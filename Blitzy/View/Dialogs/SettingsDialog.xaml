@@ -1,0 +1,111 @@
+﻿<v:CloseableView x:Class="Blitzy.View.Dialogs.SettingsDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:v="clr-namespace:Blitzy.View"
+		DataContext="{Binding Source={StaticResource Locator}, Path=Settings}"
+		WindowStartupLocation="CenterOwner" Icon="/Blitzy;component/Resources/Gears.png"
+        Title="Settings" Height="500" Width="700">
+	<Window.Resources>
+		<Style TargetType="Button">
+			<Setter Property="Margin" Value="5" />
+			<Setter Property="MinWidth" Value="75" />
+		</Style>
+	</Window.Resources>
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+
+		<TabControl TabStripPlacement="Left">
+			<TabItem Header="General">
+			</TabItem>
+			<TabItem Header="Folders">
+				<Grid Margin="5">
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto" />
+						<RowDefinition />
+						<RowDefinition />
+						<RowDefinition Height="Auto" />
+					</Grid.RowDefinitions>
+
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="2*" />
+						<ColumnDefinition Width="*" />
+					</Grid.ColumnDefinitions>
+
+					<GroupBox Header="Folders" Grid.Row="1" Grid.Column="0" Grid.RowSpan="2">
+						<Grid>
+							<Grid.RowDefinitions>
+								<RowDefinition />
+								<RowDefinition Height="Auto" />
+							</Grid.RowDefinitions>
+
+							<ListBox ItemsSource="{Binding Settings.Folders}" DisplayMemberPath="Path" SelectedItem="{Binding SelectedFolder, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+							<StackPanel Orientation="Horizontal" Grid.Row="1" HorizontalAlignment="Right">
+								<Button Content="Add" Command="{Binding AddFolderCommand}" />
+								<Button Content="Remove" Command="{Binding RemoveFolderCommand}" />
+							</StackPanel>
+						</Grid>
+					</GroupBox>
+
+					<GroupBox Header="Rules" Grid.Column="1" Grid.Row="1">
+						<Grid>
+							<Grid.RowDefinitions>
+								<RowDefinition Height="Auto" />
+								<RowDefinition />
+								<RowDefinition Height="Auto" />
+							</Grid.RowDefinitions>
+
+							<CheckBox IsChecked="{Binding SelectedFolder.IsRecursive}" Content="Recursive" Margin="5" Grid.Row="0" IsEnabled="{Binding SelectedFolder, Converter={StaticResource ElementNotNullConv}}" />
+							<ListBox Grid.Row="1" ItemsSource="{Binding SelectedFolder.Rules}" SelectedItem="{Binding SelectedRule, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+							<StackPanel Orientation="Horizontal" Grid.Row="2" HorizontalAlignment="Center">
+								<Button Content="Add" Command="{Binding AddRuleCommand}" />
+								<Button Content="Remove" Command="{Binding RemoveRuleCommand}" />
+							</StackPanel>
+						</Grid>
+					</GroupBox>
+					<GroupBox Header="Exclude" Grid.Row="2" Grid.Column="1">
+						<Grid>
+							<Grid.RowDefinitions>
+								<RowDefinition />
+								<RowDefinition Height="Auto" />
+							</Grid.RowDefinitions>
+
+							<ListBox Grid.Row="0" ItemsSource="{Binding SelectedFolder.Excludes}" SelectedItem="{Binding SelectedExclude, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+							<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.Row="1">
+								<Button Content="Add" Command="{Binding AddExcludeCommand}" />
+								<Button Content="Remove" Command="{Binding RemoveExcludeCommand}" />
+							</StackPanel>
+						</Grid>
+					</GroupBox>
+
+					<CheckBox Content="Make a backup of shortcuts before parsing them" />
+					<DockPanel Grid.Row="3" LastChildFill="True" Grid.ColumnSpan="2">
+						<Button Content="Update catalog" DockPanel.Dock="Right" Command="{Binding UpdateCatalogCommand}" />
+						<Grid>
+							<ProgressBar />
+						</Grid>
+					</DockPanel>
+				</Grid>
+			</TabItem>
+			<TabItem Header="Plugins">
+			</TabItem>
+			<TabItem Header="About">
+			</TabItem>
+		</TabControl>
+
+		<Grid Grid.Row="1">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition />
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="Auto" />
+			</Grid.ColumnDefinitions>
+
+			<Button Content="Defaults" Grid.Column="0" HorizontalAlignment="Left" Command="{Binding DefaultsCommand}" />
+			<Button Content="Save" Grid.Column="1" Command="{Binding SaveCommand}" />
+			<Button Content="Cancel" Grid.Column="2" Command="{Binding CancelCommand}" />
+		</Grid>
+	</Grid>
+</v:CloseableView>

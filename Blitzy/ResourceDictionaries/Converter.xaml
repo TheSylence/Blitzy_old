@@ -3,4 +3,5 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 	<BooleanToVisibilityConverter x:Key="BooleanToVisibilityConv" />
 	<conv:StringToImageConverter x:Key="StringToImageConv" />
+	<conv:ElementNotNullConverter x:Key="ElementNotNullConv" />
 </ResourceDictionary>

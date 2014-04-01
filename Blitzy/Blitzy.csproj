@@ -46,12 +46,17 @@
     <Reference Include="Microsoft.Practices.ServiceLocation">
       <HintPath>..\packages\CommonServiceLocator.1.0\lib\NET35\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
+    <Reference Include="Ookii.Dialogs.Wpf">
+      <HintPath>..\packages\Ookii.Dialogs.1.0\lib\net35\Ookii.Dialogs.Wpf.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.SQLite">
       <HintPath>..\packages\System.Data.SQLite.Core.1.0.92.0\lib\net45\System.Data.SQLite.dll</HintPath>
     </Reference>
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\MvvmLightLibs.4.2.30.0\lib\net45\System.Windows.Interactivity.dll</HintPath>
     </Reference>
@@ -90,8 +95,22 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Constants.cs" />
+    <Compile Include="Converter\ElementNotNullConverter.cs" />
     <Compile Include="Converter\StringToImageConverter.cs" />
+    <Compile Include="HotKey.cs" />
     <Compile Include="LogHelper.cs" />
+    <Compile Include="LogObject.cs" />
+    <Compile Include="Model\Database.cs" />
+    <Compile Include="Model\DatabaseUpgrader.cs" />
+    <Compile Include="Model\Folder.cs" />
+    <Compile Include="Model\QueryBuilder.cs" />
+    <Compile Include="Model\Settings.cs" />
+    <Compile Include="Model\Shell\ShellLinkHelper.cs" />
+    <Compile Include="Model\Shell\ShellLinkNative.cs" />
+    <Compile Include="Model\Shell\ShellShortcut.cs" />
+    <Compile Include="NativeMethods.cs" />
+    <Compile Include="SingleInstance.cs" />
     <Compile Include="ViewModel\CloseViewEventArgs.cs" />
     <Compile Include="ViewModel\Dialogs\TextInputDialogViewModel.cs" />
     <Compile Include="ViewModel\IRequestCloseViewModel.cs" />
@@ -100,6 +119,10 @@
     <Compile Include="ViewModel\ViewModelBaseEx.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Page Include="ResourceDictionaries\Converter.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Dialogs\SettingsDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -119,9 +142,14 @@
     <Compile Include="ViewServices\IDialogService.cs" />
     <Compile Include="ViewServices\MessageBoxParameter.cs" />
     <Compile Include="ViewServices\MessageBoxService.cs" />
+    <Compile Include="ViewServices\SelectFolderService.cs" />
+    <Compile Include="ViewServices\SettingsService.cs" />
     <Compile Include="ViewServices\TextInputParameter.cs" />
     <Compile Include="ViewServices\TextInputService.cs" />
     <Compile Include="View\CloseableView.cs" />
+    <Compile Include="View\Dialogs\SettingsDialog.xaml.cs">
+      <DependentUpon>SettingsDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\Dialogs\TextInputDialog.xaml.cs">
       <DependentUpon>TextInputDialog.xaml</DependentUpon>
     </Compile>
@@ -173,7 +201,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Messages\" />
-    <Folder Include="Model\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

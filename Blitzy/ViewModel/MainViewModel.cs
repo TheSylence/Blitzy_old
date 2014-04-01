@@ -1,34 +1,82 @@
+using Blitzy.Model;
+using Blitzy.ViewServices;
 using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Command;
 
 namespace Blitzy.ViewModel
 {
-    /// <summary>
-    /// This class contains properties that the main View can data bind to.
-    /// <para>
-    /// Use the <strong>mvvminpc</strong> snippet to add bindable properties to this ViewModel.
-    /// </para>
-    /// <para>
-    /// You can also use Blend to data bind with the tool's support.
-    /// </para>
-    /// <para>
-    /// See http://www.galasoft.ch/mvvm
-    /// </para>
-    /// </summary>
-    public class MainViewModel : ViewModelBase
-    {
-        /// <summary>
-        /// Initializes a new instance of the MainViewModel class.
-        /// </summary>
-        public MainViewModel()
-        {
-            ////if (IsInDesignMode)
-            ////{
-            ////    // Code runs in Blend --> create design time data.
-            ////}
-            ////else
-            ////{
-            ////    // Code runs "for real"
-            ////}
-        }
-    }
+	public class MainViewModel : ViewModelBaseEx
+	{
+		#region Constructor
+
+		/// <summary>
+		/// Initializes a new instance of the MainViewModel class.
+		/// </summary>
+		public MainViewModel()
+		{
+			Database = new Database();
+			Settings = new Settings( Database.Connection );
+
+			if( !Database.CheckExistance() )
+			{
+				Settings.SetDefaults();
+			}
+			else
+			{
+				Settings.Load();
+			}
+
+			////if (IsInDesignMode)
+			////{
+			////    // Code runs in Blend --> create design time data.
+			////}
+			////else
+			////{
+			////    // Code runs "for real"
+			////}
+		}
+
+		#endregion Constructor
+
+		#region Methods
+
+		#endregion Methods
+
+		#region Commands
+
+		private RelayCommand _SettingsCommand;
+
+		public RelayCommand SettingsCommand
+		{
+			get
+			{
+				return _SettingsCommand ??
+					( _SettingsCommand = new RelayCommand( ExecuteSettingsCommand, CanExecuteSettingsCommand ) );
+			}
+		}
+
+		private bool CanExecuteSettingsCommand()
+		{
+			return true;
+		}
+
+		private void ExecuteSettingsCommand()
+		{
+			DialogServiceManager.Show<SettingsService>( Settings );
+		}
+
+		#endregion Commands
+
+		#region Properties
+
+		internal Database Database { get; private set; }
+
+		internal Settings Settings { get; private set; }
+
+		#endregion Properties
+
+		#region Attributes
+
+		#endregion Attributes
+	}
 }
