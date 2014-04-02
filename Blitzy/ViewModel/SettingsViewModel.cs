@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using Blitzy.Model;
 using Blitzy.ViewServices;
 using GalaSoft.MvvmLight.Command;
@@ -176,6 +177,13 @@ namespace Blitzy.ViewModel
 
 		private void ExecuteAddExcludeCommand()
 		{
+			TextInputParameter args = new TextInputParameter( "Enter the exlude that should be added. Wildcards (*) are supported", "Add exclude" );
+			string exclude = DialogServiceManager.Show<TextInputService, string>( args );
+
+			if( exclude != null )
+			{
+				SelectedFolder.Excludes.Add( exclude );
+			}
 		}
 
 		private void ExecuteAddFolderCommand()
@@ -197,6 +205,13 @@ namespace Blitzy.ViewModel
 
 		private void ExecuteAddRuleCommand()
 		{
+			TextInputParameter args = new TextInputParameter( "Enter the rule that should be added. Wildcards (*) are supported", "Add rule" );
+			string rule = DialogServiceManager.Show<TextInputService, string>( args );
+
+			if( rule != null )
+			{
+				SelectedFolder.Rules.Add( rule );
+			}
 		}
 
 		private void ExecuteCancelCommand()
@@ -206,28 +221,59 @@ namespace Blitzy.ViewModel
 
 		private void ExecuteDefaultsCommand()
 		{
+			MessageBoxParameter args = new MessageBoxParameter( "Do you really want to revert to the default settings?", "Restore defaults" );
+			MessageBoxResult result = DialogServiceManager.Show<MessageBoxService, MessageBoxResult>( args );
+
+			if( result == MessageBoxResult.Yes )
+			{
+				Settings.SetDefaults();
+			}
 		}
 
 		private void ExecuteRemoveExcludeCommand()
 		{
+			MessageBoxParameter args = new MessageBoxParameter( "Do you really want to remove the selected exlude?", "Remove exlude" );
+			MessageBoxResult result = DialogServiceManager.Show<MessageBoxService, MessageBoxResult>( args );
+
+			if( result == MessageBoxResult.Yes )
+			{
+				SelectedFolder.Excludes.Remove( SelectedExclude );
+				SelectedExclude = null;
+			}
 		}
 
 		private void ExecuteRemoveFolderCommand()
 		{
-			Settings.Folders.Remove( SelectedFolder );
-			SelectedFolder = null;
+			MessageBoxParameter args = new MessageBoxParameter( "Do you really want to remove the selected folder?", "Remove folder" );
+			MessageBoxResult result = DialogServiceManager.Show<MessageBoxService, MessageBoxResult>( args );
+
+			if( result == MessageBoxResult.Yes )
+			{
+				Settings.Folders.Remove( SelectedFolder );
+				SelectedFolder = null;
+			}
 		}
 
 		private void ExecuteRemoveRuleCommand()
 		{
+			MessageBoxParameter args = new MessageBoxParameter( "Do you really want to remove the selected rule?", "Remove rule" );
+			MessageBoxResult result = DialogServiceManager.Show<MessageBoxService, MessageBoxResult>( args );
+
+			if( result == MessageBoxResult.Yes )
+			{
+				SelectedFolder.Rules.Remove( SelectedRule );
+				SelectedRule = null;
+			}
 		}
 
 		private void ExecuteSaveCommand()
 		{
+			Settings.Save();
 		}
 
 		private void ExecuteUpdateCatalogCommand()
 		{
+			throw new NotImplementedException();
 		}
 
 		#endregion Commands

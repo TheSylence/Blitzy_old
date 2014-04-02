@@ -8,6 +8,7 @@ using System.Management;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Threading;
 using Blitzy.ViewServices;
 using GalaSoft.MvvmLight.Threading;
 
@@ -22,6 +23,19 @@ namespace Blitzy
 
 		public App()
 		{
+			if( !SingleInstance.Start() )
+			{
+				SingleInstance.ShowFirstInstance();
+				this.Shutdown( int.MinValue );
+				return;
+			}
+
+			Exit += ( s, e ) => SingleInstance.Stop();
+
+#if !DEBUG
+			DispatcherUnhandledException += new DispatcherUnhandledExceptionEventArgs( Application_DispatcherUnhandledException );
+#endif
+
 			LogEnvironmentInfo();
 
 			DispatcherHelper.Initialize();
@@ -31,6 +45,30 @@ namespace Blitzy
 		#endregion Constructor
 
 		#region Methods
+
+		private void Application_DispatcherUnhandledException( object sender, DispatcherUnhandledExceptionEventArgs e )
+		{
+			try
+			{
+#if !DEBUG
+				ExceptionDialog dlg = new ExceptionDialog( e.Exception );
+				dlg.ShowDialog();
+
+				e.Handled = true;
+#endif
+			}
+			catch
+			{
+				// There already was an exception so recovering here is impossible
+			}
+			finally
+			{
+				SingleInstance.Stop();
+#if !DEBUG
+				System.Environment.Exit( -1 );
+#endif
+			}
+		}
 
 		private void LogEnvironmentInfo()
 		{

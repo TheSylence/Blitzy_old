@@ -11,7 +11,7 @@ using GalaSoft.MvvmLight;
 
 namespace Blitzy.Model
 {
-	internal class Folder : ObservableObject
+	internal class Folder : ModelBase
 	{
 		#region Constructor
 
@@ -25,7 +25,7 @@ namespace Blitzy.Model
 
 		#region Methods
 
-		public void Load( SQLiteConnection connection )
+		public override void Load( SQLiteConnection connection )
 		{
 			using( SQLiteCommand cmd = connection.CreateCommand() )
 			{
@@ -34,7 +34,30 @@ namespace Blitzy.Model
 				param.Value = ID;
 				cmd.Parameters.Add( param );
 
+				cmd.CommandText = "SELECT Path, Recursive FROM folders WHERE FolderID = @folderID;";
+				cmd.Prepare();
+
+				using( SQLiteDataReader reader = cmd.ExecuteReader() )
+				{
+					if( !reader.Read() )
+					{
+						throw new TypeLoadException( "Failed to read folder from database" );
+					}
+
+					Path = reader.GetString( 0 );
+					IsRecursive = reader.GetInt32( 1 ) == 1;
+				}
+			}
+
+			using( SQLiteCommand cmd = connection.CreateCommand() )
+			{
+				SQLiteParameter param = cmd.CreateParameter();
+				param.ParameterName = "folderID";
+				param.Value = ID;
+				cmd.Parameters.Add( param );
+
 				cmd.CommandText = "SELECT Rule FROM folder_rules WHERE FolderID = @folderID";
+				cmd.Prepare();
 
 				using( SQLiteDataReader reader = cmd.ExecuteReader() )
 				{
@@ -53,6 +76,7 @@ namespace Blitzy.Model
 				cmd.Parameters.Add( param );
 
 				cmd.CommandText = "SELECT Exclude FROM folder_excludes WHERE FolderID = @folderID";
+				cmd.Prepare();
 
 				using( SQLiteDataReader reader = cmd.ExecuteReader() )
 				{
@@ -62,6 +86,114 @@ namespace Blitzy.Model
 					}
 				}
 			}
+
+			ExistsInDatabase = true;
+		}
+
+		public override void Save( SQLiteConnection connection )
+		{
+			using( SQLiteCommand cmd = connection.CreateCommand() )
+			{
+				SQLiteParameter param = cmd.CreateParameter();
+				param.ParameterName = "folderID";
+				param.Value = ID;
+				cmd.Parameters.Add( param );
+
+				param = cmd.CreateParameter();
+				param.ParameterName = "Path";
+				param.Value = Path;
+				cmd.Parameters.Add( param );
+
+				param = cmd.CreateParameter();
+				param.ParameterName = "Recursive";
+				param.Value = IsRecursive ? 1 : 0;
+				cmd.Parameters.Add( param );
+
+				if( ExistsInDatabase )
+				{
+					cmd.CommandText = "UPDATE folders SET Path = @Path, Recursive = @Recursive WHERE FolderID = @folderID";
+				}
+				else
+				{
+					cmd.CommandText = "INSERT INTO folders (FolderID, Path, Recursive) VALUES (@folderID, @Path, @Recursive);";
+				}
+
+				cmd.Prepare();
+				cmd.ExecuteNonQuery();
+			}
+
+			if( ExistsInDatabase )
+			{
+				using( SQLiteCommand cmd = connection.CreateCommand() )
+				{
+					SQLiteParameter param = cmd.CreateParameter();
+					param.ParameterName = "folderID";
+					param.Value = ID;
+					cmd.Parameters.Add( param );
+
+					cmd.CommandText = "DELETE FROM folder_rules WHERE FolderID = @folderID";
+
+					cmd.Prepare();
+					cmd.ExecuteNonQuery();
+				}
+
+				using( SQLiteCommand cmd = connection.CreateCommand() )
+				{
+					SQLiteParameter param = cmd.CreateParameter();
+					param.ParameterName = "folderID";
+					param.Value = ID;
+					cmd.Parameters.Add( param );
+
+					cmd.CommandText = "DELETE FROM folder_excludes WHERE FolderID = @folderID";
+
+					cmd.Prepare();
+					cmd.ExecuteNonQuery();
+				}
+			}
+
+			foreach( string rule in Rules )
+			{
+				using( SQLiteCommand cmd = connection.CreateCommand() )
+				{
+					SQLiteParameter param = cmd.CreateParameter();
+					param.ParameterName = "folderID";
+					param.Value = ID;
+					cmd.Parameters.Add( param );
+
+					param = cmd.CreateParameter();
+					param.ParameterName = "rule";
+					param.Value = rule;
+					cmd.Parameters.Add( param );
+
+					cmd.CommandText = "INSERT INTO folder_rules (FolderID, Rule) VALUES (@folderID, @rule);";
+
+					cmd.Prepare();
+					cmd.ExecuteNonQuery();
+				}
+			}
+
+			foreach( string exclude in Excludes )
+			{
+				using( SQLiteCommand cmd = connection.CreateCommand() )
+				{
+					SQLiteParameter param = cmd.CreateParameter();
+					param.ParameterName = "folderID";
+					param.Value = ID;
+					cmd.Parameters.Add( param );
+
+					param = cmd.CreateParameter();
+					param.ParameterName = "exclude";
+					param.Value = exclude;
+					cmd.Parameters.Add( param );
+
+					cmd.CommandText = "INSERT INTO folder_excludes (FolderID, Exclude) VALUES (@folderID, @exclude);";
+
+					cmd.Prepare();
+					cmd.ExecuteNonQuery();
+				}
+			}
+
+			ExistsInDatabase = true;
 		}
 
 		#endregion Methods

@@ -102,16 +102,22 @@
     <Compile Include="LogHelper.cs" />
     <Compile Include="LogObject.cs" />
     <Compile Include="Model\Database.cs" />
+    <Compile Include="Model\DatabaseCreator.cs" />
     <Compile Include="Model\DatabaseUpgrader.cs" />
     <Compile Include="Model\Folder.cs" />
+    <Compile Include="Model\ModelBase.cs" />
     <Compile Include="Model\QueryBuilder.cs" />
     <Compile Include="Model\Settings.cs" />
     <Compile Include="Model\Shell\ShellLinkHelper.cs" />
     <Compile Include="Model\Shell\ShellLinkNative.cs" />
     <Compile Include="Model\Shell\ShellShortcut.cs" />
     <Compile Include="NativeMethods.cs" />
+    <Compile Include="Plugin\IPlugin.cs" />
+    <Compile Include="Plugin\IPluginHost.cs" />
+    <Compile Include="Plugin\ISettings.cs" />
     <Compile Include="SingleInstance.cs" />
     <Compile Include="ViewModel\CloseViewEventArgs.cs" />
+    <Compile Include="ViewModel\Dialogs\ExceptionDialogViewModel.cs" />
     <Compile Include="ViewModel\Dialogs\TextInputDialogViewModel.cs" />
     <Compile Include="ViewModel\IRequestCloseViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
@@ -119,6 +125,10 @@
     <Compile Include="ViewModel\ViewModelBaseEx.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Page Include="ResourceDictionaries\Converter.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Dialogs\ExceptionDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -147,6 +157,9 @@
     <Compile Include="ViewServices\TextInputParameter.cs" />
     <Compile Include="ViewServices\TextInputService.cs" />
     <Compile Include="View\CloseableView.cs" />
+    <Compile Include="View\Dialogs\ExceptionDialog.xaml.cs">
+      <DependentUpon>ExceptionDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\Dialogs\SettingsDialog.xaml.cs">
       <DependentUpon>SettingsDialog.xaml</DependentUpon>
     </Compile>
@@ -193,10 +206,10 @@
     <Resource Include="Resources\TrayIcon.ico" />
     <Resource Include="Resources\TrayIconFailure.ico" />
     <Content Include="x64\SQLite.Interop.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="x86\SQLite.Interop.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
   <ItemGroup>

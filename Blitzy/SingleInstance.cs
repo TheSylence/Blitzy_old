@@ -47,6 +47,7 @@ namespace Blitzy
 		internal static void Stop()
 		{
 			AppMutex.ReleaseMutex();
+			AppMutex.Dispose();
 		}
 
 		#endregion Methods
@@ -57,7 +58,7 @@ namespace Blitzy
 		{
 			get
 			{
-				IEnumerable<System.Runtime.InteropServices.GuidAttribute> attributes = Assembly.GetEntryAssembly().GetCustomAttributes<System.Runtime.InteropServices.GuidAttribute>();
+				IEnumerable<System.Runtime.InteropServices.GuidAttribute> attributes = Assembly.GetExecutingAssembly().GetCustomAttributes<System.Runtime.InteropServices.GuidAttribute>();
 				if( attributes == null || attributes.Count() == 0 )
 				{
 					return string.Empty;
