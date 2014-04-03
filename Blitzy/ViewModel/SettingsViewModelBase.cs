@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Blitzy.ViewModel
 {
-	internal class SettingsViewModelBase : ViewModelBaseEx
+	internal abstract class SettingsViewModelBase : ViewModelBaseEx
 	{
 		#region Constructor
 
@@ -17,6 +17,8 @@ namespace Blitzy.ViewModel
 		#endregion Constructor
 
 		#region Methods
+
+		public abstract void Save();
 
 		#endregion Methods
 

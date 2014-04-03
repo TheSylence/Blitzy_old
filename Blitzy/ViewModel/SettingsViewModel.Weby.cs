@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data.SQLite;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,11 +21,34 @@ namespace Blitzy.ViewModel
 		public WebySettingsViewModel( SettingsViewModel baseVM )
 			: base( baseVM )
 		{
+			Websites = new ObservableCollection<WebyWebsite>();
+
+			using( SQLiteCommand cmd = BaseVM.Settings.Connection.CreateCommand() )
+			{
+				cmd.CommandText = "SELECT WebyID FROM weby";
+
+				using( SQLiteDataReader reader = cmd.ExecuteReader() )
+				{
+					while( reader.Read() )
+					{
+						WebyWebsite site = new WebyWebsite();
+						site.ID = reader.GetInt32( 0 );
+
+						site.Load( BaseVM.Settings.Connection );
+						Websites.Add( site );
+					}
+				}
+			}
 		}
 
 		#endregion Constructor
 
 		#region Methods
+
+		public override void Save()
+		{
+			throw new NotImplementedException();
+		}
 
 		#endregion Methods
 
@@ -63,6 +87,11 @@ namespace Blitzy.ViewModel
 
 		private void ExecuteAddWebsiteCommand()
 		{
+			WebyWebsite site = DialogServiceManager.Create<WebyWebsite>();
+			if( site != null )
+			{
+				Websites.Add( site );
+			}
 		}
 
 		private void ExecuteRemoveWebsiteCommand()

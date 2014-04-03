@@ -127,12 +127,15 @@
     <Compile Include="Plugin\ISettings.cs" />
     <Compile Include="SingleInstance.cs" />
     <Compile Include="ViewModel\CloseViewEventArgs.cs" />
+    <Compile Include="ViewModel\Dialogs\DialogViewModelBase.cs" />
     <Compile Include="ViewModel\Dialogs\ExceptionDialogViewModel.cs" />
     <Compile Include="ViewModel\Dialogs\TextInputDialogViewModel.cs" />
+    <Compile Include="ViewModel\Dialogs\WebyWebsiteDialogViewModel.cs" />
     <Compile Include="ViewModel\IRequestCloseViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\SettingsViewModel.cs" />
     <Compile Include="ViewModel\SettingsViewModel.Weby.cs" />
+    <Compile Include="ViewModel\SettingsViewModel.Winy.cs" />
     <Compile Include="ViewModel\SettingsViewModelBase.cs" />
     <Compile Include="ViewModel\ViewModelBaseEx.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
@@ -152,6 +155,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="View\Dialogs\WebyWebsiteDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -161,13 +168,16 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ViewServices\DialogServiceManager.cs" />
+    <Compile Include="ViewServices\IDataManipulationService.cs" />
     <Compile Include="ViewServices\IDialogService.cs" />
     <Compile Include="ViewServices\MessageBoxParameter.cs" />
     <Compile Include="ViewServices\MessageBoxService.cs" />
+    <Compile Include="ViewServices\ModelManipulationService.cs" />
     <Compile Include="ViewServices\SelectFolderService.cs" />
     <Compile Include="ViewServices\SettingsService.cs" />
     <Compile Include="ViewServices\TextInputParameter.cs" />
     <Compile Include="ViewServices\TextInputService.cs" />
+    <Compile Include="ViewServices\WebyWebsiteService.cs" />
     <Compile Include="View\CloseableView.cs" />
     <Compile Include="View\Dialogs\ExceptionDialog.xaml.cs">
       <DependentUpon>ExceptionDialog.xaml</DependentUpon>
@@ -177,6 +187,9 @@
     </Compile>
     <Compile Include="View\Dialogs\TextInputDialog.xaml.cs">
       <DependentUpon>TextInputDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Dialogs\WebyWebsiteDialog.xaml.cs">
+      <DependentUpon>WebyWebsiteDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
@@ -222,6 +235,7 @@
     <Resource Include="Resources\TrayIcon.ico" />
     <Resource Include="Resources\TrayIconFailure.ico" />
     <EmbeddedResource Include="Resources\Docs\Changelog.txt" />
+    <EmbeddedResource Include="Resources\Docs\License.txt" />
     <Content Include="x64\SQLite.Interop.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

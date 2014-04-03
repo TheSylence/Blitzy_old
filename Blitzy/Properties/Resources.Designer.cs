@@ -97,6 +97,33 @@ namespace Blitzy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Ask for confirmation before logging off.
+        /// </summary>
+        public static string AskForLogoffConfirmation {
+            get {
+                return ResourceManager.GetString("AskForLogoffConfirmation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ask for confirmation before restarting.
+        /// </summary>
+        public static string AskForRestartConfirmation {
+            get {
+                return ResourceManager.GetString("AskForRestartConfirmation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ask for confirmation before shutting down.
+        /// </summary>
+        public static string AskForShutdownConfirmation {
+            get {
+                return ResourceManager.GetString("AskForShutdownConfirmation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Automatically check for updates.
         /// </summary>
         public static string AutomaticallyCheckForUpdates {
@@ -111,6 +138,24 @@ namespace Blitzy.Properties {
         public static string Behavior {
             get {
                 return ResourceManager.GetString("Behavior", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Blitzy.
+        /// </summary>
+        public static string Blitzy {
+            get {
+                return ResourceManager.GetString("Blitzy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Blitzy140.
+        /// </summary>
+        public static string Blitzy140 {
+            get {
+                return ResourceManager.GetString("Blitzy140", resourceCulture);
             }
         }
         
@@ -223,6 +268,15 @@ namespace Blitzy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Edit.
+        /// </summary>
+        public static string Edit {
+            get {
+                return ResourceManager.GetString("Edit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Excludes.
         /// </summary>
         public static string Excludes {
@@ -241,6 +295,15 @@ namespace Blitzy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to ....
+        /// </summary>
+        public static string FolderDots {
+            get {
+                return ResourceManager.GetString("FolderDots", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Folders.
         /// </summary>
         public static string Folders {
@@ -255,6 +318,15 @@ namespace Blitzy.Properties {
         public static string General {
             get {
                 return ResourceManager.GetString("General", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Import saved sessions.
+        /// </summary>
+        public static string ImportSavedSessions {
+            get {
+                return ResourceManager.GetString("ImportSavedSessions", resourceCulture);
             }
         }
         
@@ -331,6 +403,15 @@ namespace Blitzy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Path to your PuTTY.exe.
+        /// </summary>
+        public static string PathToPutty {
+            get {
+                return ResourceManager.GetString("PathToPutty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Periodically rebuild catalog.
         /// </summary>
         public static string PeriodicallyRebuildCatalog {
@@ -345,6 +426,15 @@ namespace Blitzy.Properties {
         public static string Plugins {
             get {
                 return ResourceManager.GetString("Plugins", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Putty.
+        /// </summary>
+        public static string Putty {
+            get {
+                return ResourceManager.GetString("Putty", resourceCulture);
             }
         }
         
@@ -466,6 +556,15 @@ namespace Blitzy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Use {0} as a placeholder for the user input.
+        /// </summary>
+        public static string URLTooltipPlaceholder {
+            get {
+                return ResourceManager.GetString("URLTooltipPlaceholder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Version.
         /// </summary>
         public static string Version {
@@ -480,6 +579,15 @@ namespace Blitzy.Properties {
         public static string Weby {
             get {
                 return ResourceManager.GetString("Weby", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Winy.
+        /// </summary>
+        public static string Winy {
+            get {
+                return ResourceManager.GetString("Winy", resourceCulture);
             }
         }
     }

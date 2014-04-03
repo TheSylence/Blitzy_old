@@ -166,12 +166,8 @@ namespace Blitzy.Model
 
 		public ObservableCollection<Folder> Folders { get; private set; }
 
+		internal SQLiteConnection Connection { get; private set; }
+
 		#endregion Properties
-
-		#region Attributes
-
-		private SQLiteConnection Connection;
-
-		#endregion Attributes
 	}
 }

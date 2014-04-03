@@ -49,6 +49,7 @@ namespace Blitzy.ViewModel
 			SimpleIoc.Default.Register<SettingsViewModel>();
 
 			SimpleIoc.Default.Register<TextInputDialogViewModel>();
+			SimpleIoc.Default.Register<WebyWebsiteDialogViewModel>();
 		}
 
 		#endregion Constructor
@@ -80,6 +81,14 @@ namespace Blitzy.ViewModel
 			get
 			{
 				return ServiceLocator.Current.GetInstance<TextInputDialogViewModel>();
+			}
+		}
+
+		public WebyWebsiteDialogViewModel WebyWebsiteDialog
+		{
+			get
+			{
+				return ServiceLocator.Current.GetInstance<WebyWebsiteDialogViewModel>();
 			}
 		}
 

@@ -27,12 +27,26 @@ namespace Blitzy.ViewModel
 				Changelog = reader.ReadToEnd();
 			}
 
-			WebySettings = new WebySettingsViewModel( this );
+			using( TextReader reader = new StreamReader( Assembly.GetExecutingAssembly().GetManifestResourceStream( "Blitzy.Resources.Docs.License.txt" ) ) )
+			{
+				BlitzyLicense = reader.ReadToEnd();
+			}
 		}
 
 		#endregion Constructor
 
 		#region Methods
+
+		public override void Reset()
+		{
+			base.Reset();
+
+			WebySettings = new WebySettingsViewModel( this );
+			RaisePropertyChanged( () => WebySettings );
+
+			WinySettings = new WinySettingsViewModel( this );
+			RaisePropertyChanged( () => WinySettings );
+		}
 
 		#endregion Methods
 
@@ -298,6 +312,9 @@ namespace Blitzy.ViewModel
 		private void ExecuteSaveCommand()
 		{
 			Settings.Save();
+			WinySettings.Save();
+			WebySettings.Save();
+
 			Close();
 		}
 
@@ -320,6 +337,8 @@ namespace Blitzy.ViewModel
 		private Folder _SelectedFolder;
 		private string _SelectedRule;
 		private Settings _Settings;
+
+		public string BlitzyLicense { get; private set; }
 
 		public string Changelog { get; private set; }
 
@@ -426,6 +445,8 @@ namespace Blitzy.ViewModel
 		}
 
 		public WebySettingsViewModel WebySettings { get; private set; }
+
+		public WinySettingsViewModel WinySettings { get; private set; }
 
 		#endregion Properties
 

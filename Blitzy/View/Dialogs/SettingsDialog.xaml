@@ -158,7 +158,7 @@
 										<RowDefinition Height="Auto" />
 									</Grid.RowDefinitions>
 
-									<DataGrid ItemsSource="{Binding Websites}" CanUserAddRows="False" CanUserDeleteRows="False" SelectedItem="{Binding SelectedWebsite, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}">
+									<DataGrid ItemsSource="{Binding Websites}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" SelectedItem="{Binding SelectedWebsite, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" HeadersVisibility="Column">
 										<DataGrid.Columns>
 											<DataGridTextColumn Header="{lex:Loc Blitzy:Resources:Name}" Binding="{Binding Name}" />
 											<DataGridTextColumn Header="{lex:Loc Blitzy:Resources:Description}" Binding="{Binding Description}" />
@@ -170,6 +170,36 @@
 										<Button Content="{lex:Loc Remove}" Command="{Binding RemoveWebsiteCommand}" />
 										<Button Content="{lex:Loc Add}" Command="{Binding AddWebsiteCommand}" />
 									</StackPanel>
+								</Grid>
+							</TabItem>
+							<TabItem Header="{lex:Loc Winy}" DataContext="{Binding WinySettings}">
+								<StackPanel Orientation="Vertical" Margin="5">
+									<StackPanel.Resources>
+										<Style TargetType="CheckBox">
+											<Setter Property="Margin" Value="0,0,0,5" />
+										</Style>
+									</StackPanel.Resources>
+									<CheckBox Content="{lex:Loc AskForShutdownConfirmation}" IsChecked="{Binding ShutdownConfirmation,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+									<CheckBox Content="{lex:Loc AskForRestartConfirmation}" IsChecked="{Binding RestartConfirmation,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+									<CheckBox Content="{lex:Loc AskForLogoffConfirmation}" IsChecked="{Binding LogoffConfirmation,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+								</StackPanel>
+							</TabItem>
+							<TabItem Header="{lex:Loc Putty}" DataContext="{Binding PuttySettings}">
+								<Grid Margin="5">
+									<Grid.RowDefinitions>
+										<RowDefinition Height="Auto" />
+										<RowDefinition Height="Auto" />
+										<RowDefinition Height="Auto" />
+									</Grid.RowDefinitions>
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition />
+										<ColumnDefinition Width="Auto" />
+									</Grid.ColumnDefinitions>
+
+									<TextBlock Text="{lex:Loc PathToPutty}" Grid.Row="0" />
+									<TextBox Text="{Binding PuttyPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1" VerticalAlignment="Center" Margin="5" />
+									<Button Content="..." Command="{Binding BrowsePuttyCommand}" Grid.Row="1" Grid.Column="1" Width="25" MaxWidth="25" Style="{x:Null}" VerticalAlignment="Center" />
+									<CheckBox Content="{lex:Loc ImportSavedSessions}" IsChecked="{Binding ImportSessions,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Margin="5" Grid.Row="2" />
 								</Grid>
 							</TabItem>
 						</TabControl>
@@ -210,6 +240,11 @@
 						</Grid>
 					</TabItem>
 					<TabItem Header="{lex:Loc Licenses}">
+						<TabControl>
+							<TabItem Header="{lex:Loc Blitzy}">
+								<TextBox IsReadOnly="True" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto" Text="{Binding BlitzyLicense}" TextWrapping="Wrap" />
+							</TabItem>
+						</TabControl>
 					</TabItem>
 					<TabItem Header="{lex:Loc Credits}">
 					</TabItem>

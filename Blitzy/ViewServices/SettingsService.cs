@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,7 +20,9 @@ namespace Blitzy.ViewServices
 			dlg.Owner = parent;
 
 			SettingsViewModel vm = dlg.DataContext as SettingsViewModel;
+			Debug.Assert( vm != null );
 			vm.Settings = parameter as Settings;
+			vm.Reset();
 
 			return dlg.ShowDialog();
 		}

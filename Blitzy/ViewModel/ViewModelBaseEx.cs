@@ -17,6 +17,10 @@ namespace Blitzy.ViewModel
 
 		#region Methods
 
+		public virtual void Reset()
+		{
+		}
+
 		protected void Close( bool? result = null )
 		{
 			if( RequestClose != null )

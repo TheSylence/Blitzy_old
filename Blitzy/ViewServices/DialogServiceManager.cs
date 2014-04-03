@@ -8,12 +8,35 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using Blitzy.Model;
 
 namespace Blitzy.ViewServices
 {
 	internal static class DialogServiceManager
 	{
 		#region Methods
+
+		public static T Create<T>() where T : ModelBase
+		{
+			IDataManipulationService service;
+			if( ManipServices.TryGetValue( typeof( T ), out service ) )
+			{
+				return service.Create( ActiveWindow ) as T;
+			}
+
+			throw new ArgumentException( "No service found for type" );
+		}
+
+		public static bool Edit<T>( T obj ) where T : ModelBase
+		{
+			IDataManipulationService service;
+			if( ManipServices.TryGetValue( typeof( T ), out service ) )
+			{
+				return service.Edit( ActiveWindow, obj );
+			}
+
+			throw new ArgumentException( "No service found for type" );
+		}
 
 		static public object Show<T>( object parameter = null ) where T : class, IDialogService
 		{
@@ -23,7 +46,7 @@ namespace Blitzy.ViewServices
 				return service.Show( ActiveWindow, parameter );
 			}
 
-			throw new ArgumentException( "Kein DialogService für typ gefunden" );
+			throw new ArgumentException( "No DialogService registered for type" );
 		}
 
 		/// <summary>
@@ -47,10 +70,21 @@ namespace Blitzy.ViewServices
 			Debug.Assert( App.Current == null );
 
 			Services.Clear();
+			ManipServices.Clear();
 		}
 
 		/// <summary>
-		/// Nur für Testzwecke
+		/// Only for testing purposes!
+		/// </summary>
+		internal static void RegisterManipService( Type type, IDataManipulationService service )
+		{
+			Debug.Assert( App.Current == null );
+
+			ManipServices.Add( type, service );
+		}
+
+		/// <summary>
+		/// Only for testing purposes!
 		/// </summary>
 		/// <param name="type"></param>
 		/// <param name="service"></param>
@@ -66,11 +100,18 @@ namespace Blitzy.ViewServices
 			try
 			{
 				Type baseType = typeof( IDialogService );
-
 				foreach( Type type in Assembly.GetExecutingAssembly().GetTypes().Where( t => !t.IsAbstract && baseType.IsAssignableFrom( t ) ) )
 				{
 					LogHelper.LogDebug( MethodInfo.GetCurrentMethod().DeclaringType, "Registering DialogService {0}...", type );
 					Services.Add( type, (IDialogService)Activator.CreateInstance( type ) );
+				}
+
+				baseType = typeof( IDataManipulationService );
+				foreach( Type type in Assembly.GetExecutingAssembly().GetTypes().Where( t => !t.IsAbstract && baseType.IsAssignableFrom( t ) ) )
+				{
+					LogHelper.LogDebug( MethodInfo.GetCurrentMethod().DeclaringType, "Registering DataManipulationService {0}...", type );
+					IDataManipulationService srv = (IDataManipulationService)Activator.CreateInstance( type );
+					ManipServices.Add( srv.ModelType, srv );
 				}
 			}
 			catch( ReflectionTypeLoadException ex )
@@ -83,6 +124,7 @@ namespace Blitzy.ViewServices
 				}
 			}
 
+			LogHelper.LogDebug( MethodInfo.GetCurrentMethod().DeclaringType, "{0} DataManipulationService registered", ManipServices.Count );
 			LogHelper.LogDebug( MethodInfo.GetCurrentMethod().DeclaringType, "{0} DialogServices registered", Services.Count );
 		}
 
@@ -111,6 +153,7 @@ namespace Blitzy.ViewServices
 
 		#region Attributes
 
+		private static Dictionary<Type, IDataManipulationService> ManipServices = new Dictionary<Type, IDataManipulationService>();
 		private static Dictionary<Type, IDialogService> Services = new Dictionary<Type, IDialogService>();
 
 		#endregion Attributes

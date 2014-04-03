@@ -1,6 +1,9 @@
 ﻿Version 0.9.0
 ----------------------
-* Complete rewrite of the software
+=== Complete rewrite of the software ===
+* Systemplugins are now built into the software
+* Reorganized settings menu
++ Added feature to exclude files from folders
 
 Version 0.8.29
 ----------------------

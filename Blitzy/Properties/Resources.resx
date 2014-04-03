@@ -258,4 +258,40 @@
   <data name="ConfirmDeleteItem" xml:space="preserve">
     <value>Do you really want to remove this item?</value>
   </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="URLTooltipPlaceholder" xml:space="preserve">
+    <value>Use {0} as a placeholder for the user input</value>
+  </data>
+  <data name="Winy" xml:space="preserve">
+    <value>Winy</value>
+  </data>
+  <data name="AskForShutdownConfirmation" xml:space="preserve">
+    <value>Ask for confirmation before shutting down</value>
+  </data>
+  <data name="AskForRestartConfirmation" xml:space="preserve">
+    <value>Ask for confirmation before restarting</value>
+  </data>
+  <data name="AskForLogoffConfirmation" xml:space="preserve">
+    <value>Ask for confirmation before logging off</value>
+  </data>
+  <data name="Blitzy" xml:space="preserve">
+    <value>Blitzy</value>
+  </data>
+  <data name="Blitzy140" xml:space="preserve">
+    <value>Blitzy140</value>
+  </data>
+  <data name="Putty" xml:space="preserve">
+    <value>Putty</value>
+  </data>
+  <data name="FolderDots" xml:space="preserve">
+    <value>...</value>
+  </data>
+  <data name="ImportSavedSessions" xml:space="preserve">
+    <value>Import saved sessions</value>
+  </data>
+  <data name="PathToPutty" xml:space="preserve">
+    <value>Path to your PuTTY.exe</value>
+  </data>
 </root>
