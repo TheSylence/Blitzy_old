@@ -1,0 +1,19 @@
+﻿Version 0.9.0
+----------------------
+* Complete rewrite of the software
+
+Version 0.8.29
+----------------------
+* Fixed wrong URL encoding in weby
+* Catalog update is now done in a thread with lower priority
+* Updated some internal components
++ Added option to control whether a backup of shortcuts will be made before parsing
+
+Version 0.8.27
+----------------------
+* Fixed issue in shortcut reading that could break shortcuts.
+
+Version 0.8.26
+----------------------
++ Added Changelog to settings dialog
+- Disabled shortcut resolving. If a target has moved the link will simply not processed.

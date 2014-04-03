@@ -73,5 +73,29 @@ namespace Blitzy.Tests.Model
 			cfg.SetValue( plug, "test", expected );
 			Assert.AreEqual( expected, cfg.GetValue<int>( plug, "test" ) );
 		}
+
+		[TestMethod, TestCategory( "Model" )]
+		public void SaveLoadTest()
+		{
+			Settings cfg = new Settings( Connection );
+			cfg.Folders.Add( new Folder() { ID = 123, IsRecursive = true, Path = "C:\\temp" } );
+			cfg.Folders.Add( new Folder() { ID = 456, IsRecursive = false, Path = "C:\\temp2" } );
+
+			cfg.Save();
+
+			cfg = new Settings( Connection );
+			cfg.Load();
+
+			Assert.AreEqual( 2, cfg.Folders.Count );
+			Folder folder = cfg.Folders.Where( f => f.ID == 123 ).FirstOrDefault();
+			Assert.IsNotNull( folder );
+			Assert.AreEqual( true, folder.IsRecursive );
+			Assert.AreEqual( "C:\\temp", folder.Path );
+
+			folder = cfg.Folders.Where( f => f.ID == 456 ).FirstOrDefault();
+			Assert.IsNotNull( folder );
+			Assert.AreEqual( false, folder.IsRecursive );
+			Assert.AreEqual( "C:\\temp2", folder.Path );
+		}
 	}
 }

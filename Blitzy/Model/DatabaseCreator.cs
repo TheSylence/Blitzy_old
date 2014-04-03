@@ -83,6 +83,14 @@ namespace Blitzy.Model
 					{ "PRIMARY KEY", "([Command],[Arguments],[Name])" },
 				} ) );
 
+			sb.Append( QueryBuilder.CreateTable( "weby", new Dictionary<string, string>
+				{
+					{ "WebyID", "INTEGER PRIMARY KEY" },
+					{ "Name", "VARCHAR(50) NOT NULL" },
+					{ "Description", "VARCHAR(255) NOT NULL" },
+					{ "Url", "TEXT NOT NULL" },
+				} ) );
+
 			sb.AppendFormat( "PRAGMA user_version = {0};", DatabaseUpgrader.DatabaseVersion );
 			sb.Append( "COMMIT;" );
 

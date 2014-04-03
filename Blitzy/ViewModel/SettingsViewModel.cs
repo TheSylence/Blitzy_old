@@ -2,7 +2,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -15,6 +17,18 @@ namespace Blitzy.ViewModel
 	internal class SettingsViewModel : ViewModelBaseEx
 	{
 		#region Constructor
+
+		public SettingsViewModel()
+		{
+			CurrentVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+
+			using( TextReader reader = new StreamReader( Assembly.GetExecutingAssembly().GetManifestResourceStream( "Blitzy.Resources.Docs.Changelog.txt" ) ) )
+			{
+				Changelog = reader.ReadToEnd();
+			}
+
+			WebySettings = new WebySettingsViewModel( this );
+		}
 
 		#endregion Constructor
 
@@ -34,6 +48,7 @@ namespace Blitzy.ViewModel
 		private RelayCommand _RemoveRuleCommand;
 		private RelayCommand _SaveCommand;
 		private RelayCommand _UpdateCatalogCommand;
+		private RelayCommand _UpdateCheckCommand;
 
 		public RelayCommand AddExcludeCommand
 		{
@@ -125,6 +140,15 @@ namespace Blitzy.ViewModel
 			}
 		}
 
+		public RelayCommand UpdateCheckCommand
+		{
+			get
+			{
+				return _UpdateCheckCommand ??
+					( _UpdateCheckCommand = new RelayCommand( ExecuteUpdateCheckCommand, CanExecuteUpdateCheckCommand ) );
+			}
+		}
+
 		private bool CanExecuteAddExcludeCommand()
 		{
 			return SelectedFolder != null;
@@ -172,7 +196,12 @@ namespace Blitzy.ViewModel
 
 		private bool CanExecuteUpdateCatalogCommand()
 		{
-			return Settings.Folders.Count > 0;
+			return Settings != null && Settings.Folders.Count > 0;
+		}
+
+		private bool CanExecuteUpdateCheckCommand()
+		{
+			return true;
 		}
 
 		private void ExecuteAddExcludeCommand()
@@ -269,9 +298,15 @@ namespace Blitzy.ViewModel
 		private void ExecuteSaveCommand()
 		{
 			Settings.Save();
+			Close();
 		}
 
 		private void ExecuteUpdateCatalogCommand()
+		{
+			throw new NotImplementedException();
+		}
+
+		private void ExecuteUpdateCheckCommand()
 		{
 			throw new NotImplementedException();
 		}
@@ -280,10 +315,35 @@ namespace Blitzy.ViewModel
 
 		#region Properties
 
+		private string _LatestVersion;
 		private string _SelectedExclude;
 		private Folder _SelectedFolder;
 		private string _SelectedRule;
 		private Settings _Settings;
+
+		public string Changelog { get; private set; }
+
+		public string CurrentVersion { get; private set; }
+
+		public string LatestVersion
+		{
+			get
+			{
+				return _LatestVersion;
+			}
+
+			set
+			{
+				if( _LatestVersion == value )
+				{
+					return;
+				}
+
+				RaisePropertyChanging( () => LatestVersion );
+				_LatestVersion = value;
+				RaisePropertyChanged( () => LatestVersion );
+			}
+		}
 
 		public string SelectedExclude
 		{
@@ -364,6 +424,8 @@ namespace Blitzy.ViewModel
 				RaisePropertyChanged( () => Settings );
 			}
 		}
+
+		public WebySettingsViewModel WebySettings { get; private set; }
 
 		#endregion Properties
 

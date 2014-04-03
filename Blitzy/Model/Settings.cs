@@ -131,7 +131,7 @@ namespace Blitzy.Model
 		{
 			using( SQLiteCommand cmd = Connection.CreateCommand() )
 			{
-				cmd.CommandText = "SELECT FolderID, Path, Recursive FROM folders";
+				cmd.CommandText = "SELECT FolderID FROM folders";
 
 				using( SQLiteDataReader reader = cmd.ExecuteReader() )
 				{
@@ -139,8 +139,7 @@ namespace Blitzy.Model
 					{
 						Folder f = new Folder();
 						f.ID = reader.GetInt32( 0 );
-						f.Path = reader.GetString( 1 );
-						f.IsRecursive = reader.GetInt32( 2 ) == 1;
+						f.Load( Connection );
 
 						Folders.Add( f );
 					}
@@ -150,6 +149,10 @@ namespace Blitzy.Model
 
 		internal void Save()
 		{
+			foreach( Folder f in Folders )
+			{
+				f.Save( Connection );
+			}
 		}
 
 		internal void SetDefaults()

@@ -12,6 +12,7 @@
   See http://www.galasoft.ch/mvvm
 */
 
+using Blitzy.ViewModel.Dialogs;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
 using Microsoft.Practices.ServiceLocation;
@@ -24,6 +25,8 @@ namespace Blitzy.ViewModel
 	/// </summary>
 	internal class ViewModelLocator
 	{
+		#region Constructor
+
 		/// <summary>
 		/// Initializes a new instance of the ViewModelLocator class.
 		/// </summary>
@@ -44,7 +47,13 @@ namespace Blitzy.ViewModel
 
 			SimpleIoc.Default.Register<MainViewModel>();
 			SimpleIoc.Default.Register<SettingsViewModel>();
+
+			SimpleIoc.Default.Register<TextInputDialogViewModel>();
 		}
+
+		#endregion Constructor
+
+		#region ViewModels
 
 		public MainViewModel Main
 		{
@@ -61,6 +70,20 @@ namespace Blitzy.ViewModel
 				return ServiceLocator.Current.GetInstance<SettingsViewModel>();
 			}
 		}
+
+		#endregion ViewModels
+
+		#region Dialogs
+
+		public TextInputDialogViewModel TextInputDialog
+		{
+			get
+			{
+				return ServiceLocator.Current.GetInstance<TextInputDialogViewModel>();
+			}
+		}
+
+		#endregion Dialogs
 
 		public static void Cleanup()
 		{

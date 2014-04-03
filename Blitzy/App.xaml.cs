@@ -11,6 +11,7 @@ using System.Windows;
 using System.Windows.Threading;
 using Blitzy.ViewServices;
 using GalaSoft.MvvmLight.Threading;
+using WPFLocalizeExtension.Engine;
 
 namespace Blitzy
 {
@@ -30,16 +31,26 @@ namespace Blitzy
 				return;
 			}
 
+			System.Threading.Thread.CurrentThread.Name = "Main";
+
 			Exit += ( s, e ) => SingleInstance.Stop();
 
 #if !DEBUG
 			DispatcherUnhandledException += new DispatcherUnhandledExceptionEventArgs( Application_DispatcherUnhandledException );
 #endif
 
+			LocalizeDictionary.Instance.DefaultProvider.ProviderError += DefaultProvider_ProviderError;
+			LocalizeDictionary.Instance.MissingKeyEvent += Instance_MissingKeyEvent;
+
 			LogEnvironmentInfo();
 
 			DispatcherHelper.Initialize();
 			DialogServiceManager.RegisterServices();
+		}
+
+		private void Instance_MissingKeyEvent( object sender, MissingKeyEventArgs e )
+		{
+			LogHelper.LogDebug( MethodInfo.GetCurrentMethod().DeclaringType, "Missing resource key: {0}", e.Key );
 		}
 
 		#endregion Constructor
@@ -68,6 +79,11 @@ namespace Blitzy
 				System.Environment.Exit( -1 );
 #endif
 			}
+		}
+
+		private void DefaultProvider_ProviderError( object sender, WPFLocalizeExtension.Providers.ProviderErrorEventArgs args )
+		{
+			LogHelper.LogWarning( MethodInfo.GetCurrentMethod().DeclaringType, "{0} for key {1} on {2}", args.Message, args.Key, args.Object );
 		}
 
 		private void LogEnvironmentInfo()

@@ -11,21 +11,10 @@ namespace Blitzy.ViewModel.Dialogs
 {
 	public class TextInputDialogViewModel : ViewModelBaseEx
 	{
-		#region Constructor
-
-		public TextInputDialogViewModel()
-		{
-			OkCommand = new RelayCommand( () => Ok(), () => !string.IsNullOrWhiteSpace( Input ) );
-		}
-
-		#endregion Constructor
-
 		#region Properties
 
 		private string _Caption;
-
 		private string _Input;
-
 		private string _LabelText;
 
 		public string Caption
@@ -34,10 +23,17 @@ namespace Blitzy.ViewModel.Dialogs
 			{
 				return _Caption;
 			}
+
 			set
 			{
+				if( _Caption == value )
+				{
+					return;
+				}
+
+				RaisePropertyChanging( () => Caption );
 				_Caption = value;
-				RaisePropertyChanged( "Caption" );
+				RaisePropertyChanged( () => Caption );
 			}
 		}
 
@@ -47,10 +43,17 @@ namespace Blitzy.ViewModel.Dialogs
 			{
 				return _Input;
 			}
+
 			set
 			{
+				if( _Input == value )
+				{
+					return;
+				}
+
+				RaisePropertyChanging( () => Input );
 				_Input = value;
-				RaisePropertyChanged( "Input" );
+				RaisePropertyChanged( () => Input );
 			}
 		}
 
@@ -60,10 +63,17 @@ namespace Blitzy.ViewModel.Dialogs
 			{
 				return _LabelText;
 			}
+
 			set
 			{
+				if( _LabelText == value )
+				{
+					return;
+				}
+
+				RaisePropertyChanging( () => LabelText );
 				_LabelText = value;
-				RaisePropertyChanged( "LabelText" );
+				RaisePropertyChanged( () => LabelText );
 			}
 		}
 
@@ -71,9 +81,23 @@ namespace Blitzy.ViewModel.Dialogs
 
 		#region Commands
 
-		public RelayCommand OkCommand { get; set; }
+		private RelayCommand _OkCommand;
 
-		private void Ok()
+		public RelayCommand OkCommand
+		{
+			get
+			{
+				return _OkCommand ??
+					( _OkCommand = new RelayCommand( ExecuteOkCommand, CanExecuteOkCommand ) );
+			}
+		}
+
+		private bool CanExecuteOkCommand()
+		{
+			return true;
+		}
+
+		private void ExecuteOkCommand()
 		{
 			Close( true );
 		}

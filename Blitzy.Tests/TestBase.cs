@@ -7,6 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Blitzy.Model;
+using Blitzy.ViewServices;
+using log4net.Config;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Blitzy.Tests
@@ -20,11 +22,14 @@ namespace Blitzy.Tests
 		public virtual void AfterTestRun()
 		{
 			Connection.Close();
+
+			DialogServiceManager.Clear();
 		}
 
 		[TestInitialize]
 		public virtual void BeforeTestRun()
 		{
+			BasicConfigurator.Configure();
 			Connection = CreateConnection();
 
 			DatabaseCreator.CreateDatabase( Connection );

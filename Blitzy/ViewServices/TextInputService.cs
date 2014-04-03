@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,6 +26,7 @@ namespace Blitzy.ViewServices
 			dlg.Owner = parent;
 
 			TextInputDialogViewModel vm = dlg.DataContext as TextInputDialogViewModel;
+			Debug.Assert( vm != null );
 			vm.Caption = args.Caption;
 			vm.Input = args.Input;
 			vm.LabelText = args.LabelText;
