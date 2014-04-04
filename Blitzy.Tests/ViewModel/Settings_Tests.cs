@@ -4,11 +4,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using Blitzy.Messages;
 using Blitzy.Model;
 using Blitzy.Tests.Mocks.Services;
 using Blitzy.ViewModel;
 using Blitzy.ViewServices;
+using GalaSoft.MvvmLight.Messaging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Blitzy.Tests.ViewModel
@@ -90,6 +93,39 @@ namespace Blitzy.Tests.ViewModel
 		}
 
 		[TestMethod, TestCategory( "ViewModel" )]
+		public void DefaultsTest()
+		{
+			VM.Settings.SetValue( SystemSetting.MaxMatchingItems, 123 );
+
+			MessageBoxServiceMock mock = new MessageBoxServiceMock( System.Windows.MessageBoxResult.No );
+			DialogServiceManager.RegisterService( typeof( MessageBoxService ), mock );
+
+			VM.DefaultsCommand.Execute( null );
+			Assert.AreEqual( 123, VM.Settings.GetValue<int>( SystemSetting.MaxMatchingItems ) );
+
+			mock.Result = System.Windows.MessageBoxResult.Yes;
+			VM.DefaultsCommand.Execute( null );
+			Assert.AreEqual( 20, VM.Settings.GetValue<int>( SystemSetting.MaxMatchingItems ) );
+		}
+
+		[TestMethod, TestCategory( "ViewModel" )]
+		public void LatestVersionTest()
+		{
+			AutoResetEvent evt = new AutoResetEvent( false );
+			Messenger.Default.Register<VersionCheckMessage>( this, ( msg ) =>
+				{
+					evt.Set();
+				} );
+
+			Assert.IsNull( VM.LatestVersion );
+			VM.UpdateCheckCommand.Execute( null );
+
+			evt.WaitOne();
+
+			Assert.IsNotNull( VM.LatestVersion );
+		}
+
+		[TestMethod, TestCategory( "ViewModel" )]
 		public void RemoveExcludeTest()
 		{
 			MessageBoxServiceMock mock = new MessageBoxServiceMock( System.Windows.MessageBoxResult.No );
@@ -155,6 +191,18 @@ namespace Blitzy.Tests.ViewModel
 			mock.Result = System.Windows.MessageBoxResult.Yes;
 			VM.RemoveRuleCommand.Execute( null );
 			CollectionAssert.DoesNotContain( VM.SelectedFolder.Rules, "test" );
+		}
+
+		[TestMethod, TestCategory( "ViewModel" )]
+		public void StandardCommandsTest()
+		{
+			Assert.IsTrue( VM.CancelCommand.CanExecute( null ) );
+			Assert.IsTrue( VM.DefaultsCommand.CanExecute( null ) );
+			Assert.IsTrue( VM.UpdateCheckCommand.CanExecute( null ) );
+
+			Assert.IsFalse( VM.UpdateCatalogCommand.CanExecute( null ) );
+			VM.Settings.Folders.Add( new Folder() );
+			Assert.IsTrue( VM.UpdateCatalogCommand.CanExecute( null ) );
 		}
 	}
 }

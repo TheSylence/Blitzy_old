@@ -46,5 +46,29 @@ namespace Blitzy.Tests.Model
 			Assert.AreEqual( w.Description, w2.Description );
 			Assert.AreEqual( w.URL, w2.URL );
 		}
+
+		[TestMethod, TestCategory( "Model" )]
+		public void UpdateTest()
+		{
+			WebyWebsite w = new WebyWebsite();
+			Assert.IsFalse( w.ExistsInDatabase );
+
+			w.Name = "google";
+			w.ID = 1;
+			w.Description = "This is a test";
+			w.URL = "http://google.com/q={0}";
+
+			w.Save( Connection );
+			Assert.IsTrue( w.ExistsInDatabase );
+
+			w.Name = "helloworld";
+			w.Save( Connection );
+
+			w = new WebyWebsite();
+			w.ID = 1;
+			w.Load( Connection );
+
+			Assert.AreEqual( "helloworld", w.Name );
+		}
 	}
 }

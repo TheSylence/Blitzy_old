@@ -14,13 +14,15 @@ namespace Blitzy
 	{
 		#region Constants
 
+		internal const int APIVersion = 1;
+
 #if DEBUG
 		internal const string DataFileName = "data_debug.db";
 #else
 		internal const string DataFileName = "data.db";
 #endif
-
 		internal const string ErrorReportURL = "http://software.btbsoft.org/error.php?id=Blitzy";
+		internal const string PluginsFolderName = "plugins";
 		internal const string UpdateCheckURL = "http://software.btbsoft.org/check.php?id=Blitzy";
 
 		#endregion Constants

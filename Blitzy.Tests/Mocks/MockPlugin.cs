@@ -11,6 +11,26 @@ namespace Blitzy.Tests.Mocks
 {
 	internal class MockPlugin : IPlugin
 	{
+		public int ApiVersion
+		{
+			get { throw new NotImplementedException(); }
+		}
+
+		public string Author
+		{
+			get { throw new NotImplementedException(); }
+		}
+
+		public string Description
+		{
+			get { throw new NotImplementedException(); }
+		}
+
+		public string Name
+		{
+			get { throw new NotImplementedException(); }
+		}
+
 		public Guid PluginID
 		{
 			get
@@ -19,7 +39,27 @@ namespace Blitzy.Tests.Mocks
 			}
 		}
 
+		public string Version
+		{
+			get { throw new NotImplementedException(); }
+		}
+
+		public Uri Website
+		{
+			get { throw new NotImplementedException(); }
+		}
+
 		public void ClearCache()
+		{
+			throw new NotImplementedException();
+		}
+
+		public bool ExecuteCommand( Blitzy.Model.CommandItem command, System.Collections.ObjectModel.Collection<string> input, out string message )
+		{
+			throw new NotImplementedException();
+		}
+
+		public IEnumerable<Blitzy.Model.CommandItem> GetCommands( System.Collections.ObjectModel.Collection<string> input )
 		{
 			throw new NotImplementedException();
 		}

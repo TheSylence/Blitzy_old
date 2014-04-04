@@ -2,7 +2,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Blitzy.Model;
@@ -15,6 +17,23 @@ namespace Blitzy.Tests.Model
 	[TestClass]
 	public class Settings_Tests : TestBase
 	{
+		[TestMethod, TestCategory( "Model" )]
+		public void DefaultsTest()
+		{
+			Settings cfg = new Settings( Connection );
+			cfg.SetDefaults();
+
+			Type type = typeof( SystemSetting );
+
+			foreach( SystemSetting setting in Enum.GetValues( type ) )
+			{
+				MemberInfo member = type.GetMember( setting.ToString() ).First();
+				object defaultValue = member.GetCustomAttribute<DefaultValueAttribute>().Value;
+
+				Assert.AreEqual( defaultValue.ToString(), cfg.GetValue<string>( setting ) );
+			}
+		}
+
 		[TestMethod, TestCategory( "Plugins" ), ExpectedException( typeof( ArgumentNullException ) )]
 		public void ISettings_InvalidGetKeyTest()
 		{
@@ -74,6 +93,14 @@ namespace Blitzy.Tests.Model
 			Assert.AreEqual( expected, cfg.GetValue<int>( plug, "test" ) );
 		}
 
+		[TestMethod, TestCategory( "Plugins" )]
+		public void ISettings_SystemSettingsTest()
+		{
+			ISettings cfg = new Settings( Connection );
+
+			Assert.AreEqual( ( (Settings)cfg ).GetValue<int>( SystemSetting.MaxMatchingItems ), cfg.GetSystemSetting<int>( SystemSetting.MaxMatchingItems ) );
+		}
+
 		[TestMethod, TestCategory( "Model" )]
 		public void SaveLoadTest()
 		{
@@ -96,6 +123,25 @@ namespace Blitzy.Tests.Model
 			Assert.IsNotNull( folder );
 			Assert.AreEqual( false, folder.IsRecursive );
 			Assert.AreEqual( "C:\\temp2", folder.Path );
+		}
+
+		[TestMethod, TestCategory( "Model" )]
+		public void SystemSettingTest()
+		{
+			Settings cfg = new Settings( Connection );
+			cfg.SetDefaults();
+
+			cfg.SetValue( SystemSetting.Language, "test" );
+			Assert.AreEqual( "test", cfg.GetValue<string>( SystemSetting.Language ) );
+
+			cfg.SetValue( SystemSetting.MaxMatchingItems, 123 );
+			Assert.AreEqual( 123, cfg.GetValue<int>( SystemSetting.MaxMatchingItems ) );
+
+			cfg.SetValue( SystemSetting.CloseOnEscape, false );
+			Assert.AreEqual( false, cfg.GetValue<bool>( SystemSetting.CloseOnEscape ) );
+
+			cfg.SetValue( SystemSetting.CloseOnEscape, true );
+			Assert.AreEqual( true, cfg.GetValue<bool>( SystemSetting.CloseOnEscape ) );
 		}
 	}
 }

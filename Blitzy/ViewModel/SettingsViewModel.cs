@@ -8,6 +8,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using Blitzy.Messages;
 using Blitzy.Model;
 using Blitzy.ViewServices;
 using GalaSoft.MvvmLight.Command;
@@ -20,6 +21,7 @@ namespace Blitzy.ViewModel
 
 		public SettingsViewModel()
 		{
+			UpdateChecker = ToDispose( new Model.UpdateChecker() );
 			CurrentVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
 			using( TextReader reader = new StreamReader( Assembly.GetExecutingAssembly().GetManifestResourceStream( "Blitzy.Resources.Docs.Changelog.txt" ) ) )
@@ -31,6 +33,13 @@ namespace Blitzy.ViewModel
 			{
 				BlitzyLicense = reader.ReadToEnd();
 			}
+		}
+
+		protected override void RegisterMessages()
+		{
+			base.RegisterMessages();
+
+			MessengerInstance.Register<VersionCheckMessage>( this, ( msg ) => OnVersionCheckComplete( msg ) );
 		}
 
 		#endregion Constructor
@@ -46,6 +55,11 @@ namespace Blitzy.ViewModel
 
 			WinySettings = new WinySettingsViewModel( this );
 			RaisePropertyChanged( () => WinySettings );
+		}
+
+		private void OnVersionCheckComplete( VersionCheckMessage msg )
+		{
+			LatestVersion = msg.Version.ToString();
 		}
 
 		#endregion Methods
@@ -325,7 +339,7 @@ namespace Blitzy.ViewModel
 
 		private void ExecuteUpdateCheckCommand()
 		{
-			throw new NotImplementedException();
+			UpdateChecker.StartCheck( true );
 		}
 
 		#endregion Commands
@@ -443,6 +457,8 @@ namespace Blitzy.ViewModel
 				RaisePropertyChanged( () => Settings );
 			}
 		}
+
+		public UpdateChecker UpdateChecker { get; private set; }
 
 		public WebySettingsViewModel WebySettings { get; private set; }
 

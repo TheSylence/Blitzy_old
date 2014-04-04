@@ -2,8 +2,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data.SQLite;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -90,6 +92,15 @@ namespace Blitzy.Model
 					{ "Description", "VARCHAR(255) NOT NULL" },
 					{ "Url", "TEXT NOT NULL" },
 				} ) );
+
+			Type type = typeof( SystemSetting );
+			foreach( SystemSetting setting in Enum.GetValues( type ) )
+			{
+				MemberInfo member = type.GetMember( setting.ToString() ).First();
+				object defaultValue = member.GetCustomAttribute<DefaultValueAttribute>().Value;
+
+				sb.AppendFormat( "INSERT INTO settings ([Key], [Value]) VALUES( '{0}', '{1}' );", setting.ToString(), defaultValue.ToString() );
+			}
 
 			sb.AppendFormat( "PRAGMA user_version = {0};", DatabaseUpgrader.DatabaseVersion );
 			sb.Append( "COMMIT;" );

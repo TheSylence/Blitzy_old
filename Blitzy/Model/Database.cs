@@ -18,6 +18,7 @@ namespace Blitzy.Model
 		{
 			ConnectionSB = new SQLiteConnectionStringBuilder();
 			ConnectionSB.DataSource = Path.Combine( Constants.DataPath, Constants.DataFileName );
+			ConnectionSB.JournalMode = SQLiteJournalModeEnum.Wal;
 
 			Connection = new SQLiteConnection( ConnectionSB.ToString() );
 			Connection.Open();
@@ -102,61 +103,6 @@ namespace Blitzy.Model
 			}
 
 			return existed;
-		}
-
-		internal void ResetExecutionCount()
-		{
-			using( SQLiteCommand cmd = Connection.CreateCommand() )
-			{
-				cmd.CommandText = "UPDATE Blitzy_Commands SET ExecutionCount = 0";
-				cmd.ExecuteNonQuery();
-			}
-		}
-
-		internal void UpdateExecutionCount( string itemName, string pluginId )
-		{
-			// Check if command was executed before
-			bool registered = false;
-			using( SQLiteCommand cmd = Connection.CreateCommand() )
-			{
-				cmd.CommandText = "SELECT ExecutionCount FROM Blitzy_Commands WHERE Plugin = @plugin AND Name = @name;";
-				SQLiteParameter param = cmd.CreateParameter();
-				param.ParameterName = "name";
-				param.Value = itemName;
-				cmd.Parameters.Add( param );
-
-				param = cmd.CreateParameter();
-				param.ParameterName = "plugin";
-				param.Value = pluginId;
-				cmd.Parameters.Add( param );
-
-				registered = cmd.ExecuteScalar() != null;
-			}
-
-			// Update execution count of the command
-			using( SQLiteCommand cmd = Connection.CreateCommand() )
-			{
-				SQLiteParameter param = cmd.CreateParameter();
-				param.ParameterName = "name";
-				param.Value = itemName;
-				cmd.Parameters.Add( param );
-
-				param = cmd.CreateParameter();
-				param.ParameterName = "plugin";
-				param.Value = pluginId;
-				cmd.Parameters.Add( param );
-
-				if( registered )
-				{
-					cmd.CommandText = "UPDATE Blitzy_Commands SET ExecutionCount = ExecutionCount + 1 WHERE Plugin = @plugin AND Name = @name;";
-				}
-				else
-				{
-					cmd.CommandText = "INSERT INTO Blitzy_Commands (Plugin, Name, ExecutionCount) VALUES (@plugin, @name, 1);";
-				}
-
-				cmd.ExecuteNonQuery();
-			}
 		}
 
 		#endregion Methods
