@@ -47,7 +47,15 @@ namespace Blitzy.ViewModel
 
 		public override void Save()
 		{
-			throw new NotImplementedException();
+			foreach( WebyWebsite site in WebsitesToRemove )
+			{
+				site.Delete( BaseVM.Settings.Connection );
+			}
+
+			foreach( WebyWebsite site in Websites )
+			{
+				site.Save( BaseVM.Settings.Connection );
+			}
 		}
 
 		#endregion Methods
@@ -103,6 +111,7 @@ namespace Blitzy.ViewModel
 			MessageBoxResult result = DialogServiceManager.Show<MessageBoxService, MessageBoxResult>( args );
 			if( result == MessageBoxResult.Yes )
 			{
+				WebsitesToRemove.Add( SelectedWebsite );
 				Websites.Remove( SelectedWebsite );
 				SelectedWebsite = null;
 			}
@@ -139,6 +148,8 @@ namespace Blitzy.ViewModel
 		#endregion Properties
 
 		#region Attributes
+
+		private List<WebyWebsite> WebsitesToRemove = new List<WebyWebsite>();
 
 		#endregion Attributes
 	}

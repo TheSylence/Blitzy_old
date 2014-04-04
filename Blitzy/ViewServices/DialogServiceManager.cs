@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -95,6 +96,7 @@ namespace Blitzy.ViewServices
 			Services.Add( type, service );
 		}
 
+		[ExcludeFromCodeCoverage]
 		internal static void RegisterServices()
 		{
 			try

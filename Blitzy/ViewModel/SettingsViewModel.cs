@@ -306,6 +306,7 @@ namespace Blitzy.ViewModel
 
 			if( result == MessageBoxResult.Yes )
 			{
+				FoldersToRemove.Add( SelectedFolder );
 				Settings.Folders.Remove( SelectedFolder );
 				SelectedFolder = null;
 			}
@@ -325,6 +326,11 @@ namespace Blitzy.ViewModel
 
 		private void ExecuteSaveCommand()
 		{
+			foreach( Folder folder in FoldersToRemove )
+			{
+				folder.Delete( Settings.Connection );
+			}
+
 			Settings.Save();
 			WinySettings.Save();
 			WebySettings.Save();
@@ -467,6 +473,8 @@ namespace Blitzy.ViewModel
 		#endregion Properties
 
 		#region Attributes
+
+		private List<Folder> FoldersToRemove = new List<Folder>();
 
 		#endregion Attributes
 	}

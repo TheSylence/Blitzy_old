@@ -15,13 +15,18 @@ namespace Blitzy.ViewModel
 		public WinySettingsViewModel( SettingsViewModel baseVM )
 			: base( baseVM )
 		{
+			LogoffConfirmation = BaseVM.Settings.GetValue<bool>( Model.SystemSetting.ConfirmLogoff );
+			ShutdownConfirmation = BaseVM.Settings.GetValue<bool>( Model.SystemSetting.ConfirmShutdown );
+			RestartConfirmation = BaseVM.Settings.GetValue<bool>( Model.SystemSetting.ConfirmRestart );
 		}
 
 		#endregion Constructor
 
 		public override void Save()
 		{
-			throw new NotImplementedException();
+			BaseVM.Settings.SetValue( Model.SystemSetting.ConfirmLogoff, LogoffConfirmation );
+			BaseVM.Settings.SetValue( Model.SystemSetting.ConfirmShutdown, ShutdownConfirmation );
+			BaseVM.Settings.SetValue( Model.SystemSetting.ConfirmRestart, RestartConfirmation );
 		}
 
 		#region Methods

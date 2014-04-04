@@ -14,7 +14,7 @@ namespace Blitzy.ViewModel
 		/// </summary>
 		public MainViewModel()
 		{
-			Database = new Database();
+			Database = ToDispose( new Database() );
 			Settings = new Settings( Database.Connection );
 
 			if( !Database.CheckExistance() )

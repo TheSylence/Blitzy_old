@@ -52,7 +52,16 @@ namespace Blitzy.Model
 		HistoryCount,
 
 		[DefaultValue( 60 )]
-		AutoCatalogRebuild
+		AutoCatalogRebuild,
+
+		[DefaultValue( 1 )]
+		ConfirmShutdown,
+
+		[DefaultValue( 1 )]
+		ConfirmLogoff,
+
+		[DefaultValue( 1 )]
+		ConfirmRestart
 	}
 
 	internal class Settings : ObservableObject, Blitzy.Plugin.ISettings

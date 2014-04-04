@@ -18,6 +18,8 @@ namespace Blitzy.Model
 
 		#region Methods
 
+		public abstract void Delete( SQLiteConnection connection );
+
 		public abstract void Load( SQLiteConnection connection );
 
 		public abstract void Save( SQLiteConnection connection );

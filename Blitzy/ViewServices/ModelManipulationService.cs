@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,6 +12,7 @@ using Blitzy.ViewModel.Dialogs;
 
 namespace Blitzy.ViewServices
 {
+	[ExcludeFromCodeCoverage]
 	internal abstract class ModelManipulationService<TModel, TDialog> : IDataManipulationService
 		where TModel : ModelBase
 		where TDialog : Window

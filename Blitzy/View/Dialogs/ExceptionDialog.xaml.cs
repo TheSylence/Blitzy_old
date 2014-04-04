@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,6 +19,7 @@ namespace Blitzy.View.Dialogs
 	/// <summary>
 	/// Interaction logic for ExceptionDialog.xaml
 	/// </summary>
+	[ExcludeFromCodeCoverage]
 	public partial class ExceptionDialog : Window
 	{
 		public ExceptionDialog( Exception ex )

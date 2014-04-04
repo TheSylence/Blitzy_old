@@ -13,6 +13,22 @@ namespace Blitzy.Model
 	{
 		#region Methods
 
+		public override void Delete( SQLiteConnection connection )
+		{
+			using( SQLiteCommand cmd = connection.CreateCommand() )
+			{
+				SQLiteParameter param = cmd.CreateParameter();
+				param.ParameterName = "webyID";
+				param.Value = ID;
+				cmd.Parameters.Add( param );
+
+				cmd.CommandText = "DELETE FROM weby WHERE WebyID = @webyID;";
+				cmd.Prepare();
+
+				cmd.ExecuteNonQuery();
+			}
+		}
+
 		public override void Load( System.Data.SQLite.SQLiteConnection connection )
 		{
 			using( SQLiteCommand cmd = connection.CreateCommand() )

@@ -39,7 +39,14 @@ namespace Blitzy.View
 
 		private void model_RequestClose( object sender, CloseViewEventArgs e )
 		{
-			DialogResult = e.Result;
+			try
+			{
+				DialogResult = e.Result;
+			}
+			catch( InvalidOperationException )
+			{
+			}
+
 			Close();
 		}
 

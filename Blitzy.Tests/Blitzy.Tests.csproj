@@ -82,6 +82,8 @@
     <Compile Include="Mocks\MockLogObject.cs" />
     <Compile Include="Mocks\MockViewModel.cs" />
     <Compile Include="Mocks\MockPlugin.cs" />
+    <Compile Include="Mocks\Services\CallCheckServiceMock.cs" />
+    <Compile Include="Mocks\Services\DataManipulationServiceMock.cs" />
     <Compile Include="Mocks\Services\MessageBoxServiceMock.cs" />
     <Compile Include="Mocks\Services\SelectFolderServiceMock.cs" />
     <Compile Include="Mocks\Services\TextInputServiceMock.cs" />
@@ -94,9 +96,13 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestBase.cs" />
     <Compile Include="TestHelper.cs" />
+    <Compile Include="ViewModel\CloseableView_Tests.cs" />
     <Compile Include="ViewModel\CloseViewEventArgs_Tests.cs" />
+    <Compile Include="ViewModel\MainViewModel_Tests.cs" />
     <Compile Include="ViewModel\Settings_Tests.cs" />
     <Compile Include="ViewModel\ViewModelBaseEx_Tests.cs" />
+    <Compile Include="ViewModel\WebySettingsViewModel_Tests.cs" />
+    <Compile Include="ViewModel\WinySettingsViewModel_Tests.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="x64\SQLite.Interop.dll" />

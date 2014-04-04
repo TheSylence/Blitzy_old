@@ -170,6 +170,14 @@ namespace Blitzy.Tests.ViewModel
 			VM.RemoveFolderCommand.Execute( null );
 			Assert.IsNull( VM.SelectedFolder );
 			CollectionAssert.DoesNotContain( VM.Settings.Folders, folder );
+
+			VM.Reset();
+			VM.SaveCommand.Execute( null );
+
+			VM = new SettingsViewModel();
+			VM.Settings = new Settings( Connection );
+
+			CollectionAssert.DoesNotContain( VM.Settings.Folders, folder );
 		}
 
 		[TestMethod, TestCategory( "ViewModel" )]

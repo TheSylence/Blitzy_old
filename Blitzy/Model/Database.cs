@@ -16,11 +16,12 @@ namespace Blitzy.Model
 
 		public Database()
 		{
-			ConnectionSB = new SQLiteConnectionStringBuilder();
-			ConnectionSB.DataSource = Path.Combine( Constants.DataPath, Constants.DataFileName );
-			ConnectionSB.JournalMode = SQLiteJournalModeEnum.Wal;
+			SQLiteConnectionStringBuilder connectionSB = new SQLiteConnectionStringBuilder();
+			connectionSB.DataSource = Path.Combine( Constants.DataPath, Constants.DataFileName );
+			connectionSB.JournalMode = SQLiteJournalModeEnum.Wal;
 
-			Connection = new SQLiteConnection( ConnectionSB.ToString() );
+			Existed = File.Exists( connectionSB.DataSource );
+			Connection = new SQLiteConnection( connectionSB.ToString() );
 			Connection.Open();
 		}
 
@@ -65,24 +66,7 @@ namespace Blitzy.Model
 		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities" )]
 		internal bool CheckExistance()
 		{
-			bool existed = File.Exists( ConnectionSB.DataSource );
-			if( existed )
-			{
-				LogInfo( "Database exists, checking if database is empty" );
-				FileInfo inf = new FileInfo( ConnectionSB.DataSource );
-				existed = inf.Length != 0;
-
-				if( !existed )
-				{
-					LogInfo( "Database is empty" );
-				}
-				else
-				{
-					LogInfo( "Database is not empty. Skipping first time initialization" );
-				}
-			}
-
-			if( !existed )
+			if( !Existed )
 			{
 				LogInfo( "Creating database structure for first time launch" );
 
@@ -102,7 +86,7 @@ namespace Blitzy.Model
 				}
 			}
 
-			return existed;
+			return Existed;
 		}
 
 		#endregion Methods
@@ -115,7 +99,7 @@ namespace Blitzy.Model
 
 		#region Attributes
 
-		private SQLiteConnectionStringBuilder ConnectionSB;
+		private bool Existed;
 
 		#endregion Attributes
 	}

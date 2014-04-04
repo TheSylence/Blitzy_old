@@ -25,6 +25,22 @@ namespace Blitzy.Model
 
 		#region Methods
 
+		public override void Delete( SQLiteConnection connection )
+		{
+			using( SQLiteCommand cmd = connection.CreateCommand() )
+			{
+				SQLiteParameter param = cmd.CreateParameter();
+				param.ParameterName = "folderID";
+				param.Value = ID;
+				cmd.Parameters.Add( param );
+
+				cmd.CommandText = "DELETE FROM folders WHERE FolderID = @folderID;";
+				cmd.Prepare();
+
+				cmd.ExecuteNonQuery();
+			}
+		}
+
 		public override void Load( SQLiteConnection connection )
 		{
 			using( SQLiteCommand cmd = connection.CreateCommand() )
