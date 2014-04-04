@@ -12,6 +12,16 @@ namespace Blitzy
 {
 	internal static class Extensions
 	{
+		public static double GetDiceCoefficent( this string str, string other, int n = 3 )
+		{
+			string[] strGrams = str.GetNGrams( n );
+			string[] otherGrams = other.GetNGrams( n );
+
+			int matches = strGrams.Intersect( otherGrams ).Count();
+
+			return ( 2.0 * matches ) / (double)( strGrams.Length + otherGrams.Length );
+		}
+
 		public static string Localize( this string str, string prefix = null, string suffix = null )
 		{
 			if( str == null )
@@ -37,6 +47,34 @@ namespace Blitzy
 			}
 
 			return value;
+		}
+
+		/// <summary>
+		/// Gets the dice coefficent of this string with another string.
+		/// </summary>
+		/// <param name="str">This string.</param>
+		/// <param name="other">The other string to compute the coefficent with.</param>
+		/// <param name="n">The length of the N-Grams that is used</param>
+		/// <returns>A factor between 0 and 1 that coresponds to the Dice-Coefficent </returns>
+		private static string[] GetNGrams( this string str, int n )
+		{
+			string[] grams = new string[(int)Math.Ceiling( str.Length / (double)n )];
+			int idx = 0;
+			for( int i = 0; i < grams.Length; ++i )
+			{
+				if( idx + n > str.Length )
+				{
+					grams[i] = str.Substring( idx );
+				}
+				else
+				{
+					grams[i] = str.Substring( idx, n );
+				}
+
+				idx += n;
+			}
+
+			return grams;
 		}
 	}
 }

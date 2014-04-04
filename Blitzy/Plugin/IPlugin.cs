@@ -56,6 +56,15 @@ namespace Blitzy.Plugin
 		IEnumerable<CommandItem> GetCommands( Collection<string> input );
 
 		/// <summary>
+		/// Gets information about the currently active command.
+		/// </summary>
+		/// <param name="data">The currently entered command list.</param>
+		/// <param name="item">The currently selected command item.</param>
+		/// <returns>The information that should be displayed to the user.
+		/// Return <c>null</c> when you don't want to show any information.</returns>
+		string GetInfo( Collection<string> data, CommandItem item );
+
+		/// <summary>
 		/// Called when the plugin is loaded.
 		/// </summary>
 		/// <remarks>

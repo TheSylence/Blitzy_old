@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using GalaSoft.MvvmLight;
+using log4net;
 
 namespace Blitzy.ViewModel
 {
@@ -17,6 +18,7 @@ namespace Blitzy.ViewModel
 
 		public ViewModelBaseEx()
 		{
+			Log = LogManager.GetLogger( GetType() );
 			IsDisposed = false;
 			RegisterMessages();
 		}
@@ -72,6 +74,8 @@ namespace Blitzy.ViewModel
 
 		#region Methods
 
+		protected ILog Log;
+
 		public virtual void Reset()
 		{
 		}
@@ -104,6 +108,46 @@ namespace Blitzy.ViewModel
 			while( tmpQueue.Count > 0 )
 			{
 				ObjectsToDispose.Push( tmpQueue.Dequeue() );
+			}
+		}
+
+		protected void LogDebug( string format, params object[] args )
+		{
+			if( Log.IsDebugEnabled )
+			{
+				Log.DebugFormat( CultureInfo.InvariantCulture, format, args );
+			}
+		}
+
+		protected void LogError( string format, params object[] args )
+		{
+			if( Log.IsErrorEnabled )
+			{
+				Log.ErrorFormat( CultureInfo.InvariantCulture, format, args );
+			}
+		}
+
+		protected void LogFatal( string format, params object[] args )
+		{
+			if( Log.IsFatalEnabled )
+			{
+				Log.FatalFormat( CultureInfo.InvariantCulture, format, args );
+			}
+		}
+
+		protected void LogInfo( string format, params object[] args )
+		{
+			if( Log.IsInfoEnabled )
+			{
+				Log.InfoFormat( CultureInfo.InvariantCulture, format, args );
+			}
+		}
+
+		protected void LogWarning( string format, params object[] args )
+		{
+			if( Log.IsWarnEnabled )
+			{
+				Log.WarnFormat( CultureInfo.InvariantCulture, format, args );
 			}
 		}
 

@@ -4,4 +4,5 @@
 	<BooleanToVisibilityConverter x:Key="BooleanToVisibilityConv" />
 	<conv:StringToImageConverter x:Key="StringToImageConv" />
 	<conv:ElementNotNullConverter x:Key="ElementNotNullConv" />
+	<conv:StringToVisibilityConverter x:Key="StringToVisibilityConv" />
 </ResourceDictionary>

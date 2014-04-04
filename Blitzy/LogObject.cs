@@ -6,11 +6,12 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using GalaSoft.MvvmLight;
 using log4net;
 
 namespace Blitzy
 {
-	public class LogObject
+	public class LogObject : ObservableObject
 	{
 		#region Constructor
 

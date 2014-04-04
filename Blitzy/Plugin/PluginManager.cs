@@ -35,7 +35,17 @@ namespace Blitzy.Plugin
 			string pluginsDir = Path.Combine( Path.GetDirectoryName( Assembly.GetExecutingAssembly().Location ), Constants.PluginsFolderName );
 			Type interfaceFace = typeof( IPlugin );
 
-			foreach( string file in Directory.GetFiles( pluginsDir, "*.dll" ).Concat( new[] { Assembly.GetExecutingAssembly().Location } ) )
+			IEnumerable<string> files = new[] { Assembly.GetExecutingAssembly().Location };
+			if( Directory.Exists( pluginsDir ) )
+			{
+				files = files.Concat( Directory.GetFiles( pluginsDir, "*.dll" ) );
+			}
+			else
+			{
+				LogWarning( "Plugin directory does not exist" );
+			}
+
+			foreach( string file in files )
 			{
 				LogDebug( "Loading plugins from {0}...", file );
 
@@ -108,7 +118,7 @@ namespace Blitzy.Plugin
 
 				if( version == null )
 				{
-					LogInfo( "Plugin {0} is started for the first time" );
+					LogInfo( "Plugin {0} is started for the first time", plugin.Name );
 					using( SQLiteCommand cmd = Connection.CreateCommand() )
 					{
 						SQLiteParameter param = cmd.CreateParameter();
@@ -118,7 +128,7 @@ namespace Blitzy.Plugin
 
 						param = cmd.CreateParameter();
 						param.ParameterName = "version";
-						param.Value = version;
+						param.Value = plugin.Version;
 						cmd.Parameters.Add( param );
 
 						cmd.CommandText = "INSERT INTO plugins (PluginID, Version) VALUES (@pluginID, @version);";

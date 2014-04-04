@@ -64,6 +64,11 @@ namespace Blitzy.Tests.Mocks
 			throw new NotImplementedException();
 		}
 
+		public string GetInfo( System.Collections.ObjectModel.Collection<string> data, Blitzy.Model.CommandItem item )
+		{
+			throw new NotImplementedException();
+		}
+
 		public bool Load( IPluginHost host, string oldVersion = null )
 		{
 			throw new NotImplementedException();

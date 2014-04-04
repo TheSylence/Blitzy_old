@@ -84,11 +84,24 @@ namespace Blitzy.Converter
 			else
 			{
 				string uri = Path.Combine( Path.GetDirectoryName( Assembly.GetExecutingAssembly().Location ), "icons", str );
+				BitmapImage img;
 
 				if( !File.Exists( uri ) )
-					return null;
+				{
+					Stream manifest = Assembly.GetExecutingAssembly().GetManifestResourceStream( string.Format( "Blitzy.Resources.Icons.{0}", str ) );
+					if( manifest != null )
+					{
+						img = new BitmapImage();
+						img.BeginInit();
+						img.StreamSource = manifest;
+						img.EndInit();
+						return img;
+					}
 
-				BitmapImage img = new BitmapImage();
+					return null;
+				}
+
+				img = new BitmapImage();
 				img.BeginInit();
 				img.UriSource = new Uri( uri, UriKind.Absolute );
 				img.EndInit();
@@ -98,7 +111,7 @@ namespace Blitzy.Converter
 
 		public object ConvertBack( object value, Type targetType, object parameter, CultureInfo culture )
 		{
-			return value;
+			throw new NotSupportedException();
 		}
 	}
 }

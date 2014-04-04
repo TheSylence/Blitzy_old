@@ -5,6 +5,11 @@
 		DataContext="{Binding Source={StaticResource Locator}, Path=Main}"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Blitzy" Height="160" Width="580">
+	<i:Interaction.Triggers>
+		<i:EventTrigger EventName="PreviewKeyDown">
+			<commands:EventToCommand Command="{Binding KeyPreviewCommand}" PassEventArgsToCommand="True" />
+		</i:EventTrigger>
+	</i:Interaction.Triggers>
 	<Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
@@ -24,13 +29,13 @@
 			</i:Interaction.Triggers>
 		</Image>
 
-		<TextBox Name="txtInput" Grid.Row="0" Margin="1,5,5,5" />
-		<TextBlock Name="txtInfo" Grid.Row="1" Visibility="Collapsed" />
+		<TextBox Text="{Binding CommandInput, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Grid.Row="0" Margin="1,5,5,5" />
+		<TextBlock Text="{Binding CommandInfo}" Grid.Row="1" Visibility="{Binding CommandInfo, Converter={StaticResource StringToVisibilityConv}}" />
 
-		<ListView ItemsSource="{Binding Path=CmdManager.Items}" Grid.Row="2" Grid.ColumnSpan="2" Margin="2">
+		<ListView ItemsSource="{Binding Path=CmdManager.Items}" SelectedItem="{Binding CmdManager.CurrentItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Row="2" Grid.ColumnSpan="2" Margin="2">
 			<ListView.ItemTemplate>
 				<DataTemplate>
-					<StackPanel Orientation="Horizontal" Margin="0" Visibility="{Binding Visible,Converter={StaticResource BooleanToVisibilityConv}}">
+					<StackPanel Orientation="Horizontal" Margin="0">
 						<Image Source="{Binding Icon, Converter={StaticResource StringToImageConv}}" Width="32" Height="32" Margin="0" />
 						<StackPanel Margin="0">
 							<Label Content="{Binding Name}" FontSize="13" FontWeight="Bold" Margin="0" Padding="2" />

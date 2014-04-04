@@ -38,9 +38,15 @@ namespace Blitzy.Plugin.System
 			yield return CommandItem.Create( "catalog", "Rebuild the command catalog", this, "Rebuild.png" );
 		}
 
-		public bool Load( IPluginHost host, string oldVersion = null )
+		public string GetInfo( Collection<string> data, CommandItem item )
 		{
 			throw new NotImplementedException();
+		}
+
+		public bool Load( IPluginHost host, string oldVersion = null )
+		{
+			// Nothing to do
+			return true;
 		}
 
 		public void Unload( PluginUnloadReason reason )

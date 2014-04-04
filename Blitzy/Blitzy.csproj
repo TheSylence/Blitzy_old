@@ -9,12 +9,13 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Blitzy</RootNamespace>
     <AssemblyName>Blitzy</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
     <MSBuildCommunityTasksPath>$(SolutionDir)\.build</MSBuildCommunityTasksPath>
     <UICulture>en</UICulture>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -35,6 +36,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Resources\AppIcon.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="GalaSoft.MvvmLight.Extras.WPF45">
       <HintPath>..\packages\MvvmLightLibs.4.2.30.0\lib\net45\GalaSoft.MvvmLight.Extras.WPF45.dll</HintPath>
@@ -53,8 +57,9 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Data.SQLite">
-      <HintPath>..\packages\System.Data.SQLite.Core.1.0.92.0\lib\net45\System.Data.SQLite.dll</HintPath>
+    <Reference Include="System.Data.SQLite, Version=1.0.92.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\System.Data.SQLite.Core.1.0.92.0\lib\net451\System.Data.SQLite.dll</HintPath>
     </Reference>
     <Reference Include="System.Drawing" />
     <Reference Include="System.Management" />
@@ -106,13 +111,16 @@
     <Compile Include="Constants.cs" />
     <Compile Include="Converter\ElementNotNullConverter.cs" />
     <Compile Include="Converter\StringToImageConverter.cs" />
+    <Compile Include="Converter\StringToVisibilityConverter.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="HotKey.cs" />
     <Compile Include="LogHelper.cs" />
     <Compile Include="LogObject.cs" />
+    <Compile Include="Messages\CommandMessage.cs" />
     <Compile Include="Messages\InternalCommandMessage.cs" />
     <Compile Include="Messages\VersionCheckMessage.cs" />
     <Compile Include="Model\CommandItem.cs" />
+    <Compile Include="Model\CommandManager.cs" />
     <Compile Include="Model\CommandName.cs" />
     <Compile Include="Model\Database.cs" />
     <Compile Include="Model\DatabaseCreator.cs" />
@@ -141,6 +149,7 @@
     <Compile Include="ViewModel\IRequestCloseViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\SettingsViewModel.cs" />
+    <Compile Include="ViewModel\SettingsViewModel.Putty.cs" />
     <Compile Include="ViewModel\SettingsViewModel.Weby.cs" />
     <Compile Include="ViewModel\SettingsViewModel.Winy.cs" />
     <Compile Include="ViewModel\SettingsViewModelBase.cs" />
@@ -243,14 +252,22 @@
     <Resource Include="Resources\TrayIconFailure.ico" />
     <EmbeddedResource Include="Resources\Docs\Changelog.txt" />
     <EmbeddedResource Include="Resources\Docs\License.txt" />
+    <EmbeddedResource Include="Resources\Icons\Blitzy140.png" />
+    <EmbeddedResource Include="Resources\Icons\Calcy.png" />
+    <EmbeddedResource Include="Resources\Icons\Quit.png" />
+    <EmbeddedResource Include="Resources\Icons\Rebuild.png" />
+    <EmbeddedResource Include="Resources\Icons\Reset.png" />
+    <EmbeddedResource Include="Resources\Icons\Shelly.png" />
+    <EmbeddedResource Include="Resources\Icons\Weby.png" />
+  </ItemGroup>
+  <ItemGroup>
     <Content Include="x64\SQLite.Interop.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="x86\SQLite.Interop.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.build\MSBuild.Community.Tasks.Targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -70,8 +70,6 @@ namespace Blitzy.Model
 
 		public object UserData { get; set; }
 
-		public bool Visible { get; private set; }
-
 		internal List<CommandName> CmdNames { get; private set; }
 
 		#endregion Properties
