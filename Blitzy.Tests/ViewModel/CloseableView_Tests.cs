@@ -38,22 +38,7 @@ namespace Blitzy.Tests.ViewModel
 		}
 
 		[TestMethod, TestCategory( "ViewModel" )]
-		public void HideTest()
-		{
-			CloseableView v = new CloseableView();
-			Assert.IsNull( RequestHide );
-			v.DataContext = this;
-			Assert.AreEqual( 1, RequestHide.GetInvocationList().Length );
-
-			bool hidden = false;
-			v.Hidden += ( s, e ) => hidden = true;
-
-			RequestHide( this, EventArgs.Empty );
-			Assert.IsTrue( hidden );
-		}
-
-		[TestMethod, TestCategory( "ViewModel" )]
-		public void ShowTest()
+		public void ShowHideTest()
 		{
 			CloseableView v = new CloseableView();
 			Assert.IsNull( RequestShow );
@@ -62,9 +47,14 @@ namespace Blitzy.Tests.ViewModel
 
 			bool shown = false;
 			v.Shown += ( s, e ) => shown = true;
+			bool hidden = false;
+			v.Hidden += ( s, e ) => hidden = true;
 
 			RequestShow( this, EventArgs.Empty );
+			RequestHide( this, EventArgs.Empty );
+
 			Assert.IsTrue( shown );
+			Assert.IsTrue( hidden );
 		}
 	}
 }

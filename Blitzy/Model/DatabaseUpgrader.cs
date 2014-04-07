@@ -26,7 +26,7 @@ namespace Blitzy.Model
 		{
 			if( oldVersion > DatabaseVersion )
 			{
-				LogWarning( "Database version is newer than maximum supported version... this should not be !?" );
+				LogWarning( "Database version is newer than maximum supported version... this should not be !? Old: {0}, Db: {1}", oldVersion, DatabaseVersion );
 			}
 			else if( oldVersion == DatabaseVersion )
 			{

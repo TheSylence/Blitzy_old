@@ -60,7 +60,10 @@ namespace Blitzy.ViewModel.Dialogs
 		private void ExecuteExitCommand()
 		{
 			Close();
-			Environment.Exit( -1 );
+			if( !RuntimeConfig.Tests )
+			{
+				Environment.Exit( -1 );
+			}
 		}
 
 		private void ExecuteSendCommand()
@@ -68,7 +71,10 @@ namespace Blitzy.ViewModel.Dialogs
 			// TODO: Send report
 
 			Close();
-			Environment.Exit( -1 );
+			if( !RuntimeConfig.Tests )
+			{
+				Environment.Exit( -1 );
+			}
 		}
 
 		#endregion Commands

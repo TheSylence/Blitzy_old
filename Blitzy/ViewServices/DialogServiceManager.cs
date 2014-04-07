@@ -64,7 +64,7 @@ namespace Blitzy.ViewServices
 		}
 
 		/// <summary>
-		/// NÜR FÜR TESTS!
+		/// ONLY FOR TESTS!
 		/// </summary>
 		internal static void Clear()
 		{
@@ -75,7 +75,7 @@ namespace Blitzy.ViewServices
 		}
 
 		/// <summary>
-		/// Only for testing purposes!
+		/// ONLY FOR TESTS!
 		/// </summary>
 		internal static void RegisterManipService( Type type, IDataManipulationService service )
 		{
@@ -85,10 +85,8 @@ namespace Blitzy.ViewServices
 		}
 
 		/// <summary>
-		/// Only for testing purposes!
+		/// ONLY FOR TESTS!
 		/// </summary>
-		/// <param name="type"></param>
-		/// <param name="service"></param>
 		internal static void RegisterService( Type type, IDialogService service )
 		{
 			Debug.Assert( App.Current == null );
@@ -130,6 +128,9 @@ namespace Blitzy.ViewServices
 			LogHelper.LogDebug( MethodInfo.GetCurrentMethod().DeclaringType, "{0} DialogServices registered", Services.Count );
 		}
 
+		/// <summary>
+		/// ONLY FOR TESTS!
+		/// </summary>
 		internal static void UnregisterService( Type type )
 		{
 			Services.Remove( type );

@@ -16,8 +16,11 @@ namespace Blitzy.ViewModel
 
 		public NotifyIconViewModel()
 		{
-			ViewModelLocator vmloc = (ViewModelLocator)App.Current.FindResource( "Locator" );
-			MainVM = vmloc.Main;
+			if( !RuntimeConfig.Tests )
+			{
+				ViewModelLocator vmloc = (ViewModelLocator)App.Current.FindResource( "Locator" );
+				MainVM = vmloc.Main;
+			}
 
 			IconSource = "/Blitzy;component/Resources/TrayIcon.ico";
 		}
@@ -166,7 +169,7 @@ namespace Blitzy.ViewModel
 
 		#region Attributes
 
-		private MainViewModel MainVM;
+		internal MainViewModel MainVM;
 
 		#endregion Attributes
 	}

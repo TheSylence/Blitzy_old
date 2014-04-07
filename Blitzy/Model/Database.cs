@@ -17,10 +17,19 @@ namespace Blitzy.Model
 		public Database()
 		{
 			SQLiteConnectionStringBuilder connectionSB = new SQLiteConnectionStringBuilder();
-			connectionSB.DataSource = Path.Combine( Constants.DataPath, Constants.DataFileName );
 			connectionSB.JournalMode = SQLiteJournalModeEnum.Wal;
 
-			Existed = File.Exists( connectionSB.DataSource );
+			if( RuntimeConfig.Tests )
+			{
+				connectionSB.FullUri = ":memory:";
+				Existed = false;
+			}
+			else
+			{
+				connectionSB.DataSource = Path.Combine( Constants.DataPath, Constants.DataFileName );
+				Existed = File.Exists( connectionSB.DataSource );
+			}
+
 			Connection = ToDispose( new SQLiteConnection( connectionSB.ToString() ) );
 			Connection.Open();
 		}

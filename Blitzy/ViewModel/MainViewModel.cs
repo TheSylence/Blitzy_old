@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -116,7 +117,7 @@ namespace Blitzy.ViewModel
 
 			CmdManager.SearchItems( CommandInput );
 			// Otherwise the tests won't work because the CommandListView is updating this value
-			CmdManager.CurrentItem = CmdManager.Items[0];
+			CmdManager.CurrentItem = CmdManager.Items.FirstOrDefault();
 			SelectedCommandIndex = 0;
 
 			// Check if the command does provide any info
@@ -134,7 +135,6 @@ namespace Blitzy.ViewModel
 		private RelayCommand _ExecuteCommand;
 		private RelayCommand<KeyEventArgs> _KeyPreviewCommand;
 		private RelayCommand<CancelEventArgs> _OnClosingCommand;
-
 		private RelayCommand _OnDeactivatedCommand;
 		private RelayCommand _SettingsCommand;
 
@@ -183,9 +183,95 @@ namespace Blitzy.ViewModel
 			}
 		}
 
+		internal bool OnKeyBack()
+		{
+			if( CommandInput.EndsWith( CmdManager.Separator ) )
+			{
+				CommandInput = CommandInput.Substring( 0, CommandInput.Length - CmdManager.Separator.Length );
+				MessengerInstance.Send<InputCaretPositionMessage>( new InputCaretPositionMessage( CommandInput.Length ) );
+
+				return true;
+			}
+
+			return false;
+		}
+
+		internal bool OnKeyDownArrow()
+		{
+			int idx = CmdManager.Items.IndexOf( CmdManager.CurrentItem );
+			SelectedCommandIndex = Math.Min( CmdManager.Items.Count, idx + 1 );
+			return true;
+		}
+
+		internal bool OnKeyEscape()
+		{
+			if( Settings.GetValue<bool>( SystemSetting.CloseOnEscape ) )
+			{
+				Hide();
+				return true;
+			}
+
+			return false;
+		}
+
+		internal bool OnKeyReturn()
+		{
+			if( CmdManager.CurrentItem != null )
+			{
+				ExecuteExecuteCommand();
+				return true;
+			}
+
+			return false;
+		}
+
+		internal bool OnKeyTab()
+		{
+			if( CmdManager.CurrentItem == null )
+			{
+				return false;
+			}
+
+			if( !CommandInput.EndsWith( CmdManager.Separator ) )
+			{
+				_CommandInput += CmdManager.Separator;
+				MessengerInstance.Send<InputCaretPositionMessage>( new InputCaretPositionMessage( CommandInput.Length ) );
+			}
+
+			List<string> commandParts = new List<string>( CmdManager.GetCommandParts( CommandInput ) );
+			if( CommandInput.EndsWith( CmdManager.Separator ) )
+			{
+				commandParts.RemoveAt( 0 );
+			}
+			commandParts.RemoveAt( commandParts.Count - 1 );
+			commandParts.Add( CmdManager.CurrentItem.Name );
+			commandParts.Add( string.Empty );
+
+			int subCommandCount = CmdManager.CurrentItem.Plugin.GetSubCommands( CmdManager.CurrentItem, commandParts ).Count();
+			if( subCommandCount == 0 )
+			{
+				commandParts.RemoveAt( commandParts.Count - 1 );
+			}
+
+			CommandInput = string.Join( CmdManager.Separator, commandParts );
+
+			if( subCommandCount > 0 )
+			{
+				MessengerInstance.Send<InputCaretPositionMessage>( new InputCaretPositionMessage( CommandInput.Length ) );
+			}
+			return true;
+		}
+
+		internal bool OnKeyUpArrow()
+		{
+			int idx = CmdManager.Items.IndexOf( CmdManager.CurrentItem );
+			SelectedCommandIndex = Math.Max( 0, idx - 1 );
+			return true;
+		}
+
 		private bool CanExecuteExecuteCommand()
 		{
-			return true;
+			return CmdManager.CurrentItem != null;
 		}
 
 		private bool CanExecuteKeyPreviewCommand( KeyEventArgs args )
@@ -265,78 +351,32 @@ namespace Blitzy.ViewModel
 			}
 		}
 
+		[ExcludeFromCodeCoverage]
 		private void ExecuteKeyPreviewCommand( KeyEventArgs args )
 		{
 			if( args.Key == Key.Escape )
 			{
-				if( Settings.GetValue<bool>( SystemSetting.CloseOnEscape ) )
-				{
-					Hide();
-				}
+				args.Handled = OnKeyEscape();
 			}
 			else if( args.Key == Key.Return )
 			{
-				if( CmdManager.CurrentItem != null )
-				{
-					ExecuteExecuteCommand();
-					args.Handled = true;
-				}
+				args.Handled = OnKeyReturn();
 			}
 			else if( args.Key == Key.Tab )
 			{
-				if( CmdManager.CurrentItem == null )
-				{
-					return;
-				}
-
-				args.Handled = true;
-
-				if( !CommandInput.EndsWith( CmdManager.Separator ) )
-				{
-					_CommandInput += CmdManager.Separator;
-					MessengerInstance.Send<InputCaretPositionMessage>( new InputCaretPositionMessage( CommandInput.Length ) );
-				}
-
-				List<string> commandParts = new List<string>( CmdManager.GetCommandParts( CommandInput ) );
-				if( CommandInput.EndsWith( CmdManager.Separator ) )
-				{
-					commandParts.RemoveAt( 0 );
-				}
-				commandParts.RemoveAt( commandParts.Count - 1 );
-				commandParts.Add( CmdManager.CurrentItem.Name );
-				commandParts.Add( string.Empty );
-
-				if( CmdManager.CurrentItem.Plugin.GetSubCommands( CmdManager.CurrentItem, commandParts ).Count() == 0 )
-				{
-					commandParts.RemoveAt( commandParts.Count - 1 );
-				}
-				else
-				{
-					CommandInput = string.Join( CmdManager.Separator, commandParts );
-					MessengerInstance.Send<InputCaretPositionMessage>( new InputCaretPositionMessage( CommandInput.Length ) );
-				}
+				args.Handled = OnKeyTab();
 			}
 			else if( args.Key == Key.Up )
 			{
-				int idx = CmdManager.Items.IndexOf( CmdManager.CurrentItem );
-				SelectedCommandIndex = Math.Max( 0, idx - 1 );
-				args.Handled = true;
+				args.Handled = OnKeyUpArrow();
 			}
 			else if( args.Key == Key.Down )
 			{
-				int idx = CmdManager.Items.IndexOf( CmdManager.CurrentItem );
-				SelectedCommandIndex = Math.Min( CmdManager.Items.Count, idx + 1 );
-				args.Handled = true;
+				args.Handled = OnKeyDownArrow();
 			}
 			else if( args.Key == Key.Back )
 			{
-				if( CommandInput.EndsWith( CmdManager.Separator ) )
-				{
-					CommandInput = CommandInput.Substring( 0, CommandInput.Length - CmdManager.Separator.Length );
-					MessengerInstance.Send<InputCaretPositionMessage>( new InputCaretPositionMessage( CommandInput.Length ) );
-
-					args.Handled = true;
-				}
+				args.Handled = OnKeyBack();
 			}
 		}
 
@@ -353,7 +393,7 @@ namespace Blitzy.ViewModel
 		{
 			if( Settings.GetValue<bool>( SystemSetting.CloseOnFocusLost ) )
 			{
-				Close( null, 0 );
+				Hide();
 			}
 		}
 

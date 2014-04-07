@@ -6,6 +6,8 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Input;
 using System.Windows.Threading;
 using Blitzy.Messages;
 using Blitzy.Tests.Mocks.Services;
@@ -20,11 +22,78 @@ namespace Blitzy.Tests.ViewModel
 	public class MainViewModel_Tests : TestBase
 	{
 		[TestMethod, TestCategory( "ViewModel" )]
+		public void BackTest()
+		{
+			MainViewModel vm = new MainViewModel();
+			vm.CommandInput = "test";
+			Assert.IsFalse( vm.OnKeyBack() );
+			Assert.AreEqual( "test", vm.CommandInput );
+
+			vm.CommandInput = "test" + vm.CmdManager.Separator;
+			Assert.IsTrue( vm.OnKeyBack() );
+			Assert.AreEqual( "test", vm.CommandInput );
+		}
+
+		[TestMethod, TestCategory( "ViewModel" )]
+		public void CommandsTest()
+		{
+			MainViewModel vm = new MainViewModel();
+			Assert.IsTrue( vm.OnClosingCommand.CanExecute( null ) );
+			Assert.IsTrue( vm.OnDeactivatedCommand.CanExecute( null ) );
+			Assert.IsTrue( vm.KeyPreviewCommand.CanExecute( null ) );
+		}
+
+		[TestMethod, TestCategory( "ViewModel" )]
+		public void DeactivatedTest()
+		{
+			MainViewModel vm = new MainViewModel();
+			bool hidden = false;
+			vm.RequestHide += ( s, e ) => hidden = true;
+
+			vm.Settings.SetValue( Blitzy.Model.SystemSetting.CloseOnFocusLost, false );
+			Assert.IsTrue( vm.OnDeactivatedCommand.CanExecute( null ) );
+			vm.OnDeactivatedCommand.Execute( null );
+			Assert.IsFalse( hidden );
+
+			vm.Settings.SetValue( Blitzy.Model.SystemSetting.CloseOnFocusLost, true );
+			Assert.IsTrue( vm.OnDeactivatedCommand.CanExecute( null ) );
+			vm.OnDeactivatedCommand.Execute( null );
+			Assert.IsTrue( hidden );
+		}
+
+		[TestMethod, TestCategory( "ViewModel" )]
+		public void EscapeTest()
+		{
+			MainViewModel vm = new MainViewModel();
+			bool hidden = false;
+			vm.RequestHide += ( s, e ) => hidden = true;
+
+			vm.Settings.SetValue( Blitzy.Model.SystemSetting.CloseOnEscape, false );
+			Assert.IsFalse( vm.OnKeyEscape() );
+			Assert.IsFalse( hidden );
+
+			vm.Settings.SetValue( Blitzy.Model.SystemSetting.CloseOnEscape, true );
+			Assert.IsTrue( vm.OnKeyEscape() );
+			Assert.IsTrue( hidden );
+		}
+
+		[TestMethod, TestCategory( "ViewModel" )]
+		public void PropertyChangedTest()
+		{
+			MainViewModel vm = new MainViewModel();
+			PropertyChangedListener listener = new PropertyChangedListener( vm );
+			listener.Exclude<MainViewModel>( o => o.ShouldClose );
+
+			Assert.IsTrue( listener.TestProperties() );
+		}
+
+		[TestMethod, TestCategory( "ViewModel" )]
 		public void QuitCommandTest()
 		{
 			bool? closed = null;
 			MainViewModel vm = new MainViewModel();
 			vm.Reset();
+			Assert.IsFalse( vm.ExecuteCommand.CanExecute( null ) );
 
 			vm.RequestClose += ( s, e ) =>
 				{
@@ -32,6 +101,7 @@ namespace Blitzy.Tests.ViewModel
 				};
 			vm.CommandInput = "quit";
 
+			Assert.IsTrue( vm.ExecuteCommand.CanExecute( null ) );
 			Assert.IsNotNull( vm.CmdManager.CurrentItem );
 
 			bool started = false;
@@ -59,6 +129,27 @@ namespace Blitzy.Tests.ViewModel
 		}
 
 		[TestMethod, TestCategory( "ViewModel" )]
+		public void ReturnTest()
+		{
+			MainViewModel vm = new MainViewModel();
+			Assert.IsFalse( vm.OnKeyReturn() );
+
+			vm.CommandInput = "quit";
+
+			bool started = false;
+			Messenger.Default.Register<CommandMessage>( this, msg =>
+			{
+				if( msg.Status == CommandStatus.Executing )
+				{
+					started = true;
+				}
+			} );
+
+			Assert.IsTrue( vm.OnKeyReturn() );
+			Assert.IsTrue( started );
+		}
+
+		[TestMethod, TestCategory( "ViewModel" )]
 		public void SettingsTest()
 		{
 			MainViewModel vm = new MainViewModel();
@@ -72,6 +163,21 @@ namespace Blitzy.Tests.ViewModel
 
 			Assert.IsTrue( mock.WasCalled );
 			Assert.IsNotNull( mock.Parameter );
+		}
+
+		[TestMethod, TestCategory( "ViewModel" )]
+		public void TabTest()
+		{
+			MainViewModel vm = new MainViewModel();
+			Assert.IsFalse( vm.OnKeyTab() );
+
+			vm.CommandInput = "qui";
+			Assert.IsTrue( vm.OnKeyTab() );
+			Assert.AreEqual( "quit", vm.CommandInput );
+
+			vm.CommandInput = "medy";
+			Assert.IsTrue( vm.OnKeyTab() );
+			Assert.AreEqual( "medy" + vm.CmdManager.Separator, vm.CommandInput );
 		}
 	}
 }

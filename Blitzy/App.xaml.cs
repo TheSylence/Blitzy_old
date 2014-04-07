@@ -38,7 +38,7 @@ namespace Blitzy
 			Exit += ( s, e ) => SingleInstance.Stop();
 
 #if !DEBUG
-			DispatcherUnhandledException += new DispatcherUnhandledExceptionEventArgs( Application_DispatcherUnhandledException );
+			DispatcherUnhandledException += new DispatcherUnhandledExceptionEventHandler( Application_DispatcherUnhandledException );
 #endif
 
 			LocalizeDictionary.Instance.DefaultProvider.ProviderError += DefaultProvider_ProviderError;
@@ -77,7 +77,7 @@ namespace Blitzy
 			try
 			{
 #if !DEBUG
-				ExceptionDialog dlg = new ExceptionDialog( e.Exception );
+				Blitzy.View.Dialogs.ExceptionDialog dlg = new Blitzy.View.Dialogs.ExceptionDialog( e.Exception );
 				dlg.ShowDialog();
 
 				e.Handled = true;

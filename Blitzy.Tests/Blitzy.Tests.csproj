@@ -108,6 +108,10 @@
     <Compile Include="TestHelper.cs" />
     <Compile Include="ViewModel\CloseableView_Tests.cs" />
     <Compile Include="ViewModel\CloseViewEventArgs_Tests.cs" />
+    <Compile Include="ViewModel\ExceptionDialogViewModel_Tests.cs" />
+    <Compile Include="ViewModel\NotifyIconViewModel_Tests.cs" />
+    <Compile Include="ViewModel\ViewModelLocator_Tests.cs" />
+    <Compile Include="ViewServices\DialogServiceManager_Tests.cs" />
     <Compile Include="ViewModel\DialogViewModelBase_Tests.cs" />
     <Compile Include="ViewModel\MainViewModel_Tests.cs" />
     <Compile Include="ViewModel\Settings_Tests.cs" />
