@@ -81,7 +81,17 @@ namespace Blitzy.ViewModel.Dialogs
 
 		#region Commands
 
+		private RelayCommand _CancelCommand;
 		private RelayCommand _OkCommand;
+
+		public RelayCommand CancelCommand
+		{
+			get
+			{
+				return _CancelCommand ??
+					( _CancelCommand = new RelayCommand( ExecuteCancelCommand, CanExecuteCancelCommand ) );
+			}
+		}
 
 		public RelayCommand OkCommand
 		{
@@ -92,9 +102,19 @@ namespace Blitzy.ViewModel.Dialogs
 			}
 		}
 
+		private bool CanExecuteCancelCommand()
+		{
+			return true;
+		}
+
 		private bool CanExecuteOkCommand()
 		{
 			return true;
+		}
+
+		private void ExecuteCancelCommand()
+		{
+			Close( false );
 		}
 
 		private void ExecuteOkCommand()

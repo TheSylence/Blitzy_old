@@ -85,47 +85,6 @@ namespace Blitzy.Model.Shell
 		}
 
 		/// <value>
-		///   Gets or sets the hotkey for the shortcut.
-		/// </value>
-		public Keys Hotkey
-		{
-			get
-			{
-				short wHotkey;
-				int dwHotkey;
-
-				m_Link.GetHotkey( out wHotkey );
-
-				//
-				// Convert from IShellLink 16-bit format to Keys enumeration 32-bit value
-				// IShellLink: 0xMMVK
-				// Keys:  0x00MM00VK
-				//   MM = Modifier (Alt, Control, Shift)
-				//   VK = Virtual key code
-				//
-				dwHotkey = ( ( wHotkey & 0xFF00 ) << 8 ) | ( wHotkey & 0xFF );
-				return (Keys)dwHotkey;
-			}
-			set
-			{
-				short wHotkey;
-
-				if( ( value & Keys.Modifiers ) == 0 )
-					throw new ArgumentException( "Hotkey must include a modifier key." );
-
-				//
-				// Convert from Keys enumeration 32-bit value to IShellLink 16-bit format
-				// IShellLink: 0xMMVK
-				// Keys:  0x00MM00VK
-				//   MM = Modifier (Alt, Control, Shift)
-				//   VK = Virtual key code
-				//
-				wHotkey = unchecked( (short)( ( (int)( value & Keys.Modifiers ) >> 8 ) | (int)( value & Keys.KeyCode ) ) );
-				m_Link.SetHotkey( wHotkey );
-			}
-		}
-
-		/// <value>
 		///   Retrieves the Icon of the shortcut as it will appear in Explorer.
 		///   Use the <see cref="IconPath"/> and <see cref="IconIndex"/>
 		///   properties to change it.

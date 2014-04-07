@@ -294,4 +294,44 @@
   <data name="PathToPutty" xml:space="preserve">
     <value>Path to your PuTTY.exe</value>
   </data>
+  <data name="ResetCommand" xml:space="preserve">
+    <value>Reset command execution count</value>
+    <comment>Command</comment>
+  </data>
+  <data name="Quit" xml:space="preserve">
+    <value>Quit Blitzy</value>
+    <comment>Command</comment>
+  </data>
+  <data name="RebuildCatalog" xml:space="preserve">
+    <value>Rebuild the command catalog</value>
+    <comment>Command</comment>
+  </data>
+  <data name="VersionCheck" xml:space="preserve">
+    <value>Check online for a updates</value>
+    <comment>Command</comment>
+  </data>
+  <data name="ControlMediaPlayer" xml:space="preserve">
+    <value>Control a media player</value>
+  </data>
+  <data name="MedyPlay" xml:space="preserve">
+    <value>Signals a media player it should start playing</value>
+  </data>
+  <data name="MedyPause" xml:space="preserve">
+    <value>Signals a media player it should pause</value>
+  </data>
+  <data name="MedyNext" xml:space="preserve">
+    <value>Signals a media player it should move to the next item</value>
+  </data>
+  <data name="MedyPrev" xml:space="preserve">
+    <value>Signals a media player it should move to the previous item</value>
+  </data>
+  <data name="MedyVolup" xml:space="preserve">
+    <value>Increases the volume</value>
+  </data>
+  <data name="MedyVoldn" xml:space="preserve">
+    <value>Decreases the volume</value>
+  </data>
+  <data name="UnknownCommand" xml:space="preserve">
+    <value>UnknownCommand</value>
+  </data>
 </root>

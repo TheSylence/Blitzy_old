@@ -55,6 +55,16 @@ namespace Blitzy.Tests.Model
 		}
 
 		[TestMethod, TestCategory( "Model" )]
+		public void PropertyChangedTest()
+		{
+			Folder obj = new Folder();
+			PropertyChangedListener listener = new PropertyChangedListener( obj );
+			listener.Exclude<Folder>( o => o.ID );
+
+			Assert.IsTrue( listener.TestProperties() );
+		}
+
+		[TestMethod, TestCategory( "Model" )]
 		public void RulesTest()
 		{
 			Folder f = new Folder();

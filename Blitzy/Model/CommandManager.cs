@@ -12,7 +12,7 @@ using GalaSoft.MvvmLight;
 
 namespace Blitzy.Model
 {
-	public class CommandManager : LogObject
+	public class CommandManager : BaseObject
 	{
 		#region Constructor
 
@@ -34,10 +34,15 @@ namespace Blitzy.Model
 
 		public void Clear( bool resetItem = true )
 		{
+			CommandItem oldItem = CurrentItem;
 			Items.Clear();
 			if( resetItem )
 			{
 				CurrentItem = null;
+			}
+			else
+			{
+				CurrentItem = oldItem;
 			}
 		}
 
@@ -66,7 +71,9 @@ namespace Blitzy.Model
 			}
 			else if( CurrentItem != null )
 			{
-				items.AddRange( CurrentItem.Plugin.GetCommands( new Collection<string>( parts ) ) );
+				Collection<string> cmdParts = new Collection<string>( parts );
+				//items.AddRange( CurrentItem.Plugin.GetCommands( cmdParts ) );
+				items.AddRange( CurrentItem.Plugin.GetSubCommands( CurrentItem, cmdParts ) );
 			}
 
 			foreach( CommandItem item in items.OrderByDescending( it => GetCommandExecutionCount( it ) )
@@ -115,7 +122,7 @@ namespace Blitzy.Model
 				}
 				else
 				{
-					cmd.CommandText = "INSERT INTO Blitzy_Commands (Plugin, Name, ExecutionCount) VALUES (@plugin, @name, 1);";
+					cmd.CommandText = "INSERT INTO commands (Plugin, Name, ExecutionCount) VALUES (@plugin, @name, 1);";
 				}
 
 				cmd.ExecuteNonQuery();
@@ -124,9 +131,7 @@ namespace Blitzy.Model
 
 		private int GetCommandExecutionCount( CommandItem item )
 		{
-			int hash = 17;
-			hash = hash * 23 + item.Plugin.PluginID.GetHashCode();
-			hash = hash * 23 + item.Name.GetHashCode();
+			int hash = GetHash( item );
 
 			if( !CommandExecutionBuffer.ContainsKey( hash ) )
 			{
@@ -135,6 +140,22 @@ namespace Blitzy.Model
 			}
 
 			return CommandExecutionBuffer[hash];
+		}
+
+		private int GetHash( IPlugin plugin, string command )
+		{
+			int hash = 17;
+			hash = hash * 23 + plugin.PluginID.GetHashCode();
+			hash = hash * 23 + command.GetHashCode();
+			return hash;
+		}
+
+		private int GetHash( CommandItem item )
+		{
+			int hash = 17;
+			hash = hash * 23 + item.Plugin.PluginID.GetHashCode();
+			hash = hash * 23 + item.Name.GetHashCode();
+			return hash;
 		}
 
 		private void LoadPluginCommands()

@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Blitzy.Model;
 using Blitzy.ViewServices;
+using GalaSoft.MvvmLight.Threading;
 using log4net.Config;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -29,6 +30,8 @@ namespace Blitzy.Tests
 		[TestInitialize]
 		public virtual void BeforeTestRun()
 		{
+			RuntimeConfig.Tests = true;
+			DispatcherHelper.Initialize();
 			BasicConfigurator.Configure();
 			Connection = CreateConnection();
 

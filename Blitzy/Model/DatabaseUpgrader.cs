@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Blitzy.Model
 {
-	internal class DatabaseUpgrader : LogObject
+	internal class DatabaseUpgrader : BaseObject
 	{
 		internal const int DatabaseVersion = 0;
 		private List<string[]> Queries = new List<string[]>();

@@ -11,7 +11,7 @@ using GalaSoft.MvvmLight.Messaging;
 
 namespace Blitzy.Model
 {
-	internal class UpdateChecker : LogObject, IDisposable
+	internal class UpdateChecker : BaseObject, IDisposable
 	{
 		#region Constructor
 
@@ -20,43 +20,6 @@ namespace Blitzy.Model
 		}
 
 		#endregion Constructor
-
-		#region Disposable
-
-		/// <summary>
-		/// Releases unmanaged resources and performs other cleanup operations before the
-		/// <see cref="Renderer"/> is reclaimed by garbage collection.
-		/// </summary>
-		~UpdateChecker()
-		{
-			Dispose( false );
-		}
-
-		/// <summary>
-		/// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-		/// </summary>
-		public void Dispose()
-		{
-			Dispose( true );
-			GC.SuppressFinalize( this );
-		}
-
-		/// <summary>
-		/// Releases unmanaged and - optionally - managed resources
-		/// </summary>
-		/// <param name="managed"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
-		protected void Dispose( bool managed )
-		{
-			if( managed )
-			{
-				if( Client != null )
-				{
-					Client.Dispose();
-				}
-			}
-		}
-
-		#endregion Disposable
 
 		#region Methods
 
@@ -71,7 +34,7 @@ namespace Blitzy.Model
 
 			string url = Constants.UpdateCheckURL;
 
-			Client = new WebClient();
+			Client = ToDispose( new WebClient() );
 			Client.DownloadStringCompleted += new DownloadStringCompletedEventHandler( client_DownloadStringCompleted );
 			Client.DownloadStringAsync( new Uri( url ) );
 		}

@@ -45,7 +45,7 @@ namespace Blitzy.Plugin
 		/// <param name="input">The currently entered command list</param>
 		/// <param name="message">A message that should be shown the user if the execution failed.</param>
 		/// <returns><c>true</c> if the command was executed successfully, otherwise <c>false</c></returns>
-		bool ExecuteCommand( CommandItem command, Collection<string> input, out string message );
+		bool ExecuteCommand( CommandItem command, IList<string> input, out string message );
 
 		/// <summary>
 		/// Get all commands this plugin can execute.
@@ -53,7 +53,7 @@ namespace Blitzy.Plugin
 		/// </summary>
 		/// <param name="input">The currently entered command list</param>
 		/// <returns>A list of all commands the plugins provides.</returns>
-		IEnumerable<CommandItem> GetCommands( Collection<string> input );
+		IEnumerable<CommandItem> GetCommands( IList<string> input );
 
 		/// <summary>
 		/// Gets information about the currently active command.
@@ -62,7 +62,16 @@ namespace Blitzy.Plugin
 		/// <param name="item">The currently selected command item.</param>
 		/// <returns>The information that should be displayed to the user.
 		/// Return <c>null</c> when you don't want to show any information.</returns>
-		string GetInfo( Collection<string> data, CommandItem item );
+		string GetInfo( IList<string> data, CommandItem item );
+
+		/// <summary>
+		/// Get all sub commands the given command offers.
+		/// You may return different results based upon <paramref name="input"/>
+		/// </summary>
+		/// <param name="parent">The command whose sub commands are queried</param>
+		/// <param name="input">The currently entered command list.</param>
+		/// <returns>A list of all sub commands the given command offers.</returns>
+		IEnumerable<CommandItem> GetSubCommands( CommandItem parent, IList<string> input );
 
 		/// <summary>
 		/// Called when the plugin is loaded.

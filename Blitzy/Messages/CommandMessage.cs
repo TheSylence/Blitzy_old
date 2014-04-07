@@ -19,11 +19,13 @@ namespace Blitzy.Messages
 	{
 		public readonly string Message;
 		public readonly CommandStatus Status;
+		public readonly int? TaskID;
 
-		public CommandMessage( CommandStatus status, string message = null )
+		public CommandMessage( CommandStatus status, string message, int? taskId )
 		{
 			Status = status;
 			Message = message;
+			TaskID = taskId;
 		}
 	}
 }

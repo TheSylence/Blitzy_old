@@ -10,7 +10,7 @@ using GalaSoft.MvvmLight;
 
 namespace Blitzy.Model
 {
-	internal abstract class ModelBase : LogObject
+	internal abstract class ModelBase : BaseObject
 	{
 		#region Constructor
 

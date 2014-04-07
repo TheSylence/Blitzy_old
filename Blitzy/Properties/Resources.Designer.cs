@@ -232,6 +232,15 @@ namespace Blitzy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Control a media player.
+        /// </summary>
+        public static string ControlMediaPlayer {
+            get {
+                return ResourceManager.GetString("ControlMediaPlayer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Credits.
         /// </summary>
         public static string Credits {
@@ -376,6 +385,60 @@ namespace Blitzy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Signals a media player it should move to the next item.
+        /// </summary>
+        public static string MedyNext {
+            get {
+                return ResourceManager.GetString("MedyNext", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Signals a media player it should pause.
+        /// </summary>
+        public static string MedyPause {
+            get {
+                return ResourceManager.GetString("MedyPause", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Signals a media player it should start playing.
+        /// </summary>
+        public static string MedyPlay {
+            get {
+                return ResourceManager.GetString("MedyPlay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Signals a media player it should move to the previous item.
+        /// </summary>
+        public static string MedyPrev {
+            get {
+                return ResourceManager.GetString("MedyPrev", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Decreases the volume.
+        /// </summary>
+        public static string MedyVoldn {
+            get {
+                return ResourceManager.GetString("MedyVoldn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Increases the volume.
+        /// </summary>
+        public static string MedyVolup {
+            get {
+                return ResourceManager.GetString("MedyVolup", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Misc.
         /// </summary>
         public static string Misc {
@@ -448,6 +511,24 @@ namespace Blitzy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Quit Blitzy.
+        /// </summary>
+        public static string Quit {
+            get {
+                return ResourceManager.GetString("Quit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rebuild the command catalog.
+        /// </summary>
+        public static string RebuildCatalog {
+            get {
+                return ResourceManager.GetString("RebuildCatalog", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Rebuild catalog on changed settings.
         /// </summary>
         public static string RebuildCatalogOnChangedSettings {
@@ -471,6 +552,15 @@ namespace Blitzy.Properties {
         public static string Remove {
             get {
                 return ResourceManager.GetString("Remove", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reset command execution count.
+        /// </summary>
+        public static string ResetCommand {
+            get {
+                return ResourceManager.GetString("ResetCommand", resourceCulture);
             }
         }
         
@@ -529,6 +619,15 @@ namespace Blitzy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to UnknownCommand.
+        /// </summary>
+        public static string UnknownCommand {
+            get {
+                return ResourceManager.GetString("UnknownCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Update catalog.
         /// </summary>
         public static string UpdateCatalog {
@@ -570,6 +669,15 @@ namespace Blitzy.Properties {
         public static string Version {
             get {
                 return ResourceManager.GetString("Version", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Check online for a updates.
+        /// </summary>
+        public static string VersionCheck {
+            get {
+                return ResourceManager.GetString("VersionCheck", resourceCulture);
             }
         }
         

@@ -50,6 +50,8 @@ namespace Blitzy.ViewModel
 
 			SimpleIoc.Default.Register<TextInputDialogViewModel>();
 			SimpleIoc.Default.Register<WebyWebsiteDialogViewModel>();
+
+			SimpleIoc.Default.Register<NotifyIconViewModel>();
 		}
 
 		#endregion Constructor
@@ -61,6 +63,14 @@ namespace Blitzy.ViewModel
 			get
 			{
 				return ServiceLocator.Current.GetInstance<MainViewModel>();
+			}
+		}
+
+		public NotifyIconViewModel NotifyIcon
+		{
+			get
+			{
+				return ServiceLocator.Current.GetInstance<NotifyIconViewModel>();
 			}
 		}
 

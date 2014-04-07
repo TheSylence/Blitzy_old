@@ -111,6 +111,14 @@ namespace Blitzy.ViewModel
 			}
 		}
 
+		protected void Hide()
+		{
+			if( RequestHide != null )
+			{
+				RequestHide( this, EventArgs.Empty );
+			}
+		}
+
 		protected void LogDebug( string format, params object[] args )
 		{
 			if( Log.IsDebugEnabled )
@@ -190,6 +198,8 @@ namespace Blitzy.ViewModel
 		#region Events
 
 		public event EventHandler<CloseViewEventArgs> RequestClose;
+
+		public event EventHandler<EventArgs> RequestHide;
 
 		#endregion Events
 	}

@@ -34,6 +34,7 @@ namespace Blitzy.View
 			{
 				Model = model;
 				model.RequestClose += model_RequestClose;
+				model.RequestHide += model_RequestHide;
 			}
 		}
 
@@ -48,6 +49,11 @@ namespace Blitzy.View
 			}
 
 			Close();
+		}
+
+		private void model_RequestHide( object sender, EventArgs e )
+		{
+			Hide();
 		}
 
 		#endregion Constructor

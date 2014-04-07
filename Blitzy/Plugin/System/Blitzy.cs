@@ -23,7 +23,7 @@ namespace Blitzy.Plugin.System
 			// Nothing to do
 		}
 
-		public bool ExecuteCommand( CommandItem command, Collection<string> input, out string message )
+		public bool ExecuteCommand( CommandItem command, IList<string> input, out string message )
 		{
 			Messenger.Default.Send<InternalCommandMessage>( new InternalCommandMessage( command.Name ) );
 
@@ -31,16 +31,29 @@ namespace Blitzy.Plugin.System
 			return true;
 		}
 
-		public IEnumerable<CommandItem> GetCommands( Collection<string> input )
+		public IEnumerable<CommandItem> GetCommands( IList<string> input )
 		{
-			yield return CommandItem.Create( "quit", "Quit Blitzy", this, "Quit.png" );
-			yield return CommandItem.Create( "reset", "Reset command execution count", this, "Reset.png" );
-			yield return CommandItem.Create( "catalog", "Rebuild the command catalog", this, "Rebuild.png" );
+			yield return CommandItem.Create( "quit", "Quit".Localize(), this, "Quit.png" );
+			yield return CommandItem.Create( "reset", "ResetCommand".Localize(), this, "Reset.png" );
+			yield return CommandItem.Create( "catalog", "RebuildCatalog".Localize(), this, "Rebuild.png" );
+			yield return CommandItem.Create( "version", "VersionCheck".Localize(), this, "Version.png" );
+
+#if DEBUG
+			yield return CommandItem.Create( "test", "Test Command", this );
+#endif
 		}
 
-		public string GetInfo( Collection<string> data, CommandItem item )
+		public string GetInfo( IList<string> data, CommandItem item )
 		{
-			throw new NotImplementedException();
+			return null;
+		}
+
+		public IEnumerable<CommandItem> GetSubCommands( CommandItem parent, IList<string> input )
+		{
+			if( parent.Name.Equals( "test" ) )
+			{
+				yield return CommandItem.Create( "test2", "Nested test", this );
+			}
 		}
 
 		public bool Load( IPluginHost host, string oldVersion = null )

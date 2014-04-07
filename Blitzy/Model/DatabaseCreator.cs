@@ -69,7 +69,7 @@ namespace Blitzy.Model
 				{
 					{ "Name", "TEXT NOT NULL" },
 					{ "Plugin", "VARCHAR(40) NOT NULL" },
-					{ "ExectionCount", "INTEGER NOT NULL" },
+					{ "ExecutionCount", "INTEGER NOT NULL" },
 
 					{ "PRIMARY KEY", "([Name],[Plugin])" }
 				} ) );

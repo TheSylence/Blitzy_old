@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -20,6 +21,13 @@ namespace Blitzy
 			int matches = strGrams.Intersect( otherGrams ).Count();
 
 			return ( 2.0 * matches ) / (double)( strGrams.Length + otherGrams.Length );
+		}
+
+		public static string GetNameFromExpression<T>( this Expression<Func<T, object>> exp )
+		{
+			UnaryExpression un = exp.Body as UnaryExpression;
+			MemberExpression mem = un.Operand as MemberExpression;
+			return mem.Member.Name;
 		}
 
 		public static string Localize( this string str, string prefix = null, string suffix = null )

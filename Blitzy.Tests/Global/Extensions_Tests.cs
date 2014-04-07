@@ -15,6 +15,22 @@ namespace Blitzy.Tests.Global
 	public class Extensions_Tests : TestBase
 	{
 		[TestMethod, TestCategory( "Global" )]
+		public void DiceCoefficentTest()
+		{
+			string a = "work";
+			string b = "wirk";
+
+			Assert.AreEqual( 0.5, a.GetDiceCoefficent( b ) );
+
+			a = "abcd";
+			b = "0123";
+			Assert.AreEqual( 0.0, a.GetDiceCoefficent( b ) );
+
+			a = b;
+			Assert.AreEqual( 1.0, a.GetDiceCoefficent( b ) );
+		}
+
+		[TestMethod, TestCategory( "Global" )]
 		public void LocalizeTest()
 		{
 			string str = "Cancel";

@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Blitzy.Plugin
 {
-	internal class PluginManager : LogObject
+	internal class PluginManager : BaseObject
 	{
 		#region Constructor
 

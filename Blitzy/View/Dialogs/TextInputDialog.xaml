@@ -23,7 +23,7 @@
 		<TextBox Grid.Row="1" Margin="5" Name="txtInput" Text="{Binding Input, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 		<StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right">
 			<Button Content="Ok" IsDefault="True" Command="{Binding OkCommand}" />
-			<Button Content="Cancel" IsCancel="True" />
+			<Button Content="Cancel" IsCancel="True" Command="{Binding CancelCommand}" />
 		</StackPanel>
 	</Grid>
 </v:CloseableView>

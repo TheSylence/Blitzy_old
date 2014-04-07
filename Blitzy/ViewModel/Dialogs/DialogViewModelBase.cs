@@ -10,7 +10,7 @@ using GalaSoft.MvvmLight.Command;
 
 namespace Blitzy.ViewModel.Dialogs
 {
-	internal abstract class DialogViewModelBase<TModel> : ViewModelBaseEx, IRequestCloseViewModel
+	internal abstract class DialogViewModelBase<TModel> : ViewModelBaseEx
 		where TModel : ModelBase
 	{
 		#region Constructor

@@ -9,8 +9,10 @@ using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
+using Blitzy.ViewModel;
 using Blitzy.ViewServices;
 using GalaSoft.MvvmLight.Threading;
+using Hardcodet.Wpf.TaskbarNotification;
 using WPFLocalizeExtension.Engine;
 
 namespace Blitzy
@@ -56,6 +58,19 @@ namespace Blitzy
 		#endregion Constructor
 
 		#region Methods
+
+		protected override void OnExit( ExitEventArgs e )
+		{
+			NotifyIcon.Dispose();
+			base.OnExit( e );
+		}
+
+		protected override void OnStartup( StartupEventArgs e )
+		{
+			base.OnStartup( e );
+
+			NotifyIcon = (TaskbarIcon)FindResource( "NotifyIcon" );
+		}
 
 		private void Application_DispatcherUnhandledException( object sender, DispatcherUnhandledExceptionEventArgs e )
 		{
@@ -135,6 +150,8 @@ namespace Blitzy
 		#endregion Properties
 
 		#region Attributes
+
+		private TaskbarIcon NotifyIcon;
 
 		#endregion Attributes
 	}

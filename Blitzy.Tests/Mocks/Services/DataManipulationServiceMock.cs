@@ -32,6 +32,11 @@ namespace Blitzy.Tests.Mocks.Services
 
 		public bool Edit( System.Windows.Window parent, object obj )
 		{
+			if( EditFunc == null )
+			{
+				return false;
+			}
+
 			return EditFunc( obj as T );
 		}
 	}

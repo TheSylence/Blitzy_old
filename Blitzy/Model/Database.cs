@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Blitzy.Model
 {
-	internal class Database : LogObject, IDisposable
+	internal class Database : BaseObject, IDisposable
 	{
 		#region Constructor
 
@@ -21,45 +21,11 @@ namespace Blitzy.Model
 			connectionSB.JournalMode = SQLiteJournalModeEnum.Wal;
 
 			Existed = File.Exists( connectionSB.DataSource );
-			Connection = new SQLiteConnection( connectionSB.ToString() );
+			Connection = ToDispose( new SQLiteConnection( connectionSB.ToString() ) );
 			Connection.Open();
 		}
 
 		#endregion Constructor
-
-		#region Disposable
-
-		/// <summary>
-		/// Releases unmanaged resources and performs other cleanup operations before the
-		/// <see cref="Database"/> is reclaimed by garbage collection.
-		/// </summary>
-		~Database()
-		{
-			Dispose( false );
-		}
-
-		/// <summary>
-		/// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-		/// </summary>
-		public void Dispose()
-		{
-			Dispose( true );
-			GC.SuppressFinalize( this );
-		}
-
-		/// <summary>
-		/// Releases unmanaged and - optionally - managed resources
-		/// </summary>
-		/// <param name="managed"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
-		protected virtual void Dispose( bool managed )
-		{
-			if( managed )
-			{
-				Connection.Dispose();
-			}
-		}
-
-		#endregion Disposable
 
 		#region Methods
 
@@ -81,8 +47,10 @@ namespace Blitzy.Model
 
 					LogInfo( "Database Version: {0}", val );
 
-					DatabaseUpgrader upgrader = new DatabaseUpgrader();
-					upgrader.UpgradeDatabase( Convert.ToInt32( val ), Connection );
+					using( DatabaseUpgrader upgrader = new DatabaseUpgrader() )
+					{
+						upgrader.UpgradeDatabase( Convert.ToInt32( val ), Connection );
+					}
 				}
 			}
 

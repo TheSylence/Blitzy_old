@@ -26,6 +26,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -109,14 +110,17 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Constants.cs" />
+    <Compile Include="Controls\CommandListView.cs" />
+    <Compile Include="Controls\CommandTextBox.cs" />
     <Compile Include="Converter\ElementNotNullConverter.cs" />
     <Compile Include="Converter\StringToImageConverter.cs" />
     <Compile Include="Converter\StringToVisibilityConverter.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="HotKey.cs" />
     <Compile Include="LogHelper.cs" />
-    <Compile Include="LogObject.cs" />
+    <Compile Include="BaseObject.cs" />
     <Compile Include="Messages\CommandMessage.cs" />
+    <Compile Include="Messages\InputCaretPositionMessage.cs" />
     <Compile Include="Messages\InternalCommandMessage.cs" />
     <Compile Include="Messages\VersionCheckMessage.cs" />
     <Compile Include="Model\CommandItem.cs" />
@@ -140,6 +144,8 @@
     <Compile Include="Plugin\ISettings.cs" />
     <Compile Include="Plugin\PluginManager.cs" />
     <Compile Include="Plugin\System\Blitzy.cs" />
+    <Compile Include="Plugin\System\Medy.cs" />
+    <Compile Include="RuntimeConfig.cs" />
     <Compile Include="SingleInstance.cs" />
     <Compile Include="ViewModel\CloseViewEventArgs.cs" />
     <Compile Include="ViewModel\Dialogs\DialogViewModelBase.cs" />
@@ -148,6 +154,7 @@
     <Compile Include="ViewModel\Dialogs\WebyWebsiteDialogViewModel.cs" />
     <Compile Include="ViewModel\IRequestCloseViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
+    <Compile Include="ViewModel\NotifyIconViewModel.cs" />
     <Compile Include="ViewModel\SettingsViewModel.cs" />
     <Compile Include="ViewModel\SettingsViewModel.Putty.cs" />
     <Compile Include="ViewModel\SettingsViewModel.Weby.cs" />
@@ -156,6 +163,14 @@
     <Compile Include="ViewModel\ViewModelBaseEx.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Page Include="ResourceDictionaries\Converter.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ResourceDictionaries\NotifyIcon.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ResourceDictionaries\Static.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -261,12 +276,25 @@
     <EmbeddedResource Include="Resources\Icons\Weby.png" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Resources\Icons\Medy.png" />
+    <EmbeddedResource Include="Resources\Icons\MedyNext.png" />
+    <EmbeddedResource Include="Resources\Icons\MedyPause.png" />
+    <EmbeddedResource Include="Resources\Icons\MedyPlay.png" />
+    <EmbeddedResource Include="Resources\Icons\MedyPrev.png" />
+    <EmbeddedResource Include="Resources\Icons\MedyVoldn.png" />
+    <EmbeddedResource Include="Resources\Icons\MedyVolup.png" />
     <Content Include="x64\SQLite.Interop.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="x86\SQLite.Interop.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\NotifyIconWpf\NotifyIconWpf.csproj">
+      <Project>{7ac63864-7638-41c4-969c-d3197ef2bed9}</Project>
+      <Name>NotifyIconWpf</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.build\MSBuild.Community.Tasks.Targets" />

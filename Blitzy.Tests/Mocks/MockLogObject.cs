@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Blitzy.Tests.Mocks
 {
-	internal class MockLogObject : LogObject
+	internal class MockLogObject : BaseObject
 	{
 		internal void Debug( string p )
 		{

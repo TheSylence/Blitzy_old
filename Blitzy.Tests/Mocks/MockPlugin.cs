@@ -54,17 +54,22 @@ namespace Blitzy.Tests.Mocks
 			throw new NotImplementedException();
 		}
 
-		public bool ExecuteCommand( Blitzy.Model.CommandItem command, System.Collections.ObjectModel.Collection<string> input, out string message )
+		public bool ExecuteCommand( Blitzy.Model.CommandItem command, IList<string> input, out string message )
 		{
 			throw new NotImplementedException();
 		}
 
-		public IEnumerable<Blitzy.Model.CommandItem> GetCommands( System.Collections.ObjectModel.Collection<string> input )
+		public IEnumerable<Blitzy.Model.CommandItem> GetCommands( IList<string> input )
 		{
 			throw new NotImplementedException();
 		}
 
-		public string GetInfo( System.Collections.ObjectModel.Collection<string> data, Blitzy.Model.CommandItem item )
+		public string GetInfo( IList<string> data, Blitzy.Model.CommandItem item )
+		{
+			throw new NotImplementedException();
+		}
+
+		public IEnumerable<Blitzy.Model.CommandItem> GetSubCommands( Blitzy.Model.CommandItem parent, IList<string> input )
 		{
 			throw new NotImplementedException();
 		}

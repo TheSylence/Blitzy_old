@@ -20,7 +20,7 @@ namespace Blitzy.View
 	/// Interaction logic for MainWindow.xaml
 	/// </summary>
 	[ExcludeFromCodeCoverage]
-	public partial class MainWindow : Window
+	public partial class MainWindow : CloseableView
 	{
 		public MainWindow()
 		{

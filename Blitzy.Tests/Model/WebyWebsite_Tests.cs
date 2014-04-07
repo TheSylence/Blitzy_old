@@ -23,6 +23,15 @@ namespace Blitzy.Tests.Model
 		}
 
 		[TestMethod, TestCategory( "Model" )]
+		public void PropertyChangedTest()
+		{
+			WebyWebsite obj = new WebyWebsite();
+			PropertyChangedListener listener = new PropertyChangedListener( obj );
+
+			Assert.IsTrue( listener.TestProperties() );
+		}
+
+		[TestMethod, TestCategory( "Model" )]
 		public void SaveLoadTest()
 		{
 			WebyWebsite w = new WebyWebsite();

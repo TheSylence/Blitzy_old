@@ -13,7 +13,6 @@ namespace Blitzy
 	internal static class NativeMethods
 	{
 		public const int HWND_BROADCAST = 0xffff;
-
 		public const int SW_SHOWNORMAL = 1;
 
 		[return: MarshalAs( UnmanagedType.Bool )]
@@ -60,6 +59,9 @@ namespace Blitzy
 
 		[DllImport( "user32", CharSet = CharSet.Ansi, SetLastError = true, ExactSpelling = true )]
 		internal static extern int RegisterHotKey( IntPtr hwnd, int id, int modifiers, int key );
+
+		[DllImport( "user32.dll" )]
+		internal static extern IntPtr SendMessage( IntPtr hWnd, int Msg, IntPtr wParam, IntPtr lParam );
 
 		[DllImport( "shell32.dll", CharSet = CharSet.Unicode )]
 		internal static extern int SHGetPathFromIDList( IntPtr pidl, StringBuilder pszPath );
