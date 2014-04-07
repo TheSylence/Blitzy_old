@@ -18,6 +18,8 @@ namespace Blitzy.Tests.ViewModel
 
 		public event EventHandler<EventArgs> RequestHide;
 
+		public event EventHandler<EventArgs> RequestShow;
+
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void CloseTest()
 		{
@@ -42,6 +44,27 @@ namespace Blitzy.Tests.ViewModel
 			Assert.IsNull( RequestHide );
 			v.DataContext = this;
 			Assert.AreEqual( 1, RequestHide.GetInvocationList().Length );
+
+			bool hidden = false;
+			v.Hidden += ( s, e ) => hidden = true;
+
+			RequestHide( this, EventArgs.Empty );
+			Assert.IsTrue( hidden );
+		}
+
+		[TestMethod, TestCategory( "ViewModel" )]
+		public void ShowTest()
+		{
+			CloseableView v = new CloseableView();
+			Assert.IsNull( RequestShow );
+			v.DataContext = this;
+			Assert.AreEqual( 1, RequestShow.GetInvocationList().Length );
+
+			bool shown = false;
+			v.Shown += ( s, e ) => shown = true;
+
+			RequestShow( this, EventArgs.Empty );
+			Assert.IsTrue( shown );
 		}
 	}
 }

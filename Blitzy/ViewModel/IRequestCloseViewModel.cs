@@ -7,5 +7,7 @@ namespace Blitzy.ViewModel
 		event EventHandler<CloseViewEventArgs> RequestClose;
 
 		event EventHandler<EventArgs> RequestHide;
+
+		event EventHandler<EventArgs> RequestShow;
 	}
 }

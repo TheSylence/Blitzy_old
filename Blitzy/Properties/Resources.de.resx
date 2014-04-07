@@ -330,4 +330,10 @@
   <data name="UnknownCommand" xml:space="preserve">
     <value>Unbekannter Befehl</value>
   </data>
+  <data name="ShowWindow" xml:space="preserve">
+    <value>Fenster anzeigen</value>
+  </data>
+  <data name="Error" xml:space="preserve">
+    <value>Fehler</value>
+  </data>
 </root>

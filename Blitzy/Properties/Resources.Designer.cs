@@ -286,6 +286,15 @@ namespace Blitzy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Error.
+        /// </summary>
+        public static string Error {
+            get {
+                return ResourceManager.GetString("Error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Excludes.
         /// </summary>
         public static string Excludes {
@@ -597,6 +606,15 @@ namespace Blitzy.Properties {
         public static string ShowTrayIcon {
             get {
                 return ResourceManager.GetString("ShowTrayIcon", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show window.
+        /// </summary>
+        public static string ShowWindow {
+            get {
+                return ResourceManager.GetString("ShowWindow", resourceCulture);
             }
         }
         

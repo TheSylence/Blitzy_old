@@ -4,8 +4,8 @@
 		<ResourceDictionary>
 			<ResourceDictionary.MergedDictionaries>
 				<ResourceDictionary Source="ResourceDictionaries/Static.xaml" />
-				<ResourceDictionary Source="ResourceDictionaries/NotifyIcon.xaml" />
 				<ResourceDictionary Source="ResourceDictionaries/Converter.xaml" />
+				<ResourceDictionary Source="ResourceDictionaries/NotifyIcon.xaml" />
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</Application.Resources>

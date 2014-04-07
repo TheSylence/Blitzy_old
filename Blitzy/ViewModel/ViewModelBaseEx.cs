@@ -80,11 +80,11 @@ namespace Blitzy.ViewModel
 		{
 		}
 
-		protected void Close( bool? result = null )
+		protected void Close( bool? result = null, int maxWindowCount = int.MaxValue )
 		{
 			if( RequestClose != null )
 			{
-				RequestClose( this, new CloseViewEventArgs( result ) );
+				RequestClose( this, new CloseViewEventArgs( result, maxWindowCount ) );
 			}
 		}
 
@@ -163,6 +163,14 @@ namespace Blitzy.ViewModel
 		{
 		}
 
+		protected void Show()
+		{
+			if( RequestShow != null )
+			{
+				RequestShow( this, EventArgs.Empty );
+			}
+		}
+
 		/// <summary>
 		/// Adds a new object to the internal container of disposable objects.
 		/// </summary>
@@ -200,6 +208,8 @@ namespace Blitzy.ViewModel
 		public event EventHandler<CloseViewEventArgs> RequestClose;
 
 		public event EventHandler<EventArgs> RequestHide;
+
+		public event EventHandler<EventArgs> RequestShow;
 
 		#endregion Events
 	}

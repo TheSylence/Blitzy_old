@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -45,6 +46,7 @@ namespace Blitzy.Controls
 	///     <MyNamespace:CommandListBox/>
 	///
 	/// </summary>
+	[ExcludeFromCodeCoverage]
 	public class CommandListView : ListView
 	{
 		#region Constructor

@@ -11,6 +11,12 @@
 		<i:EventTrigger EventName="PreviewKeyDown">
 			<commands:EventToCommand Command="{Binding KeyPreviewCommand}" PassEventArgsToCommand="True" />
 		</i:EventTrigger>
+		<i:EventTrigger EventName="Closing">
+			<commands:EventToCommand Command="{Binding OnClosingCommand}" PassEventArgsToCommand="True" />
+		</i:EventTrigger>
+		<i:EventTrigger EventName="Deactivated">
+			<commands:EventToCommand Command="{Binding OnDeactivatedCommand}" />
+		</i:EventTrigger>
 	</i:Interaction.Triggers>
 	<Grid>
 		<Grid.RowDefinitions>

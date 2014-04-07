@@ -150,7 +150,7 @@ namespace Blitzy.Plugin
 
 						param = cmd.CreateParameter();
 						param.ParameterName = "version";
-						param.Value = version;
+						param.Value = plugin.Version;
 						cmd.Parameters.Add( param );
 
 						cmd.CommandText = "UPDATE plugins SET Version = @version WHERE PluginID = @pluginID;";

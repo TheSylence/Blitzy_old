@@ -2,6 +2,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -65,6 +66,11 @@ namespace Blitzy.ViewModel
 
 		#region Methods
 
+		internal void RaiseShow()
+		{
+			Show();
+		}
+
 		private void OnCommand( CommandMessage msg )
 		{
 			if( msg.TaskID.HasValue )
@@ -91,6 +97,7 @@ namespace Blitzy.ViewModel
 			switch( command )
 			{
 				case "quit":
+					ShouldClose = true;
 					DispatcherHelper.CheckBeginInvokeOnUI( () => Close( true ) );
 					break;
 			}
@@ -126,7 +133,9 @@ namespace Blitzy.ViewModel
 
 		private RelayCommand _ExecuteCommand;
 		private RelayCommand<KeyEventArgs> _KeyPreviewCommand;
+		private RelayCommand<CancelEventArgs> _OnClosingCommand;
 
+		private RelayCommand _OnDeactivatedCommand;
 		private RelayCommand _SettingsCommand;
 
 		public RelayCommand ExecuteCommand
@@ -147,6 +156,24 @@ namespace Blitzy.ViewModel
 			}
 		}
 
+		public RelayCommand<CancelEventArgs> OnClosingCommand
+		{
+			get
+			{
+				return _OnClosingCommand ??
+					( _OnClosingCommand = new RelayCommand<CancelEventArgs>( ExecuteOnClosingCommand ) );
+			}
+		}
+
+		public RelayCommand OnDeactivatedCommand
+		{
+			get
+			{
+				return _OnDeactivatedCommand ??
+					( _OnDeactivatedCommand = new RelayCommand( ExecuteOnDeactivatedCommand, CanExecuteOnDeactivatedCommand ) );
+			}
+		}
+
 		public RelayCommand SettingsCommand
 		{
 			get
@@ -162,6 +189,11 @@ namespace Blitzy.ViewModel
 		}
 
 		private bool CanExecuteKeyPreviewCommand( KeyEventArgs args )
+		{
+			return true;
+		}
+
+		private bool CanExecuteOnDeactivatedCommand()
 		{
 			return true;
 		}
@@ -308,6 +340,23 @@ namespace Blitzy.ViewModel
 			}
 		}
 
+		private void ExecuteOnClosingCommand( CancelEventArgs args )
+		{
+			if( !ShouldClose )
+			{
+				args.Cancel = true;
+				Hide();
+			}
+		}
+
+		private void ExecuteOnDeactivatedCommand()
+		{
+			if( Settings.GetValue<bool>( SystemSetting.CloseOnFocusLost ) )
+			{
+				Close( null, 0 );
+			}
+		}
+
 		private void ExecuteSettingsCommand()
 		{
 			DialogServiceManager.Show<SettingsService>( Settings );
@@ -318,9 +367,7 @@ namespace Blitzy.ViewModel
 		#region Properties
 
 		private string _CommandInfo;
-
 		private string _CommandInput;
-
 		private int _SelectedCommandIndex;
 
 		public Blitzy.Model.CommandManager CmdManager { get; private set; }
@@ -386,6 +433,8 @@ namespace Blitzy.ViewModel
 				RaisePropertyChanged( () => SelectedCommandIndex );
 			}
 		}
+
+		public bool ShouldClose { get; internal set; }
 
 		internal Database Database { get; private set; }
 

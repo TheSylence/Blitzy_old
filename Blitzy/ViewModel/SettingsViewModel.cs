@@ -358,11 +358,11 @@ namespace Blitzy.ViewModel
 		private string _SelectedRule;
 		private Settings _Settings;
 
-		public string BlitzyLicense { get; private set; }
+		public string BlitzyLicense { get; set; }
 
-		public string Changelog { get; private set; }
+		public string Changelog { get; set; }
 
-		public string CurrentVersion { get; private set; }
+		public string CurrentVersion { get; set; }
 
 		public string LatestVersion
 		{

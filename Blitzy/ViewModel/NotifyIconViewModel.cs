@@ -18,11 +18,38 @@ namespace Blitzy.ViewModel
 		{
 			ViewModelLocator vmloc = (ViewModelLocator)App.Current.FindResource( "Locator" );
 			MainVM = vmloc.Main;
+
+			IconSource = "/Blitzy;component/Resources/TrayIcon.ico";
+		}
+
+		protected override void RegisterMessages()
+		{
+			base.RegisterMessages();
+
+			MessengerInstance.Register<CommandMessage>( this, msg => OnCommand( msg ) );
 		}
 
 		#endregion Constructor
 
 		#region Methods
+
+		private void OnCommand( CommandMessage msg )
+		{
+			switch( msg.Status )
+			{
+				case CommandStatus.Finished:
+					IconSource = "/Blitzy;component/Resources/TrayIcon.ico";
+					break;
+
+				case CommandStatus.Executing:
+					IconSource = "/Blitzy;component/Resources/CommandExecuting.ico";
+					break;
+
+				case CommandStatus.Error:
+					IconSource = "/Blitzy;component/Resources/TrayIconFailure.ico";
+					break;
+			}
+		}
 
 		#endregion Methods
 
@@ -86,11 +113,34 @@ namespace Blitzy.ViewModel
 
 		private void ExecuteShowCommand()
 		{
+			MainVM.RaiseShow();
 		}
 
 		#endregion Commands
 
 		#region Properties
+
+		private string _IconSource;
+
+		public string IconSource
+		{
+			get
+			{
+				return _IconSource;
+			}
+
+			set
+			{
+				if( _IconSource == value )
+				{
+					return;
+				}
+
+				RaisePropertyChanging( () => IconSource );
+				_IconSource = value;
+				RaisePropertyChanged( () => IconSource );
+			}
+		}
 
 		public string Title
 		{
@@ -101,6 +151,14 @@ namespace Blitzy.ViewModel
 #else
 				return "Blitzy";
 #endif
+			}
+		}
+
+		public bool Visible
+		{
+			get
+			{
+				return MainVM.Settings.GetValue<bool>( Model.SystemSetting.TrayIcon );
 			}
 		}
 

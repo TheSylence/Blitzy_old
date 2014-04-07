@@ -35,11 +35,17 @@ namespace Blitzy.View
 				Model = model;
 				model.RequestClose += model_RequestClose;
 				model.RequestHide += model_RequestHide;
+				model.RequestShow += model_RequestShow;
 			}
 		}
 
 		private void model_RequestClose( object sender, CloseViewEventArgs e )
 		{
+			if( OwnedWindows.Count > e.MaxWindowCount )
+			{
+				return;
+			}
+
 			try
 			{
 				DialogResult = e.Result;
@@ -54,8 +60,29 @@ namespace Blitzy.View
 		private void model_RequestHide( object sender, EventArgs e )
 		{
 			Hide();
+			if( Hidden != null )
+			{
+				Hidden( this, EventArgs.Empty );
+			}
+		}
+
+		private void model_RequestShow( object sender, EventArgs e )
+		{
+			Show();
+			if( Shown != null )
+			{
+				Shown( this, EventArgs.Empty );
+			}
 		}
 
 		#endregion Constructor
+
+		#region Events
+
+		public event EventHandler Hidden;
+
+		public event EventHandler Shown;
+
+		#endregion Events
 	}
 }
