@@ -99,6 +99,7 @@
     <Compile Include="Model\Folder_Tests.cs" />
     <Compile Include="Model\Settings_Tests.cs" />
     <Compile Include="Model\ShellShortcut_Tests.cs" />
+    <Compile Include="Model\ShuntingYard_Tests.cs" />
     <Compile Include="Model\UpdateChecker_Tests.cs" />
     <Compile Include="Model\WebyWebsite_Tests.cs" />
     <Compile Include="Plugins\PluginManager_Tests.cs" />

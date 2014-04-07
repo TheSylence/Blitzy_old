@@ -22,6 +22,22 @@ namespace Blitzy.Tests.ViewModel
 	public class MainViewModel_Tests : TestBase
 	{
 		[TestMethod, TestCategory( "ViewModel" )]
+		public void ArrowsTest()
+		{
+			MainViewModel vm = new MainViewModel();
+			vm.CommandInput = "t";
+
+			Assert.IsTrue( vm.CmdManager.Items.Count > 1 );
+
+			Assert.AreEqual( 0, vm.SelectedCommandIndex );
+			Assert.IsTrue( vm.OnKeyDownArrow() );
+			Assert.AreEqual( 1, vm.SelectedCommandIndex );
+
+			Assert.IsTrue( vm.OnKeyUpArrow() );
+			Assert.AreEqual( 0, vm.SelectedCommandIndex );
+		}
+
+		[TestMethod, TestCategory( "ViewModel" )]
 		public void BackTest()
 		{
 			MainViewModel vm = new MainViewModel();

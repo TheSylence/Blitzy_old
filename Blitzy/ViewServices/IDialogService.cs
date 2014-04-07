@@ -9,7 +9,7 @@ using System.Windows;
 
 namespace Blitzy.ViewServices
 {
-	internal interface IDialogService
+	public interface IDialogService
 	{
 		object Show( Window parent, object parameter = null );
 	}

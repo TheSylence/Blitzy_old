@@ -13,33 +13,11 @@ using Blitzy.Model;
 
 namespace Blitzy.ViewServices
 {
-	internal static class DialogServiceManager
+	public static class DialogServiceManager
 	{
 		#region Methods
 
-		public static T Create<T>() where T : ModelBase
-		{
-			IDataManipulationService service;
-			if( ManipServices.TryGetValue( typeof( T ), out service ) )
-			{
-				return service.Create( ActiveWindow ) as T;
-			}
-
-			throw new ArgumentException( "No service found for type" );
-		}
-
-		public static bool Edit<T>( T obj ) where T : ModelBase
-		{
-			IDataManipulationService service;
-			if( ManipServices.TryGetValue( typeof( T ), out service ) )
-			{
-				return service.Edit( ActiveWindow, obj );
-			}
-
-			throw new ArgumentException( "No service found for type" );
-		}
-
-		static public object Show<T>( object parameter = null ) where T : class, IDialogService
+		public static object Show<T>( object parameter = null ) where T : class, IDialogService
 		{
 			IDialogService service;
 			if( Services.TryGetValue( typeof( T ), out service ) )
@@ -72,6 +50,28 @@ namespace Blitzy.ViewServices
 
 			Services.Clear();
 			ManipServices.Clear();
+		}
+
+		internal static T Create<T>() where T : ModelBase
+		{
+			IDataManipulationService service;
+			if( ManipServices.TryGetValue( typeof( T ), out service ) )
+			{
+				return service.Create( ActiveWindow ) as T;
+			}
+
+			throw new ArgumentException( "No service found for type" );
+		}
+
+		internal static bool Edit<T>( T obj ) where T : ModelBase
+		{
+			IDataManipulationService service;
+			if( ManipServices.TryGetValue( typeof( T ), out service ) )
+			{
+				return service.Edit( ActiveWindow, obj );
+			}
+
+			throw new ArgumentException( "No service found for type" );
 		}
 
 		/// <summary>

@@ -11,7 +11,7 @@ using System.Windows;
 namespace Blitzy.ViewServices
 {
 	[ExcludeFromCodeCoverage]
-	internal class MessageBoxParameter
+	public class MessageBoxParameter
 	{
 		#region Constructor
 

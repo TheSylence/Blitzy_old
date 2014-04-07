@@ -11,14 +11,14 @@ using System.Windows;
 namespace Blitzy.ViewServices
 {
 	[ExcludeFromCodeCoverage]
-	internal class MessageBoxService : IDialogService
+	public class MessageBoxService : IDialogService
 	{
 		public object Show( System.Windows.Window parent, object parameter = null )
 		{
 			MessageBoxParameter info = parameter as MessageBoxParameter;
 			if( info == null )
 			{
-				throw new ArgumentException( "MessageBoxService braucht eine MessageBoxParameter als Parameter" );
+				throw new ArgumentException( "MessageBoxService needs a MessageBoxParameter as parameter" );
 			}
 
 			if( parent == null )

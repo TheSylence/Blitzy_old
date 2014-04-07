@@ -255,10 +255,7 @@ namespace Blitzy.ViewModel
 
 			CommandInput = string.Join( CmdManager.Separator, commandParts );
 
-			if( subCommandCount > 0 )
-			{
-				MessengerInstance.Send<InputCaretPositionMessage>( new InputCaretPositionMessage( CommandInput.Length ) );
-			}
+			MessengerInstance.Send<InputCaretPositionMessage>( new InputCaretPositionMessage( CommandInput.Length ) );
 			return true;
 		}
 

@@ -336,4 +336,31 @@
   <data name="Error" xml:space="preserve">
     <value>Fehler</value>
   </data>
+  <data name="Shutdown" xml:space="preserve">
+    <value>Fährt den Computer runter</value>
+  </data>
+  <data name="Restart" xml:space="preserve">
+    <value>Startet den Computer neu</value>
+  </data>
+  <data name="Logoff" xml:space="preserve">
+    <value>Meldet den aktuell angemeldeten Benutzer ab</value>
+  </data>
+  <data name="ConfirmationRequired" xml:space="preserve">
+    <value>Bestätigung erforderlich</value>
+  </data>
+  <data name="ConfirmOperation" xml:space="preserve">
+    <value>Soll die ausgewählte Operation wirklich ausgeführt werden?</value>
+  </data>
+  <data name="CalcyDescription" xml:space="preserve">
+    <value>Breite Auswahl an mathematischen Ausdrücken auswerten</value>
+  </data>
+  <data name="SyntaxError" xml:space="preserve">
+    <value>Syntaxfehler</value>
+  </data>
+  <data name="EmptyExpression" xml:space="preserve">
+    <value>Leerer Ausdruck</value>
+  </data>
+  <data name="IncompleteExpression" xml:space="preserve">
+    <value>Unvollständiger Ausdruck</value>
+  </data>
 </root>

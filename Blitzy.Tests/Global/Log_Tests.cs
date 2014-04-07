@@ -165,5 +165,80 @@ namespace Blitzy.Tests.Global
 				Assert.AreEqual( "Fatal", log.Messages[4] );
 			}
 		}
+
+		[TestMethod, TestCategory( "ViewModel" )]
+		public void ViewModelLogTests()
+		{
+			MockViewModel obj = new MockViewModel( "test" );
+			using( LogChecker log = new LogChecker( Level.Fatal ) )
+			{
+				obj.Debug( "Debug" );
+				obj.Info( "Info" );
+				obj.Warning( "Warning" );
+				obj.Error( "Error" );
+				obj.Fatal( "Fatal" );
+
+				Assert.AreEqual( 1, log.Messages.Count );
+				Assert.AreEqual( "Fatal", log.Messages[0] );
+			}
+
+			using( LogChecker log = new LogChecker( Level.Error ) )
+			{
+				obj.Debug( "Debug" );
+				obj.Info( "Info" );
+				obj.Warning( "Warning" );
+				obj.Error( "Error" );
+				obj.Fatal( "Fatal" );
+
+				Assert.AreEqual( 2, log.Messages.Count );
+				Assert.AreEqual( "Error", log.Messages[0] );
+				Assert.AreEqual( "Fatal", log.Messages[1] );
+			}
+
+			using( LogChecker log = new LogChecker( Level.Warn ) )
+			{
+				obj.Debug( "Debug" );
+				obj.Info( "Info" );
+				obj.Warning( "Warning" );
+				obj.Error( "Error" );
+				obj.Fatal( "Fatal" );
+
+				Assert.AreEqual( 3, log.Messages.Count );
+				Assert.AreEqual( "Warning", log.Messages[0] );
+				Assert.AreEqual( "Error", log.Messages[1] );
+				Assert.AreEqual( "Fatal", log.Messages[2] );
+			}
+
+			using( LogChecker log = new LogChecker( Level.Info ) )
+			{
+				obj.Debug( "Debug" );
+				obj.Info( "Info" );
+				obj.Warning( "Warning" );
+				obj.Error( "Error" );
+				obj.Fatal( "Fatal" );
+
+				Assert.AreEqual( 4, log.Messages.Count );
+				Assert.AreEqual( "Info", log.Messages[0] );
+				Assert.AreEqual( "Warning", log.Messages[1] );
+				Assert.AreEqual( "Error", log.Messages[2] );
+				Assert.AreEqual( "Fatal", log.Messages[3] );
+			}
+
+			using( LogChecker log = new LogChecker( Level.Debug ) )
+			{
+				obj.Debug( "Debug" );
+				obj.Info( "Info" );
+				obj.Warning( "Warning" );
+				obj.Error( "Error" );
+				obj.Fatal( "Fatal" );
+
+				Assert.AreEqual( 5, log.Messages.Count );
+				Assert.AreEqual( "Debug", log.Messages[0] );
+				Assert.AreEqual( "Info", log.Messages[1] );
+				Assert.AreEqual( "Warning", log.Messages[2] );
+				Assert.AreEqual( "Error", log.Messages[3] );
+				Assert.AreEqual( "Fatal", log.Messages[4] );
+			}
+		}
 	}
 }

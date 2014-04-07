@@ -160,6 +160,15 @@ namespace Blitzy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Calculate a wide set of mathematical.
+        /// </summary>
+        public static string CalcyDescription {
+            get {
+                return ResourceManager.GetString("CalcyDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cancel.
         /// </summary>
         public static string Cancel {
@@ -223,11 +232,29 @@ namespace Blitzy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Confirmation required.
+        /// </summary>
+        public static string ConfirmationRequired {
+            get {
+                return ResourceManager.GetString("ConfirmationRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Do you really want to remove this item?.
         /// </summary>
         public static string ConfirmDeleteItem {
             get {
                 return ResourceManager.GetString("ConfirmDeleteItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Do you really want to proceed with the selected operation?.
+        /// </summary>
+        public static string ConfirmOperation {
+            get {
+                return ResourceManager.GetString("ConfirmOperation", resourceCulture);
             }
         }
         
@@ -282,6 +309,15 @@ namespace Blitzy.Properties {
         public static string Edit {
             get {
                 return ResourceManager.GetString("Edit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Empty expression.
+        /// </summary>
+        public static string EmptyExpression {
+            get {
+                return ResourceManager.GetString("EmptyExpression", resourceCulture);
             }
         }
         
@@ -349,6 +385,15 @@ namespace Blitzy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Incomplete Expression.
+        /// </summary>
+        public static string IncompleteExpression {
+            get {
+                return ResourceManager.GetString("IncompleteExpression", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Keep input content.
         /// </summary>
         public static string KeppInputContent {
@@ -381,6 +426,15 @@ namespace Blitzy.Properties {
         public static string Licenses {
             get {
                 return ResourceManager.GetString("Licenses", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Logs off the currently logged in user.
+        /// </summary>
+        public static string Logoff {
+            get {
+                return ResourceManager.GetString("Logoff", resourceCulture);
             }
         }
         
@@ -574,6 +628,15 @@ namespace Blitzy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Restarts the computer.
+        /// </summary>
+        public static string Restart {
+            get {
+                return ResourceManager.GetString("Restart", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Rules.
         /// </summary>
         public static string Rules {
@@ -619,11 +682,29 @@ namespace Blitzy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Shuts the computer down.
+        /// </summary>
+        public static string Shutdown {
+            get {
+                return ResourceManager.GetString("Shutdown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Skin.
         /// </summary>
         public static string Skin {
             get {
                 return ResourceManager.GetString("Skin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Syntax Error.
+        /// </summary>
+        public static string SyntaxError {
+            get {
+                return ResourceManager.GetString("SyntaxError", resourceCulture);
             }
         }
         

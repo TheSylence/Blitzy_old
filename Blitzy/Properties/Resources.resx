@@ -340,4 +340,31 @@
   <data name="Error" xml:space="preserve">
     <value>Error</value>
   </data>
+  <data name="Shutdown" xml:space="preserve">
+    <value>Shuts the computer down</value>
+  </data>
+  <data name="Restart" xml:space="preserve">
+    <value>Restarts the computer</value>
+  </data>
+  <data name="Logoff" xml:space="preserve">
+    <value>Logs off the currently logged in user</value>
+  </data>
+  <data name="ConfirmOperation" xml:space="preserve">
+    <value>Do you really want to proceed with the selected operation?</value>
+  </data>
+  <data name="ConfirmationRequired" xml:space="preserve">
+    <value>Confirmation required</value>
+  </data>
+  <data name="CalcyDescription" xml:space="preserve">
+    <value>Calculate a wide set of mathematical</value>
+  </data>
+  <data name="SyntaxError" xml:space="preserve">
+    <value>Syntax Error</value>
+  </data>
+  <data name="EmptyExpression" xml:space="preserve">
+    <value>Empty expression</value>
+  </data>
+  <data name="IncompleteExpression" xml:space="preserve">
+    <value>Incomplete Expression</value>
+  </data>
 </root>
