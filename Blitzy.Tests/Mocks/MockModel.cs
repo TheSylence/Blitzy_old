@@ -25,5 +25,15 @@ namespace Blitzy.Tests.Mocks
 		{
 			throw new NotImplementedException();
 		}
+
+		internal void DisposeObjectWrapper( IDisposable obj )
+		{
+			DisposeObject( obj );
+		}
+
+		internal T ToDisposeWrapper<T>( T obj ) where T : IDisposable
+		{
+			return ToDispose( obj );
+		}
 	}
 }

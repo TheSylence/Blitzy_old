@@ -45,6 +45,14 @@ namespace Blitzy.Tests
 			{
 				return Activator.CreateInstance( type );
 			}
+			else if( type == typeof( System.Windows.Input.Key ) )
+			{
+				return System.Windows.Input.Key.Escape;
+			}
+			else if( type == typeof( System.Windows.Input.ModifierKeys ) )
+			{
+				return System.Windows.Input.ModifierKeys.Control;
+			}
 
 			throw new NotSupportedException( type.ToString() );
 		}

@@ -30,6 +30,14 @@ namespace Blitzy.Tests.Global
 			Assert.AreEqual( 1.0, a.GetDiceCoefficent( b ) );
 		}
 
+		[TestMethod, TestCategory( "Global" ), ExpectedException( typeof( ArgumentNullException ) )]
+		public void LocalizeNullTest()
+		{
+			string str = null;
+
+			str.Localize();
+		}
+
 		[TestMethod, TestCategory( "Global" )]
 		public void LocalizeTest()
 		{

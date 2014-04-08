@@ -35,6 +35,10 @@ namespace Blitzy
 
 #if DEBUG
 			name = "Blitzy.Debug";
+			if( RuntimeConfig.Tests )
+			{
+				name += ".Test";
+			}
 #else
 			name = string.Format( System.Globalization.CultureInfo.InvariantCulture, "Local\\{0}", AssemblyGuid );
 #endif

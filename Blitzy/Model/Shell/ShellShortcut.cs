@@ -25,11 +25,9 @@ namespace Blitzy.Model.Shell
 		private const int SW_SHOWMINIMIZED = 2;
 		private const int SW_SHOWMINNOACTIVE = 7;
 		private const int SW_SHOWNORMAL = 1;
-#if UNICODE
-    private IShellLinkW m_Link;
-#else
-		private IShellLinkA m_Link;
-#endif
+
+		private IShellLinkW m_Link;
+
 		private string m_sPath;
 
 		///
@@ -43,11 +41,7 @@ namespace Blitzy.Model.Shell
 
 			m_sPath = linkPath;
 
-#if UNICODE
-      m_Link = (IShellLinkW) new ShellLink();
-#else
-			m_Link = (IShellLinkA)new ShellLink();
-#endif
+			m_Link = (IShellLinkW)new ShellLink();
 
 			if( File.Exists( linkPath ) )
 			{
@@ -162,11 +156,7 @@ namespace Blitzy.Model.Shell
 		{
 			get
 			{
-#if UNICODE
-        WIN32_FIND_DATAW wfd = new WIN32_FIND_DATAW();
-#else
-				WIN32_FIND_DATAA wfd = new WIN32_FIND_DATAA();
-#endif
+				WIN32_FIND_DATAW wfd = new WIN32_FIND_DATAW();
 				StringBuilder sb = new StringBuilder( MAX_PATH );
 
 				m_Link.GetPath( sb, sb.Capacity, out wfd, SLGP_FLAGS.SLGP_UNCPRIORITY );
@@ -266,10 +256,10 @@ namespace Blitzy.Model.Shell
 		/// <summary>
 		///   Saves the shortcut to disk.
 		/// </summary>
-		public void Save()
+		public bool Save()
 		{
 			IPersistFile pf = (IPersistFile)m_Link;
-			pf.Save( m_sPath, true );
+			return pf.Save( m_sPath, true ) == 0;
 		}
 
 		#region Native Win32 API functions

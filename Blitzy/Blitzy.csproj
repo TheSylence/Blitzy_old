@@ -149,6 +149,7 @@
     <Compile Include="Plugin\System\Blitzy.cs" />
     <Compile Include="Plugin\System\Calcy.cs" />
     <Compile Include="Plugin\System\Medy.cs" />
+    <Compile Include="Plugin\System\Shelly.cs" />
     <Compile Include="Plugin\System\Winy.cs" />
     <Compile Include="RuntimeConfig.cs" />
     <Compile Include="SingleInstance.cs" />

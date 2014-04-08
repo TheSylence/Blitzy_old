@@ -80,7 +80,10 @@
     <Compile Include="Converter\StringToImageConverter_Tests.cs" />
     <Compile Include="Converter\StringToVisibilityConverter_Tests.cs" />
     <Compile Include="Extensions.cs" />
+    <Compile Include="Global\BaseObject_Tests.cs" />
     <Compile Include="Global\Extensions_Tests.cs" />
+    <Compile Include="Global\HotKeyHost_Tests.cs" />
+    <Compile Include="Global\HotKey_Tests.cs" />
     <Compile Include="Global\Log_Tests.cs" />
     <Compile Include="Global\SingleInstance_Tests.cs" />
     <Compile Include="LogChecker.cs" />
@@ -102,7 +105,13 @@
     <Compile Include="Model\ShuntingYard_Tests.cs" />
     <Compile Include="Model\UpdateChecker_Tests.cs" />
     <Compile Include="Model\WebyWebsite_Tests.cs" />
+    <Compile Include="Plugins\Blitzy_Tests.cs" />
+    <Compile Include="Plugins\Calcy_Tests.cs" />
+    <Compile Include="Plugins\Medy_Tests.cs" />
     <Compile Include="Plugins\PluginManager_Tests.cs" />
+    <Compile Include="Plugins\PluginTester.cs" />
+    <Compile Include="Plugins\Shelly_Tests.cs" />
+    <Compile Include="Plugins\Winy_Tests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PropertyChangedListener.cs" />
     <Compile Include="TestBase.cs" />

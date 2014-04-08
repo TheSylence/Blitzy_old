@@ -19,7 +19,7 @@ namespace Blitzy
 	/// <summary>
 	/// Represents an hotKey
 	/// </summary>
-	internal class HotKey : INotifyPropertyChanged, IEquatable<HotKey>
+	internal class HotKey : INotifyPropertyChanged
 	{
 		private bool enabled;
 
@@ -119,31 +119,9 @@ namespace Blitzy
 			}
 		}
 
-		public override bool Equals( object obj )
-		{
-			HotKey hotKey = obj as HotKey;
-			if( hotKey != null )
-				return Equals( hotKey );
-			else
-				return false;
-		}
-
-		public bool Equals( HotKey other )
-		{
-			if( other == null )
-				return false;
-
-			return ( Key == other.Key && Modifiers == other.Modifiers );
-		}
-
-		public override int GetHashCode()
-		{
-			return (int)Modifiers + 10 * (int)Key;
-		}
-
 		public override string ToString()
 		{
-			return string.Format( CultureInfo.InvariantCulture, "{0} + {1} ({2}Enabled)", Key, Modifiers, Enabled ? "" : "Not " );
+			return string.Format( CultureInfo.InvariantCulture, "{0} + {1} ({2}Enabled)", Modifiers, Key, Enabled ? "" : "Not " );
 		}
 
 		internal void RaiseOnHotKeyPressed()
@@ -164,7 +142,7 @@ namespace Blitzy
 		}
 	}
 
-	[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1064:ExceptionsShouldBePublic" ), Serializable]
+	[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1064:ExceptionsShouldBePublic" )]
 	internal class HotKeyAlreadyRegisteredException : Exception
 	{
 		public HotKeyAlreadyRegisteredException( string message, HotKey hotKey )
@@ -178,11 +156,6 @@ namespace Blitzy
 		{
 			HotKey = hotKey;
 		}
-
-		protected HotKeyAlreadyRegisteredException(
-		  SerializationInfo info,
-		  StreamingContext context )
-			: base( info, context ) { }
 
 		public HotKey HotKey { get; private set; }
 	}
@@ -222,7 +195,7 @@ namespace Blitzy
 
 		#region HotKey Interop
 
-		private const int WM_HotKey = 786;
+		internal const int WM_HotKey = 786;
 
 		#endregion HotKey Interop
 

@@ -363,4 +363,7 @@
   <data name="IncompleteExpression" xml:space="preserve">
     <value>Unvollständiger Ausdruck</value>
   </data>
+  <data name="ShellyDescription" xml:space="preserve">
+    <value>Einen Befehl auf der PowerShell ausführen</value>
+  </data>
 </root>

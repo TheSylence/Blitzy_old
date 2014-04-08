@@ -664,6 +664,15 @@ namespace Blitzy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Execute a command using the PowerShell.
+        /// </summary>
+        public static string ShellyDescription {
+            get {
+                return ResourceManager.GetString("ShellyDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show tray icon.
         /// </summary>
         public static string ShowTrayIcon {

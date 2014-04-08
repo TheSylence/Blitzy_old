@@ -56,7 +56,7 @@ namespace Blitzy.Model.Shell
 		  [MarshalAs( UnmanagedType.LPWStr )] string pszFileName,
 		  int dwMode );
 
-		void Save(
+		int Save(
 		  [MarshalAs( UnmanagedType.LPWStr )] string pszFileName,
 		  [MarshalAs( UnmanagedType.Bool )] bool fRemember );
 
