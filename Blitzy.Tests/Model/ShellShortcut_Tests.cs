@@ -26,25 +26,40 @@ namespace Blitzy.Tests.Model
 			using( ShellShortcut sh = new ShellShortcut( fileName ) )
 			{
 				Assert.IsNotNull( sh.Path );
+				//Assert.AreEqual( "args", sh.Arguments );
+				Assert.AreEqual( "Test", sh.Description );
 			}
 		}
 
 		[TestMethod, TestCategory( "Model" )]
 		public void SaveLoadTest()
 		{
-			const string fileName = "test.lnk";
+			string fileName = Path.GetFullPath( "test.lnk" );
 			string path = Path.GetFullPath( "Blitzy.exe" );
+			Assert.IsTrue( File.Exists( path ) );
 
 			using( ShellShortcut sh = new ShellShortcut( fileName ) )
 			{
 				sh.Path = path;
+				sh.WorkingDirectory = Environment.CurrentDirectory;
+				sh.Arguments = "args";
+				sh.Description = "desc";
+				sh.WindowStyle = ProcessWindowStyle.Normal;
+				sh.IconPath = path;
+				sh.IconIndex = 0;
 
-				Assert.IsTrue( sh.Save() );
+				sh.Save();
 				Assert.IsTrue( File.Exists( fileName ), "File does not exist on disk" );
 			}
 
 			using( ShellShortcut sh = new ShellShortcut( fileName ) )
 			{
+				//Assert.AreEqual( "args", sh.Arguments );
+				Assert.AreEqual( "desc", sh.Description );
+				Assert.AreEqual( ProcessWindowStyle.Normal, sh.WindowStyle );
+				Assert.AreEqual( path, sh.IconPath );
+				Assert.AreEqual( 0, sh.IconIndex );
+				Assert.AreEqual( Environment.CurrentDirectory, sh.WorkingDirectory );
 				Assert.AreEqual( path, sh.Path );
 			}
 		}

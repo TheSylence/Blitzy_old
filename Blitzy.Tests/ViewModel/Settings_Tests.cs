@@ -43,8 +43,8 @@ namespace Blitzy.Tests.ViewModel
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void AddFolderTest()
 		{
-			SelectFolderServiceMock mock = new SelectFolderServiceMock();
-			mock.Folder = "C:\\temp";
+			StringServiceMock mock = new StringServiceMock();
+			mock.Value = "C:\\temp";
 			DialogServiceManager.RegisterService( typeof( SelectFolderService ), mock );
 
 			Assert.AreEqual( 0, VM.Settings.Folders.Count() );
@@ -52,11 +52,11 @@ namespace Blitzy.Tests.ViewModel
 			Assert.AreEqual( 1, VM.Settings.Folders.Where( f => f.Path == "C:\\temp" ).Count() );
 
 			Assert.AreEqual( 1, VM.Settings.Folders.Count() );
-			mock.Folder = null;
+			mock.Value = null;
 			VM.AddFolderCommand.Execute( null );
 			Assert.AreEqual( 1, VM.Settings.Folders.Count() );
 
-			mock.Folder = "C:\\temp2";
+			mock.Value = "C:\\temp2";
 			VM.AddFolderCommand.Execute( null );
 			Assert.AreEqual( 1, VM.Settings.Folders.Where( f => f.Path == "C:\\temp2" ).Count() );
 

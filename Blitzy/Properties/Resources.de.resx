@@ -366,4 +366,7 @@
   <data name="ShellyDescription" xml:space="preserve">
     <value>Einen Befehl auf der PowerShell ausführen</value>
   </data>
+  <data name="ExeFileFilter" xml:space="preserve">
+    <value>Ausführbare Dateien|*.exe</value>
+  </data>
 </root>

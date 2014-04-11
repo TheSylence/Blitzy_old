@@ -9,13 +9,13 @@ using Blitzy.ViewServices;
 
 namespace Blitzy.Tests.Mocks.Services
 {
-	internal class SelectFolderServiceMock : IDialogService
+	internal class StringServiceMock : IDialogService
 	{
-		public string Folder;
+		public string Value;
 
 		public object Show( System.Windows.Window parent, object parameter = null )
 		{
-			return Folder;
+			return Value;
 		}
 	}
 }

@@ -370,4 +370,7 @@
   <data name="ShellyDescription" xml:space="preserve">
     <value>Execute a command using the PowerShell</value>
   </data>
+  <data name="ExeFileFilter" xml:space="preserve">
+    <value>Executable files|*.exe</value>
+  </data>
 </root>

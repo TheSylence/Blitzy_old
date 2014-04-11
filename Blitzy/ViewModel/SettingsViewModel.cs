@@ -55,6 +55,9 @@ namespace Blitzy.ViewModel
 
 			WinySettings = new WinySettingsViewModel( this );
 			RaisePropertyChanged( () => WinySettings );
+
+			PuttySettings = new PuttySettingsViewModel( this );
+			RaisePropertyChanged( () => PuttySettings );
 		}
 
 		private void OnVersionCheckComplete( VersionCheckMessage msg )
@@ -383,6 +386,8 @@ namespace Blitzy.ViewModel
 				RaisePropertyChanged( () => LatestVersion );
 			}
 		}
+
+		public PuttySettingsViewModel PuttySettings { get; private set; }
 
 		public string SelectedExclude
 		{

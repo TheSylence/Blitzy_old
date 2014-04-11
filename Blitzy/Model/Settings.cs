@@ -61,7 +61,13 @@ namespace Blitzy.Model
 		ConfirmLogoff,
 
 		[DefaultValue( 1 )]
-		ConfirmRestart
+		ConfirmRestart,
+
+		[DefaultValue( "" )]
+		PuttyPath,
+
+		[DefaultValue( 0 )]
+		ImportPuttySessions,
 	}
 
 	internal class Settings : ObservableObject, Blitzy.Plugin.ISettings

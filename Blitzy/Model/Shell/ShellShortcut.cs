@@ -1,14 +1,34 @@
 ﻿// $Id$
 
+/**************************************************************************
+*
+* Filename:     ShellShortcut.cs
+* Author:       Mattias Sjögren (mattias@mvps.org)
+*               http://www.msjogren.net/dotnet/
+*
+* Description:  Defines a .NET friendly class, ShellShortcut, for reading
+*               and writing shortcuts.
+*               Define the conditional compilation symbol UNICODE to use
+*               IShellLinkW internally.
+*
+* Public types: class ShellShortcut
+*
+*
+* Dependencies: ShellLinkNative.cs
+*
+*
+* Copyright ©2001-2002, Mattias Sjögren
+*
+**************************************************************************/
+#define UNICODE
+
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
+using System.Runtime.InteropServices.ComTypes;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Blitzy.Model.Shell
@@ -25,9 +45,11 @@ namespace Blitzy.Model.Shell
 		private const int SW_SHOWMINIMIZED = 2;
 		private const int SW_SHOWMINNOACTIVE = 7;
 		private const int SW_SHOWNORMAL = 1;
-
+#if UNICODE
 		private IShellLinkW m_Link;
-
+#else
+    private IShellLinkA m_Link;
+#endif
 		private string m_sPath;
 
 		///
@@ -41,7 +63,11 @@ namespace Blitzy.Model.Shell
 
 			m_sPath = linkPath;
 
+#if UNICODE
 			m_Link = (IShellLinkW)new ShellLink();
+#else
+      m_Link = (IShellLinkA) new ShellLink();
+#endif
 
 			if( File.Exists( linkPath ) )
 			{
@@ -76,6 +102,47 @@ namespace Blitzy.Model.Shell
 				return sb.ToString();
 			}
 			set { m_Link.SetDescription( value ); }
+		}
+
+		/// <value>
+		///   Gets or sets the hotkey for the shortcut.
+		/// </value>
+		public Keys Hotkey
+		{
+			get
+			{
+				short wHotkey;
+				int dwHotkey;
+
+				m_Link.GetHotkey( out wHotkey );
+
+				//
+				// Convert from IShellLink 16-bit format to Keys enumeration 32-bit value
+				// IShellLink: 0xMMVK
+				// Keys:  0x00MM00VK
+				//   MM = Modifier (Alt, Control, Shift)
+				//   VK = Virtual key code
+				//
+				dwHotkey = ( ( wHotkey & 0xFF00 ) << 8 ) | ( wHotkey & 0xFF );
+				return (Keys)dwHotkey;
+			}
+			set
+			{
+				short wHotkey;
+
+				if( ( value & Keys.Modifiers ) == 0 )
+					throw new ArgumentException( "Hotkey must include a modifier key." );
+
+				//
+				// Convert from Keys enumeration 32-bit value to IShellLink 16-bit format
+				// IShellLink: 0xMMVK
+				// Keys:  0x00MM00VK
+				//   MM = Modifier (Alt, Control, Shift)
+				//   VK = Virtual key code
+				//
+				wHotkey = unchecked( (short)( ( (int)( value & Keys.Modifiers ) >> 8 ) | (int)( value & Keys.KeyCode ) ) );
+				m_Link.SetHotkey( wHotkey );
+			}
 		}
 
 		/// <value>
@@ -156,11 +223,15 @@ namespace Blitzy.Model.Shell
 		{
 			get
 			{
+#if UNICODE
 				WIN32_FIND_DATAW wfd = new WIN32_FIND_DATAW();
+#else
+        WIN32_FIND_DATAA wfd = new WIN32_FIND_DATAA();
+#endif
 				StringBuilder sb = new StringBuilder( MAX_PATH );
 
 				m_Link.GetPath( sb, sb.Capacity, out wfd, SLGP_FLAGS.SLGP_UNCPRIORITY );
-				return ShellLinkHelper.ResolveX64Path( sb.ToString() );
+				return sb.ToString();
 			}
 			set { m_Link.SetPath( value ); }
 		}
@@ -256,10 +327,10 @@ namespace Blitzy.Model.Shell
 		/// <summary>
 		///   Saves the shortcut to disk.
 		/// </summary>
-		public bool Save()
+		public void Save()
 		{
 			IPersistFile pf = (IPersistFile)m_Link;
-			return pf.Save( m_sPath, true ) == 0;
+			pf.Save( m_sPath, true );
 		}
 
 		#region Native Win32 API functions

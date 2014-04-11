@@ -4,12 +4,37 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Blitzy.Tests
 {
 	internal static class Extensions
 	{
+		public static Task<T> StartSTATask<T>( this Func<T> func )
+		{
+			var tcs = new TaskCompletionSource<T>();
+			Thread thread = new Thread( () =>
+			{
+				if( Thread.CurrentThread.GetApartmentState() != ApartmentState.STA )
+				{
+					throw new InvalidOperationException( "STAThread is not in STA Apartment" );
+				}
+
+				try
+				{
+					tcs.SetResult( func() );
+				}
+				catch( Exception e )
+				{
+					tcs.SetException( e );
+				}
+			} );
+			thread.SetApartmentState( ApartmentState.STA );
+			thread.Start();
+			return tcs.Task;
+		}
+
 		internal static object GetDefaultValue( this Type type )
 		{
 			if( type.IsValueType )

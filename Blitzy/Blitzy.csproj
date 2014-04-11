@@ -149,6 +149,7 @@
     <Compile Include="Plugin\System\Blitzy.cs" />
     <Compile Include="Plugin\System\Calcy.cs" />
     <Compile Include="Plugin\System\Medy.cs" />
+    <Compile Include="Plugin\System\Putty.cs" />
     <Compile Include="Plugin\System\Shelly.cs" />
     <Compile Include="Plugin\System\Winy.cs" />
     <Compile Include="RuntimeConfig.cs" />
@@ -205,11 +206,13 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ViewServices\DialogServiceManager.cs" />
+    <Compile Include="ViewServices\FileDialogParameters.cs" />
     <Compile Include="ViewServices\IDataManipulationService.cs" />
     <Compile Include="ViewServices\IDialogService.cs" />
     <Compile Include="ViewServices\MessageBoxParameter.cs" />
     <Compile Include="ViewServices\MessageBoxService.cs" />
     <Compile Include="ViewServices\ModelManipulationService.cs" />
+    <Compile Include="ViewServices\OpenFileService.cs" />
     <Compile Include="ViewServices\SelectFolderService.cs" />
     <Compile Include="ViewServices\SettingsService.cs" />
     <Compile Include="ViewServices\TextInputParameter.cs" />
