@@ -18,8 +18,8 @@ namespace Blitzy.ViewModel
 		public PuttySettingsViewModel( SettingsViewModel baseVM )
 			: base( baseVM )
 		{
-			PuttyPath = BaseVM.Settings.GetPluginSetting<string>( Putty.GuidString, Putty.PathKey );
-			ImportSessions = BaseVM.Settings.GetPluginSetting<bool>( Putty.GuidString, Putty.ImportKey );
+			_PuttyPath = BaseVM.Settings.GetPluginSetting<string>( Putty.GuidString, Putty.PathKey );
+			_ImportSessions = BaseVM.Settings.GetPluginSetting<bool>( Putty.GuidString, Putty.ImportKey );
 		}
 
 		#endregion Constructor

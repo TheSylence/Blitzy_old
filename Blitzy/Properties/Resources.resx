@@ -373,4 +373,16 @@
   <data name="ExeFileFilter" xml:space="preserve">
     <value>Executable files|*.exe</value>
   </data>
+  <data name="PuttyDescription" xml:space="preserve">
+    <value>Connect to a remote host using PuTTY</value>
+  </data>
+  <data name="ResetHistory" xml:space="preserve">
+    <value>Reset command history</value>
+  </data>
+  <data name="Programming" xml:space="preserve">
+    <value>Programming</value>
+  </data>
+  <data name="Testing" xml:space="preserve">
+    <value>Testing</value>
+  </data>
 </root>

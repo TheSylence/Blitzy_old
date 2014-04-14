@@ -20,7 +20,7 @@ namespace Blitzy.ViewModel
 		{
 			Log = LogManager.GetLogger( GetType() );
 			IsDisposed = false;
-			RegisterMessages();
+			ObjectsToDispose = new Stack<IDisposable>();
 		}
 
 		#endregion Constructor
@@ -78,6 +78,11 @@ namespace Blitzy.ViewModel
 
 		public virtual void Reset()
 		{
+			if( !MessagesRegistered )
+			{
+				RegisterMessages();
+				MessagesRegistered = true;
+			}
 		}
 
 		protected void Close( bool? result = null, int maxWindowCount = int.MaxValue )
@@ -199,7 +204,8 @@ namespace Blitzy.ViewModel
 
 		#region Attributes
 
-		internal Stack<IDisposable> ObjectsToDispose = new Stack<IDisposable>();
+		internal Stack<IDisposable> ObjectsToDispose;
+		private bool MessagesRegistered;
 
 		#endregion Attributes
 

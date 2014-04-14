@@ -19,7 +19,7 @@ namespace Blitzy.Plugin.System
 
 		public void ClearCache()
 		{
-			RootItem = CommandItem.Create( "ssh", "Connect to a remote host using putty", this, "", false, null, new[] { "putty" } );
+			RootItem = CommandItem.Create( "ssh", "PuttyDescription".Localize(), this, PuttyPath, false, null, new[] { "putty" } );
 		}
 
 		public bool ExecuteCommand( CommandItem command, IList<string> input, out string message )
@@ -68,7 +68,7 @@ namespace Blitzy.Plugin.System
 					{
 						foreach( string str in puttyKey.GetSubKeyNames().OrderBy( s => s.GetDiceCoefficent( input[0] ) ) )
 						{
-							yield return CommandItem.Create( str, string.Format( CultureInfo.CurrentUICulture, "Open saved session '{0}'", str ), this, "", true, RootItem );
+							yield return CommandItem.Create( str, string.Format( CultureInfo.CurrentUICulture, "Open saved session '{0}'", str ), this, PuttyPath, true, RootItem );
 						}
 					}
 				}

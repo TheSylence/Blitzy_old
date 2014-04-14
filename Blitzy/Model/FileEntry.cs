@@ -50,6 +50,8 @@ namespace Blitzy.Model
 			return hash;
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Security",
+			"CA2100:Review SQL queries for security vulnerabilities", Justification = "Query is prepared" )]
 		internal static void CreateBatchStatement( SQLiteCommand cmd, IEnumerable<FileEntry> entries )
 		{
 			StringBuilder sb = new StringBuilder();

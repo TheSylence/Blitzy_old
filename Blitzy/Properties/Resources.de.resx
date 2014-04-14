@@ -369,4 +369,16 @@
   <data name="ExeFileFilter" xml:space="preserve">
     <value>Ausführbare Dateien|*.exe</value>
   </data>
+  <data name="PuttyDescription" xml:space="preserve">
+    <value>Verbindung mit einem entfernten Computer über PuTTY herstellen</value>
+  </data>
+  <data name="ResetHistory" xml:space="preserve">
+    <value>Zuletzt verwendete Befehle zurücksetzen</value>
+  </data>
+  <data name="Programming" xml:space="preserve">
+    <value>Programmierung</value>
+  </data>
+  <data name="Testing" xml:space="preserve">
+    <value>Tests</value>
+  </data>
 </root>

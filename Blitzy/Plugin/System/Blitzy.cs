@@ -37,6 +37,7 @@ namespace Blitzy.Plugin.System
 			yield return CommandItem.Create( "reset", "ResetCommand".Localize(), this, "Reset.png" );
 			yield return CommandItem.Create( "catalog", "RebuildCatalog".Localize(), this, "Rebuild.png" );
 			yield return CommandItem.Create( "version", "VersionCheck".Localize(), this, "Version.png" );
+			yield return CommandItem.Create( "history", "ResetHistory".Localize(), this, "History.png" );
 
 #if DEBUG
 			yield return CommandItem.Create( "test", "Test Command", this );

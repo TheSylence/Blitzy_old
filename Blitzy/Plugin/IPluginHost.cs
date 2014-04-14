@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,6 +20,8 @@ namespace Blitzy.Plugin
 		#endregion Methods
 
 		#region Properties
+
+		DbConnection Database { get; }
 
 		ISettings Settings { get; }
 

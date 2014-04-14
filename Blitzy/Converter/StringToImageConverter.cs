@@ -28,7 +28,7 @@ namespace Blitzy.Converter
 			if( str == null )
 				return null;
 
-			if( str.Contains( ":" ) )
+			if( str.Contains( ":" ) && !Uri.IsWellFormedUriString( str, UriKind.Absolute ) )
 			{
 				str = ShellLinkHelper.ResolveX64Path( str );
 
@@ -94,6 +94,15 @@ namespace Blitzy.Converter
 						img = new BitmapImage();
 						img.BeginInit();
 						img.StreamSource = manifest;
+						img.EndInit();
+						return img;
+					}
+
+					if( Uri.IsWellFormedUriString( str, UriKind.Absolute ) )
+					{
+						img = new BitmapImage();
+						img.BeginInit();
+						img.UriSource = new Uri( str, UriKind.Absolute );
 						img.EndInit();
 						return img;
 					}

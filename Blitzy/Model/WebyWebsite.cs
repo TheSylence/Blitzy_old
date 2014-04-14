@@ -38,7 +38,7 @@ namespace Blitzy.Model
 				param.Value = ID;
 				cmd.Parameters.Add( param );
 
-				cmd.CommandText = "SELECT Name, Description, URL FROM weby WHERE WebyID = @webyID;";
+				cmd.CommandText = "SELECT Name, Description, URL, Icon FROM weby WHERE WebyID = @webyID;";
 				cmd.Prepare();
 
 				using( SQLiteDataReader reader = cmd.ExecuteReader() )
@@ -51,6 +51,10 @@ namespace Blitzy.Model
 					Name = reader.GetString( 0 );
 					Description = reader.GetString( 1 );
 					URL = reader.GetString( 2 );
+					if( !reader.IsDBNull( 3 ) )
+					{
+						Icon = reader.GetString( 3 );
+					}
 				}
 			}
 
@@ -81,13 +85,18 @@ namespace Blitzy.Model
 				param.Value = URL;
 				cmd.Parameters.Add( param );
 
+				param = cmd.CreateParameter();
+				param.ParameterName = "icon";
+				param.Value = Icon;
+				cmd.Parameters.Add( param );
+
 				if( ExistsInDatabase )
 				{
-					cmd.CommandText = "UPDATE weby SET Name = @Name, Description = @Description, URL = @URL WHERE WebyID = @webyID";
+					cmd.CommandText = "UPDATE weby SET Name = @Name, Description = @Description, URL = @URL, Icon = @icon WHERE WebyID = @webyID";
 				}
 				else
 				{
-					cmd.CommandText = "INSERT INTO weby (WebyID, Name, Description, URL) VALUES (@webyID, @Name, @Description, @URL);";
+					cmd.CommandText = "INSERT INTO weby (WebyID, Name, Description, URL, Icon) VALUES (@webyID, @Name, @Description, @URL, @icon);";
 				}
 
 				cmd.Prepare();
@@ -102,6 +111,7 @@ namespace Blitzy.Model
 		#region Properties
 
 		private string _Description;
+		private string _Icon;
 		private int _ID;
 		private string _Name;
 		private string _URL;
@@ -123,6 +133,26 @@ namespace Blitzy.Model
 				RaisePropertyChanging( () => Description );
 				_Description = value;
 				RaisePropertyChanged( () => Description );
+			}
+		}
+
+		public string Icon
+		{
+			get
+			{
+				return _Icon;
+			}
+
+			set
+			{
+				if( _Icon == value )
+				{
+					return;
+				}
+
+				RaisePropertyChanging( () => Icon );
+				_Icon = value;
+				RaisePropertyChanged( () => Icon );
 			}
 		}
 

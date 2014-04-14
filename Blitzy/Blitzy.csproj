@@ -16,6 +16,10 @@
     <MSBuildCommunityTasksPath>$(SolutionDir)\.build</MSBuildCommunityTasksPath>
     <UICulture>en</UICulture>
     <TargetFrameworkProfile />
+    <SccProjectName>Svn</SccProjectName>
+    <SccLocalPath>Svn</SccLocalPath>
+    <SccAuxPath>Svn</SccAuxPath>
+    <SccProvider>SubversionScc</SccProvider>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -27,6 +31,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -64,6 +69,7 @@
     </Reference>
     <Reference Include="System.Drawing" />
     <Reference Include="System.Management" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\MvvmLightLibs.4.2.30.0\lib\net45\System.Windows.Interactivity.dll</HintPath>
@@ -134,6 +140,7 @@
     <Compile Include="Model\DatabaseUpgrader.cs" />
     <Compile Include="Model\FileEntry.cs" />
     <Compile Include="Model\Folder.cs" />
+    <Compile Include="Model\HistoryManager.cs" />
     <Compile Include="Model\ModelBase.cs" />
     <Compile Include="Model\Operators.cs" />
     <Compile Include="Model\QueryBuilder.cs" />
@@ -154,6 +161,7 @@
     <Compile Include="Plugin\System\Medy.cs" />
     <Compile Include="Plugin\System\Putty.cs" />
     <Compile Include="Plugin\System\Shelly.cs" />
+    <Compile Include="Plugin\System\Weby.cs" />
     <Compile Include="Plugin\System\Winy.cs" />
     <Compile Include="RuntimeConfig.cs" />
     <Compile Include="SingleInstance.cs" />
@@ -287,6 +295,8 @@
     <EmbeddedResource Include="Resources\Icons\MedyPrev.png" />
     <EmbeddedResource Include="Resources\Icons\MedyVoldn.png" />
     <EmbeddedResource Include="Resources\Icons\MedyVolup.png" />
+    <EmbeddedResource Include="Resources\Icons\History.png" />
+    <EmbeddedResource Include="Resources\Icons\Version.png" />
     <Content Include="x64\SQLite.Interop.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

@@ -143,6 +143,7 @@ namespace Blitzy
 	}
 
 	[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1064:ExceptionsShouldBePublic" )]
+	[Serializable]
 	internal class HotKeyAlreadyRegisteredException : Exception
 	{
 		public HotKeyAlreadyRegisteredException( string message, HotKey hotKey )

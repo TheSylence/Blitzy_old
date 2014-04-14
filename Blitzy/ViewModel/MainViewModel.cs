@@ -19,7 +19,7 @@ using GalaSoft.MvvmLight.Threading;
 
 namespace Blitzy.ViewModel
 {
-	public class MainViewModel : ViewModelBaseEx, IPluginHost
+	public sealed class MainViewModel : ViewModelBaseEx, IPluginHost
 	{
 		#region Constructor
 
@@ -46,6 +46,9 @@ namespace Blitzy.ViewModel
 			CmdManager = new Blitzy.Model.CommandManager( Database.Connection, Settings, Plugins );
 
 			Builder = new CatalogBuilder( Settings );
+			History = new HistoryManager( Settings );
+
+			Reset();
 		}
 
 		protected override void RegisterMessages()
@@ -93,6 +96,26 @@ namespace Blitzy.ViewModel
 				case "quit":
 					ShouldClose = true;
 					DispatcherHelper.CheckBeginInvokeOnUI( () => Close( true ) );
+					break;
+
+				case "catalog":
+					// TODO: Rebuild catalog
+					break;
+
+				case "version":
+					// TODO: Check for new version
+					break;
+
+				case "reset":
+					// TODO: Reset execution count
+					break;
+
+				case "history":
+					History.Clear();
+					break;
+
+				default:
+					LogInfo( "Unhandled internal command: {0}", command );
 					break;
 			}
 		}
@@ -191,9 +214,17 @@ namespace Blitzy.ViewModel
 
 		internal bool OnKeyDownArrow()
 		{
-			int idx = CmdManager.Items.IndexOf( CmdManager.CurrentItem );
-			SelectedCommandIndex = Math.Min( CmdManager.Items.Count, idx + 1 );
-			return true;
+			if( Keyboard.IsKeyDown( Key.LeftCtrl ) || Keyboard.IsKeyDown( Key.RightCtrl ) )
+			{
+				// TODO: History
+				return true;
+			}
+			else
+			{
+				int idx = CmdManager.Items.IndexOf( CmdManager.CurrentItem );
+				SelectedCommandIndex = Math.Min( CmdManager.Items.Count, idx + 1 );
+				return true;
+			}
 		}
 
 		internal bool OnKeyEscape()
@@ -254,9 +285,17 @@ namespace Blitzy.ViewModel
 
 		internal bool OnKeyUpArrow()
 		{
-			int idx = CmdManager.Items.IndexOf( CmdManager.CurrentItem );
-			SelectedCommandIndex = Math.Max( 0, idx - 1 );
-			return true;
+			if( Keyboard.IsKeyDown( Key.LeftCtrl ) || Keyboard.IsKeyDown( Key.RightCtrl ) )
+			{
+				// TODO: History
+				return true;
+			}
+			else
+			{
+				int idx = CmdManager.Items.IndexOf( CmdManager.CurrentItem );
+				SelectedCommandIndex = Math.Max( 0, idx - 1 );
+				return true;
+			}
 		}
 
 		private bool CanExecuteExecuteCommand()
@@ -329,7 +368,7 @@ namespace Blitzy.ViewModel
 			string itemName = tmp.Name;
 
 			CmdManager.UpdateExecutionCount( itemName, item.Plugin.PluginID );
-			// TODO: History
+			History.AddItem( CommandInput );
 
 			CommandInput = null;
 			CommandInfo = null;
@@ -389,7 +428,8 @@ namespace Blitzy.ViewModel
 
 		private void ExecuteSettingsCommand()
 		{
-			DialogServiceManager.Show<SettingsService>( Settings );
+			SettingsServiceParameters args = new SettingsServiceParameters( Settings, Builder );
+			DialogServiceManager.Show<SettingsService>( args );
 		}
 
 		#endregion Commands
@@ -444,6 +484,8 @@ namespace Blitzy.ViewModel
 			}
 		}
 
+		public HistoryManager History { get; private set; }
+
 		public int SelectedCommandIndex
 		{
 			get
@@ -484,6 +526,11 @@ namespace Blitzy.ViewModel
 		#endregion Attributes
 
 		#region IPluginHost
+
+		System.Data.Common.DbConnection IPluginHost.Database
+		{
+			get { return Settings.Connection; }
+		}
 
 		ISettings IPluginHost.Settings
 		{

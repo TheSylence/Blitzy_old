@@ -33,6 +33,8 @@ namespace Blitzy.ViewModel
 			{
 				BlitzyLicense = reader.ReadToEnd();
 			}
+
+			BuildDate = Assembly.GetExecutingAssembly().LinkerTimestamp();
 		}
 
 		protected override void RegisterMessages()
@@ -69,6 +71,7 @@ namespace Blitzy.ViewModel
 			PeriodicallyRebuild = Settings.GetValue<int>( SystemSetting.AutoCatalogRebuild ) > 0;
 			RebuildOnChange = Settings.GetValue<bool>( SystemSetting.RebuildCatalogOnChanges );
 			RebuildTime = Settings.GetValue<int>( SystemSetting.AutoCatalogRebuild );
+			BackupShortcuts = Settings.GetValue<bool>( SystemSetting.BackupShortcuts );
 		}
 
 		private void OnVersionCheckComplete( VersionCheckMessage msg )
@@ -354,6 +357,7 @@ namespace Blitzy.ViewModel
 			Settings.SetValue( SystemSetting.KeepCommand, KeepInput );
 			Settings.SetValue( SystemSetting.AutoCatalogRebuild, RebuildTime );
 			Settings.SetValue( SystemSetting.RebuildCatalogOnChanges, RebuildOnChange );
+			Settings.SetValue( SystemSetting.BackupShortcuts, BackupShortcuts );
 
 			Settings.Save();
 			WinySettings.Save();
@@ -379,6 +383,7 @@ namespace Blitzy.ViewModel
 		#region SettingItems
 
 		private bool _BackupShortcuts;
+		private DateTime _BuildDate;
 		private bool _CloseOnCommand;
 		private bool _CloseOnEscape;
 		private bool _CloseOnFocusLost;
@@ -407,6 +412,26 @@ namespace Blitzy.ViewModel
 				RaisePropertyChanging( () => BackupShortcuts );
 				_BackupShortcuts = value;
 				RaisePropertyChanged( () => BackupShortcuts );
+			}
+		}
+
+		public DateTime BuildDate
+		{
+			get
+			{
+				return _BuildDate;
+			}
+
+			set
+			{
+				if( _BuildDate == value )
+				{
+					return;
+				}
+
+				RaisePropertyChanging( () => BuildDate );
+				_BuildDate = value;
+				RaisePropertyChanged( () => BuildDate );
 			}
 		}
 

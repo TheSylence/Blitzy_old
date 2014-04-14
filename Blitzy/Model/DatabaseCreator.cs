@@ -13,6 +13,8 @@ namespace Blitzy.Model
 {
 	internal static class DatabaseCreator
 	{
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Security",
+			"CA2100:Review SQL queries for security vulnerabilities", Justification = "String is not affacted by user input" )]
 		internal static void CreateDatabase( SQLiteConnection connection )
 		{
 			StringBuilder sb = new StringBuilder();
@@ -91,6 +93,7 @@ namespace Blitzy.Model
 					{ "Name", "VARCHAR(50) NOT NULL" },
 					{ "Description", "VARCHAR(255) NOT NULL" },
 					{ "Url", "TEXT NOT NULL" },
+					{ "Icon", "TEXT" }
 				} ) );
 
 			Type type = typeof( SystemSetting );

@@ -22,7 +22,7 @@ namespace Blitzy.ViewModel
 				MainVM = vmloc.Main;
 			}
 
-			IconSource = "/Blitzy;component/Resources/TrayIcon.ico";
+			_IconSource = "/Blitzy;component/Resources/TrayIcon.ico";
 		}
 
 		protected override void RegisterMessages()
@@ -161,7 +161,8 @@ namespace Blitzy.ViewModel
 		{
 			get
 			{
-				return MainVM.Settings.GetValue<bool>( Model.SystemSetting.TrayIcon );
+				bool visible = MainVM.Settings.GetValue<bool>( Model.SystemSetting.TrayIcon );
+				return visible;
 			}
 		}
 

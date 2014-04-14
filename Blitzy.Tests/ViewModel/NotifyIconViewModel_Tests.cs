@@ -22,6 +22,7 @@ namespace Blitzy.Tests.ViewModel
 		{
 			NotifyIconViewModel vm = new NotifyIconViewModel();
 			vm.MainVM = new MainViewModel();
+			vm.Reset();
 
 			Messenger.Default.Send<CommandMessage>( new CommandMessage( CommandStatus.Finished, null, null ) );
 			Assert.IsTrue( vm.IconSource.Contains( "TrayIcon.ico" ) );

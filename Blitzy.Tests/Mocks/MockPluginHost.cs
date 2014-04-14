@@ -11,6 +11,11 @@ namespace Blitzy.Tests.Mocks
 {
 	internal class MockPluginHost : IPluginHost
 	{
+		public System.Data.Common.DbConnection Database
+		{
+			get { throw new NotImplementedException(); }
+		}
+
 		public ISettings Settings
 		{
 			get { throw new NotImplementedException(); }

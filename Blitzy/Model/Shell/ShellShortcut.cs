@@ -161,7 +161,7 @@ namespace Blitzy.Model.Shell
 
 				m_Link.GetIconLocation( sb, sb.Capacity, out nIconIdx );
 				hInst = Marshal.GetHINSTANCE( this.GetType().Module );
-				hIcon = Native.ExtractIcon( hInst, sb.ToString(), nIconIdx );
+				hIcon = NativeMethods.ExtractIcon( hInst, sb.ToString(), nIconIdx );
 				if( hIcon == IntPtr.Zero )
 					return null;
 
@@ -169,7 +169,7 @@ namespace Blitzy.Model.Shell
 				ico = Icon.FromHandle( hIcon );
 				clone = (Icon)ico.Clone();
 				ico.Dispose();
-				Native.DestroyIcon( hIcon );
+				NativeMethods.DestroyIcon( hIcon );
 				return clone;
 			}
 		}
@@ -312,16 +312,10 @@ namespace Blitzy.Model.Shell
 			set { m_Link.SetWorkingDirectory( value ); }
 		}
 
-		//
-		//  IDisplosable implementation
-		//
 		public void Dispose()
 		{
-			if( m_Link != null )
-			{
-				Marshal.ReleaseComObject( m_Link );
-				m_Link = null;
-			}
+			Dispose( true );
+			GC.SuppressFinalize( this );
 		}
 
 		/// <summary>
@@ -333,17 +327,16 @@ namespace Blitzy.Model.Shell
 			pf.Save( m_sPath, true );
 		}
 
-		#region Native Win32 API functions
-
-		private class Native
+		//
+		//  IDisplosable implementation
+		//
+		private void Dispose( bool disposing )
 		{
-			[DllImport( "user32.dll" )]
-			public static extern bool DestroyIcon( IntPtr hIcon );
-
-			[DllImport( "shell32.dll", CharSet = CharSet.Auto )]
-			public static extern IntPtr ExtractIcon( IntPtr hInst, string lpszExeFileName, int nIconIndex );
+			if( m_Link != null )
+			{
+				Marshal.ReleaseComObject( m_Link );
+				m_Link = null;
+			}
 		}
-
-		#endregion Native Win32 API functions
 	}
 }

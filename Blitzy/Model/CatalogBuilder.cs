@@ -23,6 +23,7 @@ namespace Blitzy.Model
 
 		public CatalogBuilder( Settings settings )
 		{
+			CanProcess = ToDispose( new AutoResetEvent( false ) );
 			Settings = settings;
 
 			IsRunning = true;
@@ -310,7 +311,7 @@ namespace Blitzy.Model
 		#region Attributes
 
 		private readonly Settings Settings;
-		private AutoResetEvent CanProcess = new AutoResetEvent( false );
+		private AutoResetEvent CanProcess;
 		private List<string> FilesToProcess = new List<string>( 16384 );
 		private bool IsRunning;
 		private object LockObject = new object();

@@ -111,6 +111,7 @@ namespace Blitzy.Tests.ViewModel
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void LatestVersionTest()
 		{
+			VM.Reset();
 			AutoResetEvent evt = new AutoResetEvent( false );
 			Messenger.Default.Register<VersionCheckMessage>( this, ( msg ) =>
 				{

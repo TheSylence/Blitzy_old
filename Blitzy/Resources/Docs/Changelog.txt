@@ -3,7 +3,16 @@
 === Complete rewrite of the software ===
 * Systemplugins are now built into the software
 * Reorganized settings menu
+* Fixed some issues in calcy
+* Cleaned up Plugin API
+* Plugins can now be localized
+* Changed license to a more software like one
+* Plugins without settings are now longer visible in settings menu
++ Catalog building progress can now be seen in settings
 + Added feature to exclude files from folders
++ Weby websites can now display a favicon
++ Added command history
+- Removed URL shortening services
 
 Version 0.8.29
 ----------------------

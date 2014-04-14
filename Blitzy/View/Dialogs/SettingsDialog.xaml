@@ -251,6 +251,30 @@
 						</TabControl>
 					</TabItem>
 					<TabItem Header="{lex:Loc Credits}">
+						<ScrollViewer>
+							<StackPanel>
+								<TextBlock TextAlignment="Center" Name="txtInfo">
+										<Run>Blitzy Version</Run><Run Text=" " /><Run Text="{Binding CurrentVersion}" /><LineBreak />
+										<Run>Copyright © 2012-2014 btbsoft.org</Run><LineBreak />
+										<Run>Build on</Run><Run Text=" " /><Run Text="{Binding BuildDate}" /><LineBreak />
+								</TextBlock>
+								<Label />
+								<Label />
+								<Label Content="{lex:Loc Programming}" HorizontalAlignment="Center" FontWeight="Bold" />
+								<TextBlock TextAlignment="Center">
+										Matthias Specht
+								</TextBlock>
+								<Label />
+
+								<Label Content="{lex:Loc Testing}" HorizontalAlignment="Center" FontWeight="Bold" />
+								<TextBlock TextAlignment="Center">
+										Sebastian Neumann<LineBreak />
+										Julia Eck
+								</TextBlock>
+								<Label />
+								<Label />
+							</StackPanel>
+						</ScrollViewer>
 					</TabItem>
 				</TabControl>
 			</TabItem>

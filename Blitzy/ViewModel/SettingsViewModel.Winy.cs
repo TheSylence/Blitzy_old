@@ -16,9 +16,9 @@ namespace Blitzy.ViewModel
 		public WinySettingsViewModel( SettingsViewModel baseVM )
 			: base( baseVM )
 		{
-			LogoffConfirmation = BaseVM.Settings.GetPluginSetting<bool>( Winy.GuidString, Winy.LogoffKey );
-			ShutdownConfirmation = BaseVM.Settings.GetPluginSetting<bool>( Winy.GuidString, Winy.ShutdownKey );
-			RestartConfirmation = BaseVM.Settings.GetPluginSetting<bool>( Winy.GuidString, Winy.RestartKey );
+			_LogoffConfirmation = BaseVM.Settings.GetPluginSetting<bool>( Winy.GuidString, Winy.LogoffKey );
+			_ShutdownConfirmation = BaseVM.Settings.GetPluginSetting<bool>( Winy.GuidString, Winy.ShutdownKey );
+			_RestartConfirmation = BaseVM.Settings.GetPluginSetting<bool>( Winy.GuidString, Winy.RestartKey );
 		}
 
 		#endregion Constructor

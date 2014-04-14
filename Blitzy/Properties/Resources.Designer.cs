@@ -565,11 +565,29 @@ namespace Blitzy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Programming.
+        /// </summary>
+        public static string Programming {
+            get {
+                return ResourceManager.GetString("Programming", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Putty.
         /// </summary>
         public static string Putty {
             get {
                 return ResourceManager.GetString("Putty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Connect to a remote host using PuTTY.
+        /// </summary>
+        public static string PuttyDescription {
+            get {
+                return ResourceManager.GetString("PuttyDescription", resourceCulture);
             }
         }
         
@@ -633,6 +651,15 @@ namespace Blitzy.Properties {
         public static string ResetCommand {
             get {
                 return ResourceManager.GetString("ResetCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reset command history.
+        /// </summary>
+        public static string ResetHistory {
+            get {
+                return ResourceManager.GetString("ResetHistory", resourceCulture);
             }
         }
         
@@ -732,6 +759,15 @@ namespace Blitzy.Properties {
         public static string SystemPlugins {
             get {
                 return ResourceManager.GetString("SystemPlugins", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Testing.
+        /// </summary>
+        public static string Testing {
+            get {
+                return ResourceManager.GetString("Testing", resourceCulture);
             }
         }
         
