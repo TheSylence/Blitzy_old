@@ -4,8 +4,10 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data.SQLite;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using GalaSoft.MvvmLight;
 
@@ -38,6 +40,33 @@ namespace Blitzy.Model
 				cmd.Prepare();
 
 				cmd.ExecuteNonQuery();
+			}
+		}
+
+		public IEnumerable<string> GetFiles()
+		{
+			SearchOption options = IsRecursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
+
+			foreach( string rule in Rules )
+			{
+				string[] fileList = new string[0];
+
+				try
+				{
+					fileList = Directory.GetFiles( Path, rule, options );
+				}
+				catch( Exception ex )
+				{
+					LogError( "While loading files: {0}", ex );
+				}
+
+				foreach( string file in fileList )
+				{
+					if( !Excludes.Any( e => IsExcluded( file, e ) ) )
+					{
+						yield return file;
+					}
+				}
 			}
 		}
 
@@ -210,6 +239,13 @@ namespace Blitzy.Model
 			}
 
 			ExistsInDatabase = true;
+		}
+
+		private static bool IsExcluded( string path, string exclude )
+		{
+			Regex ex = new Regex( exclude.WildcardToRegex() );
+			path = System.IO.Path.GetFileName( path );
+			return ex.IsMatch( path );
 		}
 
 		#endregion Methods

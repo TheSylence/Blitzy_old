@@ -20,9 +20,9 @@ namespace Blitzy.Plugin.System
 		public void ClearCache()
 		{
 			Confirmations = new Dictionary<string, bool>();
-			Confirmations.Add( "shutdown", Settings.GetSystemSetting<bool>( SystemSetting.ConfirmShutdown ) );
-			Confirmations.Add( "restart", Settings.GetSystemSetting<bool>( SystemSetting.ConfirmRestart ) );
-			Confirmations.Add( "logoff", Settings.GetSystemSetting<bool>( SystemSetting.ConfirmLogoff ) );
+			Confirmations.Add( "shutdown", Settings.GetValue<bool>( this, ShutdownKey ) );
+			Confirmations.Add( "restart", Settings.GetValue<bool>( this, RestartKey ) );
+			Confirmations.Add( "logoff", Settings.GetValue<bool>( this, LogoffKey ) );
 		}
 
 		public bool ExecuteCommand( CommandItem command, IList<string> input, out string message )
@@ -79,6 +79,11 @@ namespace Blitzy.Plugin.System
 		public bool Load( IPluginHost host, string oldVersion = null )
 		{
 			Settings = host.Settings;
+			if( oldVersion == null )
+			{
+				SetDefaultSettings( Settings );
+			}
+
 			ClearCache();
 			return true;
 		}
@@ -87,7 +92,23 @@ namespace Blitzy.Plugin.System
 		{
 		}
 
+		internal void SetDefaultSettings( ISettings settings )
+		{
+			settings.SetValue( this, LogoffKey, true );
+			settings.SetValue( this, ShutdownKey, true );
+			settings.SetValue( this, RestartKey, true );
+		}
+
 		#endregion Methods
+
+		#region Constants
+
+		internal const string GuidString = "26F7306C-AF81-4979-9F5B-1857EB9387BF";
+		internal const string LogoffKey = "ConfirmLogoff";
+		internal const string RestartKey = "ConfirmRestart";
+		internal const string ShutdownKey = "ConfirmShutdown";
+
+		#endregion Constants
 
 		#region Properties
 
@@ -119,7 +140,7 @@ namespace Blitzy.Plugin.System
 			{
 				if( !GUID.HasValue )
 				{
-					GUID = Guid.Parse( "26F7306C-AF81-4979-9F5B-1857EB9387BF" );
+					GUID = Guid.Parse( GuidString );
 				}
 
 				return GUID.Value;

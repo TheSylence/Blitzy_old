@@ -97,6 +97,7 @@
     <Compile Include="Mocks\Services\MessageBoxServiceMock.cs" />
     <Compile Include="Mocks\Services\StringServiceMock.cs" />
     <Compile Include="Mocks\Services\TextInputServiceMock.cs" />
+    <Compile Include="Model\CatalogBuilder_Tests.cs" />
     <Compile Include="Model\CommandItem_Tests.cs" />
     <Compile Include="Model\CommandName_Tests.cs" />
     <Compile Include="Model\Folder_Tests.cs" />

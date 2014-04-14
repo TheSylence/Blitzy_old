@@ -33,27 +33,27 @@
 					<StackPanel Orientation="Vertical">
 						<GroupBox Header="{lex:Loc Misc}">
 							<StackPanel Orientation="Vertical" Margin="5">
-								<CheckBox Content="{lex:Loc AutomaticallyCheckForUpdates}" />
-								<CheckBox Content="{lex:Loc ShowTrayIcon}" />
+								<CheckBox Content="{lex:Loc AutomaticallyCheckForUpdates}" IsChecked="{Binding UpdateCheck, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+								<CheckBox Content="{lex:Loc ShowTrayIcon}" IsChecked="{Binding TrayIcon, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
 							</StackPanel>
 						</GroupBox>
 						<GroupBox Header="{lex:Loc Behavior}">
 							<StackPanel Orientation="Vertical" Margin="5">
-								<CheckBox Content="{lex:Loc CloseWhenFocusLost}" />
-								<CheckBox Content="{lex:Loc CloseOnEscape}" />
-								<CheckBox Content="{lex:Loc CloseAfterCommandExecution}" />
-								<CheckBox Content="{lex:Loc KeppInputContent}" />
-								<CheckBox Content="{lex:Loc AlawysStayOnTop}" />
+								<CheckBox Content="{lex:Loc CloseWhenFocusLost}" IsChecked="{Binding CloseOnFocusLost, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+								<CheckBox Content="{lex:Loc CloseOnEscape}" IsChecked="{Binding CloseOnEscape, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+								<CheckBox Content="{lex:Loc CloseAfterCommandExecution}" IsChecked="{Binding CloseOnCommand, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+								<CheckBox Content="{lex:Loc KeppInputContent}" IsChecked="{Binding KeepInput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+								<CheckBox Content="{lex:Loc AlawysStayOnTop}" IsChecked="{Binding StayOnTop, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 							</StackPanel>
 						</GroupBox>
 						<GroupBox Header="{lex:Loc Catalog}">
 							<StackPanel Orientation="Vertical" Margin="5">
-								<CheckBox Content="{lex:Loc RebuildCatalogOnChangedSettings}" />
-								<CheckBox Content="{lex:Loc MakeBackupOfShortcuts}" />
-								<CheckBox Content="{lex:Loc PeriodicallyRebuildCatalog}" />
+								<CheckBox Content="{lex:Loc RebuildCatalogOnChangedSettings}" IsChecked="{Binding RebuildOnChange, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+								<CheckBox Content="{lex:Loc MakeBackupOfShortcuts}" IsChecked="{Binding BackupShortcuts, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+								<CheckBox Content="{lex:Loc PeriodicallyRebuildCatalog}" IsChecked="{Binding PeriodicallyRebuild, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 								<StackPanel Orientation="Horizontal">
 									<TextBlock Text="Rebuild every" VerticalAlignment="Center" />
-									<xctk:IntegerUpDown Margin="5,0" Minimum="1" Maximum="10080" Width="50" VerticalAlignment="Center" />
+									<xctk:IntegerUpDown Margin="5,0" Minimum="1" Maximum="10080" Width="50" VerticalAlignment="Center" Value="{Binding RebuildTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 									<TextBlock Text="minutes" VerticalAlignment="Center" />
 								</StackPanel>
 							</StackPanel>
@@ -142,8 +142,10 @@
 					<DockPanel Grid.Row="3" LastChildFill="True" Grid.ColumnSpan="2">
 						<Button Content="{lex:Loc UpdateCatalog}" DockPanel.Dock="Right" Command="{Binding UpdateCatalogCommand}" />
 						<Grid>
-							<ProgressBar VerticalAlignment="Center" MinHeight="20" />
-							<TextBlock Text="{Binding CatalogStatus}" VerticalAlignment="Center" HorizontalAlignment="Center" />
+							<ProgressBar VerticalAlignment="Center" MinHeight="20" IsIndeterminate="{Binding IsCatalogBuilding}" />
+							<StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+								<TextBlock Text="{Binding FilesProcessed}" />
+							</StackPanel>
 						</Grid>
 					</DockPanel>
 				</Grid>

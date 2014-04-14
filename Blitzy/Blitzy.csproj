@@ -120,16 +120,19 @@
     <Compile Include="HotKey.cs" />
     <Compile Include="LogHelper.cs" />
     <Compile Include="BaseObject.cs" />
+    <Compile Include="Messages\CatalogStatusMessage.cs" />
     <Compile Include="Messages\CommandMessage.cs" />
     <Compile Include="Messages\InputCaretPositionMessage.cs" />
     <Compile Include="Messages\InternalCommandMessage.cs" />
     <Compile Include="Messages\VersionCheckMessage.cs" />
+    <Compile Include="Model\CatalogBuilder.cs" />
     <Compile Include="Model\CommandItem.cs" />
     <Compile Include="Model\CommandManager.cs" />
     <Compile Include="Model\CommandName.cs" />
     <Compile Include="Model\Database.cs" />
     <Compile Include="Model\DatabaseCreator.cs" />
     <Compile Include="Model\DatabaseUpgrader.cs" />
+    <Compile Include="Model\FileEntry.cs" />
     <Compile Include="Model\Folder.cs" />
     <Compile Include="Model\ModelBase.cs" />
     <Compile Include="Model\Operators.cs" />
@@ -215,6 +218,7 @@
     <Compile Include="ViewServices\OpenFileService.cs" />
     <Compile Include="ViewServices\SelectFolderService.cs" />
     <Compile Include="ViewServices\SettingsService.cs" />
+    <Compile Include="ViewServices\SettingsServiceParameters.cs" />
     <Compile Include="ViewServices\TextInputParameter.cs" />
     <Compile Include="ViewServices\TextInputService.cs" />
     <Compile Include="ViewServices\WebyWebsiteService.cs" />

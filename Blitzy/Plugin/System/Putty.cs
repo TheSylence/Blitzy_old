@@ -60,7 +60,7 @@ namespace Blitzy.Plugin.System
 
 		public IEnumerable<CommandItem> GetSubCommands( CommandItem parent, IList<string> input )
 		{
-			if( Host.Settings.GetSystemSetting<bool>( SystemSetting.ImportPuttySessions ) )
+			if( Host.Settings.GetValue<bool>( this, ImportKey ) )
 			{
 				using( RegistryKey puttyKey = Registry.CurrentUser.OpenSubKey( @"Software\SimonTatham\PuTTY\Sessions" ) )
 				{
@@ -78,22 +78,39 @@ namespace Blitzy.Plugin.System
 		public bool Load( IPluginHost host, string oldVersion = null )
 		{
 			Host = host;
+			if( oldVersion == null )
+			{
+				SetDefaultValues( host.Settings );
+			}
+
 			ClearCache();
 			return true;
 		}
 
 		public void Unload( PluginUnloadReason reason )
 		{
-			throw new NotImplementedException();
+		}
+
+		internal void SetDefaultValues( ISettings settings )
+		{
+			settings.SetValue( this, ImportKey, false );
+			settings.SetValue( this, PathKey, string.Empty );
 		}
 
 		#endregion Methods
+
+		#region Constants
+
+		internal const string GuidString = "9FF8854A-68AB-4586-BB1A-03061A270C84";
+		internal const string ImportKey = "ImportPuttySessions";
+		internal const string PathKey = "PuttyPath";
+
+		#endregion Constants
 
 		#region Properties
 
 		private Guid? GUID;
 		private IPluginHost Host;
-
 		private CommandItem RootItem;
 
 		public int ApiVersion
@@ -122,7 +139,7 @@ namespace Blitzy.Plugin.System
 			{
 				if( !GUID.HasValue )
 				{
-					GUID = Guid.Parse( "9FF8854A-68AB-4586-BB1A-03061A270C84" );
+					GUID = Guid.Parse( GuidString );
 				}
 
 				return GUID.Value;
@@ -143,7 +160,7 @@ namespace Blitzy.Plugin.System
 		{
 			get
 			{
-				return Host.Settings.GetSystemSetting<string>( Model.SystemSetting.PuttyPath );
+				return Host.Settings.GetValue<string>( this, "PathKey" );
 			}
 		}
 

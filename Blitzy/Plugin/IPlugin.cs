@@ -36,6 +36,8 @@ namespace Blitzy.Plugin
 		/// <summary>
 		/// Called when the plugin's cache (if there is any) should be cleared. This happens when the catalog is being rebuild for example.
 		/// </summary>
+		/// <remarks>It is totally acceptable if you recreate objects during this call.
+		/// However you should only do so if the recreation is fast enough and does not consme too much memory.</remarks>
 		void ClearCache();
 
 		/// <summary>

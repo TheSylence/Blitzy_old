@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Blitzy.Plugin.System;
 
 namespace Blitzy.ViewModel
 {
@@ -15,18 +16,18 @@ namespace Blitzy.ViewModel
 		public WinySettingsViewModel( SettingsViewModel baseVM )
 			: base( baseVM )
 		{
-			LogoffConfirmation = BaseVM.Settings.GetValue<bool>( Model.SystemSetting.ConfirmLogoff );
-			ShutdownConfirmation = BaseVM.Settings.GetValue<bool>( Model.SystemSetting.ConfirmShutdown );
-			RestartConfirmation = BaseVM.Settings.GetValue<bool>( Model.SystemSetting.ConfirmRestart );
+			LogoffConfirmation = BaseVM.Settings.GetPluginSetting<bool>( Winy.GuidString, Winy.LogoffKey );
+			ShutdownConfirmation = BaseVM.Settings.GetPluginSetting<bool>( Winy.GuidString, Winy.ShutdownKey );
+			RestartConfirmation = BaseVM.Settings.GetPluginSetting<bool>( Winy.GuidString, Winy.RestartKey );
 		}
 
 		#endregion Constructor
 
 		public override void Save()
 		{
-			BaseVM.Settings.SetValue( Model.SystemSetting.ConfirmLogoff, LogoffConfirmation );
-			BaseVM.Settings.SetValue( Model.SystemSetting.ConfirmShutdown, ShutdownConfirmation );
-			BaseVM.Settings.SetValue( Model.SystemSetting.ConfirmRestart, RestartConfirmation );
+			BaseVM.Settings.SetPluginSetting( Winy.GuidString, Winy.LogoffKey, LogoffConfirmation );
+			BaseVM.Settings.SetPluginSetting( Winy.GuidString, Winy.ShutdownKey, ShutdownConfirmation );
+			BaseVM.Settings.SetPluginSetting( Winy.GuidString, Winy.RestartKey, RestartConfirmation );
 		}
 
 		#region Methods

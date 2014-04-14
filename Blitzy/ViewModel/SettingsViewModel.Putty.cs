@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Blitzy.Plugin.System;
 using Blitzy.ViewServices;
 using GalaSoft.MvvmLight.Command;
 
@@ -17,8 +18,8 @@ namespace Blitzy.ViewModel
 		public PuttySettingsViewModel( SettingsViewModel baseVM )
 			: base( baseVM )
 		{
-			PuttyPath = BaseVM.Settings.GetValue<string>( Model.SystemSetting.PuttyPath );
-			ImportSessions = BaseVM.Settings.GetValue<bool>( Model.SystemSetting.ImportPuttySessions );
+			PuttyPath = BaseVM.Settings.GetPluginSetting<string>( Putty.GuidString, Putty.PathKey );
+			ImportSessions = BaseVM.Settings.GetPluginSetting<bool>( Putty.GuidString, Putty.ImportKey );
 		}
 
 		#endregion Constructor
@@ -27,8 +28,8 @@ namespace Blitzy.ViewModel
 
 		public override void Save()
 		{
-			BaseVM.Settings.SetValue( Model.SystemSetting.PuttyPath, PuttyPath );
-			BaseVM.Settings.SetValue( Model.SystemSetting.ImportPuttySessions, ImportSessions );
+			BaseVM.Settings.SetPluginSetting( Putty.GuidString, Putty.PathKey, PuttyPath );
+			BaseVM.Settings.SetPluginSetting( Putty.GuidString, Putty.ImportKey, ImportSessions );
 		}
 
 		#endregion Methods

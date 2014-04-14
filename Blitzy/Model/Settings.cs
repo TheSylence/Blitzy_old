@@ -55,19 +55,10 @@ namespace Blitzy.Model
 		AutoCatalogRebuild,
 
 		[DefaultValue( 1 )]
-		ConfirmShutdown,
-
-		[DefaultValue( 1 )]
-		ConfirmLogoff,
-
-		[DefaultValue( 1 )]
-		ConfirmRestart,
-
-		[DefaultValue( "" )]
-		PuttyPath,
+		BackupShortcuts,
 
 		[DefaultValue( 0 )]
-		ImportPuttySessions,
+		RebuildCatalogOnChanges,
 	}
 
 	internal class Settings : ObservableObject, Blitzy.Plugin.ISettings
@@ -84,113 +75,6 @@ namespace Blitzy.Model
 
 		#region Methods
 
-		#region ISettings
-
-		T Plugin.ISettings.GetSystemSetting<T>( SystemSetting setting )
-		{
-			return GetValue<T>( setting );
-		}
-
-		T Plugin.ISettings.GetValue<T>( Plugin.IPlugin plugin, string key )
-		{
-			if( plugin == null )
-			{
-				throw new ArgumentNullException( "plugin" );
-			}
-			if( string.IsNullOrWhiteSpace( key ) )
-			{
-				throw new ArgumentNullException( "key" );
-			}
-
-			using( SQLiteCommand cmd = Connection.CreateCommand() )
-			{
-				SQLiteParameter param = cmd.CreateParameter();
-				param.Value = plugin.PluginID;
-				param.ParameterName = "pluginID";
-				cmd.Parameters.Add( param );
-
-				param = cmd.CreateParameter();
-				param.Value = key;
-				param.ParameterName = "key";
-				cmd.Parameters.Add( param );
-
-				cmd.CommandText = "SELECT [Value] FROM plugin_settings WHERE PluginID = @pluginID AND [Key] = @key;";
-				cmd.Prepare();
-
-				return (T)Convert.ChangeType( cmd.ExecuteScalar(), typeof( T ) );
-			}
-		}
-
-		void Plugin.ISettings.RemoveValue( Plugin.IPlugin plugin, string key )
-		{
-			if( plugin == null )
-			{
-				throw new ArgumentNullException( "plugin" );
-			}
-
-			if( string.IsNullOrWhiteSpace( key ) )
-			{
-				throw new ArgumentNullException( "key" );
-			}
-
-			using( SQLiteCommand cmd = Connection.CreateCommand() )
-			{
-				SQLiteParameter param = cmd.CreateParameter();
-				param.Value = plugin.PluginID;
-				param.ParameterName = "pluginID";
-				cmd.Parameters.Add( param );
-
-				param = cmd.CreateParameter();
-				param.Value = key;
-				param.ParameterName = "key";
-				cmd.Parameters.Add( param );
-
-				cmd.CommandText = "DELETE FROM plugin_settings WHERE PluginID = @pluginID AND [Key] = @key;";
-				cmd.Prepare();
-
-				cmd.ExecuteNonQuery();
-			}
-		}
-
-		void Plugin.ISettings.SetValue( Plugin.IPlugin plugin, string key, object value )
-		{
-			if( plugin == null )
-			{
-				throw new ArgumentNullException( "plugin" );
-			}
-			if( string.IsNullOrWhiteSpace( key ) )
-			{
-				throw new ArgumentNullException( "key" );
-			}
-
-			( (Plugin.ISettings)this ).RemoveValue( plugin, key );
-
-			using( SQLiteCommand cmd = Connection.CreateCommand() )
-			{
-				SQLiteParameter param = cmd.CreateParameter();
-				param.Value = plugin.PluginID;
-				param.ParameterName = "pluginID";
-				cmd.Parameters.Add( param );
-
-				param = cmd.CreateParameter();
-				param.Value = key;
-				param.ParameterName = "key";
-				cmd.Parameters.Add( param );
-
-				param = cmd.CreateParameter();
-				param.Value = value;
-				param.ParameterName = "value";
-				cmd.Parameters.Add( param );
-
-				cmd.CommandText = "INSERT INTO plugin_settings (PluginID, [Key], [Value]) VALUES( @pluginID ,@key, @value );";
-				cmd.Prepare();
-
-				cmd.ExecuteNonQuery();
-			}
-		}
-
-		#endregion ISettings
-
 		public T GetValue<T>( SystemSetting setting )
 		{
 			using( SQLiteCommand cmd = Connection.CreateCommand() )
@@ -204,21 +88,62 @@ namespace Blitzy.Model
 				cmd.Prepare();
 
 				object value = cmd.ExecuteScalar();
-				Type targetType = typeof( T );
+				return ConvertValue<T>( value );
+			}
+		}
 
-				if( targetType == typeof( bool ) )
+		internal T ConvertValue<T>( object value )
+		{
+			if( DBNull.Value.Equals( value ) || value == null )
+			{
+				return default( T );
+			}
+
+			Type targetType = typeof( T );
+			if( targetType == typeof( bool ) )
+			{
+				if( value.GetType() == typeof( int ) )
 				{
-					if( value.GetType() == typeof( int ) )
-					{
-						value = ( (int)value ) == 1;
-					}
-					else if( value.GetType() == typeof( string ) )
-					{
-						value = Convert.ToInt32( value.ToString() ) == 1;
-					}
+					value = ( (int)value ) == 1;
 				}
+				else if( value.GetType() == typeof( string ) )
+				{
+					value = Convert.ToInt32( value.ToString() ) == 1;
+				}
+			}
 
-				return (T)Convert.ChangeType( value, targetType );
+			return (T)Convert.ChangeType( value, targetType );
+		}
+
+		internal T GetPluginSetting<T>( string pluginID, string key )
+		{
+			return GetPluginSetting<T>( Guid.Parse( pluginID ), key );
+		}
+
+		internal T GetPluginSetting<T>( Guid pluginID, string key )
+		{
+			if( string.IsNullOrWhiteSpace( key ) )
+			{
+				throw new ArgumentNullException( "key" );
+			}
+
+			using( SQLiteCommand cmd = Connection.CreateCommand() )
+			{
+				SQLiteParameter param = cmd.CreateParameter();
+				param.Value = pluginID;
+				param.ParameterName = "pluginID";
+				cmd.Parameters.Add( param );
+
+				param = cmd.CreateParameter();
+				param.Value = key;
+				param.ParameterName = "key";
+				cmd.Parameters.Add( param );
+
+				cmd.CommandText = "SELECT [Value] FROM plugin_settings WHERE PluginID = @pluginID AND [Key] = @key;";
+				cmd.Prepare();
+
+				object value = cmd.ExecuteScalar();
+				return ConvertValue<T>( value );
 			}
 		}
 
@@ -239,6 +164,32 @@ namespace Blitzy.Model
 						Folders.Add( f );
 					}
 				}
+			}
+		}
+
+		internal void RemovePluginSetting( string pluginId, string key )
+		{
+			RemovePluginSetting( Guid.Parse( pluginId ), key );
+		}
+
+		internal void RemovePluginSetting( Guid pluginId, string key )
+		{
+			using( SQLiteCommand cmd = Connection.CreateCommand() )
+			{
+				SQLiteParameter param = cmd.CreateParameter();
+				param.Value = pluginId;
+				param.ParameterName = "pluginID";
+				cmd.Parameters.Add( param );
+
+				param = cmd.CreateParameter();
+				param.Value = key;
+				param.ParameterName = "key";
+				cmd.Parameters.Add( param );
+
+				cmd.CommandText = "DELETE FROM plugin_settings WHERE PluginID = @pluginID AND [Key] = @key;";
+				cmd.Prepare();
+
+				cmd.ExecuteNonQuery();
 			}
 		}
 
@@ -271,6 +222,96 @@ namespace Blitzy.Model
 				throw;
 			}
 		}
+
+		internal void SetPluginSetting( string pluginID, string key, object value )
+		{
+			SetPluginSetting( Guid.Parse( pluginID ), key, value );
+		}
+
+		internal void SetPluginSetting( Guid pluginID, string key, object value )
+		{
+			RemovePluginSetting( pluginID, key );
+
+			if( value.GetType() == typeof( bool ) )
+			{
+				value = ( (bool)value ) ? 1 : 0;
+			}
+
+			using( SQLiteCommand cmd = Connection.CreateCommand() )
+			{
+				SQLiteParameter param = cmd.CreateParameter();
+				param.Value = pluginID;
+				param.ParameterName = "pluginID";
+				cmd.Parameters.Add( param );
+
+				param = cmd.CreateParameter();
+				param.Value = key;
+				param.ParameterName = "key";
+				cmd.Parameters.Add( param );
+
+				param = cmd.CreateParameter();
+				param.Value = value;
+				param.ParameterName = "value";
+				cmd.Parameters.Add( param );
+
+				cmd.CommandText = "INSERT INTO plugin_settings (PluginID, [Key], [Value]) VALUES( @pluginID ,@key, @value );";
+				cmd.Prepare();
+
+				cmd.ExecuteNonQuery();
+			}
+		}
+
+		#region ISettings
+
+		T Plugin.ISettings.GetSystemSetting<T>( SystemSetting setting )
+		{
+			return GetValue<T>( setting );
+		}
+
+		T Plugin.ISettings.GetValue<T>( Plugin.IPlugin plugin, string key )
+		{
+			if( plugin == null )
+			{
+				throw new ArgumentNullException( "plugin" );
+			}
+			if( string.IsNullOrWhiteSpace( key ) )
+			{
+				throw new ArgumentNullException( "key" );
+			}
+
+			return GetPluginSetting<T>( plugin.PluginID, key );
+		}
+
+		void Plugin.ISettings.RemoveValue( Plugin.IPlugin plugin, string key )
+		{
+			if( plugin == null )
+			{
+				throw new ArgumentNullException( "plugin" );
+			}
+
+			if( string.IsNullOrWhiteSpace( key ) )
+			{
+				throw new ArgumentNullException( "key" );
+			}
+
+			RemovePluginSetting( plugin.PluginID, key );
+		}
+
+		void Plugin.ISettings.SetValue( Plugin.IPlugin plugin, string key, object value )
+		{
+			if( plugin == null )
+			{
+				throw new ArgumentNullException( "plugin" );
+			}
+			if( string.IsNullOrWhiteSpace( key ) )
+			{
+				throw new ArgumentNullException( "key" );
+			}
+
+			SetPluginSetting( plugin.PluginID, key, value );
+		}
+
+		#endregion ISettings
 
 		internal void SetValue( SystemSetting setting, object value )
 		{

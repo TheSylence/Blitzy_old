@@ -58,6 +58,17 @@ namespace Blitzy.ViewModel
 
 			PuttySettings = new PuttySettingsViewModel( this );
 			RaisePropertyChanged( () => PuttySettings );
+
+			UpdateCheck = Settings.GetValue<bool>( SystemSetting.AutoUpdate );
+			StayOnTop = Settings.GetValue<bool>( SystemSetting.StayOnTop );
+			TrayIcon = Settings.GetValue<bool>( SystemSetting.TrayIcon );
+			CloseOnCommand = Settings.GetValue<bool>( SystemSetting.CloseAfterCommand );
+			CloseOnEscape = Settings.GetValue<bool>( SystemSetting.CloseOnEscape );
+			CloseOnFocusLost = Settings.GetValue<bool>( SystemSetting.CloseOnFocusLost );
+			KeepInput = Settings.GetValue<bool>( SystemSetting.KeepCommand );
+			PeriodicallyRebuild = Settings.GetValue<int>( SystemSetting.AutoCatalogRebuild ) > 0;
+			RebuildOnChange = Settings.GetValue<bool>( SystemSetting.RebuildCatalogOnChanges );
+			RebuildTime = Settings.GetValue<int>( SystemSetting.AutoCatalogRebuild );
 		}
 
 		private void OnVersionCheckComplete( VersionCheckMessage msg )
@@ -227,7 +238,7 @@ namespace Blitzy.ViewModel
 
 		private bool CanExecuteUpdateCatalogCommand()
 		{
-			return Settings != null && Settings.Folders.Count > 0;
+			return Settings != null && Settings.Folders.Count > 0 && CatalogBuilder != null && !CatalogBuilder.IsBuilding;
 		}
 
 		private bool CanExecuteUpdateCheckCommand()
@@ -334,6 +345,16 @@ namespace Blitzy.ViewModel
 				folder.Delete( Settings.Connection );
 			}
 
+			Settings.SetValue( SystemSetting.AutoUpdate, UpdateCheck );
+			Settings.SetValue( SystemSetting.StayOnTop, StayOnTop );
+			Settings.SetValue( SystemSetting.TrayIcon, TrayIcon );
+			Settings.SetValue( SystemSetting.CloseAfterCommand, CloseOnCommand );
+			Settings.SetValue( SystemSetting.CloseOnEscape, CloseOnEscape );
+			Settings.SetValue( SystemSetting.CloseOnFocusLost, CloseOnFocusLost );
+			Settings.SetValue( SystemSetting.KeepCommand, KeepInput );
+			Settings.SetValue( SystemSetting.AutoCatalogRebuild, RebuildTime );
+			Settings.SetValue( SystemSetting.RebuildCatalogOnChanges, RebuildOnChange );
+
 			Settings.Save();
 			WinySettings.Save();
 			WebySettings.Save();
@@ -355,6 +376,243 @@ namespace Blitzy.ViewModel
 
 		#region Properties
 
+		#region SettingItems
+
+		private bool _BackupShortcuts;
+		private bool _CloseOnCommand;
+		private bool _CloseOnEscape;
+		private bool _CloseOnFocusLost;
+		private bool _KeepInput;
+		private bool _PeriodicallyRebuild;
+		private bool _RebuildOnChange;
+		private int _RebuildTime;
+		private bool _StayOnTop;
+		private bool _TrayIcon;
+		private bool _UpdateCheck;
+
+		public bool BackupShortcuts
+		{
+			get
+			{
+				return _BackupShortcuts;
+			}
+
+			set
+			{
+				if( _BackupShortcuts == value )
+				{
+					return;
+				}
+
+				RaisePropertyChanging( () => BackupShortcuts );
+				_BackupShortcuts = value;
+				RaisePropertyChanged( () => BackupShortcuts );
+			}
+		}
+
+		public bool CloseOnCommand
+		{
+			get
+			{
+				return _CloseOnCommand;
+			}
+
+			set
+			{
+				if( _CloseOnCommand == value )
+				{
+					return;
+				}
+
+				RaisePropertyChanging( () => CloseOnCommand );
+				_CloseOnCommand = value;
+				RaisePropertyChanged( () => CloseOnCommand );
+			}
+		}
+
+		public bool CloseOnEscape
+		{
+			get
+			{
+				return _CloseOnEscape;
+			}
+
+			set
+			{
+				if( _CloseOnEscape == value )
+				{
+					return;
+				}
+
+				RaisePropertyChanging( () => CloseOnEscape );
+				_CloseOnEscape = value;
+				RaisePropertyChanged( () => CloseOnEscape );
+			}
+		}
+
+		public bool CloseOnFocusLost
+		{
+			get
+			{
+				return _CloseOnFocusLost;
+			}
+
+			set
+			{
+				if( _CloseOnFocusLost == value )
+				{
+					return;
+				}
+
+				RaisePropertyChanging( () => CloseOnFocusLost );
+				_CloseOnFocusLost = value;
+				RaisePropertyChanged( () => CloseOnFocusLost );
+			}
+		}
+
+		public bool KeepInput
+		{
+			get
+			{
+				return _KeepInput;
+			}
+
+			set
+			{
+				if( _KeepInput == value )
+				{
+					return;
+				}
+
+				RaisePropertyChanging( () => KeepInput );
+				_KeepInput = value;
+				RaisePropertyChanged( () => KeepInput );
+			}
+		}
+
+		public bool PeriodicallyRebuild
+		{
+			get
+			{
+				return _PeriodicallyRebuild;
+			}
+
+			set
+			{
+				if( _PeriodicallyRebuild == value )
+				{
+					return;
+				}
+
+				RaisePropertyChanging( () => PeriodicallyRebuild );
+				_PeriodicallyRebuild = value;
+				RaisePropertyChanged( () => PeriodicallyRebuild );
+			}
+		}
+
+		public bool RebuildOnChange
+		{
+			get
+			{
+				return _RebuildOnChange;
+			}
+
+			set
+			{
+				if( _RebuildOnChange == value )
+				{
+					return;
+				}
+
+				RaisePropertyChanging( () => RebuildOnChange );
+				_RebuildOnChange = value;
+				RaisePropertyChanged( () => RebuildOnChange );
+			}
+		}
+
+		public int RebuildTime
+		{
+			get
+			{
+				return _RebuildTime;
+			}
+
+			set
+			{
+				if( _RebuildTime == value )
+				{
+					return;
+				}
+
+				RaisePropertyChanging( () => RebuildTime );
+				_RebuildTime = value;
+				RaisePropertyChanged( () => RebuildTime );
+			}
+		}
+
+		public bool StayOnTop
+		{
+			get
+			{
+				return _StayOnTop;
+			}
+
+			set
+			{
+				if( _StayOnTop == value )
+				{
+					return;
+				}
+
+				RaisePropertyChanging( () => StayOnTop );
+				_StayOnTop = value;
+				RaisePropertyChanged( () => StayOnTop );
+			}
+		}
+
+		public bool TrayIcon
+		{
+			get
+			{
+				return _TrayIcon;
+			}
+
+			set
+			{
+				if( _TrayIcon == value )
+				{
+					return;
+				}
+
+				RaisePropertyChanging( () => TrayIcon );
+				_TrayIcon = value;
+				RaisePropertyChanged( () => TrayIcon );
+			}
+		}
+
+		public bool UpdateCheck
+		{
+			get
+			{
+				return _UpdateCheck;
+			}
+
+			set
+			{
+				if( _UpdateCheck == value )
+				{
+					return;
+				}
+
+				RaisePropertyChanging( () => UpdateCheck );
+				_UpdateCheck = value;
+				RaisePropertyChanged( () => UpdateCheck );
+			}
+		}
+
+		#endregion SettingItems
+
+		private CatalogBuilder _CatalogBuilder;
 		private string _LatestVersion;
 		private string _SelectedExclude;
 		private Folder _SelectedFolder;
@@ -362,6 +620,26 @@ namespace Blitzy.ViewModel
 		private Settings _Settings;
 
 		public string BlitzyLicense { get; set; }
+
+		public CatalogBuilder CatalogBuilder
+		{
+			get
+			{
+				return _CatalogBuilder;
+			}
+
+			set
+			{
+				if( _CatalogBuilder == value )
+				{
+					return;
+				}
+
+				RaisePropertyChanging( () => CatalogBuilder );
+				_CatalogBuilder = value;
+				RaisePropertyChanged( () => CatalogBuilder );
+			}
+		}
 
 		public string Changelog { get; set; }
 

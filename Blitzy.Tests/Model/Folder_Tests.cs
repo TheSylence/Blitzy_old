@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -43,6 +44,44 @@ namespace Blitzy.Tests.Model
 			CollectionAssert.Contains( f.Excludes, "ex1" );
 			CollectionAssert.DoesNotContain( f.Excludes, "ex2" );
 			CollectionAssert.Contains( f.Excludes, "ex3" );
+		}
+
+		[TestMethod, TestCategory( "Model" )]
+		public void GetFilesTest()
+		{
+			Folder f = new Folder();
+			f.Rules.Add( "*.txt" );
+			f.Excludes.Add( "exclude*.txt" );
+			f.Path = "folder_test";
+
+			TestHelper.CreateTestFolder( "folder_test" );
+			File.AppendAllText( "folder_test/test.txt", "" );
+			File.AppendAllText( "folder_test/exclude.txt", "" );
+			File.AppendAllText( "folder_test/exclude1.txt", "" );
+			File.AppendAllText( "folder_test/include.txt", "" );
+
+			TestHelper.CreateTestFolder( "folder_test/rec" );
+			File.AppendAllText( "folder_test/rec/rec_test.txt", "" );
+			File.AppendAllText( "folder_test/rec/rec_exclude.txt", "" );
+
+			f.IsRecursive = false;
+
+			string[] files = f.GetFiles().Select( file => Path.GetFileName( file ) ).ToArray();
+			CollectionAssert.Contains( files, "test.txt", "test.txt" );
+			CollectionAssert.Contains( files, "include.txt", "include.txt" );
+			CollectionAssert.DoesNotContain( files, "exclude.txt", "exclude.txt" );
+			CollectionAssert.DoesNotContain( files, "exclude1.txt", "exclude1.txt" );
+
+			f.IsRecursive = true;
+			files = f.GetFiles().Select( file => Path.GetFileName( file ) ).ToArray();
+
+			CollectionAssert.Contains( files, "test.txt", "test.txt" );
+			CollectionAssert.Contains( files, "include.txt", "include.txt" );
+			CollectionAssert.DoesNotContain( files, "exclude.txt", "exclude.txt" );
+			CollectionAssert.DoesNotContain( files, "exclude1.txt", "exclude1.txt" );
+
+			CollectionAssert.DoesNotContain( files, "rec_exclude.txt", "rec_exclude.txt" );
+			CollectionAssert.Contains( files, "rec_test.txt", "rec_test.txt" );
 		}
 
 		[TestMethod, TestCategory( "Model" ), ExpectedException( typeof( TypeLoadException ) )]

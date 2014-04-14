@@ -210,6 +210,7 @@ namespace Blitzy.Tests.ViewModel
 
 			Assert.IsFalse( VM.UpdateCatalogCommand.CanExecute( null ) );
 			VM.Settings.Folders.Add( new Folder() );
+			VM.CatalogBuilder = new CatalogBuilder( new Settings( Connection ) );
 			Assert.IsTrue( VM.UpdateCatalogCommand.CanExecute( null ) );
 		}
 	}

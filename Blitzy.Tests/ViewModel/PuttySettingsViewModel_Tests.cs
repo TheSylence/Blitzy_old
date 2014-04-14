@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Blitzy.Plugin.System;
 using Blitzy.Tests.Mocks.Services;
 using Blitzy.ViewModel;
 using Blitzy.ViewServices;
@@ -31,7 +32,7 @@ namespace Blitzy.Tests.ViewModel
 			mock.Value = null;
 
 			vm.BrowsePuttyCommand.Execute( null );
-			Assert.AreEqual( baseVM.Settings.GetValue<string>( Blitzy.Model.SystemSetting.PuttyPath ), vm.PuttyPath );
+			Assert.AreEqual( baseVM.Settings.GetPluginSetting<string>( Putty.GuidString, Putty.PathKey ), vm.PuttyPath );
 
 			mock.Value = "test.exe";
 			vm.BrowsePuttyCommand.Execute( null );
@@ -66,8 +67,8 @@ namespace Blitzy.Tests.ViewModel
 
 			vm.Save();
 
-			Assert.AreEqual( vm.PuttyPath, baseVM.Settings.GetValue<string>( Blitzy.Model.SystemSetting.PuttyPath ) );
-			Assert.AreEqual( vm.ImportSessions, baseVM.Settings.GetValue<bool>( Blitzy.Model.SystemSetting.ImportPuttySessions ) );
+			Assert.AreEqual( vm.PuttyPath, baseVM.Settings.GetPluginSetting<string>( Putty.GuidString, Putty.PathKey ) );
+			Assert.AreEqual( vm.ImportSessions, baseVM.Settings.GetPluginSetting<bool>( Putty.GuidString, Putty.ImportKey ) );
 		}
 	}
 }

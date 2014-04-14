@@ -18,12 +18,19 @@ namespace Blitzy.ViewServices
 	{
 		public object Show( System.Windows.Window parent, object parameter = null )
 		{
+			SettingsServiceParameters args = parameter as SettingsServiceParameters;
+			if( args == null )
+			{
+				throw new ArgumentException( "SettingsService needs SettingsServiceParameters" );
+			}
+
 			SettingsDialog dlg = new SettingsDialog();
 			dlg.Owner = parent;
 
 			SettingsViewModel vm = dlg.DataContext as SettingsViewModel;
 			Debug.Assert( vm != null );
-			vm.Settings = parameter as Settings;
+			vm.Settings = args.Settings;
+			vm.CatalogBuilder = args.Builder;
 			vm.Reset();
 
 			return dlg.ShowDialog();

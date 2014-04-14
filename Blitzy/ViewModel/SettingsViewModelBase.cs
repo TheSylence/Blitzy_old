@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Blitzy.Model;
+using Blitzy.Plugin;
 
 namespace Blitzy.ViewModel
 {
@@ -23,6 +25,14 @@ namespace Blitzy.ViewModel
 		#endregion Methods
 
 		#region Properties
+
+		protected Settings Settings
+		{
+			get
+			{
+				return BaseVM.Settings;
+			}
+		}
 
 		#endregion Properties
 

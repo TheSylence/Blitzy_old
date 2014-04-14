@@ -45,14 +45,7 @@ namespace Blitzy.ViewModel
 
 			CmdManager = new Blitzy.Model.CommandManager( Database.Connection, Settings, Plugins );
 
-			////if (IsInDesignMode)
-			////{
-			////    // Code runs in Blend --> create design time data.
-			////}
-			////else
-			////{
-			////    // Code runs "for real"
-			////}
+			Builder = new CatalogBuilder( Settings );
 		}
 
 		protected override void RegisterMessages()
@@ -472,6 +465,8 @@ namespace Blitzy.ViewModel
 		}
 
 		public bool ShouldClose { get; internal set; }
+
+		internal CatalogBuilder Builder { get; private set; }
 
 		internal Database Database { get; private set; }
 

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using WPFLocalizeExtension.Engine;
@@ -55,6 +56,18 @@ namespace Blitzy
 			}
 
 			return value;
+		}
+
+		public static string WildcardToRegex( this string pattern, bool wholeString = false )
+		{
+			string ex = Regex.Escape( pattern ).Replace( @"\*", ".*" ).Replace( @"\?", "." );
+
+			if( wholeString )
+			{
+				return "^" + ex + "$";
+			}
+
+			return ex;
 		}
 
 		/// <summary>
