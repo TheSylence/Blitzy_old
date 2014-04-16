@@ -21,6 +21,7 @@ namespace Blitzy.ViewModel
 
 		public SettingsViewModel()
 		{
+			FoldersToRemove = new List<Folder>();
 			UpdateChecker = ToDispose( new Model.UpdateChecker() );
 			CurrentVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
@@ -34,7 +35,7 @@ namespace Blitzy.ViewModel
 				BlitzyLicense = reader.ReadToEnd();
 			}
 
-			BuildDate = Assembly.GetExecutingAssembly().LinkerTimestamp();
+			_BuildDate = Assembly.GetExecutingAssembly().LinkerTimestamp();
 		}
 
 		protected override void RegisterMessages()
@@ -644,6 +645,8 @@ namespace Blitzy.ViewModel
 		private string _SelectedRule;
 		private Settings _Settings;
 
+		public PluginDatabase APIDatabase { get; set; }
+
 		public string BlitzyLicense { get; set; }
 
 		public CatalogBuilder CatalogBuilder
@@ -782,7 +785,7 @@ namespace Blitzy.ViewModel
 
 		#region Attributes
 
-		private List<Folder> FoldersToRemove = new List<Folder>();
+		private List<Folder> FoldersToRemove;
 
 		#endregion Attributes
 	}

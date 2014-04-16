@@ -113,9 +113,11 @@
     <Compile Include="Plugins\Blitzy_Tests.cs" />
     <Compile Include="Plugins\Calcy_Tests.cs" />
     <Compile Include="Plugins\Medy_Tests.cs" />
+    <Compile Include="Plugins\PluginDatabase_Tests.cs" />
     <Compile Include="Plugins\PluginManager_Tests.cs" />
     <Compile Include="Plugins\PluginTester.cs" />
     <Compile Include="Plugins\Shelly_Tests.cs" />
+    <Compile Include="Plugins\WhereClause_Tests.cs" />
     <Compile Include="Plugins\Winy_Tests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PropertyChangedListener.cs" />

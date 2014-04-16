@@ -22,7 +22,7 @@ namespace Blitzy.Model
 				param.Value = ID;
 				cmd.Parameters.Add( param );
 
-				cmd.CommandText = "DELETE FROM weby WHERE WebyID = @webyID;";
+				cmd.CommandText = "DELETE FROM weby_websites WHERE WebyID = @webyID;";
 				cmd.Prepare();
 
 				cmd.ExecuteNonQuery();
@@ -38,7 +38,7 @@ namespace Blitzy.Model
 				param.Value = ID;
 				cmd.Parameters.Add( param );
 
-				cmd.CommandText = "SELECT Name, Description, URL, Icon FROM weby WHERE WebyID = @webyID;";
+				cmd.CommandText = "SELECT Name, Description, URL, Icon FROM weby_websites WHERE WebyID = @webyID;";
 				cmd.Prepare();
 
 				using( SQLiteDataReader reader = cmd.ExecuteReader() )
@@ -92,11 +92,11 @@ namespace Blitzy.Model
 
 				if( ExistsInDatabase )
 				{
-					cmd.CommandText = "UPDATE weby SET Name = @Name, Description = @Description, URL = @URL, Icon = @icon WHERE WebyID = @webyID";
+					cmd.CommandText = "UPDATE weby_websites SET Name = @Name, Description = @Description, URL = @URL, Icon = @icon WHERE WebyID = @webyID";
 				}
 				else
 				{
-					cmd.CommandText = "INSERT INTO weby (WebyID, Name, Description, URL, Icon) VALUES (@webyID, @Name, @Description, @URL, @icon);";
+					cmd.CommandText = "INSERT INTO weby_websites (WebyID, Name, Description, URL, Icon) VALUES (@webyID, @Name, @Description, @URL, @icon);";
 				}
 
 				cmd.Prepare();

@@ -28,7 +28,7 @@ namespace Blitzy.Tests.Mocks
 
 		public string Name
 		{
-			get { throw new NotImplementedException(); }
+			get { return "MockPlugin"; }
 		}
 
 		public Guid PluginID

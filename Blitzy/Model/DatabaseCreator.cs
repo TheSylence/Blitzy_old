@@ -87,7 +87,7 @@ namespace Blitzy.Model
 					{ "PRIMARY KEY", "([Command],[Arguments],[Name])" },
 				} ) );
 
-			sb.Append( QueryBuilder.CreateTable( "weby", new Dictionary<string, string>
+			sb.Append( QueryBuilder.CreateTable( "weby_websites", new Dictionary<string, string>
 				{
 					{ "WebyID", "INTEGER PRIMARY KEY" },
 					{ "Name", "VARCHAR(50) NOT NULL" },
@@ -95,6 +95,14 @@ namespace Blitzy.Model
 					{ "Url", "TEXT NOT NULL" },
 					{ "Icon", "TEXT" }
 				} ) );
+
+			sb.Append( QueryBuilder.CreateTable( "plugin_tables", new Dictionary<string, string>
+			{
+				{ "TableName", "VARCHAR(255) PRIMARY KEY" },
+				{ "PluginID", "VARCHAR(40) NOT NULL" },
+			} ) );
+
+			// TODO: Insert weby_websites into plugin_tables
 
 			Type type = typeof( SystemSetting );
 			foreach( SystemSetting setting in Enum.GetValues( type ) )

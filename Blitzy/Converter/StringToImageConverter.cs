@@ -20,7 +20,7 @@ namespace Blitzy.Converter
 	[SuppressMessage( "Microsoft.Performance", "CA1812", Justification = "Used in XAML" )]
 	internal class StringToImageConverter : IValueConverter
 	{
-		private Regex Pattern = new Regex( ".*,[0-9-]+", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.CultureInvariant );
+		private Regex Pattern = new Regex( "^.*,[0-9-]+$", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.CultureInvariant );
 
 		public object Convert( object value, Type targetType, object parameter, CultureInfo culture )
 		{
@@ -75,10 +75,15 @@ namespace Blitzy.Converter
 				}
 				else
 				{
-					using( System.Drawing.Icon i = System.Drawing.Icon.ExtractAssociatedIcon( str ) )
+					if( File.Exists( str ) )
 					{
-						return Imaging.CreateBitmapSourceFromHIcon( i.Handle, new System.Windows.Int32Rect( 0, 0, i.Width, i.Height ), BitmapSizeOptions.FromEmptyOptions() );
+						using( System.Drawing.Icon i = System.Drawing.Icon.ExtractAssociatedIcon( str ) )
+						{
+							return Imaging.CreateBitmapSourceFromHIcon( i.Handle, new System.Windows.Int32Rect( 0, 0, i.Width, i.Height ), BitmapSizeOptions.FromEmptyOptions() );
+						}
 					}
+
+					return null;
 				}
 			}
 			else

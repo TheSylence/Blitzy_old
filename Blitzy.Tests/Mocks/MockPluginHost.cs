@@ -11,7 +11,7 @@ namespace Blitzy.Tests.Mocks
 {
 	internal class MockPluginHost : IPluginHost
 	{
-		public System.Data.Common.DbConnection Database
+		public IDatabase Database
 		{
 			get { throw new NotImplementedException(); }
 		}

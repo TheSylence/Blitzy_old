@@ -25,7 +25,7 @@ namespace Blitzy.ViewModel
 
 			using( SQLiteCommand cmd = BaseVM.Settings.Connection.CreateCommand() )
 			{
-				cmd.CommandText = "SELECT WebyID FROM weby";
+				cmd.CommandText = "SELECT WebyID FROM weby_websites";
 
 				using( SQLiteDataReader reader = cmd.ExecuteReader() )
 				{

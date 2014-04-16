@@ -40,6 +40,7 @@ namespace Blitzy.ViewModel
 				Settings.Load();
 			}
 
+			APIDatabase = new PluginDatabase( Database.Connection );
 			Plugins = new PluginManager( this, Database.Connection );
 			Plugins.LoadPlugins();
 
@@ -527,9 +528,14 @@ namespace Blitzy.ViewModel
 
 		#region IPluginHost
 
-		System.Data.Common.DbConnection IPluginHost.Database
+		private PluginDatabase APIDatabase;
+
+		IDatabase IPluginHost.Database
 		{
-			get { return Settings.Connection; }
+			get
+			{
+				return APIDatabase;
+			}
 		}
 
 		ISettings IPluginHost.Settings

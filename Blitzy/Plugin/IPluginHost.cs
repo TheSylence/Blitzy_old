@@ -21,7 +21,7 @@ namespace Blitzy.Plugin
 
 		#region Properties
 
-		DbConnection Database { get; }
+		IDatabase Database { get; }
 
 		ISettings Settings { get; }
 

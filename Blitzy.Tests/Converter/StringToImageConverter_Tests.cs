@@ -42,6 +42,16 @@ namespace Blitzy.Tests.Converter
 
 			fileName += "_1";
 			Assert.IsNull( conv.Convert( fileName, null, null, null ), "Absolute file name with wrong icon index" );
+
+			fileName = "https://www.google.de/images/google_favicon_128.png";
+			Assert.IsNotNull( conv.Convert( fileName, null, null, null ), "URL File" );
+
+			fileName = Path.Combine( Directory.GetCurrentDirectory(), "Blitzy.exe" );
+			fileName += ",0,0";
+			Assert.IsNull( conv.Convert( fileName, null, null, null ), "Double coma at end" );
+
+			fileName = "C:\\temp\test,file.png,0";
+			Assert.IsNull( conv.Convert( fileName, null, null, null ), "Coma in file name" );
 		}
 	}
 }
