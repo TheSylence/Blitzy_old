@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Blitzy.View;
 using Blitzy.ViewModel;
+using Microsoft.QualityTools.Testing.Fakes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Blitzy.Tests.ViewModel

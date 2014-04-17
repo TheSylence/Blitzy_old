@@ -25,7 +25,6 @@ namespace Blitzy.Tests.Plugins
 			Assert.AreNotEqual( Guid.Empty, plug.PluginID, "Plugin ID" );
 			Assert.IsNotNull( plug.Website, "Plugin Website" );
 			Assert.IsNotNull( plug.Name, "Plugin Name" );
-			Assert.AreNotEqual( 0, plug.GetCommands( Enumerable.Empty<string>().ToList() ).Count(), "Plugin commands" );
 
 			TestRunComplete = true;
 		}

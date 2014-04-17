@@ -11,7 +11,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Blitzy.Tests.Plugins
 {
 	[TestClass]
-	public class Medy_Tests : TestBase
+	public class Medy_Tests : PluginTestBase
 	{
 		[TestMethod, TestCategory( "Plugins" )]
 		public void InterfaceTest()

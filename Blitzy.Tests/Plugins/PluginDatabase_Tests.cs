@@ -38,6 +38,8 @@ namespace Blitzy.Tests.Plugins
 				new TableColumn( "col2", ColumnType.Text )
 			};
 
+			Assert.IsFalse( db.CreateTable( null, "test", columns ) );
+
 			Assert.IsTrue( db.CreateTable( Plugin, "test", columns ) );
 
 			using( SQLiteCommand cmd = Connection.CreateCommand() )
@@ -78,6 +80,113 @@ namespace Blitzy.Tests.Plugins
 		}
 
 		[TestMethod, TestCategory( "Plugins" )]
+		public void InjectionCreateTest()
+		{
+			PluginDatabase db = new PluginDatabase( Connection );
+
+			db.CreateTable( Plugin, "] (Temp INTEGER PRIMARY KEY); DROP TABLE settings ;--", new[] { new TableColumn() } );
+
+			using( SQLiteCommand cmd = Connection.CreateCommand() )
+			{
+				cmd.CommandText = "SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'settings'";
+
+				string result = (string)cmd.ExecuteScalar();
+				Assert.AreEqual( "settings", result );
+			}
+
+			// TODO: Test TableColumns
+		}
+
+		[TestMethod, TestCategory( "Plugins" )]
+		public void InjectionDeleteTest()
+		{
+			PluginDatabase db = new PluginDatabase( Connection );
+
+			db.Delete( Plugin, "]; DROP TABLE settings; --" );
+
+			using( SQLiteCommand cmd = Connection.CreateCommand() )
+			{
+				cmd.CommandText = "SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'settings'";
+
+				string result = (string)cmd.ExecuteScalar();
+				Assert.AreEqual( "settings", result );
+			}
+		}
+
+		[TestMethod, TestCategory( "Plugins" )]
+		public void InjectionDropTest()
+		{
+			PluginDatabase db = new PluginDatabase( Connection );
+
+			db.DropTable( Plugin, "]; DROP TABLE settings; --" );
+
+			using( SQLiteCommand cmd = Connection.CreateCommand() )
+			{
+				cmd.CommandText = "SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'settings'";
+
+				string result = (string)cmd.ExecuteScalar();
+				Assert.AreEqual( "settings", result );
+			}
+		}
+
+		[TestMethod, TestCategory( "Plugins" )]
+		public void InjectionInsertTest()
+		{
+			PluginDatabase db = new PluginDatabase( Connection );
+
+			Dictionary<string, object>[] values = new Dictionary<string, object>[]
+			{
+				new Dictionary<string,object>{ {"col1", 1}, {"col2", "1"} },
+				new Dictionary<string,object>{ {"col1", 2}, {"col2", "2"} },
+				new Dictionary<string,object>{ {"col1", 3}, {"col2", "3"} },
+			};
+			db.Insert( Plugin, "]; DROP TABLE settings; --", values );
+
+			using( SQLiteCommand cmd = Connection.CreateCommand() )
+			{
+				cmd.CommandText = "SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'settings'";
+
+				string result = (string)cmd.ExecuteScalar();
+				Assert.AreEqual( "settings", result );
+			}
+
+			// TODO: Test TableColumns
+		}
+
+		[TestMethod, TestCategory( "Plugins" )]
+		public void InjectionSelectTest()
+		{
+			PluginDatabase db = new PluginDatabase( Connection );
+
+			db.Select( Plugin, "]; DROP TABLE settings; --", new[] { "col1" } );
+
+			using( SQLiteCommand cmd = Connection.CreateCommand() )
+			{
+				cmd.CommandText = "SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'settings'";
+
+				string result = (string)cmd.ExecuteScalar();
+				Assert.AreEqual( "settings", result );
+			}
+		}
+
+		[TestMethod, TestCategory( "Plugins" )]
+		public void InjectionUpdatTest()
+		{
+			PluginDatabase db = new PluginDatabase( Connection );
+			db.Update( Plugin, "]; DROP TABLE settings; --", new Dictionary<string, object> { { "col1", 1 }, { "col2", "1" } } );
+
+			using( SQLiteCommand cmd = Connection.CreateCommand() )
+			{
+				cmd.CommandText = "SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'settings'";
+
+				string result = (string)cmd.ExecuteScalar();
+				Assert.AreEqual( "settings", result );
+			}
+
+			// TODO: Test TableColumns
+		}
+
+		[TestMethod, TestCategory( "Plugins" )]
 		public void InsertUpdateDeleteTest()
 		{
 			PluginDatabase db = new PluginDatabase( Connection );
@@ -115,6 +224,50 @@ namespace Blitzy.Tests.Plugins
 
 			result = db.Select( Plugin, "datatest", new[] { "col1", "col2" } );
 			Assert.AreEqual( 0, result.Count() );
+		}
+
+		[TestMethod, TestCategory( "Plugins" )]
+		public void MayAccessTest()
+		{
+			PluginDatabase db = new PluginDatabase( Connection );
+
+			Assert.IsFalse( db.MayAccess( Plugin, string.Empty ) );
+			Assert.IsFalse( db.MayAccess( Plugin, null ) );
+			Assert.IsFalse( db.MayAccess( null, "test" ) );
+		}
+
+		[TestMethod, TestCategory( "Plugins" )]
+		public void MultipleInsertTest()
+		{
+			PluginDatabase db = new PluginDatabase( Connection );
+
+			TableColumn[] columns = new TableColumn[]
+			{
+				new TableColumn( "col1", ColumnType.Numeric ),
+				new TableColumn( "col2", ColumnType.Text )
+			};
+
+			db.CreateTable( Plugin, "multiinserttest", columns );
+
+			Dictionary<string, object>[] values = new Dictionary<string, object>[]
+			{
+				new Dictionary<string,object>{ {"col1", 1}, {"col2", "1"} },
+				new Dictionary<string,object>{ {"col1", 2}, {"col2", "2"} },
+				new Dictionary<string,object>{ {"col1", 3}, {"col2", "3"} },
+			};
+
+			db.Insert( Plugin, "multiinserttest", values );
+
+			IEnumerable<IDictionary<string, object>> result = db.Select( Plugin, "multiinserttest", new[] { "col1", "col2" } );
+			Assert.AreEqual( 3, result.Count() );
+
+			for( int i = 1; i <= 3; ++i )
+			{
+				IDictionary<string, object> row = result.Where( dict => Convert.ToInt32( dict["col1"] ) == i ).FirstOrDefault();
+				Assert.IsNotNull( row );
+				Assert.AreEqual( i.ToString(), row["col1"].ToString() );
+				Assert.AreEqual( i.ToString(), row["col2"] );
+			}
 		}
 
 		[TestMethod, TestCategory( "Plugins" )]

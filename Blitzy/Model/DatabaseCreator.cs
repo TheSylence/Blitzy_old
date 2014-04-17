@@ -102,7 +102,7 @@ namespace Blitzy.Model
 				{ "PluginID", "VARCHAR(40) NOT NULL" },
 			} ) );
 
-			// TODO: Insert weby_websites into plugin_tables
+			sb.AppendFormat( "INSERT INTO plugin_tables (TableName, PluginID) VALUES ('{0}', '{1}');", "weby_websites", Plugin.System.Weby.GuidString );
 
 			Type type = typeof( SystemSetting );
 			foreach( SystemSetting setting in Enum.GetValues( type ) )

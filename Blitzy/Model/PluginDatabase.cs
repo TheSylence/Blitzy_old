@@ -28,7 +28,9 @@ namespace Blitzy.Model
 			return Connection.BeginTransaction( isolationLevel );
 		}
 
-		public bool CreateTable( IPlugin plugin, string table, TableColumn[] columns )
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities",
+			Justification = "Values are escpaed an we have tests for this" )]
+		public bool CreateTable( IPlugin plugin, string tableName, TableColumn[] columns )
 		{
 			if( plugin == null )
 			{
@@ -37,12 +39,12 @@ namespace Blitzy.Model
 
 			try
 			{
-				string tableName = string.Format( "{0}_{1}", plugin.Name, table );
+				tableName = GenerateTableName( plugin, tableName );
 				string columnDefinitions = string.Join( ",", columns.Select( c => c.ToSql() ) );
 
 				using( SQLiteCommand cmd = Connection.CreateCommand() )
 				{
-					cmd.CommandText = string.Format( "CREATE TABLE {0} ( {1} );", tableName, columnDefinitions );
+					cmd.CommandText = string.Format( "CREATE TABLE [{0}] ( {1} );", tableName, columnDefinitions );
 
 					cmd.ExecuteNonQuery();
 				}
@@ -75,6 +77,8 @@ namespace Blitzy.Model
 			return false;
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities",
+			Justification = "Values are escpaed an we have tests for this" )]
 		public void Delete( IPlugin plugin, string tableName, WhereClause where = null )
 		{
 			tableName = GenerateTableName( plugin, tableName );
@@ -86,7 +90,7 @@ namespace Blitzy.Model
 
 			using( SQLiteCommand cmd = Connection.CreateCommand() )
 			{
-				cmd.CommandText = string.Format( "DELETE FROM {0}", tableName );
+				cmd.CommandText = string.Format( "DELETE FROM [{0}]", tableName );
 				if( where != null )
 				{
 					cmd.CommandText += " WHERE " + where.ToSql( cmd );
@@ -99,6 +103,8 @@ namespace Blitzy.Model
 			}
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities",
+			Justification = "Values are escpaed an we have tests for this" )]
 		public void DropTable( IPlugin plugin, string tableName )
 		{
 			tableName = GenerateTableName( plugin, tableName ); ;
@@ -110,7 +116,7 @@ namespace Blitzy.Model
 
 			using( SQLiteCommand cmd = Connection.CreateCommand() )
 			{
-				cmd.CommandText = string.Format( "DROP TABLE {0};", tableName );
+				cmd.CommandText = string.Format( "DROP TABLE [{0}];", tableName );
 				cmd.ExecuteNonQuery();
 			}
 
@@ -136,6 +142,13 @@ namespace Blitzy.Model
 
 		public void Insert( IPlugin plugin, string tableName, IDictionary<string, object> values )
 		{
+			Insert( plugin, tableName, new[] { values } );
+		}
+
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities",
+			Justification = "Values are escpaed an we have tests for this" )]
+		public void Insert( IPlugin plugin, string tableName, IEnumerable<IDictionary<string, object>> values )
+		{
 			tableName = GenerateTableName( plugin, tableName );
 
 			if( !MayAccess( plugin, tableName ) )
@@ -143,26 +156,35 @@ namespace Blitzy.Model
 				return;
 			}
 
-			string columns = string.Join( ",", values.Select( v => v.Key ).OrderBy( k => k ) );
+			string columns = string.Join( "],[", values.First().Select( v => v.Key ).OrderBy( k => k ) );
 
 			using( SQLiteCommand cmd = Connection.CreateCommand() )
 			{
-				string columnValues = string.Join( ",", values.OrderBy( k => k.Key ).Select( kvp =>
-				{
-					SQLiteParameter param = cmd.CreateParameter();
-					param.ParameterName = string.Format( "value_{0}", kvp.Key );
-					param.Value = kvp.Value;
-					cmd.Parameters.Add( param );
+				int cnt = values.Count();
+				int i = 0;
 
-					return string.Format( "@{0}", param.ParameterName );
-				} ) );
+				string columnValues = string.Join( "),(", values.Select( row =>
+					{
+						++i;
+						return string.Join( ",", row.OrderBy( k => k.Key ).Select( kvp =>
+						{
+							SQLiteParameter param = cmd.CreateParameter();
+							param.ParameterName = string.Format( "value_{0}_{1}", kvp.Key, i );
+							param.Value = kvp.Value;
+							cmd.Parameters.Add( param );
 
-				cmd.CommandText = string.Format( "INSERT INTO {0} ({1}) VALUES({2});", tableName, columns, columnValues );
+							return string.Format( "@{0}", param.ParameterName );
+						} ) );
+					} ) );
+
+				cmd.CommandText = string.Format( "INSERT INTO [{0}] ([{1}]) VALUES ({2});", tableName, columns, columnValues );
 
 				cmd.ExecuteNonQuery();
 			}
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities",
+			Justification = "Values are escpaed an we have tests for this" )]
 		public IEnumerable<IDictionary<string, object>> Select( IPlugin plugin, string tableName, string[] columns, WhereClause where = null )
 		{
 			tableName = GenerateTableName( plugin, tableName );
@@ -174,7 +196,7 @@ namespace Blitzy.Model
 
 			using( SQLiteCommand cmd = Connection.CreateCommand() )
 			{
-				cmd.CommandText = string.Format( "SELECT {1} FROM {0}", tableName, string.Join( ",", columns ) );
+				cmd.CommandText = string.Format( "SELECT [{1}] FROM [{0}]", tableName, string.Join( "],[", columns ) );
 				if( where != null )
 				{
 					cmd.CommandText += " WHERE " + where.ToSql( cmd );
@@ -200,6 +222,8 @@ namespace Blitzy.Model
 			}
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities",
+			Justification = "Values are escpaed an we have tests for this" )]
 		public void Update( IPlugin plugin, string tableName, IDictionary<string, object> newValues, WhereClause where = null )
 		{
 			tableName = GenerateTableName( plugin, tableName );
@@ -218,10 +242,10 @@ namespace Blitzy.Model
 					param.ParameterName = string.Format( "value_{0}", kvp.Key );
 					cmd.Parameters.Add( param );
 
-					return string.Format( "{0} = @{1}", kvp.Key, param.ParameterName );
+					return string.Format( "[{0}] = @{1}", kvp.Key, param.ParameterName );
 				} ) );
 
-				cmd.CommandText = string.Format( "UPDATE {0} SET {1}", tableName, values );
+				cmd.CommandText = string.Format( "UPDATE [{0}] SET {1}", tableName, values );
 
 				if( where != null )
 				{
@@ -235,13 +259,7 @@ namespace Blitzy.Model
 			}
 		}
 
-		private static string GenerateTableName( IPlugin plugin, string tableName )
-		{
-			tableName = string.Format( "{0}_{1}", plugin.Name, tableName );
-			return tableName;
-		}
-
-		private bool MayAccess( IPlugin plugin, string tableName )
+		internal bool MayAccess( IPlugin plugin, string tableName )
 		{
 			if( plugin == null || string.IsNullOrWhiteSpace( tableName ) )
 			{
@@ -267,6 +285,19 @@ namespace Blitzy.Model
 					return plugin.PluginID.Equals( reader.GetGuid( 0 ) );
 				}
 			}
+		}
+
+		private static string GenerateTableName( IPlugin plugin, string tableName )
+		{
+			tableName = string.Format( "{0}_{1}", plugin.Name, tableName );
+
+			char[] replacements = new char[] { '[', ']', ';', '\"', '\'', ':' };
+			foreach( char c in replacements )
+			{
+				tableName = tableName.Replace( c, '_' );
+			}
+
+			return tableName;
 		}
 
 		#endregion Methods

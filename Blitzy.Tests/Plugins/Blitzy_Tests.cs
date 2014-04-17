@@ -10,7 +10,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Blitzy.Tests.Plugins
 {
 	[TestClass]
-	public class Blitzy_Tests : TestBase
+	public class Blitzy_Tests : PluginTestBase
 	{
 		[TestMethod, TestCategory( "Plugins" )]
 		public void InterfaceTest()

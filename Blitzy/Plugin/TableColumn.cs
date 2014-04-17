@@ -54,7 +54,7 @@ namespace Blitzy.Plugin
 				sqlType += " NOT NULL";
 			}
 
-			return string.Format( "{0} {1}", Name, sqlType );
+			return string.Format( "[{0}] {1}", Name, sqlType );
 		}
 
 		#endregion Methods

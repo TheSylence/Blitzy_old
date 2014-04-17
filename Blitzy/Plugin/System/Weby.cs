@@ -60,27 +60,20 @@ namespace Blitzy.Plugin.System
 
 				Items.Add( CommandItem.Create( "weby", "OpenWebsite".Localize(), this, "Weby.png" ) );
 
-				// FIXME: Rewrite for correct API use
-				//using( DbCommand cmd = Host.Database.CreateCommand() )
-				//{
-				//	cmd.CommandText = "SELECT Name, Description, URL, Icon FROM weby_websites";
-				//	using( DbDataReader reader = cmd.ExecuteReader() )
-				//	{
-				//		while( reader.Read() )
-				//		{
-				//			string url = reader.GetString( 2 );
-				//			string name = reader.GetString( 0 );
-				//			string desc = reader.GetString( 1 );
-				//			string icon = reader.GetString( 3 );
-				//			if( string.IsNullOrWhiteSpace( icon ) )
-				//			{
-				//				icon = "Weby.png";
-				//			}
+				IEnumerable<IDictionary<string, object>> sites = Host.Database.Select( this, "websites", new[] { "Name", "Description", "URL", "Icon" } );
+				foreach( IDictionary<string, object> site in sites )
+				{
+					string url = site["URL"].ToString();
+					string name = site["Name"].ToString();
+					string desc = site["Description"].ToString();
+					string icon = site["Icon"].ToString();
+					if( string.IsNullOrWhiteSpace( icon ) )
+					{
+						icon = "Weby.png";
+					}
 
-				//			Items.Add( CommandItem.Create( name, desc, this, icon, url ) );
-				//		}
-				//	}
-				//}
+					Items.Add( CommandItem.Create( name, desc, this, icon, url ) );
+				}
 			}
 
 			return Items;
@@ -99,43 +92,31 @@ namespace Blitzy.Plugin.System
 		[global::System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities" )]
 		public bool Load( IPluginHost host, string oldVersion = null )
 		{
-			/*	*/
-
 			Host = host;
 
 			if( oldVersion == null )
 			{
-				// FIXME: Rewrite for correct API use
-				//string[] engines = new[]
-				//{
-				//	"INSERT INTO weby (WebyID, Name, Url, Description, Icon) VALUES (1, 'google', 'https://www.google.com/search?source=Blitzy&q={0}', 'Search the internet using Google', 'https://www.google.de/images/google_favicon_128.png');",
-				//	"INSERT INTO weby (WebyID, Name, Url, Description, Icon) VALUES (2, 'wiki', 'http://en.wikipedia.org/wiki/{0}', 'Search in wikipedia (en)', 'http://bits.wikimedia.org/favicon/wikipedia.ico');",
-				//	"INSERT INTO weby (WebyID, Name, Url, Description, Icon) VALUES( 3, 'youtube', 'http://www.youtube.com/results?search_query={0}', 'Search in YouTube', 'http://s.ytimg.com/yts/img/favicon-vfldLzJxy.ico');",
-				//	"INSERT INTO weby (WebyID, Name, Url, Description, Icon) VALUES (4, 'bing', 'http://www.bing.com/search?q={0}', 'Seach the internet using Bing', 'http://www.bing.com/s/a/bing_p.ico');",
-				//	"INSERT INTO weby (WebyID, Name, Url, Description, Icon) VALUES (5, 'facebook', 'https://www.facebook.com/search/results.php?q={0}', 'Search in facebook', 'https://fbstatic-a.akamaihd.net/rsrc.php/yl/r/H3nktOa7ZMg.ico');",
-				//	"INSERT INTO weby (WebyID, Name, Url, Description, Icon) VALUES (6, 'wolfram', 'http://www.wolframalpha.com/input/?i={0}', 'Compute something using Wolfram Alpha', 'http://www.wolframalpha.com/favicon_calculate.ico');"
-				//};
+				Dictionary<string, object>[] values = new Dictionary<string, object>[]
+				{
+					new Dictionary<string,object>{ {"WebyID", 1 }, {"Name", "google" }, {"Url", "https://www.google.com/search?source=Blitzy&q={0}" }, {"Description", "Search the internet using Google"}, {"Icon", "https://www.google.de/images/google_favicon_128.png" } },
+					new Dictionary<string,object>{ {"WebyID", 2 }, {"Name", "wiki" }, {"Url", "http://en.wikipedia.org/wiki/{0}" }, {"Description", "Search in wikipedia (en)" }, {"Icon", "http://bits.wikimedia.org/favicon/wikipedia.ico"} },
+					new Dictionary<string,object>{ {"WebyID", 3 }, {"Name", "youtube" }, {"Url", "http://www.youtube.com/results?search_query={0}" }, {"Description", "Search in YouTube" }, {"Icon", "http://s.ytimg.com/yts/img/favicon-vfldLzJxy.ico" } },
+					new Dictionary<string,object>{ {"WebyID", 4 }, {"Name", "bing" }, {"Url", "http://www.bing.com/search?q={0}" }, {"Description", "Seach the internet using Bing" }, {"Icon", "http://www.bing.com/s/a/bing_p.ico" } },
+					new Dictionary<string,object>{ {"WebyID", 5 }, {"Name", "facebook" }, {"Url", "https://www.facebook.com/search/results.php?q={0}"}, {"Description", "Search in facebook" }, {"Icon", "https://fbstatic-a.akamaihd.net/rsrc.php/yl/r/H3nktOa7ZMg.ico" } },
+					new Dictionary<string,object>{ {"WebyID", 6 }, {"Name", "wolfram" }, {"Url", "http://www.wolframalpha.com/input/?i={0}" }, {"Description", "Compute something using Wolfram Alpha" }, {"Icon", "http://www.wolframalpha.com/favicon_calculate.ico"} },
+				};
 
-				//DbTransaction transaction = Host.Database.BeginTransaction();
-				//try
-				//{
-				//	foreach( string eng in engines )
-				//	{
-				//		using( DbCommand cmd = Host.Database.CreateCommand() )
-				//		{
-				//			cmd.CommandText = eng;
-				//			cmd.Transaction = transaction;
-				//			cmd.ExecuteNonQuery();
-				//		}
-				//	}
-
-				//	transaction.Commit();
-				//}
-				//catch
-				//{
-				//	transaction.Rollback();
-				//	throw;
-				//}
+				DbTransaction transaction = Host.Database.BeginTransaction();
+				try
+				{
+					Host.Database.Insert( this, "websites", values );
+					transaction.Commit();
+				}
+				catch
+				{
+					transaction.Rollback();
+					throw;
+				}
 			}
 
 			return true;

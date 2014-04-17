@@ -11,7 +11,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Blitzy.Tests.Plugins
 {
 	[TestClass]
-	public class Calcy_Tests : TestBase
+	public class Calcy_Tests : PluginTestBase
 	{
 		[TestMethod, TestCategory( "Plugins" )]
 		public void InterfaceTest()

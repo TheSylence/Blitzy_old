@@ -40,29 +40,42 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="GalaSoft.MvvmLight.Extras.WPF45">
-      <HintPath>..\packages\MvvmLightLibs.4.2.30.0\lib\net45\GalaSoft.MvvmLight.Extras.WPF45.dll</HintPath>
+    <Reference Include="GalaSoft.MvvmLight.Extras.WPF45, Version=4.3.31.28649, Culture=neutral, PublicKeyToken=0e27b6f8be9b2ef7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\MvvmLightLibs.4.3.31.1\lib\net45\GalaSoft.MvvmLight.Extras.WPF45.dll</HintPath>
     </Reference>
-    <Reference Include="GalaSoft.MvvmLight.WPF45">
-      <HintPath>..\packages\MvvmLightLibs.4.2.30.0\lib\net45\GalaSoft.MvvmLight.WPF45.dll</HintPath>
+    <Reference Include="GalaSoft.MvvmLight.WPF45, Version=4.3.31.28649, Culture=neutral, PublicKeyToken=eabbf6a5f5af5004, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\MvvmLightLibs.4.3.31.1\lib\net45\GalaSoft.MvvmLight.WPF45.dll</HintPath>
     </Reference>
     <Reference Include="log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Practices.ServiceLocation">
-      <HintPath>..\packages\CommonServiceLocator.1.0\lib\NET35\Microsoft.Practices.ServiceLocation.dll</HintPath>
+    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\CommonServiceLocator.1.2\lib\portable-windows8+net40+sl5+windowsphone8\Microsoft.Practices.ServiceLocation.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.QualityTools.Testing.Fakes, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="mscorlib.4.0.0.0.Fakes">
+      <HintPath>FakesAssemblies\mscorlib.4.0.0.0.Fakes.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="PresentationFramework.4.0.0.0.Fakes">
+      <HintPath>FakesAssemblies\PresentationFramework.4.0.0.0.Fakes.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.4.0.0.0.Fakes">
+      <HintPath>FakesAssemblies\System.4.0.0.0.Fakes.dll</HintPath>
+    </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Data.SQLite">
       <HintPath>..\packages\System.Data.SQLite.Core.1.0.92.0\lib\net451\System.Data.SQLite.dll</HintPath>
     </Reference>
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\MvvmLightLibs.4.2.30.0\lib\net45\System.Windows.Interactivity.dll</HintPath>
+      <HintPath>..\packages\MvvmLightLibs.4.3.31.1\lib\net45\System.Windows.Interactivity.dll</HintPath>
     </Reference>
     <Reference Include="System.Xaml" />
     <Reference Include="WindowsBase" />
@@ -104,6 +117,7 @@
     <Compile Include="Model\CatalogBuilder_Tests.cs" />
     <Compile Include="Model\CommandItem_Tests.cs" />
     <Compile Include="Model\CommandName_Tests.cs" />
+    <Compile Include="Model\FileEntry_Tests.cs" />
     <Compile Include="Model\Folder_Tests.cs" />
     <Compile Include="Model\Settings_Tests.cs" />
     <Compile Include="Model\ShellShortcut_Tests.cs" />
@@ -115,8 +129,10 @@
     <Compile Include="Plugins\Medy_Tests.cs" />
     <Compile Include="Plugins\PluginDatabase_Tests.cs" />
     <Compile Include="Plugins\PluginManager_Tests.cs" />
+    <Compile Include="Plugins\PluginTestBase.cs" />
     <Compile Include="Plugins\PluginTester.cs" />
     <Compile Include="Plugins\Shelly_Tests.cs" />
+    <Compile Include="Plugins\Weby_Tests.cs" />
     <Compile Include="Plugins\WhereClause_Tests.cs" />
     <Compile Include="Plugins\Winy_Tests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -139,6 +155,10 @@
     <Compile Include="ViewModel\WinySettingsViewModel_Tests.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
+    <Fakes Include="Fakes\System.fakes" />
+    <Fakes Include="Fakes\mscorlib.fakes" />
+    <Fakes Include="Fakes\PresentationFramework.fakes" />
     <None Include="packages.config" />
     <None Include="TestData\Blitzy.exe.lnk">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

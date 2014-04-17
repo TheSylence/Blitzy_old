@@ -69,6 +69,13 @@ namespace Blitzy.ViewModel
 			Show();
 		}
 
+		private void BuildCatalog()
+		{
+			// TODO: Check if currently building
+			// TODO: Reset timer if one is set
+			Builder.Build();
+		}
+
 		private void OnCommand( CommandMessage msg )
 		{
 			if( msg.TaskID.HasValue )
@@ -100,7 +107,7 @@ namespace Blitzy.ViewModel
 					break;
 
 				case "catalog":
-					// TODO: Rebuild catalog
+					BuildCatalog();
 					break;
 
 				case "version":
