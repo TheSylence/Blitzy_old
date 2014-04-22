@@ -69,16 +69,17 @@ namespace Blitzy.Plugin.System
 			return null;
 		}
 
-		public IEnumerable<Model.CommandItem> GetSubCommands( Model.CommandItem parent, IList<string> input )
+		public IEnumerable<CommandItem> GetSubCommands( Model.CommandItem parent, IList<string> input )
 		{
-			return new[]{
-				CommandItem.Create( "play", "MedyPlay".Localize(), this, "MedyPlay.png", null, RootItem ),
-				CommandItem.Create( "pause", "MedyPause".Localize(), this, "MedyPause.png", null, RootItem),
-				CommandItem.Create( "next", "MedyNext".Localize(), this , "MedyNext.png", null, RootItem),
-				CommandItem.Create( "prev", "MedyPrev".Localize(), this, "MedyPrev.png", null, RootItem ),
-				CommandItem.Create( "volup", "MedyVolup".Localize(), this, "MedyVolup.png", null, RootItem ),
-				CommandItem.Create("voldn", "MedyVoldn".Localize(), this, "MedyVoldn.png", null, RootItem )
-			}.Where( it => it.Name.StartsWith( input[1], true, CultureInfo.CurrentUICulture ) );
+			if( parent == RootItem )
+			{
+				yield return CommandItem.Create( "play", "MedyPlay".Localize(), this, "MedyPlay.png", null, RootItem );
+				yield return CommandItem.Create( "pause", "MedyPause".Localize(), this, "MedyPause.png", null, RootItem );
+				yield return CommandItem.Create( "next", "MedyNext".Localize(), this, "MedyNext.png", null, RootItem );
+				yield return CommandItem.Create( "prev", "MedyPrev".Localize(), this, "MedyPrev.png", null, RootItem );
+				yield return CommandItem.Create( "volup", "MedyVolup".Localize(), this, "MedyVolup.png", null, RootItem );
+				yield return CommandItem.Create( "voldn", "MedyVoldn".Localize(), this, "MedyVoldn.png", null, RootItem );
+			}
 		}
 
 		public bool Load( IPluginHost host, string oldVersion = null )

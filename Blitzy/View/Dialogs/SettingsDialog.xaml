@@ -76,6 +76,12 @@
 								<ListBox Grid.Row="3" MinHeight="100" />
 							</Grid>
 						</GroupBox>
+						<GroupBox Header="{lex:Loc History}">
+							<StackPanel Orientation="Horizontal">
+								<TextBlock Text="{lex:LocText HistorySize, Suffix=':'}" VerticalAlignment="Center" />
+								<xctk:IntegerUpDown Value="{Binding HistoryCount, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5,0" />
+							</StackPanel>
+						</GroupBox>
 					</StackPanel>
 				</Grid>
 			</TabItem>

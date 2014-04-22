@@ -73,6 +73,7 @@ namespace Blitzy.ViewModel
 			RebuildOnChange = Settings.GetValue<bool>( SystemSetting.RebuildCatalogOnChanges );
 			RebuildTime = Settings.GetValue<int>( SystemSetting.AutoCatalogRebuild );
 			BackupShortcuts = Settings.GetValue<bool>( SystemSetting.BackupShortcuts );
+			HistoryCount = Settings.GetValue<int>( SystemSetting.HistoryCount );
 		}
 
 		private void OnVersionCheckComplete( VersionCheckMessage msg )
@@ -359,6 +360,7 @@ namespace Blitzy.ViewModel
 			Settings.SetValue( SystemSetting.AutoCatalogRebuild, RebuildTime );
 			Settings.SetValue( SystemSetting.RebuildCatalogOnChanges, RebuildOnChange );
 			Settings.SetValue( SystemSetting.BackupShortcuts, BackupShortcuts );
+			Settings.SetValue( SystemSetting.HistoryCount, HistoryCount );
 
 			Settings.Save();
 			WinySettings.Save();
@@ -388,6 +390,7 @@ namespace Blitzy.ViewModel
 		private bool _CloseOnCommand;
 		private bool _CloseOnEscape;
 		private bool _CloseOnFocusLost;
+		private int _HistoryCount;
 		private bool _KeepInput;
 		private bool _PeriodicallyRebuild;
 		private bool _RebuildOnChange;
@@ -493,6 +496,26 @@ namespace Blitzy.ViewModel
 				RaisePropertyChanging( () => CloseOnFocusLost );
 				_CloseOnFocusLost = value;
 				RaisePropertyChanged( () => CloseOnFocusLost );
+			}
+		}
+
+		public int HistoryCount
+		{
+			get
+			{
+				return _HistoryCount;
+			}
+
+			set
+			{
+				if( _HistoryCount == value )
+				{
+					return;
+				}
+
+				RaisePropertyChanging( () => HistoryCount );
+				_HistoryCount = value;
+				RaisePropertyChanged( () => HistoryCount );
 			}
 		}
 

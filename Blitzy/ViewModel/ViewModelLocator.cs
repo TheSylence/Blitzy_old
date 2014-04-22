@@ -12,6 +12,9 @@
   See http://www.galasoft.ch/mvvm
 */
 
+using System;
+using System.Collections.Generic;
+using System.Reflection;
 using Blitzy.ViewModel.Dialogs;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
@@ -26,6 +29,8 @@ namespace Blitzy.ViewModel
 	internal class ViewModelLocator
 	{
 		#region Constructor
+
+		private static List<Type> ViewModelTypes = new List<Type>();
 
 		/// <summary>
 		/// Initializes a new instance of the ViewModelLocator class.
@@ -45,18 +50,34 @@ namespace Blitzy.ViewModel
 			////    SimpleIoc.Default.Register<IDataService, DataService>();
 			////}
 
-			SimpleIoc.Default.Register<MainViewModel>();
-			SimpleIoc.Default.Register<SettingsViewModel>();
+			Register<MainViewModel>();
 
-			SimpleIoc.Default.Register<TextInputDialogViewModel>();
-			SimpleIoc.Default.Register<WebyWebsiteDialogViewModel>();
+			Register<SettingsViewModel>();
+			Register<HistoryViewModel>();
 
-			SimpleIoc.Default.Register<NotifyIconViewModel>();
+			Register<TextInputDialogViewModel>();
+			Register<WebyWebsiteDialogViewModel>();
+
+			Register<NotifyIconViewModel>();
+		}
+
+		private void Register<T>() where T : class
+		{
+			SimpleIoc.Default.Register<T>();
+			ViewModelTypes.Add( typeof( T ) );
 		}
 
 		#endregion Constructor
 
 		#region ViewModels
+
+		public HistoryViewModel History
+		{
+			get
+			{
+				return ServiceLocator.Current.GetInstance<HistoryViewModel>();
+			}
+		}
 
 		public MainViewModel Main
 		{
@@ -106,7 +127,18 @@ namespace Blitzy.ViewModel
 
 		public static void Cleanup()
 		{
-			// TODO Clear the ViewModels
+			LogHelper.LogInfo( MethodInfo.GetCurrentMethod().DeclaringType, "Cleaning up ViewModels..." );
+
+			foreach( Type type in ViewModelTypes )
+			{
+				foreach( ViewModelBaseEx vm in ServiceLocator.Current.GetAllInstances( type ) )
+				{
+					vm.Cleanup();
+					vm.Dispose();
+				}
+			}
+
+			LogHelper.LogInfo( MethodInfo.GetCurrentMethod().DeclaringType, "All ViewModels cleared" );
 		}
 	}
 }

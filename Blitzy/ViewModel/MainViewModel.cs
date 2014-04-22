@@ -40,14 +40,14 @@ namespace Blitzy.ViewModel
 				Settings.Load();
 			}
 
-			APIDatabase = new PluginDatabase( Database.Connection );
-			Plugins = new PluginManager( this, Database.Connection );
+			APIDatabase = ToDispose( new PluginDatabase( Database.Connection ) );
+			Plugins = ToDispose( new PluginManager( this, Database.Connection ) );
 			Plugins.LoadPlugins();
 
-			CmdManager = new Blitzy.Model.CommandManager( Database.Connection, Settings, Plugins );
+			CmdManager = ToDispose( new Blitzy.Model.CommandManager( Database.Connection, Settings, Plugins ) );
 
-			Builder = new CatalogBuilder( Settings );
-			History = new HistoryManager( Settings );
+			Builder = ToDispose( new CatalogBuilder( Settings ) );
+			History = ToDispose( new HistoryManager( Settings ) );
 
 			Reset();
 		}
@@ -63,6 +63,13 @@ namespace Blitzy.ViewModel
 		#endregion Constructor
 
 		#region Methods
+
+		public override void Cleanup()
+		{
+			History.Save();
+
+			base.Cleanup();
+		}
 
 		internal void RaiseShow()
 		{
@@ -158,6 +165,7 @@ namespace Blitzy.ViewModel
 
 		private RelayCommand _ExecuteCommand;
 		private RelayCommand<KeyEventArgs> _KeyPreviewCommand;
+		private RelayCommand<KeyEventArgs> _KeyUpCommand;
 		private RelayCommand<CancelEventArgs> _OnClosingCommand;
 		private RelayCommand _OnDeactivatedCommand;
 		private RelayCommand _SettingsCommand;
@@ -177,6 +185,15 @@ namespace Blitzy.ViewModel
 			{
 				return _KeyPreviewCommand ??
 					( _KeyPreviewCommand = new RelayCommand<KeyEventArgs>( ExecuteKeyPreviewCommand, CanExecuteKeyPreviewCommand ) );
+			}
+		}
+
+		public RelayCommand<KeyEventArgs> KeyUpCommand
+		{
+			get
+			{
+				return _KeyUpCommand ??
+					( _KeyUpCommand = new RelayCommand<KeyEventArgs>( ExecuteKeyUpCommand, CanExecuteKeyUpCommand ) );
 			}
 		}
 
@@ -224,7 +241,8 @@ namespace Blitzy.ViewModel
 		{
 			if( Keyboard.IsKeyDown( Key.LeftCtrl ) || Keyboard.IsKeyDown( Key.RightCtrl ) )
 			{
-				// TODO: History
+				MessengerInstance.Send<HistoryMessage>( new HistoryMessage( HistoryMessageType.Show, History ) );
+				MessengerInstance.Send<HistoryMessage>( new HistoryMessage( HistoryMessageType.Down ) );
 				return true;
 			}
 			else
@@ -248,6 +266,17 @@ namespace Blitzy.ViewModel
 
 		internal bool OnKeyReturn()
 		{
+			if( Keyboard.IsKeyDown( Key.LeftCtrl ) || Keyboard.IsKeyDown( Key.RightCtrl ) )
+			{
+				string hist = History.SelectedItem;
+
+				CommandInput = hist;
+
+				MessengerInstance.Send<HistoryMessage>( new HistoryMessage( HistoryMessageType.Hide ) );
+				MessengerInstance.Send<InputCaretPositionMessage>( new InputCaretPositionMessage( CommandInput.Length ) );
+				return true;
+			}
+
 			if( CmdManager.CurrentItem != null )
 			{
 				ExecuteExecuteCommand();
@@ -271,21 +300,34 @@ namespace Blitzy.ViewModel
 			}
 
 			List<string> commandParts = new List<string>( CmdManager.GetCommandParts( CommandInput ) );
-			if( CommandInput.EndsWith( CmdManager.Separator ) )
-			{
-				commandParts.RemoveAt( 0 );
-			}
 			commandParts.RemoveAt( commandParts.Count - 1 );
-			commandParts.Add( CmdManager.CurrentItem.Name );
-			commandParts.Add( string.Empty );
+
+			if( CmdManager.CurrentItem.Name != commandParts.Last() )
+			{
+				commandParts.Add( CmdManager.CurrentItem.Name );
+			}
+
+			// Autocomplete all commands up to root
+			CommandItem item = CmdManager.CurrentItem;
+			for( int i = commandParts.Count - 1; i >= 0; --i )
+			{
+				if( item == null )
+					break;
+
+				commandParts[i] = item.Name;
+				item = item.Parent;
+			}
 
 			int subCommandCount = CmdManager.CurrentItem.Plugin.GetSubCommands( CmdManager.CurrentItem, commandParts ).Count();
-			if( subCommandCount == 0 )
+			if( subCommandCount > 0 )
 			{
-				commandParts.RemoveAt( commandParts.Count - 1 );
+				commandParts.Add( string.Empty );
 			}
 
 			CommandInput = string.Join( CmdManager.Separator, commandParts );
+			// In case the actual content didn't change (we change the underlying property above)
+			RaisePropertyChanged( () => CommandInput );
+			UpdateCommandInput();
 
 			MessengerInstance.Send<InputCaretPositionMessage>( new InputCaretPositionMessage( CommandInput.Length ) );
 			return true;
@@ -295,7 +337,8 @@ namespace Blitzy.ViewModel
 		{
 			if( Keyboard.IsKeyDown( Key.LeftCtrl ) || Keyboard.IsKeyDown( Key.RightCtrl ) )
 			{
-				// TODO: History
+				MessengerInstance.Send<HistoryMessage>( new HistoryMessage( HistoryMessageType.Show, History ) );
+				MessengerInstance.Send<HistoryMessage>( new HistoryMessage( HistoryMessageType.Up ) );
 				return true;
 			}
 			else
@@ -312,6 +355,11 @@ namespace Blitzy.ViewModel
 		}
 
 		private bool CanExecuteKeyPreviewCommand( KeyEventArgs args )
+		{
+			return true;
+		}
+
+		private bool CanExecuteKeyUpCommand( KeyEventArgs args )
 		{
 			return true;
 		}
@@ -417,6 +465,15 @@ namespace Blitzy.ViewModel
 			}
 		}
 
+		[ExcludeFromCodeCoverage]
+		private void ExecuteKeyUpCommand( KeyEventArgs args )
+		{
+			if( args.Key == Key.LeftCtrl || args.Key == Key.RightCtrl )
+			{
+				MessengerInstance.Send<HistoryMessage>( new HistoryMessage( HistoryMessageType.Hide ) );
+			}
+		}
+
 		private void ExecuteOnClosingCommand( CancelEventArgs args )
 		{
 			if( !ShouldClose )
@@ -431,6 +488,7 @@ namespace Blitzy.ViewModel
 			if( Settings.GetValue<bool>( SystemSetting.CloseOnFocusLost ) )
 			{
 				Hide();
+				CommandInput = string.Empty;
 			}
 		}
 

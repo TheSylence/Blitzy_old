@@ -37,8 +37,6 @@ namespace Blitzy
 
 			System.Threading.Thread.CurrentThread.Name = "Main";
 
-			Exit += ( s, e ) => SingleInstance.Stop();
-
 #if !DEBUG
 			DispatcherUnhandledException += new DispatcherUnhandledExceptionEventHandler( Application_DispatcherUnhandledException );
 #endif
@@ -63,7 +61,10 @@ namespace Blitzy
 
 		protected override void OnExit( ExitEventArgs e )
 		{
+			ViewModelLocator.Cleanup();
+
 			NotifyIcon.Dispose();
+			SingleInstance.Stop();
 			base.OnExit( e );
 		}
 

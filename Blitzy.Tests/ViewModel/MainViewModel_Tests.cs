@@ -190,10 +190,26 @@ namespace Blitzy.Tests.ViewModel
 			vm.CommandInput = "qui";
 			Assert.IsTrue( vm.OnKeyTab() );
 			Assert.AreEqual( "quit", vm.CommandInput );
+			Assert.IsNotNull( vm.CmdManager.CurrentItem );
+			Assert.AreEqual( "quit", vm.CmdManager.CurrentItem.Name );
 
 			vm.CommandInput = "medy";
 			Assert.IsTrue( vm.OnKeyTab() );
 			Assert.AreEqual( "medy" + vm.CmdManager.Separator, vm.CommandInput );
+			Assert.IsNotNull( vm.CmdManager.CurrentItem );
+			Assert.AreEqual( "medy", vm.CmdManager.CurrentItem.Name );
+
+			vm.CommandInput = "med";
+			Assert.IsTrue( vm.OnKeyTab() );
+			Assert.AreEqual( "medy" + vm.CmdManager.Separator, vm.CommandInput );
+			Assert.IsNotNull( vm.CmdManager.CurrentItem );
+			Assert.AreNotEqual( "medy", vm.CmdManager.CurrentItem.Name );
+
+			vm.CommandInput += "play";
+			Assert.IsTrue( vm.OnKeyTab() );
+			Assert.AreEqual( "medy" + vm.CmdManager.Separator + "play", vm.CommandInput );
+			Assert.IsNotNull( vm.CmdManager.CurrentItem );
+			Assert.AreEqual( "play", vm.CmdManager.CurrentItem.Name );
 		}
 	}
 }

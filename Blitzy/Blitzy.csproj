@@ -121,6 +121,9 @@
     <Compile Include="Constants.cs" />
     <Compile Include="Controls\CommandListView.cs" />
     <Compile Include="Controls\CommandTextBox.cs" />
+    <Compile Include="Controls\HistoryWindow.xaml.cs">
+      <DependentUpon>HistoryWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\TrayIcon.cs" />
     <Compile Include="Converter\ElementNotNullConverter.cs" />
     <Compile Include="Converter\StringToImageConverter.cs" />
@@ -131,6 +134,7 @@
     <Compile Include="BaseObject.cs" />
     <Compile Include="Messages\CatalogStatusMessage.cs" />
     <Compile Include="Messages\CommandMessage.cs" />
+    <Compile Include="Messages\HistoryMessage.cs" />
     <Compile Include="Messages\InputCaretPositionMessage.cs" />
     <Compile Include="Messages\InternalCommandMessage.cs" />
     <Compile Include="Messages\VersionCheckMessage.cs" />
@@ -177,6 +181,7 @@
     <Compile Include="ViewModel\Dialogs\ExceptionDialogViewModel.cs" />
     <Compile Include="ViewModel\Dialogs\TextInputDialogViewModel.cs" />
     <Compile Include="ViewModel\Dialogs\WebyWebsiteDialogViewModel.cs" />
+    <Compile Include="ViewModel\HistoryViewModel.cs" />
     <Compile Include="ViewModel\IRequestCloseViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\NotifyIconViewModel.cs" />
@@ -187,6 +192,10 @@
     <Compile Include="ViewModel\SettingsViewModelBase.cs" />
     <Compile Include="ViewModel\ViewModelBaseEx.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
+    <Page Include="Controls\HistoryWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="ResourceDictionaries\Converter.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -304,6 +313,7 @@
     <EmbeddedResource Include="Resources\Icons\MedyVolup.png" />
     <EmbeddedResource Include="Resources\Icons\History.png" />
     <EmbeddedResource Include="Resources\Icons\Version.png" />
+    <Resource Include="Resources\History.png" />
     <Content Include="x64\SQLite.Interop.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

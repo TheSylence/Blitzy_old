@@ -45,6 +45,11 @@ namespace Blitzy.Model
 
 		public void AddItem( string command )
 		{
+			if( command.Equals( Commands.LastOrDefault(), StringComparison.OrdinalIgnoreCase ) )
+			{
+				return;
+			}
+
 			Commands.Add( command );
 
 			while( Commands.Count > Settings.GetValue<int>( SystemSetting.HistoryCount ) )
@@ -104,7 +109,29 @@ namespace Blitzy.Model
 
 		#region Properties
 
+		private string _SelectedItem;
+
 		public ObservableCollection<string> Commands { get; private set; }
+
+		public string SelectedItem
+		{
+			get
+			{
+				return _SelectedItem;
+			}
+
+			set
+			{
+				if( _SelectedItem == value )
+				{
+					return;
+				}
+
+				RaisePropertyChanging( () => SelectedItem );
+				_SelectedItem = value;
+				RaisePropertyChanged( () => SelectedItem );
+			}
+		}
 
 		#endregion Properties
 

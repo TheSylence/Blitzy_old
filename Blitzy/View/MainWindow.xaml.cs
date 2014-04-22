@@ -13,6 +13,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Blitzy.Messages;
+using GalaSoft.MvvmLight.Messaging;
 
 namespace Blitzy.View
 {
@@ -25,6 +27,19 @@ namespace Blitzy.View
 		public MainWindow()
 		{
 			InitializeComponent();
+
+			Activated += ( s, e ) =>
+				{
+					txtInput.Focus();
+				};
+
+			Messenger.Default.Register<HistoryMessage>( this, msg =>
+			{
+				if( msg.Type == HistoryMessageType.Hide )
+				{
+					txtInput.Focus();
+				}
+			} );
 		}
 	}
 }

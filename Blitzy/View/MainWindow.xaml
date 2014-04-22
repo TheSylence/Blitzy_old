@@ -11,6 +11,9 @@
 		<i:EventTrigger EventName="PreviewKeyDown">
 			<commands:EventToCommand Command="{Binding KeyPreviewCommand}" PassEventArgsToCommand="True" />
 		</i:EventTrigger>
+		<i:EventTrigger EventName="PreviewKeyUp">
+			<commands:EventToCommand Command="{Binding KeyUpCommand}" PassEventArgsToCommand="True" />
+		</i:EventTrigger>
 		<i:EventTrigger EventName="Closing">
 			<commands:EventToCommand Command="{Binding OnClosingCommand}" PassEventArgsToCommand="True" />
 		</i:EventTrigger>
@@ -40,18 +43,21 @@
 		<ctrl:CommandTextBox Text="{Binding CommandInput, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Grid.Row="0" Margin="1,5,5,5" x:Name="txtInput" />
 		<TextBlock Text="{Binding CommandInfo}" Grid.Row="1" Visibility="{Binding CommandInfo, Converter={StaticResource StringToVisibilityConv}}" />
 
-		<ctrl:CommandListView ItemsSource="{Binding Path=CmdManager.Items}" SelectedIndex="{Binding SelectedCommandIndex, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding CmdManager.CurrentItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Row="2" Grid.ColumnSpan="2" Margin="2">
-			<ListView.ItemTemplate>
-				<DataTemplate>
-					<StackPanel Orientation="Horizontal" Margin="0">
-						<Image Source="{Binding Icon, Converter={StaticResource StringToImageConv}}" Width="32" Height="32" Margin="0" />
-						<StackPanel Margin="0">
-							<Label Content="{Binding Name}" FontSize="13" FontWeight="Bold" Margin="0" Padding="2" />
-							<Label Content="{Binding Description}" FontSize="11" Margin="0"  Padding="2" />
+		<Grid Grid.Row="2" Grid.ColumnSpan="2" Margin="2">
+			<ctrl:CommandListView ItemsSource="{Binding Path=CmdManager.Items}" SelectedIndex="{Binding SelectedCommandIndex, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding CmdManager.CurrentItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+				<ListView.ItemTemplate>
+					<DataTemplate>
+						<StackPanel Orientation="Horizontal" Margin="0">
+							<Image Source="{Binding Icon, Converter={StaticResource StringToImageConv}}" Width="32" Height="32" Margin="0" />
+							<StackPanel Margin="0">
+								<Label Content="{Binding Name}" FontSize="13" FontWeight="Bold" Margin="0" Padding="2" />
+								<Label Content="{Binding Description}" FontSize="11" Margin="0"  Padding="2" />
+							</StackPanel>
 						</StackPanel>
-					</StackPanel>
-				</DataTemplate>
-			</ListView.ItemTemplate>
-		</ctrl:CommandListView>
+					</DataTemplate>
+				</ListView.ItemTemplate>
+			</ctrl:CommandListView>
+			<ctrl:HistoryWindow Visibility="Collapsed" />
+		</Grid>
 	</Grid>
 </v:CloseableView>
