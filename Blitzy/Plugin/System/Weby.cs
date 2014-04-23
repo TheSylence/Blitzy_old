@@ -63,7 +63,7 @@ namespace Blitzy.Plugin.System
 				IEnumerable<IDictionary<string, object>> sites = Host.Database.Select( this, "websites", new[] { "Name", "Description", "URL", "Icon" } );
 				foreach( IDictionary<string, object> site in sites )
 				{
-					string url = site["URL"].ToString();
+					string url = site["Url"].ToString();
 					string name = site["Name"].ToString();
 					string desc = site["Description"].ToString();
 					string icon = site["Icon"].ToString();
@@ -96,6 +96,19 @@ namespace Blitzy.Plugin.System
 
 			if( oldVersion == null )
 			{
+				TableColumn[] columns = new TableColumn[]
+				{
+					new TableColumn( "WebyID", ColumnType.Numeric ),
+					new TableColumn( "Name", ColumnType.Text, 50 ),
+					new TableColumn( "Description", ColumnType.Text, 255 ),
+					new	TableColumn( "Url", ColumnType.Text ),
+					new TableColumn( "Icon", ColumnType.Text )
+				};
+				if( !Host.Database.CreateTable( this, "websites", columns ) )
+				{
+					return false;
+				}
+
 				Dictionary<string, object>[] values = new Dictionary<string, object>[]
 				{
 					new Dictionary<string,object>{ {"WebyID", 1 }, {"Name", "google" }, {"Url", "https://www.google.com/search?source=Blitzy&q={0}" }, {"Description", "Search the internet using Google"}, {"Icon", "https://www.google.de/images/google_favicon_128.png" } },
@@ -109,7 +122,11 @@ namespace Blitzy.Plugin.System
 				DbTransaction transaction = Host.Database.BeginTransaction();
 				try
 				{
-					Host.Database.Insert( this, "websites", values );
+					if( Host.Database.Insert( this, "websites", values ) != values.Count() )
+					{
+						transaction.Rollback();
+						return false;
+					}
 					transaction.Commit();
 				}
 				catch

@@ -140,20 +140,20 @@ namespace Blitzy.Model
 			}
 		}
 
-		public void Insert( IPlugin plugin, string tableName, IDictionary<string, object> values )
+		public int Insert( IPlugin plugin, string tableName, IDictionary<string, object> values )
 		{
-			Insert( plugin, tableName, new[] { values } );
+			return Insert( plugin, tableName, new[] { values } );
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities",
 			Justification = "Values are escpaed an we have tests for this" )]
-		public void Insert( IPlugin plugin, string tableName, IEnumerable<IDictionary<string, object>> values )
+		public int Insert( IPlugin plugin, string tableName, IEnumerable<IDictionary<string, object>> values )
 		{
 			tableName = GenerateTableName( plugin, tableName );
 
 			if( !MayAccess( plugin, tableName ) )
 			{
-				return;
+				return 0;
 			}
 
 			string columns = string.Join( "],[", values.First().Select( v => v.Key ).OrderBy( k => k ) );
@@ -179,7 +179,7 @@ namespace Blitzy.Model
 
 				cmd.CommandText = string.Format( "INSERT INTO [{0}] ([{1}]) VALUES ({2});", tableName, columns, columnValues );
 
-				cmd.ExecuteNonQuery();
+				return cmd.ExecuteNonQuery();
 			}
 		}
 
@@ -224,13 +224,13 @@ namespace Blitzy.Model
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities",
 			Justification = "Values are escpaed an we have tests for this" )]
-		public void Update( IPlugin plugin, string tableName, IDictionary<string, object> newValues, WhereClause where = null )
+		public int Update( IPlugin plugin, string tableName, IDictionary<string, object> newValues, WhereClause where = null )
 		{
 			tableName = GenerateTableName( plugin, tableName );
 
 			if( !MayAccess( plugin, tableName ) )
 			{
-				return;
+				return 0;
 			}
 
 			using( SQLiteCommand cmd = Connection.CreateCommand() )
@@ -255,7 +255,7 @@ namespace Blitzy.Model
 				cmd.CommandText += ";";
 
 				cmd.Prepare();
-				cmd.ExecuteNonQuery();
+				return cmd.ExecuteNonQuery();
 			}
 		}
 

@@ -48,6 +48,25 @@ namespace Blitzy.Tests
 			Connection = CreateConnection();
 
 			DatabaseCreator.CreateDatabase( Connection );
+
+			CreatePluginTables();
+		}
+
+		protected virtual void CreatePluginTables()
+		{
+			using( SQLiteCommand cmd = Connection.CreateCommand() )
+			{
+				cmd.CommandText = QueryBuilder.CreateTable( "weby_websites", new Dictionary<string, string>
+				{
+					{ "WebyID", "INTEGER PRIMARY KEY" },
+					{ "Name", "VARCHAR(50) NOT NULL" },
+					{ "Description", "VARCHAR(255) NOT NULL" },
+					{ "Url", "TEXT NOT NULL" },
+					{ "Icon", "TEXT" }
+				} );
+
+				cmd.ExecuteNonQuery();
+			}
 		}
 
 		protected void SetNativeMethods( NativeMethodsType type )

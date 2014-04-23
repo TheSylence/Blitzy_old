@@ -19,12 +19,12 @@ namespace Blitzy.Plugin
 
 		void DropTable( IPlugin plugin, string tableName );
 
-		void Insert( IPlugin plugin, string tableName, IDictionary<string, object> values );
+		int Insert( IPlugin plugin, string tableName, IDictionary<string, object> values );
 
-		void Insert( IPlugin plugin, string tableName, IEnumerable<IDictionary<string, object>> values );
+		int Insert( IPlugin plugin, string tableName, IEnumerable<IDictionary<string, object>> values );
 
 		IEnumerable<IDictionary<string, object>> Select( IPlugin plugin, string tableName, string[] columns, WhereClause where = null );
 
-		void Update( IPlugin plugin, string tableName, IDictionary<string, object> newValues, WhereClause where = null );
+		int Update( IPlugin plugin, string tableName, IDictionary<string, object> newValues, WhereClause where = null );
 	}
 }

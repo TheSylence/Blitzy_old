@@ -12,39 +12,54 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Blitzy.Tests.Plugins
 {
-	[TestClass] [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+	[TestClass]
+	[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	public class Weby_Tests : PluginTestBase
 	{
 		[TestMethod, TestCategory( "Plugins" )]
 		public void ExecuteCommandTest()
 		{
 			Weby plug = new Weby();
-			plug.Load( this );
+			Assert.IsTrue( plug.Load( this ) );
 
-			IEnumerable<CommandItem> commands = plug.GetCommands( new[] { "weby" } );
-			Assert.AreEqual( 1, commands.Count() );
+			Dictionary<string, string> expectedUrls = new Dictionary<string, string>();
+			expectedUrls.Add( "google", "google.com" );
+			expectedUrls.Add( "wiki", "wikipedia.org" );
+			expectedUrls.Add( "youtube", "youtube.com" );
+			expectedUrls.Add( "bing", "bing.com" );
+			expectedUrls.Add( "facebook", "facebook.com" );
+			expectedUrls.Add( "wolfram", "wolframalpha.com" );
+			expectedUrls.Add( "weby", "http://test" );
 
-			CommandItem cmd = commands.FirstOrDefault();
-			Assert.IsNotNull( cmd );
-			Assert.AreEqual( "weby", cmd.Name );
+			IEnumerable<CommandItem> commands = plug.GetCommands( new List<string>() );
+			Assert.AreEqual( expectedUrls.Count, commands.Count() );
 
 			string message;
 			bool result;
 			string url = null;
 
-			using( ShimsContext.Create() )
+			foreach( CommandItem command in commands )
 			{
-				System.Diagnostics.Fakes.ShimProcess.StartString = s =>
+				if( command.Name == "weby" )
 				{
-					url = s;
-					return new System.Diagnostics.Fakes.StubProcess();
-				};
+					continue;
+				}
 
-				result = plug.ExecuteCommand( cmd, new[] { "weby", "example.invalid" }, out message );
+				using( ShimsContext.Create() )
+				{
+					System.Diagnostics.Fakes.ShimProcess.StartString = s =>
+					{
+						url = s;
+						return new System.Diagnostics.Fakes.StubProcess();
+					};
+
+					result = plug.ExecuteCommand( command, new[] { command.Name, "test" }, out message );
+				}
+
+				Assert.IsTrue( result );
+				Assert.IsTrue( url.Contains( "test" ) );
+				Assert.IsTrue( url.Contains( expectedUrls[command.Name] ) );
 			}
-
-			Assert.IsTrue( result );
-			Assert.AreEqual( "http://example.invalid/", url );
 		}
 
 		[TestMethod, TestCategory( "Plugins" )]
@@ -60,7 +75,8 @@ namespace Blitzy.Tests.Plugins
 			Weby plug = new Weby();
 			Assert.IsTrue( plug.Load( this ) );
 
-			// TODO: Check if websites are saved in the database
+			IEnumerable<CommandItem> commands = plug.GetCommands( new List<string>() );
+			Assert.AreEqual( 7, commands.Count() );
 		}
 	}
 }

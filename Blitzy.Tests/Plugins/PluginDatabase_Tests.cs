@@ -14,7 +14,8 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Blitzy.Tests.Plugins
 {
-	[TestClass] [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+	[TestClass]
+	[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	public class PluginDatabase_Tests : TestBase
 	{
 		private IPlugin Plugin { get; set; }
@@ -202,7 +203,7 @@ namespace Blitzy.Tests.Plugins
 			Dictionary<string, object> values = new Dictionary<string, object>();
 			values.Add( "col1", 12 );
 			values.Add( "col2", "test" );
-			db.Insert( Plugin, "datatest", values );
+			Assert.AreEqual( 1, db.Insert( Plugin, "datatest", values ) );
 
 			IEnumerable<IDictionary<string, object>> result = db.Select( Plugin, "datatest", new[] { "col1", "col2" } );
 			Assert.AreEqual( 1, result.Count() );
@@ -211,7 +212,7 @@ namespace Blitzy.Tests.Plugins
 			Assert.AreEqual( "12", row["col1"].ToString() );
 			Assert.AreEqual( "test", row["col2"] );
 
-			db.Update( Plugin, "datatest", new Dictionary<string, object> { { "col1", 123 }, { "col2", "col" } } );
+			Assert.AreEqual( 1, db.Update( Plugin, "datatest", new Dictionary<string, object> { { "col1", 123 }, { "col2", "col" } } ) );
 
 			result = db.Select( Plugin, "datatest", new[] { "col1", "col2" } );
 			Assert.AreEqual( 1, result.Count() );
@@ -256,7 +257,7 @@ namespace Blitzy.Tests.Plugins
 				new Dictionary<string,object>{ {"col1", 3}, {"col2", "3"} },
 			};
 
-			db.Insert( Plugin, "multiinserttest", values );
+			Assert.AreEqual( 3, db.Insert( Plugin, "multiinserttest", values ) );
 
 			IEnumerable<IDictionary<string, object>> result = db.Select( Plugin, "multiinserttest", new[] { "col1", "col2" } );
 			Assert.AreEqual( 3, result.Count() );
@@ -326,7 +327,7 @@ namespace Blitzy.Tests.Plugins
 			WhereClause where = new WhereClause();
 			where.AddCondition( "col1", 5, WhereOperation.Less );
 
-			db.Update( Plugin, "wheretest", new Dictionary<string, object> { { "col2", "test" } }, where );
+			Assert.AreEqual( 5, db.Update( Plugin, "wheretest", new Dictionary<string, object> { { "col2", "test" } }, where ) );
 
 			IEnumerable<IDictionary<string, object>> result = db.Select( Plugin, "wheretest", new[] { "col2" }, where );
 			Assert.AreEqual( 5, result.Count() );

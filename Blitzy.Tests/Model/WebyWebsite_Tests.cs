@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data.SQLite;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,7 +11,8 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Blitzy.Tests.Model
 {
-	[TestClass] [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+	[TestClass]
+	[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	public class WebyWebsite_Tests : TestBase
 	{
 		[TestMethod, TestCategory( "Model" ), ExpectedException( typeof( TypeLoadException ) )]

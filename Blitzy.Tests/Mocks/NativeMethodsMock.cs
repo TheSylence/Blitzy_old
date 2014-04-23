@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace Blitzy.Tests.Mocks
 {
+	[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	public class NativeMethodsMock : INativeMethods
 	{
 		#region Methods

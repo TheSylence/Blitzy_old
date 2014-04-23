@@ -24,6 +24,11 @@ namespace Blitzy.Tests.Plugins
 			Settings = new Settings( Connection );
 		}
 
+		protected override void CreatePluginTables()
+		{
+			// Do nothing
+		}
+
 		#region IPluginHost
 
 		IDatabase IPluginHost.Database
