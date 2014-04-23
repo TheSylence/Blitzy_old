@@ -12,7 +12,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Blitzy.Tests.ViewServices
 {
-	[TestClass]
+	[TestClass] [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	public class DialogServiceManager_Tests : TestBase
 	{
 		[TestMethod, TestCategory( "ViewServices" )]
