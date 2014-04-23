@@ -60,15 +60,18 @@ namespace Blitzy.Plugin.System
 
 		public IEnumerable<CommandItem> GetSubCommands( CommandItem parent, IList<string> input )
 		{
-			if( Host.Settings.GetValue<bool>( this, ImportKey ) )
+			if( parent == RootItem )
 			{
-				using( RegistryKey puttyKey = Registry.CurrentUser.OpenSubKey( @"Software\SimonTatham\PuTTY\Sessions" ) )
+				if( Host.Settings.GetValue<bool>( this, ImportKey ) )
 				{
-					if( puttyKey != null )
+					using( RegistryKey puttyKey = Registry.CurrentUser.OpenSubKey( @"Software\SimonTatham\PuTTY\Sessions" ) )
 					{
-						foreach( string str in puttyKey.GetSubKeyNames().OrderBy( s => s.GetDiceCoefficent( input[0] ) ) )
+						if( puttyKey != null )
 						{
-							yield return CommandItem.Create( str, string.Format( CultureInfo.CurrentUICulture, "Open saved session '{0}'", str ), this, PuttyPath, true, RootItem );
+							foreach( string str in puttyKey.GetSubKeyNames().OrderBy( s => s.GetDiceCoefficent( input[0] ) ) )
+							{
+								yield return CommandItem.Create( str, string.Format( CultureInfo.CurrentUICulture, "Open saved session '{0}'", str ), this, PuttyPath, true, RootItem );
+							}
 						}
 					}
 				}

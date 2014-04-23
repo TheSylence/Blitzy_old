@@ -28,8 +28,21 @@ namespace Blitzy
 
 		public static string GetNameFromExpression<T>( this Expression<Func<T, object>> exp )
 		{
-			UnaryExpression un = exp.Body as UnaryExpression;
-			MemberExpression mem = un.Operand as MemberExpression;
+			MemberExpression mem = exp.Body as MemberExpression;
+			if( mem == null )
+			{
+				UnaryExpression un = exp.Body as UnaryExpression;
+				if( un == null )
+				{
+					return null;
+				}
+				mem = un.Operand as MemberExpression;
+			}
+
+			if( mem == null )
+			{
+				return null;
+			}
 			return mem.Member.Name;
 		}
 

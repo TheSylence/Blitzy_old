@@ -78,6 +78,10 @@ namespace Blitzy.Tests
 			{
 				return System.Windows.Input.ModifierKeys.Control;
 			}
+			else if( type == typeof( DateTime ) )
+			{
+				return new DateTime( 2013, 3, 14 );
+			}
 
 			throw new NotSupportedException( type.ToString() );
 		}

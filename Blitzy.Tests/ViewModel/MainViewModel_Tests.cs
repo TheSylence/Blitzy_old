@@ -197,13 +197,17 @@ namespace Blitzy.Tests.ViewModel
 			Assert.IsTrue( vm.OnKeyTab() );
 			Assert.AreEqual( "medy" + vm.CmdManager.Separator, vm.CommandInput );
 			Assert.IsNotNull( vm.CmdManager.CurrentItem );
-			Assert.AreEqual( "medy", vm.CmdManager.CurrentItem.Name );
+			Assert.AreNotEqual( "medy", vm.CmdManager.CurrentItem.Name );
+			Assert.IsNotNull( vm.CmdManager.CurrentItem.Parent );
+			Assert.AreEqual( "medy", vm.CmdManager.CurrentItem.Parent.Name );
 
 			vm.CommandInput = "med";
 			Assert.IsTrue( vm.OnKeyTab() );
 			Assert.AreEqual( "medy" + vm.CmdManager.Separator, vm.CommandInput );
 			Assert.IsNotNull( vm.CmdManager.CurrentItem );
 			Assert.AreNotEqual( "medy", vm.CmdManager.CurrentItem.Name );
+			Assert.IsNotNull( vm.CmdManager.CurrentItem.Parent );
+			Assert.AreEqual( "medy", vm.CmdManager.CurrentItem.Parent.Name );
 
 			vm.CommandInput += "play";
 			Assert.IsTrue( vm.OnKeyTab() );

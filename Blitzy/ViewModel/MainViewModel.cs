@@ -293,19 +293,7 @@ namespace Blitzy.ViewModel
 				return false;
 			}
 
-			if( !CommandInput.EndsWith( CmdManager.Separator ) )
-			{
-				_CommandInput += CmdManager.Separator;
-				MessengerInstance.Send<InputCaretPositionMessage>( new InputCaretPositionMessage( CommandInput.Length ) );
-			}
-
 			List<string> commandParts = new List<string>( CmdManager.GetCommandParts( CommandInput ) );
-			commandParts.RemoveAt( commandParts.Count - 1 );
-
-			if( CmdManager.CurrentItem.Name != commandParts.Last() )
-			{
-				commandParts.Add( CmdManager.CurrentItem.Name );
-			}
 
 			// Autocomplete all commands up to root
 			CommandItem item = CmdManager.CurrentItem;
@@ -325,10 +313,6 @@ namespace Blitzy.ViewModel
 			}
 
 			CommandInput = string.Join( CmdManager.Separator, commandParts );
-			// In case the actual content didn't change (we change the underlying property above)
-			RaisePropertyChanged( () => CommandInput );
-			UpdateCommandInput();
-
 			MessengerInstance.Send<InputCaretPositionMessage>( new InputCaretPositionMessage( CommandInput.Length ) );
 			return true;
 		}

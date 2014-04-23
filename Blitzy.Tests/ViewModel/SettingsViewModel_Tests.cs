@@ -17,7 +17,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Blitzy.Tests.ViewModel
 {
 	[TestClass]
-	public class Settings_Tests : TestBase
+	public class SettingsViewModel_Tests : TestBase
 	{
 		private SettingsViewModel VM;
 
@@ -124,6 +124,19 @@ namespace Blitzy.Tests.ViewModel
 			evt.WaitOne();
 
 			Assert.IsNotNull( VM.LatestVersion );
+		}
+
+		[TestMethod, TestCategory( "ViewModel" )]
+		public void PropertyChangedTest()
+		{
+			PropertyChangedListener listener = new PropertyChangedListener( VM );
+			listener.Exclude<SettingsViewModel>( vm => vm.APIDatabase );
+			listener.Exclude<SettingsViewModel>( vm => vm.BlitzyLicense );
+			listener.Exclude<SettingsViewModel>( vm => vm.Changelog );
+			listener.Exclude<SettingsViewModel>( vm => vm.CatalogBuilder );
+			listener.Exclude<SettingsViewModel>( vm => vm.CurrentVersion );
+			listener.Exclude<SettingsViewModel>( vm => vm.Settings );
+			Assert.IsTrue( listener.TestProperties() );
 		}
 
 		[TestMethod, TestCategory( "ViewModel" )]

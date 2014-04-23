@@ -73,7 +73,7 @@ namespace Blitzy.Plugin.System
 
 		public IEnumerable<CommandItem> GetSubCommands( CommandItem parent, IList<string> input )
 		{
-			return Enumerable.Empty<CommandItem>();
+			yield break;
 		}
 
 		public bool Load( IPluginHost host, string oldVersion = null )

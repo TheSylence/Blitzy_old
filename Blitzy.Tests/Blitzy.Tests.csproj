@@ -119,6 +119,7 @@
     <Compile Include="Model\CommandName_Tests.cs" />
     <Compile Include="Model\FileEntry_Tests.cs" />
     <Compile Include="Model\Folder_Tests.cs" />
+    <Compile Include="Model\HistoryManager_Tests.cs" />
     <Compile Include="Model\Settings_Tests.cs" />
     <Compile Include="Model\ShellShortcut_Tests.cs" />
     <Compile Include="Model\ShuntingYard_Tests.cs" />
@@ -142,13 +143,14 @@
     <Compile Include="ViewModel\CloseableView_Tests.cs" />
     <Compile Include="ViewModel\CloseViewEventArgs_Tests.cs" />
     <Compile Include="ViewModel\ExceptionDialogViewModel_Tests.cs" />
+    <Compile Include="ViewModel\HistoryViewModel_Tests.cs" />
     <Compile Include="ViewModel\NotifyIconViewModel_Tests.cs" />
     <Compile Include="ViewModel\PuttySettingsViewModel_Tests.cs" />
     <Compile Include="ViewModel\ViewModelLocator_Tests.cs" />
     <Compile Include="ViewServices\DialogServiceManager_Tests.cs" />
     <Compile Include="ViewModel\DialogViewModelBase_Tests.cs" />
     <Compile Include="ViewModel\MainViewModel_Tests.cs" />
-    <Compile Include="ViewModel\Settings_Tests.cs" />
+    <Compile Include="ViewModel\SettingsViewModel_Tests.cs" />
     <Compile Include="ViewModel\TextInputDialogViewModel_Tests.cs" />
     <Compile Include="ViewModel\ViewModelBaseEx_Tests.cs" />
     <Compile Include="ViewModel\WebySettingsViewModel_Tests.cs" />

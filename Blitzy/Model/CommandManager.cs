@@ -73,7 +73,16 @@ namespace Blitzy.Model
 			{
 				Collection<string> cmdParts = new Collection<string>( parts );
 				//items.AddRange( CurrentItem.Plugin.GetCommands( cmdParts ) );
-				items.AddRange( CurrentItem.Plugin.GetSubCommands( CurrentItem, cmdParts ) );
+
+				IEnumerable<CommandItem> subCommands = CurrentItem.Plugin.GetSubCommands( CurrentItem, cmdParts );
+				if( subCommands.Count() == 0 )
+				{
+					items.Add( CurrentItem );
+				}
+				else
+				{
+					items.AddRange( subCommands );
+				}
 			}
 
 			foreach( CommandItem item in items.OrderByDescending( it => GetCommandExecutionCount( it ) )
