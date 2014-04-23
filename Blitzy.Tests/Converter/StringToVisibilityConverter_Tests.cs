@@ -11,7 +11,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Blitzy.Tests.Converter
 {
-	[TestClass]
+	[TestClass] [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	public class StringToVisibilityConverter_Tests : TestBase
 	{
 		[TestMethod, TestCategory( "Converter" ), ExpectedException( typeof( NotSupportedException ) )]

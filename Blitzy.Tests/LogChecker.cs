@@ -12,6 +12,7 @@ using log4net.Repository.Hierarchy;
 
 namespace Blitzy.Tests
 {
+	[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	internal class LogChecker : IDisposable
 	{
 		private readonly MemoryAppender Appender = new MemoryAppender();

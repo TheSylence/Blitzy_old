@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace Blitzy.Tests
 {
+	[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	internal static class Extensions
 	{
 		public static Task<T> StartSTATask<T>( this Func<T> func )

@@ -109,6 +109,7 @@
     <Compile Include="Mocks\MockPluginHost.cs" />
     <Compile Include="Mocks\MockViewModel.cs" />
     <Compile Include="Mocks\MockPlugin.cs" />
+    <Compile Include="Mocks\NativeMethodsMock.cs" />
     <Compile Include="Mocks\Services\CallCheckServiceMock.cs" />
     <Compile Include="Mocks\Services\DataManipulationServiceMock.cs" />
     <Compile Include="Mocks\Services\MessageBoxServiceMock.cs" />

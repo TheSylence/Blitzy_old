@@ -11,7 +11,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Blitzy.Tests.Plugins
 {
-	[TestClass]
+	[TestClass] [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	public class WhereClause_Tests : TestBase
 	{
 		[TestMethod, TestCategory( "Plugins" )]

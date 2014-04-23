@@ -9,6 +9,7 @@ using Blitzy.ViewModel;
 
 namespace Blitzy.Tests.Mocks
 {
+	[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	internal class MockViewModel : ViewModelBaseEx
 	{
 		#region Constructor

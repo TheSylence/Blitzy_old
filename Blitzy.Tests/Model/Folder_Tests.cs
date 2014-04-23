@@ -11,7 +11,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Blitzy.Tests.Model
 {
-	[TestClass]
+	[TestClass] [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	public class Folder_Tests : TestBase
 	{
 		[TestMethod, TestCategory( "Model" )]

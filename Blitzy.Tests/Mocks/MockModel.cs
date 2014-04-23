@@ -9,6 +9,7 @@ using Blitzy.Model;
 
 namespace Blitzy.Tests.Mocks
 {
+	[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	internal class MockModel : ModelBase
 	{
 		public override void Delete( System.Data.SQLite.SQLiteConnection connection )

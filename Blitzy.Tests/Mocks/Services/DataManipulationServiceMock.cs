@@ -10,6 +10,7 @@ using Blitzy.ViewServices;
 
 namespace Blitzy.Tests.Mocks.Services
 {
+	[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	internal class DataManipulationServiceMock<T> : IDataManipulationService where T : ModelBase
 	{
 		public Func<T> CreateFunc;

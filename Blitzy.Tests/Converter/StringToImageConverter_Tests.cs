@@ -12,6 +12,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Blitzy.Tests.Converter
 {
 	[TestClass]
+	[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	public class StringToImageConverter_Tests : TestBase
 	{
 		[TestMethod, TestCategory( "Converter" ), ExpectedException( typeof( NotSupportedException ) )]

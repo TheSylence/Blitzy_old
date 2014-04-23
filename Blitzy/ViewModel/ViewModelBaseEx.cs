@@ -74,7 +74,49 @@ namespace Blitzy.ViewModel
 
 		#region Methods
 
-		protected ILog Log;
+		#region Logging
+
+		protected void LogDebug( string format, params object[] args )
+		{
+			if( Log.IsDebugEnabled )
+			{
+				Log.DebugFormat( CultureInfo.InvariantCulture, format, args );
+			}
+		}
+
+		protected void LogError( string format, params object[] args )
+		{
+			if( Log.IsErrorEnabled )
+			{
+				Log.ErrorFormat( CultureInfo.InvariantCulture, format, args );
+			}
+		}
+
+		protected void LogFatal( string format, params object[] args )
+		{
+			if( Log.IsFatalEnabled )
+			{
+				Log.FatalFormat( CultureInfo.InvariantCulture, format, args );
+			}
+		}
+
+		protected void LogInfo( string format, params object[] args )
+		{
+			if( Log.IsInfoEnabled )
+			{
+				Log.InfoFormat( CultureInfo.InvariantCulture, format, args );
+			}
+		}
+
+		protected void LogWarning( string format, params object[] args )
+		{
+			if( Log.IsWarnEnabled )
+			{
+				Log.WarnFormat( CultureInfo.InvariantCulture, format, args );
+			}
+		}
+
+		#endregion Logging
 
 		public virtual void Reset()
 		{
@@ -124,46 +166,6 @@ namespace Blitzy.ViewModel
 			}
 		}
 
-		protected void LogDebug( string format, params object[] args )
-		{
-			if( Log.IsDebugEnabled )
-			{
-				Log.DebugFormat( CultureInfo.InvariantCulture, format, args );
-			}
-		}
-
-		protected void LogError( string format, params object[] args )
-		{
-			if( Log.IsErrorEnabled )
-			{
-				Log.ErrorFormat( CultureInfo.InvariantCulture, format, args );
-			}
-		}
-
-		protected void LogFatal( string format, params object[] args )
-		{
-			if( Log.IsFatalEnabled )
-			{
-				Log.FatalFormat( CultureInfo.InvariantCulture, format, args );
-			}
-		}
-
-		protected void LogInfo( string format, params object[] args )
-		{
-			if( Log.IsInfoEnabled )
-			{
-				Log.InfoFormat( CultureInfo.InvariantCulture, format, args );
-			}
-		}
-
-		protected void LogWarning( string format, params object[] args )
-		{
-			if( Log.IsWarnEnabled )
-			{
-				Log.WarnFormat( CultureInfo.InvariantCulture, format, args );
-			}
-		}
-
 		protected virtual void RegisterMessages()
 		{
 		}
@@ -205,6 +207,7 @@ namespace Blitzy.ViewModel
 		#region Attributes
 
 		internal Stack<IDisposable> ObjectsToDispose;
+		protected ILog Log;
 		private bool MessagesRegistered;
 
 		#endregion Attributes

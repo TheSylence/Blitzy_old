@@ -11,7 +11,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Blitzy.Tests
 {
-	[TestClass]
+	[TestClass] [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	public sealed class TestHelper
 	{
 		private static Stack<string> TestFolders;

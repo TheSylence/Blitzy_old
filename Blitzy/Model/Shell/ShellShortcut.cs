@@ -161,7 +161,7 @@ namespace Blitzy.Model.Shell
 
 				m_Link.GetIconLocation( sb, sb.Capacity, out nIconIdx );
 				hInst = Marshal.GetHINSTANCE( this.GetType().Module );
-				hIcon = NativeMethods.ExtractIcon( hInst, sb.ToString(), nIconIdx );
+				hIcon = INativeMethods.Instance.ExtractIcon_Wrapper( hInst, sb.ToString(), nIconIdx );
 				if( hIcon == IntPtr.Zero )
 					return null;
 
@@ -169,7 +169,7 @@ namespace Blitzy.Model.Shell
 				ico = Icon.FromHandle( hIcon );
 				clone = (Icon)ico.Clone();
 				ico.Dispose();
-				NativeMethods.DestroyIcon( hIcon );
+				INativeMethods.Instance.DestroyIcon_Wrapper( hIcon );
 				return clone;
 			}
 		}

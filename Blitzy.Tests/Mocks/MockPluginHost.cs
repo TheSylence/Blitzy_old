@@ -9,6 +9,7 @@ using Blitzy.Plugin;
 
 namespace Blitzy.Tests.Mocks
 {
+	[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	internal class MockPluginHost : IPluginHost
 	{
 		public IDatabase Database

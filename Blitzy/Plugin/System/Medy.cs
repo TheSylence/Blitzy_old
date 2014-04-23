@@ -54,7 +54,7 @@ namespace Blitzy.Plugin.System
 					return false;
 			}
 
-			NativeMethods.SendMessage( HWND_BROADCAST, WM_APPCOMMAND, IntPtr.Zero, (IntPtr)( lp * 65536 ) );
+			INativeMethods.Instance.SendMessage_Wrapper( HWND_BROADCAST, WM_APPCOMMAND, IntPtr.Zero, (IntPtr)( lp * 65536 ) );
 			message = null;
 			return true;
 		}
@@ -90,7 +90,7 @@ namespace Blitzy.Plugin.System
 
 		public void Unload( PluginUnloadReason reason )
 		{
-			throw new NotImplementedException();
+			// Do nothing
 		}
 
 		#endregion Methods
@@ -148,13 +148,13 @@ namespace Blitzy.Plugin.System
 
 		#region Constants
 
-		private const int APPCOMMAND_MEDIA_NEXTTRACK = 11;
-		private const int APPCOMMAND_MEDIA_PAUSE = 47;
-		private const int APPCOMMAND_MEDIA_PLAY = 46;
-		private const int APPCOMMAND_MEDIA_PREVIOUSTRACK = 12;
-		private const int APPCOMMAND_VOLUME_DOWN = 9;
-		private const int APPCOMMAND_VOLUME_UP = 10;
-		private const int WM_APPCOMMAND = 0x0319;
+		internal const int APPCOMMAND_MEDIA_NEXTTRACK = 11;
+		internal const int APPCOMMAND_MEDIA_PAUSE = 47;
+		internal const int APPCOMMAND_MEDIA_PLAY = 46;
+		internal const int APPCOMMAND_MEDIA_PREVIOUSTRACK = 12;
+		internal const int APPCOMMAND_VOLUME_DOWN = 9;
+		internal const int APPCOMMAND_VOLUME_UP = 10;
+		internal const int WM_APPCOMMAND = 0x0319;
 		private IntPtr HWND_BROADCAST = (IntPtr)0xffff;
 
 		#endregion Constants

@@ -54,7 +54,7 @@ namespace Blitzy.Converter
 
 					IntPtr large = IntPtr.Zero;
 					IntPtr small = IntPtr.Zero;
-					int icons = NativeMethods.ExtractIconEx( file, icoIdx, ref large, ref small, 1 );
+					int icons = INativeMethods.Instance.ExtractIconEx_Wrapper( file, icoIdx, ref large, ref small, 1 );
 					if( icons == 0 )
 					{
 						LogHelper.LogWarning( MethodInfo.GetCurrentMethod().DeclaringType, "No icons extracted from {0}", file );

@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace Blitzy.Tests.Mocks
 {
+	[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	internal class MockLogObject : BaseObject
 	{
 		internal void Debug( string p )

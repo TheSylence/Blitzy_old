@@ -14,7 +14,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Blitzy.Tests.Model
 {
 	// FIXME: This does not work...
-	[TestClass]
+	[TestClass] [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	internal class ShellShortcut_Tests : TestBase
 	{
 		[TestMethod, TestCategory( "Model" )]

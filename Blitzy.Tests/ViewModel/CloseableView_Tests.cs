@@ -12,7 +12,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Blitzy.Tests.ViewModel
 {
-	[TestClass]
+	[TestClass] [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	public class CloseableView_Tests : TestBase, IRequestCloseViewModel
 	{
 		public event EventHandler<CloseViewEventArgs> RequestClose;

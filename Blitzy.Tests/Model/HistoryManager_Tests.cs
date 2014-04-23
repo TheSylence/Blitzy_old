@@ -11,6 +11,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Blitzy.Tests.Model
 {
 	[TestClass]
+	[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	public class HistoryManager_Tests : TestBase
 	{
 		[TestMethod, TestCategory( "Model" )]

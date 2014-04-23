@@ -28,6 +28,8 @@ namespace Blitzy
 
 		public App()
 		{
+			INativeMethods.Instance = new NativeMethods();
+
 			if( !SingleInstance.Start() )
 			{
 				SingleInstance.ShowFirstInstance();
@@ -106,22 +108,22 @@ namespace Blitzy
 
 		private void LogEnvironmentInfo()
 		{
-			LogHelper.LogInfo( GetType(), "Version {0}", Assembly.GetExecutingAssembly().GetName().Version );
-			LogHelper.LogInfo( GetType(), "CLR: {0}", Environment.Version );
-			LogHelper.LogInfo( GetType(), "{0} ({1})", Environment.OSVersion.ToString(), Environment.Is64BitOperatingSystem ? "x64" : "x86" );
-			LogHelper.LogInfo( GetType(), "{0}bit process", Environment.Is64BitProcess ? 64 : 32 );
+			LogHelper.LogInfo( MethodInfo.GetCurrentMethod().DeclaringType, "Version {0}", Assembly.GetExecutingAssembly().GetName().Version );
+			LogHelper.LogInfo( MethodInfo.GetCurrentMethod().DeclaringType, "CLR: {0}", Environment.Version );
+			LogHelper.LogInfo( MethodInfo.GetCurrentMethod().DeclaringType, "{0} ({1})", Environment.OSVersion.ToString(), Environment.Is64BitOperatingSystem ? "x64" : "x86" );
+			LogHelper.LogInfo( MethodInfo.GetCurrentMethod().DeclaringType, "{0}bit process", Environment.Is64BitProcess ? 64 : 32 );
 			using( ManagementObjectSearcher searcher = new ManagementObjectSearcher( "select Name, NumberOfLogicalProcessors, NumberOfCores from Win32_Processor" ) )
 			{
 				try
 				{
 					foreach( ManagementObject obj in searcher.Get() )
 					{
-						LogHelper.LogInfo( GetType(), "CPU: {0} ({1} physical, {2} logical)", obj["Name"], obj["NumberOfCores"], obj["NumberOfLogicalProcessors"] );
+						LogHelper.LogInfo( MethodInfo.GetCurrentMethod().DeclaringType, "CPU: {0} ({1} physical, {2} logical)", obj["Name"], obj["NumberOfCores"], obj["NumberOfLogicalProcessors"] );
 					}
 				}
 				catch
 				{
-					LogHelper.LogWarning( GetType(), "Failed to get CPU information" );
+					LogHelper.LogWarning( MethodInfo.GetCurrentMethod().DeclaringType, "Failed to get CPU information" );
 				}
 			}
 
@@ -135,15 +137,15 @@ namespace Blitzy
 						mem += Convert.ToUInt64( obj["Capacity"], CultureInfo.InvariantCulture );
 					}
 
-					LogHelper.LogInfo( GetType(), "RAM: {0}MB", mem / 1024.0 / 1024.0 );
+					LogHelper.LogInfo( MethodInfo.GetCurrentMethod().DeclaringType, "RAM: {0}MB", mem / 1024.0 / 1024.0 );
 				}
 				catch
 				{
-					LogHelper.LogWarning( GetType(), "Failed to get RAM information" );
+					LogHelper.LogWarning( MethodInfo.GetCurrentMethod().DeclaringType, "Failed to get RAM information" );
 				}
 			}
 
-			LogHelper.LogInfo( GetType(), "Command: {0}", Environment.CommandLine );
+			LogHelper.LogInfo( MethodInfo.GetCurrentMethod().DeclaringType, "Command: {0}", Environment.CommandLine );
 		}
 
 		#endregion Methods

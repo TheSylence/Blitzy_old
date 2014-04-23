@@ -11,6 +11,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Blitzy.Tests.Global
 {
 	[TestClass]
+	[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	public class HotKeyHost_Tests : TestBase
 	{
 		[TestMethod, TestCategory( "Global" ), ExpectedException( typeof( ArgumentNullException ) )]
@@ -58,7 +59,7 @@ namespace Blitzy.Tests.Global
 					host.HotKeyPressed += ( s, e ) => raised = true;
 
 					IntPtr wParam = new IntPtr( 2 ); // I have no idea why this is a two...
-					NativeMethods.SendMessage( hwndSource.Handle, HotKeyHost.WM_HotKey, wParam, IntPtr.Zero );
+					INativeMethods.Instance.SendMessage_Wrapper( hwndSource.Handle, HotKeyHost.WM_HotKey, wParam, IntPtr.Zero );
 					Assert.IsTrue( raised );
 
 					host.RemoveHotKey( key );
@@ -70,6 +71,8 @@ namespace Blitzy.Tests.Global
 		[TestMethod, TestCategory( "Global" ), ExpectedException( typeof( HotKeyAlreadyRegisteredException ) )]
 		public void AlreadyRegisteredTest()
 		{
+			SetNativeMethods( NativeMethodsType.Real );
+
 			HwndSourceParameters p = new HwndSourceParameters();
 
 			using( HwndSource hwndSource = new HwndSource( p ) )

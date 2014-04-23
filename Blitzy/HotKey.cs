@@ -209,7 +209,7 @@ namespace Blitzy
 		{
 			if( (int)hwndSource.Handle != 0 )
 			{
-				int error = NativeMethods.RegisterHotKey( hwndSource.Handle, id, (int)hotKey.Modifiers, KeyInterop.VirtualKeyFromKey( hotKey.Key ) );
+				int error = INativeMethods.Instance.RegisterHotKey_Wrapper( hwndSource.Handle, id, (int)hotKey.Modifiers, KeyInterop.VirtualKeyFromKey( hotKey.Key ) );
 				if( error == 0 )
 				{
 					error = Marshal.GetLastWin32Error();
@@ -229,7 +229,7 @@ namespace Blitzy
 		{
 			if( (int)hwndSource.Handle != 0 )
 			{
-				int error = NativeMethods.UnregisterHotKey( hwndSource.Handle, id );
+				int error = INativeMethods.Instance.UnregisterHotKey_Wrapper( hwndSource.Handle, id );
 				if( error == 0 )
 				{
 					throw new Win32Exception( Marshal.GetLastWin32Error() );

@@ -379,7 +379,7 @@ namespace Blitzy.ViewModel
 				catch( Exception ex )
 				{
 					result = false;
-					LogError( "Failed to execute command: {0}", ex );
+					LogError( "Failed to execute command ({1}): {0}", ex, CommandInput );
 				}
 				finally
 				{

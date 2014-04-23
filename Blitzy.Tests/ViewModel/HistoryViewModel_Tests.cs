@@ -13,6 +13,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Blitzy.Tests.ViewModel
 {
 	[TestClass]
+	[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	public class HistoryViewModel_Tests : TestBase
 	{
 		[TestMethod, TestCategory( "ViewModel" )]

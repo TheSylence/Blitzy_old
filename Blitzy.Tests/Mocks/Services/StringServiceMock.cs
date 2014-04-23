@@ -9,6 +9,7 @@ using Blitzy.ViewServices;
 
 namespace Blitzy.Tests.Mocks.Services
 {
+	[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	internal class StringServiceMock : IDialogService
 	{
 		public string Value;

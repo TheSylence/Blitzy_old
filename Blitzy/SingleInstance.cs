@@ -17,7 +17,7 @@ namespace Blitzy
 		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline" )]
 		static SingleInstance()
 		{
-			WM_SHOWFIRSTINSTANCE = NativeMethods.RegisterWindowMessage( "WM_SHOWFIRSTINSTANCE|{0}", AssemblyGuid );
+			WM_SHOWFIRSTINSTANCE = INativeMethods.Instance.RegisterWindowMessage_Wrapper( "WM_SHOWFIRSTINSTANCE|{0}", AssemblyGuid );
 		}
 
 		#endregion Constructor
@@ -26,7 +26,7 @@ namespace Blitzy
 
 		internal static void ShowFirstInstance()
 		{
-			NativeMethods.PostMessage( (IntPtr)NativeMethods.HWND_BROADCAST, WM_SHOWFIRSTINSTANCE, IntPtr.Zero, IntPtr.Zero );
+			INativeMethods.Instance.PostMessage_Wrapper( (IntPtr)INativeMethods.HWND_BROADCAST, WM_SHOWFIRSTINSTANCE, IntPtr.Zero, IntPtr.Zero );
 		}
 
 		internal static bool Start()
