@@ -72,7 +72,7 @@ namespace Blitzy.Tests.Mocks
 
 		public IEnumerable<Blitzy.Model.CommandItem> GetSubCommands( Blitzy.Model.CommandItem parent, IList<string> input )
 		{
-			throw new NotImplementedException();
+			yield return parent;
 		}
 
 		public bool Load( IPluginHost host, string oldVersion = null )

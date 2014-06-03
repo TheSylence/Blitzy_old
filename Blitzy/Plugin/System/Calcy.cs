@@ -34,7 +34,7 @@ namespace Blitzy.Plugin.System
 
 		public IEnumerable<CommandItem> GetCommands( IList<string> input )
 		{
-			yield return CommandItem.Create( "calcy", "CalcyDescription".Localize(), this, "Calcy.png" );
+			yield return CommandItem.Create( "calcy", "CalcyDescription".Localize(), this, "Calcy.png", null, null, null, true );
 		}
 
 		public string GetInfo( IList<string> data, CommandItem item )
@@ -49,7 +49,7 @@ namespace Blitzy.Plugin.System
 
 		public IEnumerable<CommandItem> GetSubCommands( CommandItem parent, IList<string> input )
 		{
-			return GetCommands( input );
+			yield break;
 		}
 
 		public bool Load( IPluginHost host, string oldVersion = null )

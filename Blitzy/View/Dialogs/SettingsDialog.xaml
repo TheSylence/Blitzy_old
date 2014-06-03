@@ -156,6 +156,47 @@
 					</DockPanel>
 				</Grid>
 			</TabItem>
+			<TabItem Header="{lex:Loc Workspaces}">
+				<Grid>
+					<Grid.RowDefinitions>
+						<RowDefinition />
+						<RowDefinition />
+					</Grid.RowDefinitions>
+
+					<GroupBox Header="Workspaces" Grid.Row="0">
+						<Grid>
+							<Grid.RowDefinitions>
+								<RowDefinition />
+								<RowDefinition Height="Auto" />
+							</Grid.RowDefinitions>
+
+							<ListBox Grid.Row="0" />
+
+							<StackPanel Orientation="Horizontal" Grid.Row="1" HorizontalAlignment="Right">
+								<Button Content="New" />
+								<Button Content="Delete" />
+							</StackPanel>
+						</Grid>
+					</GroupBox>
+					<GroupBox Header="Details" Grid.Row="1">
+						<Grid>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition />
+								<ColumnDefinition Width="Auto" />
+							</Grid.ColumnDefinitions>
+
+							<ListBox />
+
+							<StackPanel Orientation="Vertical" Grid.Column="1">
+								<Button Content="New" />
+								<Button Content="" />
+								<Button Content="" />
+								<Button Content="Remove" />
+							</StackPanel>
+						</Grid>
+					</GroupBox>
+				</Grid>
+			</TabItem>
 			<TabItem Header="{lex:Loc Plugins}">
 				<TabControl>
 					<TabItem Header="{lex:Loc SystemPlugins}">

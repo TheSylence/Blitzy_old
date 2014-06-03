@@ -33,11 +33,7 @@ namespace Blitzy.Plugin.System
 			// weby
 			if( command.UserData == null )
 			{
-				url = ( term.StartsWith( "http://", true, culture ) ||
-					term.StartsWith( "ftp://", true, culture ) ||
-					term.StartsWith( "https://", true, culture ) ||
-					term.StartsWith( "file://", true, culture ) )
-					? PrepareString( term ) : string.Format( culture, "http://{0}", term );
+				url = IsUrl( term ) ? PrepareString( term ) : string.Format( culture, "http://{0}", term );
 				uri = new Uri( url );
 			}
 			// user defined
@@ -72,7 +68,7 @@ namespace Blitzy.Plugin.System
 						icon = "Weby.png";
 					}
 
-					Items.Add( CommandItem.Create( name, desc, this, icon, url ) );
+					Items.Add( CommandItem.Create( name, desc, this, icon, url, null, null, true ) );
 				}
 			}
 
@@ -141,6 +137,15 @@ namespace Blitzy.Plugin.System
 
 		public void Unload( PluginUnloadReason reason )
 		{
+		}
+
+		internal static bool IsUrl( string term )
+		{
+			CultureInfo culture = CultureInfo.CurrentUICulture;
+			return ( term.StartsWith( "http://", true, culture ) ||
+					term.StartsWith( "ftp://", true, culture ) ||
+					term.StartsWith( "https://", true, culture ) ||
+					term.StartsWith( "file://", true, culture ) );
 		}
 
 		private static string PrepareString( string term )

@@ -182,6 +182,7 @@
     <Compile Include="Plugin\WhereClause.cs" />
     <Compile Include="RuntimeConfig.cs" />
     <Compile Include="SingleInstance.cs" />
+    <Compile Include="Todo.cs" />
     <Compile Include="ViewModel\CloseViewEventArgs.cs" />
     <Compile Include="ViewModel\Dialogs\DialogViewModelBase.cs" />
     <Compile Include="ViewModel\Dialogs\ExceptionDialogViewModel.cs" />

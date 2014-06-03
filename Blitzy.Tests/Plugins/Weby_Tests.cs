@@ -40,11 +40,6 @@ namespace Blitzy.Tests.Plugins
 
 			foreach( CommandItem command in commands )
 			{
-				if( command.Name == "weby" )
-				{
-					continue;
-				}
-
 				using( ShimsContext.Create() )
 				{
 					System.Diagnostics.Fakes.ShimProcess.StartString = s =>
@@ -67,6 +62,18 @@ namespace Blitzy.Tests.Plugins
 		{
 			PluginTester tester = new PluginTester( new Weby() );
 			Assert.IsTrue( tester.TestRunComplete );
+		}
+
+		[TestMethod, TestCategory( "Plugins" )]
+		public void IsUrlTest()
+		{
+			Assert.IsTrue( Weby.IsUrl( "http://google.com" ) );
+			Assert.IsTrue( Weby.IsUrl( "ftp://user:pass@domain.com" ) );
+			Assert.IsTrue( Weby.IsUrl( "file://local/file.txt" ) );
+			Assert.IsTrue( Weby.IsUrl( "https://secure.website.com" ) );
+
+			Assert.IsFalse( Weby.IsUrl( "htp://typo.com" ) );
+			Assert.IsFalse( Weby.IsUrl( "steam://steamapp" ) );
 		}
 
 		[TestMethod, TestCategory( "Plugins" )]

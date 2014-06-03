@@ -22,6 +22,7 @@ namespace Blitzy.Model
 			Settings = settings;
 			Plugins = plugins;
 
+			AvailableCommands = new List<CommandItem>();
 			Items = new ObservableCollection<CommandItem>();
 			Separator = " " + char.ConvertFromUtf32( 0x00002192 ) + " ";
 
@@ -214,11 +215,12 @@ namespace Blitzy.Model
 
 		public string Separator { get; private set; }
 
+		internal List<CommandItem> AvailableCommands { get; private set; }
+
 		#endregion Properties
 
 		#region Attributes
 
-		private List<CommandItem> AvailableCommands = new List<CommandItem>();
 		private Dictionary<int, int> CommandExecutionBuffer = new Dictionary<int, int>();
 		private SQLiteConnection Connection;
 		private PluginManager Plugins;

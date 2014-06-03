@@ -117,6 +117,7 @@
     <Compile Include="Mocks\Services\TextInputServiceMock.cs" />
     <Compile Include="Model\CatalogBuilder_Tests.cs" />
     <Compile Include="Model\CommandItem_Tests.cs" />
+    <Compile Include="Model\CommandManager_Tests.cs" />
     <Compile Include="Model\CommandName_Tests.cs" />
     <Compile Include="Model\FileEntry_Tests.cs" />
     <Compile Include="Model\Folder_Tests.cs" />

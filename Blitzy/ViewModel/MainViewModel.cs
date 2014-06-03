@@ -297,19 +297,37 @@ namespace Blitzy.ViewModel
 
 			// Autocomplete all commands up to root
 			CommandItem item = CmdManager.CurrentItem;
-			for( int i = commandParts.Count - 1; i >= 0; --i )
-			{
-				if( item == null )
-					break;
 
-				commandParts[i] = item.Name;
-				item = item.Parent;
+			// TODO: [calcy -> 3423423] -> tab ends in [calcy -> calcy] :(
+			if( !( commandParts.Last().Length == 0 && item.AcceptsData ) )
+			{
+				for( int i = commandParts.Count - 1; i >= 0; --i )
+				{
+					if( item == null )
+						break;
+
+					commandParts[i] = item.Name;
+					item = item.Parent;
+				}
 			}
 
 			int subCommandCount = CmdManager.CurrentItem.Plugin.GetSubCommands( CmdManager.CurrentItem, commandParts ).Count();
 			if( subCommandCount > 0 )
 			{
 				commandParts.Add( string.Empty );
+			}
+			if( CmdManager.CurrentItem.AcceptsData )
+			{
+				bool add = false;
+				if( commandParts.Count == 1 )
+				{
+					add = true;
+				}
+
+				if( add )
+				{
+					commandParts.Add( string.Empty );
+				}
 			}
 
 			CommandInput = string.Join( CmdManager.Separator, commandParts );

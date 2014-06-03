@@ -11,7 +11,8 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Blitzy.Tests.Plugins
 {
-	[TestClass] [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+	[TestClass]
+	[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	public class WhereClause_Tests : TestBase
 	{
 		[TestMethod, TestCategory( "Plugins" )]
@@ -49,6 +50,29 @@ namespace Blitzy.Tests.Plugins
 
 				Assert.AreEqual( "where_greater", cmd.Parameters[2].ParameterName );
 				Assert.AreEqual( 9, cmd.Parameters[2].Value );
+			}
+		}
+
+		[TestMethod, TestCategory( "Plugins" )]
+		public void OpTest()
+		{
+			Dictionary<WhereOperation, string> expectedValues = new Dictionary<WhereOperation, string>();
+			expectedValues.Add( WhereOperation.Equals, "=" );
+			expectedValues.Add( WhereOperation.Greater, ">" );
+			expectedValues.Add( WhereOperation.GreaterOrEqual, ">=" );
+			expectedValues.Add( WhereOperation.Less, "<" );
+			expectedValues.Add( WhereOperation.LessOrEqual, "<=" );
+			expectedValues.Add( WhereOperation.NotEquals, "!=" );
+
+			foreach( KeyValuePair<WhereOperation, string> kvp in expectedValues )
+			{
+				WhereClause where = new WhereClause();
+				where.AddCondition( "col", 123, kvp.Key );
+
+				using( SQLiteCommand cmd = Connection.CreateCommand() )
+				{
+					Assert.AreEqual( string.Format( "col {0} @where_col", kvp.Value ), where.ToSql( cmd ) );
+				}
 			}
 		}
 

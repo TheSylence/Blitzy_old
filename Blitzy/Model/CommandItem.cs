@@ -23,7 +23,7 @@ namespace Blitzy.Model
 		#region Methods
 
 		public static CommandItem Create( string name, string description, IPlugin plugin, string image = "",
-			object userdata = null, CommandItem parent = null, IEnumerable<string> aliases = null )
+			object userdata = null, CommandItem parent = null, IEnumerable<string> aliases = null, bool acceptsData = false )
 		{
 			if( string.IsNullOrWhiteSpace( name ) )
 			{
@@ -51,12 +51,16 @@ namespace Blitzy.Model
 				item.CmdNames.AddRange( aliases.Select( a => new CommandName( a ) ) );
 			}
 
+			item.AcceptsData = acceptsData;
+
 			return item;
 		}
 
 		#endregion Methods
 
 		#region Properties
+
+		public bool AcceptsData { get; set; }
 
 		public string Description { get; set; }
 
