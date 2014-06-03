@@ -137,6 +137,7 @@ namespace Blitzy.Tests.ViewModel
 			listener.Exclude<SettingsViewModel>( vm => vm.CatalogBuilder );
 			listener.Exclude<SettingsViewModel>( vm => vm.CurrentVersion );
 			listener.Exclude<SettingsViewModel>( vm => vm.Settings );
+			listener.Exclude<SettingsViewModel>( vm => vm.LatestVersionInfo );
 			Assert.IsTrue( listener.TestProperties() );
 		}
 

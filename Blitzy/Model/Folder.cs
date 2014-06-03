@@ -40,6 +40,8 @@ namespace Blitzy.Model
 				cmd.Prepare();
 
 				cmd.ExecuteNonQuery();
+
+				// TODO: Delete rules and exludes that belong to this folder
 			}
 		}
 

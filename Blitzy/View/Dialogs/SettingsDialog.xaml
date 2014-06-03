@@ -156,7 +156,7 @@
 					</DockPanel>
 				</Grid>
 			</TabItem>
-			<TabItem Header="{lex:Loc Workspaces}">
+			<TabItem Header="{lex:Loc Workspaces}" DataContext="{Binding WorkspaceSettings}">
 				<Grid>
 					<Grid.RowDefinitions>
 						<RowDefinition />
@@ -170,7 +170,7 @@
 								<RowDefinition Height="Auto" />
 							</Grid.RowDefinitions>
 
-							<ListBox Grid.Row="0" />
+							<ListBox Grid.Row="0" ItemsSource="{Binding Workspaces}" SelectedItem="{Binding SelectedWorkspace, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
 							<StackPanel Orientation="Horizontal" Grid.Row="1" HorizontalAlignment="Right">
 								<Button Content="New" />
@@ -280,7 +280,7 @@
 										<TextBlock Text="{lex:LocText CurrentVersion,Suffix=':'}" />
 										<TextBlock Text="{Binding CurrentVersion}" Margin="10,0,0,0" />
 										<TextBlock Text="{lex:LocText LatestVersion,Suffix=':'}" Margin="50,0,0,0" />
-										<TextBlock Text="{Binding LatestVersion}" Margin="10,0,0,0" />
+										<TextBlock Text="{Binding LatestVersionInfo.LatestVersion}" Margin="10,0,0,0" />
 									</StackPanel>
 								</DockPanel>
 							</GroupBox>

@@ -851,5 +851,14 @@ namespace Blitzy.Properties {
                 return ResourceManager.GetString("Winy", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Workspaces.
+        /// </summary>
+        public static string Workspaces {
+            get {
+                return ResourceManager.GetString("Workspaces", resourceCulture);
+            }
+        }
     }
 }

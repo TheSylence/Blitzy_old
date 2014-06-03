@@ -125,8 +125,8 @@
     <Compile Include="Model\Settings_Tests.cs" />
     <Compile Include="Model\ShellShortcut_Tests.cs" />
     <Compile Include="Model\ShuntingYard_Tests.cs" />
-    <Compile Include="Model\UpdateChecker_Tests.cs" />
     <Compile Include="Model\WebyWebsite_Tests.cs" />
+    <Compile Include="Model\Workspace_Tests.cs" />
     <Compile Include="Plugins\Blitzy_Tests.cs" />
     <Compile Include="Plugins\Calcy_Tests.cs" />
     <Compile Include="Plugins\Medy_Tests.cs" />
@@ -172,6 +172,10 @@
     <ProjectReference Include="..\Blitzy\Blitzy.csproj">
       <Project>{82e328eb-8b53-4d67-b7df-639a8ec1b92e}</Project>
       <Name>Blitzy</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\btbapi\btbapi\btbapi.csproj">
+      <Project>{f656ea31-9755-4188-b662-02beacc5652f}</Project>
+      <Name>btbapi</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

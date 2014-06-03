@@ -55,37 +55,51 @@ namespace Blitzy.Model
 			} ) );
 
 			sb.Append( QueryBuilder.CreateTable( "history", new Dictionary<string, string>
-				{
-					{ "HistoryID", "INTEGER PRIMARY KEY" },
-					{ "Command", "TEXT NOT NULL" }
-				} ) );
+			{
+				{ "HistoryID", "INTEGER PRIMARY KEY" },
+				{ "Command", "TEXT NOT NULL" }
+			} ) );
 
 			sb.Append( QueryBuilder.CreateTable( "plugins", new Dictionary<string, string>
-				{
-					{ "PluginID", "VARCHAR(40) PRIMARY KEY" },
-					{ "Version", "VARCHAR(32) NOT NULL" },
-					{ "Disabled", "INTEGER DEFAULT '0' NOT NULL" }
-				} ) );
+			{
+				{ "PluginID", "VARCHAR(40) PRIMARY KEY" },
+				{ "Version", "VARCHAR(32) NOT NULL" },
+				{ "Disabled", "INTEGER DEFAULT '0' NOT NULL" }
+			} ) );
 
 			sb.Append( QueryBuilder.CreateTable( "commands", new Dictionary<string, string>
-				{
-					{ "Name", "TEXT NOT NULL" },
-					{ "Plugin", "VARCHAR(40) NOT NULL" },
-					{ "ExecutionCount", "INTEGER NOT NULL" },
+			{
+				{ "Name", "TEXT NOT NULL" },
+				{ "Plugin", "VARCHAR(40) NOT NULL" },
+				{ "ExecutionCount", "INTEGER NOT NULL" },
 
-					{ "PRIMARY KEY", "([Name],[Plugin])" }
-				} ) );
+				{ "PRIMARY KEY", "([Name],[Plugin])" }
+			} ) );
 
 			sb.Append( QueryBuilder.CreateTable( "files", new Dictionary<string, string>
-				{
-					{ "Command", "TEXT NOT NULL" },
-					{ "Name", "VARCHAR(255) NOT NULL" },
-					{ "Icon", "TEXT NULL" },
-					{ "[Type]", "VARCHAR(10) NULL" },
-					{ "Arguments", "TEXT NULL" },
+			{
+				{ "Command", "TEXT NOT NULL" },
+				{ "Name", "VARCHAR(255) NOT NULL" },
+				{ "Icon", "TEXT NULL" },
+				{ "[Type]", "VARCHAR(10) NULL" },
+				{ "Arguments", "TEXT NULL" },
 
-					{ "PRIMARY KEY", "([Command],[Arguments],[Name])" },
-				} ) );
+				{ "PRIMARY KEY", "([Command],[Arguments],[Name])" },
+			} ) );
+
+			sb.Append( QueryBuilder.CreateTable( "workspaces", new Dictionary<string, string>
+			{
+				{ "WorkspaceID", "INTEGER PRIMARY KEY" },
+				{ "Name", "TEXT NOT NULL" }
+			} ) );
+
+			sb.Append( QueryBuilder.CreateTable( "workspace_items", new Dictionary<string, string>
+			{
+				{ "ItemID", "INTEGER PRIMARY KEY" },
+				{ "WorkspaceID", "INTEGER NOT NULL" },
+				{ "ItemOrder", "INTEGER NOT NULL" },
+				{ "ItemCommand", "TEXT NOT NULL" }
+			} ) );
 
 			sb.Append( QueryBuilder.CreateTable( "plugin_tables", new Dictionary<string, string>
 			{

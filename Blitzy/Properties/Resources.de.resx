@@ -381,4 +381,7 @@
   <data name="Testing" xml:space="preserve">
     <value>Tests</value>
   </data>
+  <data name="Workspaces" xml:space="preserve">
+    <value>Workspaces</value>
+  </data>
 </root>

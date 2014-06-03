@@ -69,6 +69,9 @@ namespace Blitzy.ViewModel
 			PuttySettings = new PuttySettingsViewModel( this );
 			RaisePropertyChanged( () => PuttySettings );
 
+			WorkspaceSettings = new WorkspaceSettingsViewModel( this );
+			RaisePropertyChanged( () => WorkspaceSettings );
+
 			UpdateCheck = Settings.GetValue<bool>( SystemSetting.AutoUpdate );
 			StayOnTop = Settings.GetValue<bool>( SystemSetting.StayOnTop );
 			TrayIcon = Settings.GetValue<bool>( SystemSetting.TrayIcon );
@@ -367,6 +370,7 @@ namespace Blitzy.ViewModel
 			Settings.Save();
 			WinySettings.Save();
 			WebySettings.Save();
+			WorkspaceSettings.Save();
 
 			Close();
 		}
@@ -810,6 +814,8 @@ namespace Blitzy.ViewModel
 		public WebySettingsViewModel WebySettings { get; private set; }
 
 		public WinySettingsViewModel WinySettings { get; private set; }
+
+		public WorkspaceSettingsViewModel WorkspaceSettings { get; private set; }
 
 		#endregion Properties
 

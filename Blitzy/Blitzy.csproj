@@ -164,6 +164,8 @@
     <Compile Include="Model\Shell\ShellShortcut.cs" />
     <Compile Include="Model\ShuntingYard.cs" />
     <Compile Include="Model\WebyWebsite.cs" />
+    <Compile Include="Model\Workspace.cs" />
+    <Compile Include="Model\WorkspaceItem.cs" />
     <Compile Include="NativeMethods.cs" />
     <Compile Include="Plugin\IDatabase.cs" />
     <Compile Include="Plugin\IPlugin.cs" />
@@ -294,6 +296,7 @@
     </EmbeddedResource>
     <None Include="packages.config" />
     <AppDesigner Include="Properties\" />
+    <Compile Include="ViewModel\SettingsViewModel.Workspaces.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
