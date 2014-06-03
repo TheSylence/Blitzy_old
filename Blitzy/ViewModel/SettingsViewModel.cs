@@ -11,6 +11,7 @@ using System.Windows;
 using Blitzy.Messages;
 using Blitzy.Model;
 using Blitzy.ViewServices;
+using btbapi;
 using GalaSoft.MvvmLight.Command;
 
 namespace Blitzy.ViewModel
@@ -22,7 +23,15 @@ namespace Blitzy.ViewModel
 		public SettingsViewModel()
 		{
 			FoldersToRemove = new List<Folder>();
-			UpdateChecker = ToDispose( new Model.UpdateChecker() );
+
+			if( !RuntimeConfig.Tests )
+			{
+				API = new btbapi.API( APIEndPoint.Default );
+			}
+			else
+			{
+				API = new API( APIEndPoint.Localhost );
+			}
 			CurrentVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
 			using( TextReader reader = new StreamReader( Assembly.GetExecutingAssembly().GetManifestResourceStream( "Blitzy.Resources.Docs.Changelog.txt" ) ) )
@@ -41,8 +50,6 @@ namespace Blitzy.ViewModel
 		protected override void RegisterMessages()
 		{
 			base.RegisterMessages();
-
-			MessengerInstance.Register<VersionCheckMessage>( this, ( msg ) => OnVersionCheckComplete( msg ) );
 		}
 
 		#endregion Constructor
@@ -74,11 +81,6 @@ namespace Blitzy.ViewModel
 			RebuildTime = Settings.GetValue<int>( SystemSetting.AutoCatalogRebuild );
 			BackupShortcuts = Settings.GetValue<bool>( SystemSetting.BackupShortcuts );
 			HistoryCount = Settings.GetValue<int>( SystemSetting.HistoryCount );
-		}
-
-		private void OnVersionCheckComplete( VersionCheckMessage msg )
-		{
-			LatestVersion = msg.Version.ToString();
 		}
 
 		#endregion Methods
@@ -376,7 +378,12 @@ namespace Blitzy.ViewModel
 
 		private void ExecuteUpdateCheckCommand()
 		{
-			UpdateChecker.StartCheck( true );
+			Task.Run( async () =>
+			{
+				LatestVersionInfo = await API.CheckVersion( Constants.SoftwareName, Assembly.GetExecutingAssembly().GetName().Version );
+
+				MessengerInstance.Send<VersionCheckMessage>( new VersionCheckMessage( LatestVersionInfo.LatestVersion, LatestVersionInfo.DownloadLink.ToString(), true ) );
+			} );
 		}
 
 		#endregion Commands
@@ -662,11 +669,13 @@ namespace Blitzy.ViewModel
 		#endregion SettingItems
 
 		private CatalogBuilder _CatalogBuilder;
-		private string _LatestVersion;
+		private VersionInfo _LatestVersionInfo;
 		private string _SelectedExclude;
 		private Folder _SelectedFolder;
 		private string _SelectedRule;
 		private Settings _Settings;
+
+		public API API { get; private set; }
 
 		public PluginDatabase APIDatabase { get; set; }
 
@@ -696,23 +705,23 @@ namespace Blitzy.ViewModel
 
 		public string CurrentVersion { get; set; }
 
-		public string LatestVersion
+		public VersionInfo LatestVersionInfo
 		{
 			get
 			{
-				return _LatestVersion;
+				return _LatestVersionInfo;
 			}
 
 			set
 			{
-				if( _LatestVersion == value )
+				if( _LatestVersionInfo == value )
 				{
 					return;
 				}
 
-				RaisePropertyChanging( () => LatestVersion );
-				_LatestVersion = value;
-				RaisePropertyChanged( () => LatestVersion );
+				RaisePropertyChanging( () => LatestVersionInfo );
+				_LatestVersionInfo = value;
+				RaisePropertyChanged( () => LatestVersionInfo );
 			}
 		}
 
@@ -797,8 +806,6 @@ namespace Blitzy.ViewModel
 				RaisePropertyChanged( () => Settings );
 			}
 		}
-
-		public UpdateChecker UpdateChecker { get; private set; }
 
 		public WebySettingsViewModel WebySettings { get; private set; }
 

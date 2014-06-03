@@ -2,7 +2,7 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 		xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
 		xmlns:ctrl="clr-namespace:Blitzy.Controls"
-		xmlns:v="clr-namespace:Blitzy.View"
+		xmlns:v="clr-namespace:Blitzy.View" x:Name="ctrlThis"
 		xmlns:commands="clr-namespace:GalaSoft.MvvmLight.Command;assembly=GalaSoft.MvvmLight.Extras.WPF45"
 		DataContext="{Binding Source={StaticResource Locator}, Path=Main}" FocusManager.FocusedElement="{Binding ElementName=txtInput}"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -47,7 +47,12 @@
 			<ctrl:CommandListView ItemsSource="{Binding Path=CmdManager.Items}" SelectedIndex="{Binding SelectedCommandIndex, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding CmdManager.CurrentItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
 				<ListView.ItemTemplate>
 					<DataTemplate>
-						<StackPanel Orientation="Horizontal" Margin="0">
+						<StackPanel Orientation="Horizontal" Margin="0" HorizontalAlignment="Stretch">
+							<i:Interaction.Triggers>
+								<i:EventTrigger EventName="MouseDown">
+									<commands:EventToCommand Command="{Binding DataContext.MouseExecuteCommand, ElementName=ctrlThis}" PassEventArgsToCommand="True" />
+								</i:EventTrigger>
+							</i:Interaction.Triggers>
 							<Image Source="{Binding Icon, Converter={StaticResource StringToImageConv}}" Width="32" Height="32" Margin="0" />
 							<StackPanel Margin="0">
 								<Label Content="{Binding Name}" FontSize="13" FontWeight="Bold" Margin="0" Padding="2" />

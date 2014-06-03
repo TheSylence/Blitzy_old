@@ -166,6 +166,7 @@ namespace Blitzy.ViewModel
 		private RelayCommand _ExecuteCommand;
 		private RelayCommand<KeyEventArgs> _KeyPreviewCommand;
 		private RelayCommand<KeyEventArgs> _KeyUpCommand;
+		private RelayCommand<MouseButtonEventArgs> _MouseExecuteCommand;
 		private RelayCommand<CancelEventArgs> _OnClosingCommand;
 		private RelayCommand _OnDeactivatedCommand;
 		private RelayCommand _SettingsCommand;
@@ -194,6 +195,15 @@ namespace Blitzy.ViewModel
 			{
 				return _KeyUpCommand ??
 					( _KeyUpCommand = new RelayCommand<KeyEventArgs>( ExecuteKeyUpCommand, CanExecuteKeyUpCommand ) );
+			}
+		}
+
+		public RelayCommand<MouseButtonEventArgs> MouseExecuteCommand
+		{
+			get
+			{
+				return _MouseExecuteCommand ??
+					( _MouseExecuteCommand = new RelayCommand<MouseButtonEventArgs>( ExecuteMouseExecuteCommand, CanExecuteMouseExecuteCommand ) );
 			}
 		}
 
@@ -366,6 +376,11 @@ namespace Blitzy.ViewModel
 			return true;
 		}
 
+		private bool CanExecuteMouseExecuteCommand( MouseButtonEventArgs args )
+		{
+			return ExecuteCommand.CanExecute( null );
+		}
+
 		private bool CanExecuteOnDeactivatedCommand()
 		{
 			return true;
@@ -473,6 +488,14 @@ namespace Blitzy.ViewModel
 			if( args.Key == Key.LeftCtrl || args.Key == Key.RightCtrl )
 			{
 				MessengerInstance.Send<HistoryMessage>( new HistoryMessage( HistoryMessageType.Hide ) );
+			}
+		}
+
+		private void ExecuteMouseExecuteCommand( MouseButtonEventArgs args )
+		{
+			if( args.ClickCount >= 2 )
+			{
+				ExecuteCommand.Execute( null );
 			}
 		}
 

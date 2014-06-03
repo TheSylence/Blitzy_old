@@ -163,7 +163,6 @@
     <Compile Include="Model\Shell\ShellLinkNative.cs" />
     <Compile Include="Model\Shell\ShellShortcut.cs" />
     <Compile Include="Model\ShuntingYard.cs" />
-    <Compile Include="Model\UpdateChecker.cs" />
     <Compile Include="Model\WebyWebsite.cs" />
     <Compile Include="NativeMethods.cs" />
     <Compile Include="Plugin\IDatabase.cs" />

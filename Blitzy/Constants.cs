@@ -15,12 +15,8 @@ namespace Blitzy
 		#region Constants
 
 		internal const int APIVersion = 1;
-
-		internal const string ErrorReportURL = "http://software.btbsoft.org/error.php?id=Blitzy";
-
 		internal const string PluginsFolderName = "plugins";
-
-		internal const string UpdateCheckURL = "http://software.btbsoft.org/check.php?id=Blitzy";
+		internal const string SoftwareName = "Blitzy";
 
 		internal static string DataFileName
 		{
