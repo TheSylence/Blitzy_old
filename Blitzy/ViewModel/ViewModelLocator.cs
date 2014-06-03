@@ -57,6 +57,7 @@ namespace Blitzy.ViewModel
 
 			Register<TextInputDialogViewModel>();
 			Register<WebyWebsiteDialogViewModel>();
+			Register<ChangelogDialogViewModel>();
 
 			Register<NotifyIconViewModel>();
 		}
@@ -106,6 +107,14 @@ namespace Blitzy.ViewModel
 		#endregion ViewModels
 
 		#region Dialogs
+
+		public ChangelogDialogViewModel ChangelogDialog
+		{
+			get
+			{
+				return ServiceLocator.Current.GetInstance<ChangelogDialogViewModel>();
+			}
+		}
 
 		public TextInputDialogViewModel TextInputDialog
 		{

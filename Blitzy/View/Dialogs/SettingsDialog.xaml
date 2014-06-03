@@ -278,9 +278,19 @@
 											</Style>
 										</StackPanel.Resources>
 										<TextBlock Text="{lex:LocText CurrentVersion,Suffix=':'}" />
-										<TextBlock Text="{Binding CurrentVersion}" Margin="10,0,0,0" />
-										<TextBlock Text="{lex:LocText LatestVersion,Suffix=':'}" Margin="50,0,0,0" />
+										<TextBlock Text="{Binding CurrentVersion, Mode=OneTime}" Margin="10,0,0,0" />
+										<TextBlock Text="{lex:LocText LatestVersion,Suffix=':'}" Margin="25,0,0,0" />
 										<TextBlock Text="{Binding LatestVersionInfo.LatestVersion}" Margin="10,0,0,0" />
+										<Label Visibility="{Binding IsNewerVersionAvailable, Converter={StaticResource BooleanToVisibilityConv}}">
+											<Hyperlink Command="{Binding ViewChangelogCommand}">
+												<TextBlock Text="{lex:Loc ViewChangelog}" />
+											</Hyperlink>
+										</Label>
+										<Label Visibility="{Binding IsNewerVersionAvailable, Converter={StaticResource BooleanToVisibilityConv}}">
+											<Hyperlink Command="{Binding DownloadUpdateCommand}">
+												<TextBlock Text="{lex:Loc Download}" />
+											</Hyperlink>
+										</Label>
 									</StackPanel>
 								</DockPanel>
 							</GroupBox>
@@ -301,7 +311,7 @@
 						<ScrollViewer>
 							<StackPanel>
 								<TextBlock TextAlignment="Center" Name="txtInfo">
-										<Run>Blitzy Version</Run><Run Text=" " /><Run Text="{Binding CurrentVersion}" /><LineBreak />
+										<Run>Blitzy Version</Run><Run Text=" " /><Run Text="{Binding CurrentVersion, Mode=OneTime}" /><LineBreak />
 										<Run>Copyright © 2012-2014 btbsoft.org</Run><LineBreak />
 										<Run>Build on</Run><Run Text=" " /><Run Text="{Binding BuildDate}" /><LineBreak />
 								</TextBlock>

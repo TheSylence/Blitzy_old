@@ -122,6 +122,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Behaviors\HtmlBehavior.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Controls\CommandListView.cs" />
     <Compile Include="Controls\CommandTextBox.cs" />
@@ -185,6 +186,7 @@
     <Compile Include="SingleInstance.cs" />
     <Compile Include="Todo.cs" />
     <Compile Include="ViewModel\CloseViewEventArgs.cs" />
+    <Compile Include="ViewModel\Dialogs\ChangelogDialogViewModel.cs" />
     <Compile Include="ViewModel\Dialogs\DialogViewModelBase.cs" />
     <Compile Include="ViewModel\Dialogs\ExceptionDialogViewModel.cs" />
     <Compile Include="ViewModel\Dialogs\TextInputDialogViewModel.cs" />
@@ -213,6 +215,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ResourceDictionaries\Static.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Dialogs\ChangelogDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -253,8 +259,12 @@
     <Compile Include="ViewServices\SettingsServiceParameters.cs" />
     <Compile Include="ViewServices\TextInputParameter.cs" />
     <Compile Include="ViewServices\TextInputService.cs" />
+    <Compile Include="ViewServices\ViewChangelogService.cs" />
     <Compile Include="ViewServices\WebyWebsiteService.cs" />
     <Compile Include="View\CloseableView.cs" />
+    <Compile Include="View\Dialogs\ChangelogDialog.xaml.cs">
+      <DependentUpon>ChangelogDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\Dialogs\ExceptionDialog.xaml.cs">
       <DependentUpon>ExceptionDialog.xaml</DependentUpon>
     </Compile>

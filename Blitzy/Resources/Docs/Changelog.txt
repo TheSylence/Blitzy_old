@@ -8,10 +8,12 @@
 * Plugins can now be localized
 * Changed license to a more software like one
 * Plugins without settings are now longer visible in settings menu
+* Changelogs for new versions are now visible before downloading and installing an update
 + Catalog building progress can now be seen in settings
 + Added feature to exclude files from folders
 + Weby websites can now display a favicon
 + Added command history
++ Added workspaces that allow to execute multiple commands at once
 - Removed URL shortening services
 
 Version 0.8.29

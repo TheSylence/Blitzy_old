@@ -384,4 +384,10 @@
   <data name="Workspaces" xml:space="preserve">
     <value>Workspaces</value>
   </data>
+  <data name="ViewChangelog" xml:space="preserve">
+    <value>Changelog anzeigen</value>
+  </data>
+  <data name="Download" xml:space="preserve">
+    <value>Download</value>
+  </data>
 </root>

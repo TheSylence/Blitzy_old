@@ -14,6 +14,23 @@ namespace Blitzy.Tests.Model
 	[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	public class Workspace_Tests : TestBase
 	{
+		[TestMethod, TestCategory( "Model" ), ExpectedException( typeof( TypeLoadException ) )]
+		public void DeleteTest()
+		{
+			Workspace w = new Workspace();
+			w.ID = 1;
+			w.Name = "test";
+			w.Save( Connection );
+
+			w = new Workspace();
+			w.ID = 1;
+			w.Delete( Connection );
+
+			w = new Workspace();
+			w.ID = 1;
+			w.Load( Connection );
+		}
+
 		[TestMethod, TestCategory( "Model" )]
 		public void ItemsTest()
 		{

@@ -304,6 +304,15 @@ namespace Blitzy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Download.
+        /// </summary>
+        public static string Download {
+            get {
+                return ResourceManager.GetString("Download", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Edit.
         /// </summary>
         public static string Edit {
@@ -831,6 +840,15 @@ namespace Blitzy.Properties {
         public static string VersionCheck {
             get {
                 return ResourceManager.GetString("VersionCheck", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to View Changelog.
+        /// </summary>
+        public static string ViewChangelog {
+            get {
+                return ResourceManager.GetString("ViewChangelog", resourceCulture);
             }
         }
         

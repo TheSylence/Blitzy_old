@@ -126,6 +126,7 @@
     <Compile Include="Model\ShellShortcut_Tests.cs" />
     <Compile Include="Model\ShuntingYard_Tests.cs" />
     <Compile Include="Model\WebyWebsite_Tests.cs" />
+    <Compile Include="Model\WorkspaceItem_Tests.cs" />
     <Compile Include="Model\Workspace_Tests.cs" />
     <Compile Include="Plugins\Blitzy_Tests.cs" />
     <Compile Include="Plugins\Calcy_Tests.cs" />

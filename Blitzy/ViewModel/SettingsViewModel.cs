@@ -26,13 +26,17 @@ namespace Blitzy.ViewModel
 
 			if( !RuntimeConfig.Tests )
 			{
+#if DEBUG
+				API = new API( APIEndPoint.Localhost );
+#else
 				API = new btbapi.API( APIEndPoint.Default );
+#endif
 			}
 			else
 			{
 				API = new API( APIEndPoint.Localhost );
 			}
-			CurrentVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+			CurrentVersion = Assembly.GetExecutingAssembly().GetName().Version;
 
 			using( TextReader reader = new StreamReader( Assembly.GetExecutingAssembly().GetManifestResourceStream( "Blitzy.Resources.Docs.Changelog.txt" ) ) )
 			{
@@ -95,12 +99,14 @@ namespace Blitzy.ViewModel
 		private RelayCommand _AddRuleCommand;
 		private RelayCommand _CancelCommand;
 		private RelayCommand _DefaultsCommand;
+		private RelayCommand _DownloadUpdateCommand;
 		private RelayCommand _RemoveExcludeCommand;
 		private RelayCommand _RemoveFolderCommand;
 		private RelayCommand _RemoveRuleCommand;
 		private RelayCommand _SaveCommand;
 		private RelayCommand _UpdateCatalogCommand;
 		private RelayCommand _UpdateCheckCommand;
+		private RelayCommand _ViewChangelogCommand;
 
 		public RelayCommand AddExcludeCommand
 		{
@@ -144,6 +150,15 @@ namespace Blitzy.ViewModel
 			{
 				return _DefaultsCommand ??
 					( _DefaultsCommand = new RelayCommand( ExecuteDefaultsCommand, CanExecuteDefaultsCommand ) );
+			}
+		}
+
+		public RelayCommand DownloadUpdateCommand
+		{
+			get
+			{
+				return _DownloadUpdateCommand ??
+					( _DownloadUpdateCommand = new RelayCommand( ExecuteDownloadUpdateCommand, CanExecuteDownloadUpdateCommand ) );
 			}
 		}
 
@@ -201,6 +216,15 @@ namespace Blitzy.ViewModel
 			}
 		}
 
+		public RelayCommand ViewChangelogCommand
+		{
+			get
+			{
+				return _ViewChangelogCommand ??
+					( _ViewChangelogCommand = new RelayCommand( ExecuteViewChangelogCommand, CanExecuteViewChangelogCommand ) );
+			}
+		}
+
 		private bool CanExecuteAddExcludeCommand()
 		{
 			return SelectedFolder != null;
@@ -222,6 +246,11 @@ namespace Blitzy.ViewModel
 		}
 
 		private bool CanExecuteDefaultsCommand()
+		{
+			return true;
+		}
+
+		private bool CanExecuteDownloadUpdateCommand()
 		{
 			return true;
 		}
@@ -252,6 +281,11 @@ namespace Blitzy.ViewModel
 		}
 
 		private bool CanExecuteUpdateCheckCommand()
+		{
+			return true;
+		}
+
+		private bool CanExecuteViewChangelogCommand()
 		{
 			return true;
 		}
@@ -309,6 +343,10 @@ namespace Blitzy.ViewModel
 			{
 				Settings.SetDefaults();
 			}
+		}
+
+		private void ExecuteDownloadUpdateCommand()
+		{
 		}
 
 		private void ExecuteRemoveExcludeCommand()
@@ -386,8 +424,18 @@ namespace Blitzy.ViewModel
 			{
 				LatestVersionInfo = await API.CheckVersion( Constants.SoftwareName, Assembly.GetExecutingAssembly().GetName().Version );
 
-				MessengerInstance.Send<VersionCheckMessage>( new VersionCheckMessage( LatestVersionInfo.LatestVersion, LatestVersionInfo.DownloadLink.ToString(), true ) );
+				string downloadLink = null;
+				if( LatestVersionInfo.DownloadLink != null )
+				{
+					downloadLink = LatestVersionInfo.DownloadLink.ToString();
+				}
+				MessengerInstance.Send<VersionCheckMessage>( new VersionCheckMessage( LatestVersionInfo.LatestVersion, downloadLink, true ) );
 			} );
+		}
+
+		private void ExecuteViewChangelogCommand()
+		{
+			DialogServiceManager.Show<ViewChangelogService>( LatestVersionInfo );
 		}
 
 		#endregion Commands
@@ -673,6 +721,7 @@ namespace Blitzy.ViewModel
 		#endregion SettingItems
 
 		private CatalogBuilder _CatalogBuilder;
+		private bool _IsNewerVersionAvailable;
 		private VersionInfo _LatestVersionInfo;
 		private string _SelectedExclude;
 		private Folder _SelectedFolder;
@@ -707,7 +756,27 @@ namespace Blitzy.ViewModel
 
 		public string Changelog { get; set; }
 
-		public string CurrentVersion { get; set; }
+		public Version CurrentVersion { get; set; }
+
+		public bool IsNewerVersionAvailable
+		{
+			get
+			{
+				return _IsNewerVersionAvailable;
+			}
+
+			set
+			{
+				if( _IsNewerVersionAvailable == value )
+				{
+					return;
+				}
+
+				RaisePropertyChanging( () => IsNewerVersionAvailable );
+				_IsNewerVersionAvailable = value;
+				RaisePropertyChanged( () => IsNewerVersionAvailable );
+			}
+		}
 
 		public VersionInfo LatestVersionInfo
 		{
@@ -726,6 +795,8 @@ namespace Blitzy.ViewModel
 				RaisePropertyChanging( () => LatestVersionInfo );
 				_LatestVersionInfo = value;
 				RaisePropertyChanged( () => LatestVersionInfo );
+
+				IsNewerVersionAvailable = CurrentVersion < LatestVersionInfo.LatestVersion;
 			}
 		}
 
