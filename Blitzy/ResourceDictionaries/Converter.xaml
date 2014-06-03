@@ -5,4 +5,6 @@
 	<conv:StringToImageConverter x:Key="StringToImageConv" />
 	<conv:ElementNotNullConverter x:Key="ElementNotNullConv" />
 	<conv:StringToVisibilityConverter x:Key="StringToVisibilityConv" />
+	<conv:LocalizeFormatterConverter x:Key="LocalizeFormatterConv" />
+	<conv:FileSizeConverter x:Key="FileSizeConv" />
 </ResourceDictionary>

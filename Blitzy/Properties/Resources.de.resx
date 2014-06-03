@@ -390,4 +390,7 @@
   <data name="Download" xml:space="preserve">
     <value>Download</value>
   </data>
+  <data name="DownloadProgress" xml:space="preserve">
+    <value>Downloaden von {0} von {1}</value>
+  </data>
 </root>

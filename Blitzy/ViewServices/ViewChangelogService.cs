@@ -13,6 +13,7 @@ using btbapi;
 
 namespace Blitzy.ViewServices
 {
+	[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	internal class ViewChangelogService : IDialogService
 	{
 		public object Show( Window parent, object parameter = null )
