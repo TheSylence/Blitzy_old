@@ -1,18 +1,15 @@
 ﻿// $Id$
 
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Blitzy.Utility;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Threading;
 
-namespace Blitzy.ViewModel
+namespace Blitzy.ViewModel.Dialogs
 {
 	internal class DownloadDialogViewModel : ViewModelBaseEx
 	{
@@ -26,7 +23,8 @@ namespace Blitzy.ViewModel
 		{
 			using( HttpClient client = new HttpClient() )
 			{
-				DownloadLink = "http://speedtest.qsc.de/100MB.qsc";
+				LogInfo( "Start download of {0}", DownloadLink );
+				//DownloadLink = "http://speedtest.qsc.de/100MB.qsc";
 
 				HttpResponseMessage response = await client.GetAsync( DownloadLink, HttpCompletionOption.ResponseHeadersRead );
 				try
@@ -53,6 +51,8 @@ namespace Blitzy.ViewModel
 							totalLength = response.Content.Headers.ContentLength.Value;
 						}
 
+						LogInfo( "Download size: {0} bytes", totalLength );
+
 						DownloadSize = totalLength;
 						stats.ProgressChanged += stats_ProgressChanged;
 						stats.Finished += stats_Finished;
@@ -61,6 +61,8 @@ namespace Blitzy.ViewModel
 						DispatcherHelper.CheckBeginInvokeOnUI( () => System.Windows.Input.CommandManager.InvalidateRequerySuggested() );
 						fileStream.CopyFrom( responseStream, CopyArguments );
 						stats.Finish();
+
+						LogInfo( "Download completed" );
 					}
 				} );
 			}
@@ -70,6 +72,7 @@ namespace Blitzy.ViewModel
 		{
 			if( CopyArguments.StopEvent != null )
 			{
+				LogInfo( "User cancelled download" );
 				// User cancelled operation. Don't compute hashes
 				try
 				{
@@ -78,6 +81,7 @@ namespace Blitzy.ViewModel
 				catch( IOException )
 				{
 					// Temporary file... Windows will take care of this
+					LogWarning( "Failed to delete temporarry file {0}", TargetPath );
 				}
 			}
 			else
@@ -92,6 +96,7 @@ namespace Blitzy.ViewModel
 						if( !computedHash.Equals( MD5, StringComparison.Ordinal ) )
 						{
 							// TODO: Downloaded file is broken
+							LogError( "Downloaded file is corrupted. Exepected Hash: {0} - Calculated: {1}", MD5, computedHash );
 						}
 					}
 				}

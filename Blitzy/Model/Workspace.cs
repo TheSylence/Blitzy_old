@@ -1,12 +1,8 @@
 ﻿// $Id$
 
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data.SQLite;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Blitzy.Model
 {
@@ -36,8 +32,17 @@ namespace Blitzy.Model
 				cmd.Prepare();
 
 				cmd.ExecuteNonQuery();
+			}
 
-				// TODO: Delete items that belong to this workspace
+			using( SQLiteCommand cmd = connection.CreateCommand() )
+			{
+				SQLiteParameter param = cmd.CreateParameter();
+				param.ParameterName = "WorkspaceID";
+				param.Value = ID;
+				cmd.Parameters.Add( param );
+
+				cmd.CommandText = "DELETE FROM workspace_items WHERE WorkspaceID = @WorkspaceID";
+				cmd.ExecuteNonQuery();
 			}
 		}
 

@@ -1,10 +1,6 @@
 ﻿// $Id$
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Blitzy.Model;
 using Blitzy.Tests.Mocks.Services;
 using Blitzy.ViewServices;
@@ -12,7 +8,8 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Blitzy.Tests.ViewServices
 {
-	[TestClass] [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+	[TestClass]
+	[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	public class DialogServiceManager_Tests : TestBase
 	{
 		[TestMethod, TestCategory( "ViewServices" )]

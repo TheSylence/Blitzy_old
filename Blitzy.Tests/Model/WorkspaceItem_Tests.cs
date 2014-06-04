@@ -1,10 +1,6 @@
 ﻿// $Id$
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Blitzy.Model;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -14,6 +10,31 @@ namespace Blitzy.Tests.Model
 	[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	public class WorkspaceItem_Tests : TestBase
 	{
+		[TestMethod, TestCategory( "Model" ), ExpectedException( typeof( TypeLoadException ) )]
+		public void DeleteTest()
+		{
+			WorkspaceItem w = new WorkspaceItem();
+			w.ItemID = 1;
+			w.ItemCommand = "test";
+			w.Save( Connection );
+
+			w = new WorkspaceItem();
+			w.ItemID = 1;
+			try
+			{
+				w.Load( Connection );
+			}
+			catch( TypeLoadException )
+			{
+				Assert.Fail();
+			}
+
+			w.Delete( Connection );
+			w = new WorkspaceItem();
+			w.ItemID = 1;
+			w.Load( Connection );
+		}
+
 		[TestMethod, TestCategory( "Model" ), ExpectedException( typeof( TypeLoadException ) )]
 		public void LoadNonExistingTest()
 		{

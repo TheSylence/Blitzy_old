@@ -1,14 +1,11 @@
 ﻿// $Id$
 
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Data.SQLite;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using GalaSoft.MvvmLight;
 
 namespace Blitzy.Model

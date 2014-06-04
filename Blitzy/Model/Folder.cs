@@ -6,11 +6,8 @@ using System.Collections.ObjectModel;
 using System.Data.SQLite;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using Blitzy.Utility;
-using GalaSoft.MvvmLight;
 
 namespace Blitzy.Model
 {
@@ -41,8 +38,32 @@ namespace Blitzy.Model
 				cmd.Prepare();
 
 				cmd.ExecuteNonQuery();
+			}
 
-				// TODO: Delete rules and exludes that belong to this folder
+			using( SQLiteCommand cmd = connection.CreateCommand() )
+			{
+				SQLiteParameter param = cmd.CreateParameter();
+				param.ParameterName = "folderID";
+				param.Value = ID;
+				cmd.Parameters.Add( param );
+
+				cmd.CommandText = "DELETE FROM folder_rules WHERE FolderID = @folderID";
+
+				cmd.Prepare();
+				cmd.ExecuteNonQuery();
+			}
+
+			using( SQLiteCommand cmd = connection.CreateCommand() )
+			{
+				SQLiteParameter param = cmd.CreateParameter();
+				param.ParameterName = "folderID";
+				param.Value = ID;
+				cmd.Parameters.Add( param );
+
+				cmd.CommandText = "DELETE FROM folder_excludes WHERE FolderID = @folderID";
+
+				cmd.Prepare();
+				cmd.ExecuteNonQuery();
 			}
 		}
 

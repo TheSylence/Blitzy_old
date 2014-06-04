@@ -1,11 +1,7 @@
 ﻿// $Id$
 
 using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using log4net;
 
 namespace Blitzy
@@ -16,12 +12,14 @@ namespace Blitzy
 
 		public static void LogDebug( Type type, string format, params object[] args )
 		{
+#if DEBUG
 			ILog log = LogManager.GetLogger( type );
 
 			if( log.IsDebugEnabled )
 			{
 				log.DebugFormat( CultureInfo.InvariantCulture, format, args );
 			}
+#endif
 		}
 
 		public static void LogError( Type type, string format, params object[] args )

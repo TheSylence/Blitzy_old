@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Blitzy.Model;
-using Blitzy.Plugin;
+﻿using Blitzy.Model;
 
 namespace Blitzy.ViewModel
 {

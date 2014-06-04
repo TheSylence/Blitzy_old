@@ -1,10 +1,7 @@
 ﻿// $Id$
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Blitzy.Model;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -89,6 +86,9 @@ namespace Blitzy.Tests.Model
 			w.Name = "google";
 			w.ID = 1;
 
+			w.Items.Add( new WorkspaceItem() { ItemID = 1, ItemCommand = "test", WorkspaceID = 1 } );
+			w.Items.Add( new WorkspaceItem() { ItemID = 2, ItemCommand = "test2", WorkspaceID = 1 } );
+
 			w.Save( Connection );
 
 			Assert.IsTrue( w.ExistsInDatabase );
@@ -99,6 +99,7 @@ namespace Blitzy.Tests.Model
 
 			Assert.IsTrue( w2.ExistsInDatabase );
 			Assert.AreEqual( w.Name, w2.Name );
+			Assert.AreEqual( 2, w2.Items.Count );
 		}
 
 		[TestMethod, TestCategory( "Model" )]

@@ -1,17 +1,14 @@
 ﻿// $Id$
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using Blitzy.Converter;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Blitzy.Tests.Converter
 {
-	[TestClass] [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+	[TestClass]
+	[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	public class StringToVisibilityConverter_Tests : TestBase
 	{
 		[TestMethod, TestCategory( "Converter" ), ExpectedException( typeof( NotSupportedException ) )]

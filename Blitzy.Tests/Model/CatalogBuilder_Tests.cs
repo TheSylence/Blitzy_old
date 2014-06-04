@@ -1,11 +1,6 @@
 ﻿// $Id$
 
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Blitzy.Messages;
 using Blitzy.Model;
 using GalaSoft.MvvmLight.Messaging;
@@ -13,7 +8,8 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Blitzy.Tests.Model
 {
-	[TestClass] [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+	[TestClass]
+	[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	public class CatalogBuilder_Tests : TestBase
 	{
 		[TestMethod, TestCategory( "Model" )]

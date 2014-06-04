@@ -98,13 +98,14 @@
     <Compile Include="Converter\LocalizeFormatterConverter_Tests.cs" />
     <Compile Include="Converter\StringToImageConverter_Tests.cs" />
     <Compile Include="Converter\StringToVisibilityConverter_Tests.cs" />
+    <Compile Include="Converter\TimeSpanConverter_Tests.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Global\BaseObject_Tests.cs" />
-    <Compile Include="Global\Extensions_Tests.cs" />
-    <Compile Include="Global\HotKeyHost_Tests.cs" />
-    <Compile Include="Global\HotKey_Tests.cs" />
+    <Compile Include="Utility\Extensions_Tests.cs" />
+    <Compile Include="Utility\HotKeyHost_Tests.cs" />
+    <Compile Include="Utility\HotKey_Tests.cs" />
     <Compile Include="Global\Log_Tests.cs" />
-    <Compile Include="Global\SingleInstance_Tests.cs" />
+    <Compile Include="Utility\SingleInstance_Tests.cs" />
     <Compile Include="LogChecker.cs" />
     <Compile Include="Mocks\MockLogObject.cs" />
     <Compile Include="Mocks\MockModel.cs" />
@@ -117,6 +118,7 @@
     <Compile Include="Mocks\Services\MessageBoxServiceMock.cs" />
     <Compile Include="Mocks\Services\StringServiceMock.cs" />
     <Compile Include="Mocks\Services\TextInputServiceMock.cs" />
+    <Compile Include="Mocks\SlowStream.cs" />
     <Compile Include="Model\CatalogBuilder_Tests.cs" />
     <Compile Include="Model\CommandItem_Tests.cs" />
     <Compile Include="Model\CommandManager_Tests.cs" />
@@ -137,6 +139,7 @@
     <Compile Include="Plugins\PluginManager_Tests.cs" />
     <Compile Include="Plugins\PluginTestBase.cs" />
     <Compile Include="Plugins\PluginTester.cs" />
+    <Compile Include="Plugins\Putty_Tests.cs" />
     <Compile Include="Plugins\Shelly_Tests.cs" />
     <Compile Include="Plugins\Weby_Tests.cs" />
     <Compile Include="Plugins\WhereClause_Tests.cs" />
@@ -145,6 +148,8 @@
     <Compile Include="PropertyChangedListener.cs" />
     <Compile Include="TestBase.cs" />
     <Compile Include="TestHelper.cs" />
+    <Compile Include="Utility\StreamHelper_Tests.cs" />
+    <Compile Include="ViewModel\ChangelogDialogViewModel_Tests.cs" />
     <Compile Include="ViewModel\CloseableView_Tests.cs" />
     <Compile Include="ViewModel\CloseViewEventArgs_Tests.cs" />
     <Compile Include="ViewModel\ExceptionDialogViewModel_Tests.cs" />
@@ -190,6 +195,7 @@
     </Content>
     <Content Include="x86\SQLite.Interop.dll" />
   </ItemGroup>
+  <ItemGroup />
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>

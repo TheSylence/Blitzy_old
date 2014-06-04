@@ -7,12 +7,9 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using Blitzy.Messages;
 using Blitzy.Model.Shell;
-using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Messaging;
 
 namespace Blitzy.Model

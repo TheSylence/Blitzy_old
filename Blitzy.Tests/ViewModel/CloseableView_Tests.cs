@@ -1,18 +1,14 @@
 ﻿// $Id$
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Blitzy.View;
 using Blitzy.ViewModel;
-using Microsoft.QualityTools.Testing.Fakes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Blitzy.Tests.ViewModel
 {
-	[TestClass] [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+	[TestClass]
+	[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	public class CloseableView_Tests : TestBase, IRequestCloseViewModel
 	{
 		public event EventHandler<CloseViewEventArgs> RequestClose;

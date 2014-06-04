@@ -6,8 +6,6 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using Blitzy.Model;
 using Blitzy.Utility;
 using Microsoft.Win32;
@@ -82,7 +80,7 @@ namespace Blitzy.Plugin.System
 		public bool Load( IPluginHost host, string oldVersion = null )
 		{
 			Host = host;
-			if( oldVersion == null )
+			if( oldVersion == null && !RuntimeConfig.Tests )
 			{
 				SetDefaultValues( host.Settings );
 			}
@@ -164,7 +162,7 @@ namespace Blitzy.Plugin.System
 		{
 			get
 			{
-				return Host.Settings.GetValue<string>( this, "PathKey" );
+				return Host.Settings.GetValue<string>( this, PathKey );
 			}
 		}
 

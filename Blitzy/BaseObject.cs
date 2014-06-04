@@ -4,9 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using GalaSoft.MvvmLight;
 using log4net;
 
@@ -99,10 +96,12 @@ namespace Blitzy
 
 		protected void LogDebug( string format, params object[] args )
 		{
+#if DEBUG
 			if( Log.IsDebugEnabled )
 			{
 				Log.DebugFormat( CultureInfo.InvariantCulture, format, args );
 			}
+#endif
 		}
 
 		protected void LogError( string format, params object[] args )

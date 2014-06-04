@@ -1,12 +1,9 @@
 ﻿// $Id$
 
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using Blitzy.Model;
 using Blitzy.Plugin;
 using Blitzy.Tests.Mocks;
@@ -14,7 +11,8 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Blitzy.Tests.Model
 {
-	[TestClass] [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+	[TestClass]
+	[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	public class Settings_Tests : TestBase
 	{
 		[TestMethod, TestCategory( "Model" )]

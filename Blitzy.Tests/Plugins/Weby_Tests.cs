@@ -1,10 +1,7 @@
 ﻿// $Id$
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Blitzy.Model;
 using Blitzy.Plugin.System;
 using Microsoft.QualityTools.Testing.Fakes;
@@ -38,12 +35,14 @@ namespace Blitzy.Tests.Plugins
 			bool result;
 			string url = null;
 
+			int startedProcesses = 0;
 			foreach( CommandItem command in commands )
 			{
 				using( ShimsContext.Create() )
 				{
 					System.Diagnostics.Fakes.ShimProcess.StartString = s =>
 					{
+						++startedProcesses;
 						url = s;
 						return new System.Diagnostics.Fakes.StubProcess();
 					};
@@ -55,6 +54,8 @@ namespace Blitzy.Tests.Plugins
 				Assert.IsTrue( url.Contains( "test" ) );
 				Assert.IsTrue( url.Contains( expectedUrls[command.Name] ) );
 			}
+
+			Assert.AreEqual( commands.Count(), startedProcesses );
 		}
 
 		[TestMethod, TestCategory( "Plugins" )]

@@ -16,7 +16,6 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using Blitzy.ViewModel.Dialogs;
-using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
 using Microsoft.Practices.ServiceLocation;
 

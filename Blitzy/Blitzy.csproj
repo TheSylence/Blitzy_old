@@ -205,7 +205,7 @@
     <Compile Include="ViewModel\Dialogs\ExceptionDialogViewModel.cs" />
     <Compile Include="ViewModel\Dialogs\TextInputDialogViewModel.cs" />
     <Compile Include="ViewModel\Dialogs\WebyWebsiteDialogViewModel.cs" />
-    <Compile Include="ViewModel\DownloadDialogViewModel.cs" />
+    <Compile Include="ViewModel\Dialogs\DownloadDialogViewModel.cs" />
     <Compile Include="ViewModel\HistoryViewModel.cs" />
     <Compile Include="ViewModel\IRequestCloseViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />

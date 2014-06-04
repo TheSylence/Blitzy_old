@@ -1,17 +1,14 @@
 ﻿// $Id$
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Blitzy.Tests.Mocks;
 using log4net.Core;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Blitzy.Tests.Global
 {
-	[TestClass] [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+	[TestClass]
+	[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	public class Log_Tests : TestBase
 	{
 		[TestMethod, TestCategory( "Global" )]

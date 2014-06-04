@@ -5,8 +5,6 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Data.SQLite;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Blitzy.Model;
 using Blitzy.Plugin;
 using Blitzy.Tests.Mocks;
@@ -85,8 +83,7 @@ namespace Blitzy.Tests.Plugins
 		{
 			PluginDatabase db = new PluginDatabase( Connection );
 
-			db.CreateTable( Plugin, "] (Temp INTEGER PRIMARY KEY); DROP TABLE settings ;--", new[] { new TableColumn() } );
-
+			db.CreateTable( Plugin, "] (Temp INTEGER PRIMARY KEY); DROP TABLE settings ;-- ", new[] { new TableColumn() } );
 			using( SQLiteCommand cmd = Connection.CreateCommand() )
 			{
 				cmd.CommandText = "SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'settings'";
@@ -95,7 +92,14 @@ namespace Blitzy.Tests.Plugins
 				Assert.AreEqual( "settings", result );
 			}
 
-			// TODO: Test TableColumns
+			db.CreateTable( Plugin, "testtable", new[] { new TableColumn( "temp INTEGER PRIMARY KEY); DROP TABLE settings ;-- ", ColumnType.Text ) } );
+			using( SQLiteCommand cmd = Connection.CreateCommand() )
+			{
+				cmd.CommandText = "SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'settings'";
+
+				string result = (string)cmd.ExecuteScalar();
+				Assert.AreEqual( "settings", result );
+			}
 		}
 
 		[TestMethod, TestCategory( "Plugins" )]
@@ -103,7 +107,7 @@ namespace Blitzy.Tests.Plugins
 		{
 			PluginDatabase db = new PluginDatabase( Connection );
 
-			db.Delete( Plugin, "]; DROP TABLE settings; --" );
+			db.Delete( Plugin, "]; DROP TABLE settings; -- " );
 
 			using( SQLiteCommand cmd = Connection.CreateCommand() )
 			{
@@ -119,7 +123,7 @@ namespace Blitzy.Tests.Plugins
 		{
 			PluginDatabase db = new PluginDatabase( Connection );
 
-			db.DropTable( Plugin, "]; DROP TABLE settings; --" );
+			db.DropTable( Plugin, "]; DROP TABLE settings; -- " );
 
 			using( SQLiteCommand cmd = Connection.CreateCommand() )
 			{
@@ -141,7 +145,7 @@ namespace Blitzy.Tests.Plugins
 				new Dictionary<string,object>{ {"col1", 2}, {"col2", "2"} },
 				new Dictionary<string,object>{ {"col1", 3}, {"col2", "3"} },
 			};
-			db.Insert( Plugin, "]; DROP TABLE settings; --", values );
+			db.Insert( Plugin, "]; DROP TABLE settings; -- ", values );
 
 			using( SQLiteCommand cmd = Connection.CreateCommand() )
 			{
@@ -151,7 +155,31 @@ namespace Blitzy.Tests.Plugins
 				Assert.AreEqual( "settings", result );
 			}
 
-			// TODO: Test TableColumns
+			values = new Dictionary<string, object>[]
+			{
+				new Dictionary<string,object>{ {"col1) VALUES(1); DROP TABLE settings; -- ", 1}, {"col2", "1"} }
+			};
+			db.Insert( Plugin, "temptable", values );
+			using( SQLiteCommand cmd = Connection.CreateCommand() )
+			{
+				cmd.CommandText = "SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'settings'";
+
+				string result = (string)cmd.ExecuteScalar();
+				Assert.AreEqual( "settings", result );
+			}
+
+			values = new Dictionary<string, object>[]
+			{
+				new Dictionary<string,object>{ {"col1", 1}, {"col2", "1); DROP TABLE settings; -- "} }
+			};
+			db.Insert( Plugin, "temptable", values );
+			using( SQLiteCommand cmd = Connection.CreateCommand() )
+			{
+				cmd.CommandText = "SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'settings'";
+
+				string result = (string)cmd.ExecuteScalar();
+				Assert.AreEqual( "settings", result );
+			}
 		}
 
 		[TestMethod, TestCategory( "Plugins" )]
@@ -159,7 +187,7 @@ namespace Blitzy.Tests.Plugins
 		{
 			PluginDatabase db = new PluginDatabase( Connection );
 
-			db.Select( Plugin, "]; DROP TABLE settings; --", new[] { "col1" } );
+			db.Select( Plugin, "]; DROP TABLE settings; -- ", new[] { "col1" } );
 
 			using( SQLiteCommand cmd = Connection.CreateCommand() )
 			{
@@ -174,7 +202,7 @@ namespace Blitzy.Tests.Plugins
 		public void InjectionUpdatTest()
 		{
 			PluginDatabase db = new PluginDatabase( Connection );
-			db.Update( Plugin, "]; DROP TABLE settings; --", new Dictionary<string, object> { { "col1", 1 }, { "col2", "1" } } );
+			db.Update( Plugin, "]; DROP TABLE settings; -- ", new Dictionary<string, object> { { "col1", 1 }, { "col2", "1" } } );
 
 			using( SQLiteCommand cmd = Connection.CreateCommand() )
 			{
@@ -184,7 +212,23 @@ namespace Blitzy.Tests.Plugins
 				Assert.AreEqual( "settings", result );
 			}
 
-			// TODO: Test TableColumns
+			db.Update( Plugin, "temptable", new Dictionary<string, object> { { "col1 = 1; DROP TABLE settings; -- ", 1 }, { "col2", "1" } } );
+			using( SQLiteCommand cmd = Connection.CreateCommand() )
+			{
+				cmd.CommandText = "SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'settings'";
+
+				string result = (string)cmd.ExecuteScalar();
+				Assert.AreEqual( "settings", result );
+			}
+
+			db.Update( Plugin, "]; DROP TABLE settings; -- ", new Dictionary<string, object> { { "col1", 1 }, { "col2", "1; DROP TABLE settings; -- " } } );
+			using( SQLiteCommand cmd = Connection.CreateCommand() )
+			{
+				cmd.CommandText = "SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'settings'";
+
+				string result = (string)cmd.ExecuteScalar();
+				Assert.AreEqual( "settings", result );
+			}
 		}
 
 		[TestMethod, TestCategory( "Plugins" )]
