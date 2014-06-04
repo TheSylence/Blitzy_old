@@ -139,7 +139,7 @@ namespace Blitzy.Model
 
 		private int GetCommandExecutionCount( CommandItem item )
 		{
-			int hash = GetHash( item );
+			int hash = item.GetHashCode();
 
 			if( !CommandExecutionBuffer.ContainsKey( hash ) )
 			{
@@ -148,22 +148,6 @@ namespace Blitzy.Model
 			}
 
 			return CommandExecutionBuffer[hash];
-		}
-
-		private int GetHash( IPlugin plugin, string command )
-		{
-			int hash = 17;
-			hash = hash * 23 + plugin.PluginID.GetHashCode();
-			hash = hash * 23 + command.GetHashCode();
-			return hash;
-		}
-
-		private int GetHash( CommandItem item )
-		{
-			int hash = 17;
-			hash = hash * 23 + item.Plugin.PluginID.GetHashCode();
-			hash = hash * 23 + item.Name.GetHashCode();
-			return hash;
 		}
 
 		private void LoadPluginCommands()

@@ -40,18 +40,18 @@ namespace Blitzy.Tests.Model
 			}
 
 			Stopwatch timer = new Stopwatch();
-			timer.Start();
 			foreach( string test in tests )
 			{
+				timer.Start();
 				mgr.Clear( true );
 				mgr.SearchItems( test );
+				timer.Stop();
 			}
-			timer.Stop();
 
 			TimeSpan elapsed = timer.Elapsed;
 			TimeSpan maxSpan = TimeSpan.FromMilliseconds( 275 );
 
-			Assert.IsTrue( elapsed < maxSpan, string.Format( "{0} of {1}: {2}", testCount, totalCount, elapsed.ToString() ) );
+			Assert.IsTrue( elapsed <= maxSpan, string.Format( "{0} of {1}: {2}", testCount, totalCount, elapsed.ToString() ) );
 		}
 
 		[TestMethod, TestCategory( "Model" )]

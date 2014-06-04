@@ -54,6 +54,19 @@ namespace Blitzy.Model
 			return item;
 		}
 
+		public override int GetHashCode()
+		{
+			if( HashCode == 0 )
+			{
+				int hash = 17;
+				hash = hash * 23 + Plugin.PluginID.GetHashCode();
+				hash = hash * 23 + Name.GetHashCode();
+				HashCode = hash;
+			}
+
+			return HashCode;
+		}
+
 		#endregion Methods
 
 		#region Properties
@@ -77,6 +90,8 @@ namespace Blitzy.Model
 		#endregion Properties
 
 		#region Attributes
+
+		private int HashCode;
 
 		#endregion Attributes
 	}
