@@ -395,6 +395,12 @@
     <value>Download</value>
   </data>
   <data name="DownloadProgress" xml:space="preserve">
-    <value>Downloading {0} of {1}</value>
+    <value>Downloading {0} of {1} - Estimated time left: {2}</value>
+  </data>
+  <data name="Downloading" xml:space="preserve">
+    <value>Downloading...</value>
+  </data>
+  <data name="ErrorRetrieveVersion" xml:space="preserve">
+    <value>Error retrieving version information</value>
   </data>
 </root>

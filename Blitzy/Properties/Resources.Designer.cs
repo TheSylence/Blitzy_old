@@ -313,7 +313,16 @@ namespace Blitzy.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Downloading {0} of {1}.
+        ///   Looks up a localized string similar to Downloading....
+        /// </summary>
+        public static string Downloading {
+            get {
+                return ResourceManager.GetString("Downloading", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Downloading {0} of {1} - Estimated time left: {2}.
         /// </summary>
         public static string DownloadProgress {
             get {
@@ -345,6 +354,15 @@ namespace Blitzy.Properties {
         public static string Error {
             get {
                 return ResourceManager.GetString("Error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error retrieving version information.
+        /// </summary>
+        public static string ErrorRetrieveVersion {
+            get {
+                return ResourceManager.GetString("ErrorRetrieveVersion", resourceCulture);
             }
         }
         

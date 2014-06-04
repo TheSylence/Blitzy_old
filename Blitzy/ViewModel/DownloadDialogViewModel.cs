@@ -2,9 +2,15 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using Blitzy.Utility;
+using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Threading;
 
 namespace Blitzy.ViewModel
 {
@@ -16,14 +22,151 @@ namespace Blitzy.ViewModel
 
 		#region Methods
 
+		public async void StartDownload()
+		{
+			using( HttpClient client = new HttpClient() )
+			{
+				DownloadLink = "http://speedtest.qsc.de/100MB.qsc";
+
+				HttpResponseMessage response = await client.GetAsync( DownloadLink, HttpCompletionOption.ResponseHeadersRead );
+				try
+				{
+					response.EnsureSuccessStatusCode();
+				}
+				catch( HttpRequestException )
+				{
+					// TODO: Error handling
+				}
+
+				Stream responseStream = await response.Content.ReadAsStreamAsync();
+
+				await Task.Run( () =>
+				{
+					using( FileStream fileStream = File.OpenWrite( TargetPath ) )
+					{
+						ProgressStatistic stats = new ProgressStatistic();
+						stats.UsedEstimatingMethod = ProgressStatistic.EstimatingMethod.CurrentBytesPerSecond;
+
+						long totalLength = DownloadSize;
+						if( response.Content.Headers.ContentLength.HasValue )
+						{
+							totalLength = response.Content.Headers.ContentLength.Value;
+						}
+
+						DownloadSize = totalLength;
+						stats.ProgressChanged += stats_ProgressChanged;
+						stats.Finished += stats_Finished;
+
+						CopyArguments = new CopyFromArguments( stats.ProgressChange, TimeSpan.FromSeconds( 0.5 ), totalLength );
+						DispatcherHelper.CheckBeginInvokeOnUI( () => System.Windows.Input.CommandManager.InvalidateRequerySuggested() );
+						fileStream.CopyFrom( responseStream, CopyArguments );
+						stats.Finish();
+					}
+				} );
+			}
+		}
+
+		private void stats_Finished( object sender, ProgressEventArgs e )
+		{
+			if( CopyArguments.StopEvent != null )
+			{
+				// User cancelled operation. Don't compute hashes
+				try
+				{
+					File.Delete( TargetPath );
+				}
+				catch( IOException )
+				{
+					// Temporary file... Windows will take care of this
+				}
+			}
+			else
+			{
+				CopyArguments = null;
+				using( System.Security.Cryptography.MD5 md5 = System.Security.Cryptography.MD5.Create() )
+				{
+					using( FileStream stream = File.OpenRead( TargetPath ) )
+					{
+						string computedHash = BitConverter.ToString( md5.ComputeHash( stream ) ).Replace( "-", "" ).ToLower();
+
+						if( !computedHash.Equals( MD5, StringComparison.Ordinal ) )
+						{
+							// TODO: Downloaded file is broken
+						}
+					}
+				}
+
+				// TODO: Send message
+			}
+
+			DispatcherHelper.CheckBeginInvokeOnUI( () => Close() );
+		}
+
+		private void stats_ProgressChanged( object sender, ProgressEventArgs e )
+		{
+			DispatcherHelper.CheckBeginInvokeOnUI( () =>
+			{
+				TimeLeft = e.ProgressStatistic.EstimatedFinishingTime - DateTime.Now;
+				BytesDownloaded = e.ProgressStatistic.BytesRead;
+			} );
+		}
+
 		#endregion Methods
+
+		#region Commands
+
+		private RelayCommand _CancelCommand;
+
+		public RelayCommand CancelCommand
+		{
+			get
+			{
+				return _CancelCommand ??
+					( _CancelCommand = new RelayCommand( ExecuteCancelCommand, CanExecuteCancelCommand ) );
+			}
+		}
+
+		private bool CanExecuteCancelCommand()
+		{
+			return CopyArguments != null;
+		}
+
+		private void ExecuteCancelCommand()
+		{
+			ManualResetEvent evt = new ManualResetEvent( true );
+			CopyArguments.StopEvent = evt;
+		}
+
+		#endregion Commands
 
 		#region Properties
 
+		private long _BytesDownloaded;
 		private string _DownloadLink;
-		private ulong _FileSize;
+		private long _DownloadSize;
 		private string _MD5;
 		private string _TargetPath;
+		private TimeSpan _TimeLeft;
+
+		public long BytesDownloaded
+		{
+			get
+			{
+				return _BytesDownloaded;
+			}
+
+			set
+			{
+				if( _BytesDownloaded == value )
+				{
+					return;
+				}
+
+				RaisePropertyChanging( () => BytesDownloaded );
+				_BytesDownloaded = value;
+				RaisePropertyChanged( () => BytesDownloaded );
+			}
+		}
 
 		public string DownloadLink
 		{
@@ -45,23 +188,23 @@ namespace Blitzy.ViewModel
 			}
 		}
 
-		public ulong FileSize
+		public long DownloadSize
 		{
 			get
 			{
-				return _FileSize;
+				return _DownloadSize;
 			}
 
 			set
 			{
-				if( _FileSize == value )
+				if( _DownloadSize == value )
 				{
 					return;
 				}
 
-				RaisePropertyChanging( () => FileSize );
-				_FileSize = value;
-				RaisePropertyChanged( () => FileSize );
+				RaisePropertyChanging( () => DownloadSize );
+				_DownloadSize = value;
+				RaisePropertyChanged( () => DownloadSize );
 			}
 		}
 
@@ -105,9 +248,31 @@ namespace Blitzy.ViewModel
 			}
 		}
 
+		public TimeSpan TimeLeft
+		{
+			get
+			{
+				return _TimeLeft;
+			}
+
+			set
+			{
+				if( _TimeLeft == value )
+				{
+					return;
+				}
+
+				RaisePropertyChanging( () => TimeLeft );
+				_TimeLeft = value;
+				RaisePropertyChanged( () => TimeLeft );
+			}
+		}
+
 		#endregion Properties
 
 		#region Attributes
+
+		private CopyFromArguments CopyArguments;
 
 		#endregion Attributes
 	}

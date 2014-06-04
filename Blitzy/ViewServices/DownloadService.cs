@@ -30,8 +30,9 @@ namespace Blitzy.ViewServices
 			vm.DownloadLink = args.DownloadLink.AbsoluteUri;
 			vm.MD5 = args.MD5;
 			vm.TargetPath = args.TargetPath;
-			vm.FileSize = args.FileSize;
+			vm.DownloadSize = args.FileSize;
 
+			vm.StartDownload();
 			return dlg.ShowDialog();
 		}
 	}

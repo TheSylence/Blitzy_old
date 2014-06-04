@@ -74,6 +74,7 @@
     </Reference>
     <Reference Include="System.Drawing" />
     <Reference Include="System.Management" />
+    <Reference Include="System.Net.Http" />
     <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -140,9 +141,10 @@
     <Compile Include="Converter\LocalizeFormatterConverter.cs" />
     <Compile Include="Converter\StringToImageConverter.cs" />
     <Compile Include="Converter\StringToVisibilityConverter.cs" />
-    <Compile Include="Extensions.cs" />
+    <Compile Include="Converter\TimeSpanConverter.cs" />
+    <Compile Include="Utility\Extensions.cs" />
     <Compile Include="GlobalSuppressions.cs" />
-    <Compile Include="HotKey.cs" />
+    <Compile Include="Utility\HotKey.cs" />
     <Compile Include="INativeMethods.cs" />
     <Compile Include="LogHelper.cs" />
     <Compile Include="BaseObject.cs" />
@@ -190,8 +192,13 @@
     <Compile Include="Plugin\TableColumn.cs" />
     <Compile Include="Plugin\WhereClause.cs" />
     <Compile Include="RuntimeConfig.cs" />
-    <Compile Include="SingleInstance.cs" />
+    <Compile Include="Utility\SingleInstance.cs" />
     <Compile Include="Todo.cs" />
+    <Compile Include="Utility\CopyFromArguments.cs" />
+    <Compile Include="Utility\OperationAlreadyStartedException.cs" />
+    <Compile Include="Utility\ProgressEventArgs.cs" />
+    <Compile Include="Utility\ProgressStatistic.cs" />
+    <Compile Include="Utility\StreamHelper.cs" />
     <Compile Include="ViewModel\CloseViewEventArgs.cs" />
     <Compile Include="ViewModel\Dialogs\ChangelogDialogViewModel.cs" />
     <Compile Include="ViewModel\Dialogs\DialogViewModelBase.cs" />

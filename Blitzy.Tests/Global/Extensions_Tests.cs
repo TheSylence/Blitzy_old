@@ -7,11 +7,13 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Blitzy.Utility;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Blitzy.Tests.Global
 {
-	[TestClass] [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+	[TestClass]
+	[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	public class Extensions_Tests : TestBase
 	{
 		[TestMethod, TestCategory( "Global" )]

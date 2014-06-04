@@ -10,9 +10,11 @@ using System.Threading.Tasks;
 using System.Windows;
 using Blitzy.Messages;
 using Blitzy.Model;
+using Blitzy.Utility;
 using Blitzy.ViewServices;
 using btbapi;
 using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Threading;
 
 namespace Blitzy.ViewModel
 {
@@ -252,7 +254,7 @@ namespace Blitzy.ViewModel
 
 		private bool CanExecuteDownloadUpdateCommand()
 		{
-			return true;
+			return LatestVersionInfo != null && LatestVersionInfo.DownloadLink != null;
 		}
 
 		private bool CanExecuteRemoveExcludeCommand()
@@ -347,6 +349,8 @@ namespace Blitzy.ViewModel
 
 		private void ExecuteDownloadUpdateCommand()
 		{
+			DownloadServiceParameters args = new DownloadServiceParameters( LatestVersionInfo.DownloadLink, "test.exe", 0, "234" );
+			DialogServiceManager.Show<DownloadService>( args );
 		}
 
 		private void ExecuteRemoveExcludeCommand()
@@ -422,14 +426,25 @@ namespace Blitzy.ViewModel
 		{
 			Task.Run( async () =>
 			{
+				LogInfo( "Checking for updates..." );
 				LatestVersionInfo = await API.CheckVersion( Constants.SoftwareName, Assembly.GetExecutingAssembly().GetName().Version );
-
-				string downloadLink = null;
-				if( LatestVersionInfo.DownloadLink != null )
+				if( LatestVersionInfo.Status == System.Net.HttpStatusCode.OK )
 				{
-					downloadLink = LatestVersionInfo.DownloadLink.ToString();
+					LogInfo( "Latest available version is {0}", LatestVersionInfo.LatestVersion );
+					string downloadLink = null;
+					if( LatestVersionInfo.DownloadLink != null )
+					{
+						downloadLink = LatestVersionInfo.DownloadLink.ToString();
+					}
+					MessengerInstance.Send<VersionCheckMessage>( new VersionCheckMessage( LatestVersionInfo.LatestVersion, downloadLink, true ) );
+
+					DispatcherHelper.CheckBeginInvokeOnUI( () => System.Windows.Input.CommandManager.InvalidateRequerySuggested() );
 				}
-				MessengerInstance.Send<VersionCheckMessage>( new VersionCheckMessage( LatestVersionInfo.LatestVersion, downloadLink, true ) );
+				else
+				{
+					LogWarning( "Failed to retrieve latest version: {0}", LatestVersionInfo.Status );
+					VersionCheckError = true;
+				}
 			} );
 		}
 
@@ -727,6 +742,7 @@ namespace Blitzy.ViewModel
 		private Folder _SelectedFolder;
 		private string _SelectedRule;
 		private Settings _Settings;
+		private bool _VersionCheckError;
 
 		public API API { get; private set; }
 
@@ -879,6 +895,26 @@ namespace Blitzy.ViewModel
 				RaisePropertyChanging( () => Settings );
 				_Settings = value;
 				RaisePropertyChanged( () => Settings );
+			}
+		}
+
+		public bool VersionCheckError
+		{
+			get
+			{
+				return _VersionCheckError;
+			}
+
+			set
+			{
+				if( _VersionCheckError == value )
+				{
+					return;
+				}
+
+				RaisePropertyChanging( () => VersionCheckError );
+				_VersionCheckError = value;
+				RaisePropertyChanged( () => VersionCheckError );
 			}
 		}
 

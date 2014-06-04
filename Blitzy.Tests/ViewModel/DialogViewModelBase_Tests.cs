@@ -6,12 +6,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Blitzy.Tests.Mocks;
+using Blitzy.Utility;
 using Blitzy.ViewModel.Dialogs;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Blitzy.Tests.ViewModel
 {
-	[TestClass] [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+	[TestClass]
+	[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	public class DialogViewModelBase_Tests : TestBase
 	{
 		[TestMethod, TestCategory( "ViewModel" )]

@@ -10,6 +10,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
+using Blitzy.Utility;
 using Blitzy.ViewModel;
 using Blitzy.ViewServices;
 using GalaSoft.MvvmLight.Threading;

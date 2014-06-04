@@ -9,6 +9,7 @@
 * Changed license to a more software like one
 * Plugins without settings are now longer visible in settings menu
 * Changelogs for new versions are now visible before downloading and installing an update
++ Update downloader now displays estimated time left
 + Catalog building progress can now be seen in settings
 + Added feature to exclude files from folders
 + Weby websites can now display a favicon

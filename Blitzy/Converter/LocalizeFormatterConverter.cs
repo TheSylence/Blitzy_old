@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
+using Blitzy.Utility;
 using WPFLocalizeExtension.Extensions;
 
 namespace Blitzy.Converter

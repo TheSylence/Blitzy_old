@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Blitzy.Plugin;
+using Blitzy.Utility;
 using GalaSoft.MvvmLight;
 
 namespace Blitzy.Model

@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Blitzy.Messages;
 using Blitzy.Model;
+using Blitzy.Utility;
 using GalaSoft.MvvmLight.Messaging;
 
 namespace Blitzy.Plugin.System

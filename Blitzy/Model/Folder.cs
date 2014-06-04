@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Blitzy.Utility;
 using GalaSoft.MvvmLight;
 
 namespace Blitzy.Model

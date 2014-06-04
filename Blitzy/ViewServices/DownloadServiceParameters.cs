@@ -13,13 +13,13 @@ namespace Blitzy.ViewServices
 	{
 		public readonly Uri DownloadLink;
 
-		public readonly ulong FileSize;
+		public readonly long FileSize;
 
 		public readonly string MD5;
 
 		public readonly string TargetPath;
 
-		public DownloadServiceParameters( Uri downloadLink, string targetPath, ulong fileSize, string md5 )
+		public DownloadServiceParameters( Uri downloadLink, string targetPath, long fileSize, string md5 )
 		{
 			DownloadLink = downloadLink;
 			TargetPath = targetPath;

@@ -7,4 +7,5 @@
 	<conv:StringToVisibilityConverter x:Key="StringToVisibilityConv" />
 	<conv:LocalizeFormatterConverter x:Key="LocalizeFormatterConv" />
 	<conv:FileSizeConverter x:Key="FileSizeConv" />
+	<conv:TimeSpanConverter x:Key="TimeSpanConv" />
 </ResourceDictionary>

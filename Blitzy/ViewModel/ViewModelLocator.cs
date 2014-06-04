@@ -58,6 +58,7 @@ namespace Blitzy.ViewModel
 			Register<TextInputDialogViewModel>();
 			Register<WebyWebsiteDialogViewModel>();
 			Register<ChangelogDialogViewModel>();
+			Register<DownloadDialogViewModel>();
 
 			Register<NotifyIconViewModel>();
 		}
@@ -113,6 +114,14 @@ namespace Blitzy.ViewModel
 			get
 			{
 				return ServiceLocator.Current.GetInstance<ChangelogDialogViewModel>();
+			}
+		}
+
+		public DownloadDialogViewModel DownloadDialog
+		{
+			get
+			{
+				return ServiceLocator.Current.GetInstance<DownloadDialogViewModel>();
 			}
 		}
 

@@ -32,10 +32,11 @@ namespace Blitzy.Tests.Converter
 			object[] values = new object[]
 			{
 				12,
-				150
+				150,
+				122
 			};
 			string result = conv.Convert( values, typeof( string ), "DownloadProgress", CultureInfo.InvariantCulture ) as string;
-			string expected = "Downloading 12 of 150";
+			string expected = "Downloading 12 of 150 - Estimated time left: 122";
 
 			Assert.AreEqual( expected, result );
 
@@ -44,11 +45,12 @@ namespace Blitzy.Tests.Converter
 			values = new object[]
 			{
 				null,
-				DependencyProperty.UnsetValue
+				DependencyProperty.UnsetValue,
+				null
 			};
 
 			result = conv.Convert( values, typeof( string ), "DownloadProgress", CultureInfo.InvariantCulture ) as string;
-			expected = "Downloading  of ";
+			expected = "Downloading  of  - Estimated time left: ";
 			Assert.AreEqual( expected, result );
 		}
 	}

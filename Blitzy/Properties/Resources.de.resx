@@ -391,6 +391,12 @@
     <value>Download</value>
   </data>
   <data name="DownloadProgress" xml:space="preserve">
-    <value>Downloaden von {0} von {1}</value>
+    <value>Downloaden von {0} von {1} - Geschätzte verbleibende Zeit: {2}</value>
+  </data>
+  <data name="Downloading" xml:space="preserve">
+    <value>Downloade...</value>
+  </data>
+  <data name="ErrorRetrieveVersion" xml:space="preserve">
+    <value>Fehler beim Abrufen der Information</value>
   </data>
 </root>
