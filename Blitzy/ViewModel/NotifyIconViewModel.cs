@@ -55,10 +55,10 @@ namespace Blitzy.ViewModel
 
 		private void OnVersionCheck( VersionCheckMessage msg )
 		{
-			bool update = msg.LatestVersion > msg.CurrentVersion;
+			bool update = msg.VersionInfo.LatestVersion > msg.CurrentVersion;
 			if( update )
 			{
-				string message = string.Format( "NewVersionAvailable".Localize(), msg.LatestVersion );
+				string message = string.Format( "NewVersionAvailable".Localize(), msg.VersionInfo.LatestVersion );
 				MessengerInstance.Send<BalloonTipMessage>( new BalloonTipMessage( "UpdateAvailable".Localize(), message, Hardcodet.Wpf.TaskbarNotification.BalloonIcon.Info, msg ) );
 			}
 			else if( msg.ShowIfNewest )

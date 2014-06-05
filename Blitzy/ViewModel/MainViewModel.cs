@@ -114,7 +114,7 @@ namespace Blitzy.ViewModel
 					break;
 
 				case "version":
-					Task.Run( async () => await UpdateChecker.CheckVersion( true ) );
+					Task.Run( async () => await UpdateChecker.Instance.CheckVersion( true ) );
 					break;
 
 				case "reset":

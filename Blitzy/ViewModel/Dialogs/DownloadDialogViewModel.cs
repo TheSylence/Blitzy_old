@@ -32,25 +32,25 @@ namespace Blitzy.ViewModel.Dialogs
 
 		public async void StartDownload()
 		{
-			using( HttpClient client = new HttpClient() )
+			await Task.Run( async () =>
 			{
-				LogInfo( "Start download of {0}", DownloadLink );
-
-				HttpResponseMessage response = await client.GetAsync( DownloadLink, HttpCompletionOption.ResponseHeadersRead );
-				try
+				using( HttpClient client = new HttpClient() )
 				{
-					response.EnsureSuccessStatusCode();
-				}
-				catch( HttpRequestException ex )
-				{
-					LogWarning( "Failed to download file: {0}", ex );
-					MessengerInstance.Send<DownloadStatusMessage>( new DownloadStatusMessage( TargetPath, DownloadLink, DownloadSize, MD5 ), MessageTokens.DownloadFailed );
-				}
+					LogInfo( "Start download of {0}", DownloadLink );
 
-				Stream responseStream = await response.Content.ReadAsStreamAsync();
+					HttpResponseMessage response = await client.GetAsync( DownloadLink, HttpCompletionOption.ResponseHeadersRead );
+					try
+					{
+						response.EnsureSuccessStatusCode();
+					}
+					catch( HttpRequestException ex )
+					{
+						LogWarning( "Failed to download file: {0}", ex );
+						MessengerInstance.Send<DownloadStatusMessage>( new DownloadStatusMessage( TargetPath, DownloadLink, DownloadSize, MD5 ), MessageTokens.DownloadFailed );
+						return;
+					}
 
-				await Task.Run( () =>
-				{
+					Stream responseStream = await response.Content.ReadAsStreamAsync();
 					using( FileStream fileStream = File.OpenWrite( TargetPath ) )
 					{
 						ProgressStatistic stats = new ProgressStatistic();
@@ -75,8 +75,8 @@ namespace Blitzy.ViewModel.Dialogs
 
 						LogInfo( "Download completed" );
 					}
-				} );
-			}
+				}
+			} );
 		}
 
 		private void OnDownloadCorrupted( DownloadStatusMessage msg )
@@ -91,15 +91,18 @@ namespace Blitzy.ViewModel.Dialogs
 
 		private void ShowRetryDialog( string message, DownloadStatusMessage msg )
 		{
-			DispatcherHelper.CheckBeginInvokeOnUI( () => Close() );
-
-			MessageBoxParameter args = new MessageBoxParameter( message, "DownloadFailed".Localize(), MessageBoxButton.YesNo, MessageBoxImage.Error );
-			MessageBoxResult result = DialogServiceManager.Show<MessageBoxService, MessageBoxResult>( args );
-			if( result == MessageBoxResult.Yes )
+			DispatcherHelper.CheckBeginInvokeOnUI( () =>
 			{
-				DownloadServiceParameters downloadArgs = new DownloadServiceParameters( new Uri( msg.DownloadLink ), msg.TargetPath, msg.DownloadSize, msg.MD5 );
-				DialogServiceManager.Show<DownloadService>( downloadArgs );
-			}
+				Close();
+
+				MessageBoxParameter args = new MessageBoxParameter( message, "DownloadFailed".Localize(), MessageBoxButton.YesNo, MessageBoxImage.Error );
+				MessageBoxResult result = DialogServiceManager.Show<MessageBoxService, MessageBoxResult>( args );
+				if( result == MessageBoxResult.Yes )
+				{
+					DownloadServiceParameters downloadArgs = new DownloadServiceParameters( new Uri( msg.DownloadLink ), msg.TargetPath, msg.DownloadSize, msg.MD5 );
+					DialogServiceManager.Show<DownloadService>( downloadArgs );
+				}
+			} );
 		}
 
 		private void stats_Finished( object sender, ProgressEventArgs e )

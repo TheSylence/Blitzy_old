@@ -18,6 +18,9 @@ namespace Blitzy.Messages
 		public DownloadStatusMessage( string targetPath, string downloadLink, long downloadSize, string md5 )
 		{
 			TargetPath = targetPath;
+			DownloadLink = downloadLink;
+			MD5 = md5;
+			DownloadSize = downloadSize;
 		}
 	}
 }

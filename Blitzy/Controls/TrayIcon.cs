@@ -17,6 +17,8 @@ namespace Blitzy.Controls
 		{
 			Messenger.Default.Register<CommandMessage>( this, msg => OnCommand( msg ) );
 			Messenger.Default.Register<BalloonTipMessage>( this, msg => OnBallon( msg ) );
+
+			this.TrayBalloonTipClicked += TrayIcon_TrayBalloonTipClicked;
 		}
 
 		#endregion Constructor
@@ -25,6 +27,7 @@ namespace Blitzy.Controls
 
 		private void OnBallon( BalloonTipMessage msg )
 		{
+			BallonToken = msg.Token;
 			ShowBalloonTip( msg.Title, msg.Message, msg.Icon );
 		}
 
@@ -36,6 +39,11 @@ namespace Blitzy.Controls
 			}
 		}
 
+		private void TrayIcon_TrayBalloonTipClicked( object sender, System.Windows.RoutedEventArgs e )
+		{
+			Messenger.Default.Send( new BalloonActivatedMessage( BallonToken ) );
+		}
+
 		#endregion Methods
 
 		#region Properties
@@ -43,6 +51,8 @@ namespace Blitzy.Controls
 		#endregion Properties
 
 		#region Attributes
+
+		private object BallonToken;
 
 		#endregion Attributes
 	}

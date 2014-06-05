@@ -9,6 +9,11 @@
 		WindowStyle="ToolWindow" DataContext="{Binding Source={StaticResource Locator}, Path=ChangelogDialog}"
         Title="{lex:Loc ViewChangelog}" Height="400" Width="500">
 	<Grid>
-		<WebBrowser beh:HtmlBehavior.Html="{Binding Changelog}" />
+		<Grid.RowDefinitions>
+			<RowDefinition />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+		<WebBrowser beh:HtmlBehavior.Html="{Binding Changelog}" Grid.Row="0" Margin="5" />
+		<Button Grid.Row="1" HorizontalAlignment="Right" Content="Download update" Margin="5" Command="{Binding DownloadCommand}" />
 	</Grid>
 </v:CloseableView>

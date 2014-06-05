@@ -22,7 +22,7 @@ namespace Blitzy.Tests.ViewModel
 			Version currentVersion = new Version( 1, 2, 3, 4 );
 			Uri downloadLink = new Uri( "http://localhost/file/path" );
 			string md5 = "md5";
-			ulong size = 12345;
+			long size = 12345;
 			Dictionary<Version, string> changes = new Dictionary<Version, string>();
 			changes.Add( new Version( 1, 2 ), "Changes 1.2" );
 			changes.Add( new Version( 1, 3 ), "Changes 1.3" );

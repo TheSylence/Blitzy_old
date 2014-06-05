@@ -3,12 +3,41 @@
 using System;
 using System.Linq;
 using System.Text;
+using Blitzy.Model;
+using Blitzy.ViewServices;
 using btbapi;
+using GalaSoft.MvvmLight.Command;
 
 namespace Blitzy.ViewModel.Dialogs
 {
 	public class ChangelogDialogViewModel : ViewModelBaseEx
 	{
+		#region Commands
+
+		private RelayCommand _DownloadCommand;
+
+		public RelayCommand DownloadCommand
+		{
+			get
+			{
+				return _DownloadCommand ??
+					( _DownloadCommand = new RelayCommand( ExecuteDownloadCommand, CanExecuteDownloadCommand ) );
+			}
+		}
+
+		private bool CanExecuteDownloadCommand()
+		{
+			return LatestVersionInfo != null;
+		}
+
+		private void ExecuteDownloadCommand()
+		{
+			Close();
+			UpdateChecker.Instance.DownloadLatestVersion( LatestVersionInfo );
+		}
+
+		#endregion Commands
+
 		#region Properties
 
 		private string _Changelog;

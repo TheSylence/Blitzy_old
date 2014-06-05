@@ -23,6 +23,7 @@ namespace Blitzy.ViewServices
 
 			DownloadDialogViewModel vm = dlg.DataContext as DownloadDialogViewModel;
 			Debug.Assert( vm != null );
+			vm.Reset();
 			vm.DownloadLink = args.DownloadLink.AbsoluteUri;
 			vm.MD5 = args.MD5;
 			vm.TargetPath = args.TargetPath;

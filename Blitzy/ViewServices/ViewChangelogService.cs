@@ -25,6 +25,7 @@ namespace Blitzy.ViewServices
 
 			ChangelogDialogViewModel vm = dlg.DataContext as ChangelogDialogViewModel;
 			Debug.Assert( vm != null );
+			vm.Reset();
 			vm.LatestVersionInfo = args;
 
 			return dlg.ShowDialog();

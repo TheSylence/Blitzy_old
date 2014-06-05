@@ -2,6 +2,7 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using btbapi;
 using GalaSoft.MvvmLight.Messaging;
 
 namespace Blitzy.Messages
@@ -10,16 +11,14 @@ namespace Blitzy.Messages
 	internal class VersionCheckMessage : MessageBase
 	{
 		public readonly Version CurrentVersion;
-		public readonly string DownloadURL;
-		public readonly Version LatestVersion;
 		public readonly bool ShowIfNewest;
+		public readonly VersionInfo VersionInfo;
 
-		public VersionCheckMessage( Version currentVersion, Version latestVersion, string url, bool showIfNewest )
+		public VersionCheckMessage( Version currentVersion, VersionInfo versionInfo, bool showIfNewest )
 		{
-			LatestVersion = latestVersion;
 			CurrentVersion = currentVersion;
-			DownloadURL = url;
 			ShowIfNewest = showIfNewest;
+			VersionInfo = versionInfo;
 		}
 	}
 }
