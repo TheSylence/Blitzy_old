@@ -1,11 +1,12 @@
 ﻿// $Id$
 
 using System.Diagnostics.CodeAnalysis;
+using GalaSoft.MvvmLight.Messaging;
 
 namespace Blitzy.Messages
 {
 	[ExcludeFromCodeCoverage]
-	internal class InternalCommandMessage
+	internal class InternalCommandMessage : MessageBase
 	{
 		public readonly string Command;
 

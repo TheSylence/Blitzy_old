@@ -2,6 +2,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 using Blitzy.Model;
+using GalaSoft.MvvmLight.Messaging;
 
 namespace Blitzy.Messages
 {
@@ -14,7 +15,7 @@ namespace Blitzy.Messages
 	}
 
 	[ExcludeFromCodeCoverage]
-	internal class HistoryMessage
+	internal class HistoryMessage : MessageBase
 	{
 		public readonly HistoryManager History;
 		public readonly HistoryMessageType Type;

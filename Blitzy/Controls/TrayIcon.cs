@@ -16,11 +16,17 @@ namespace Blitzy.Controls
 		public TrayIcon()
 		{
 			Messenger.Default.Register<CommandMessage>( this, msg => OnCommand( msg ) );
+			Messenger.Default.Register<BalloonTipMessage>( this, msg => OnBallon( msg ) );
 		}
 
 		#endregion Constructor
 
 		#region Methods
+
+		private void OnBallon( BalloonTipMessage msg )
+		{
+			ShowBalloonTip( msg.Title, msg.Message, msg.Icon );
+		}
 
 		private void OnCommand( CommandMessage msg )
 		{

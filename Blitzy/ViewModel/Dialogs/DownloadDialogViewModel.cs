@@ -5,8 +5,10 @@ using System.IO;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using Blitzy.Messages;
 using Blitzy.Utility;
+using Blitzy.ViewServices;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Threading;
 
@@ -15,6 +17,14 @@ namespace Blitzy.ViewModel.Dialogs
 	internal class DownloadDialogViewModel : ViewModelBaseEx
 	{
 		#region Constructor
+
+		protected override void RegisterMessages()
+		{
+			base.RegisterMessages();
+
+			MessengerInstance.Register<DownloadStatusMessage>( this, MessageTokens.DownloadCorrupted, ( msg ) => OnDownloadCorrupted( msg ) );
+			MessengerInstance.Register<DownloadStatusMessage>( this, MessageTokens.DownloadFailed, ( msg ) => OnDownloadFailed( msg ) );
+		}
 
 		#endregion Constructor
 
@@ -34,7 +44,7 @@ namespace Blitzy.ViewModel.Dialogs
 				catch( HttpRequestException ex )
 				{
 					LogWarning( "Failed to download file: {0}", ex );
-					MessengerInstance.Send<DownloadStatusMessage>( new DownloadStatusMessage( TargetPath ), MessageTokens.DownloadFailed );
+					MessengerInstance.Send<DownloadStatusMessage>( new DownloadStatusMessage( TargetPath, DownloadLink, DownloadSize, MD5 ), MessageTokens.DownloadFailed );
 				}
 
 				Stream responseStream = await response.Content.ReadAsStreamAsync();
@@ -69,6 +79,29 @@ namespace Blitzy.ViewModel.Dialogs
 			}
 		}
 
+		private void OnDownloadCorrupted( DownloadStatusMessage msg )
+		{
+			ShowRetryDialog( "DownloadCorruptedRetryQuestion".Localize(), msg );
+		}
+
+		private void OnDownloadFailed( DownloadStatusMessage msg )
+		{
+			ShowRetryDialog( "DownloadFailedRetryQuestion".Localize(), msg );
+		}
+
+		private void ShowRetryDialog( string message, DownloadStatusMessage msg )
+		{
+			DispatcherHelper.CheckBeginInvokeOnUI( () => Close() );
+
+			MessageBoxParameter args = new MessageBoxParameter( message, "DownloadFailed".Localize(), MessageBoxButton.YesNo, MessageBoxImage.Error );
+			MessageBoxResult result = DialogServiceManager.Show<MessageBoxService, MessageBoxResult>( args );
+			if( result == MessageBoxResult.Yes )
+			{
+				DownloadServiceParameters downloadArgs = new DownloadServiceParameters( new Uri( msg.DownloadLink ), msg.TargetPath, msg.DownloadSize, msg.MD5 );
+				DialogServiceManager.Show<DownloadService>( downloadArgs );
+			}
+		}
+
 		private void stats_Finished( object sender, ProgressEventArgs e )
 		{
 			if( CopyArguments.StopEvent != null )
@@ -97,12 +130,12 @@ namespace Blitzy.ViewModel.Dialogs
 						if( !computedHash.Equals( MD5, StringComparison.Ordinal ) )
 						{
 							LogError( "Downloaded file is corrupted. Exepected Hash: {0} - Calculated: {1}", MD5, computedHash );
-							MessengerInstance.Send<DownloadStatusMessage>( new DownloadStatusMessage( TargetPath ), MessageTokens.DownloadCorrupted );
+							MessengerInstance.Send<DownloadStatusMessage>( new DownloadStatusMessage( TargetPath, DownloadLink, DownloadSize, MD5 ), MessageTokens.DownloadCorrupted );
 						}
 					}
 				}
 
-				MessengerInstance.Send<DownloadStatusMessage>( new DownloadStatusMessage( TargetPath ), MessageTokens.DownloadSucessful );
+				MessengerInstance.Send<DownloadStatusMessage>( new DownloadStatusMessage( TargetPath, DownloadLink, DownloadSize, MD5 ), MessageTokens.DownloadSucessful );
 			}
 
 			DispatcherHelper.CheckBeginInvokeOnUI( () => Close() );

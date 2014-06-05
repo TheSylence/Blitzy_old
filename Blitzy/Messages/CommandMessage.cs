@@ -1,6 +1,7 @@
 ﻿// $Id$
 
 using System.Diagnostics.CodeAnalysis;
+using GalaSoft.MvvmLight.Messaging;
 
 namespace Blitzy.Messages
 {
@@ -12,7 +13,7 @@ namespace Blitzy.Messages
 	}
 
 	[ExcludeFromCodeCoverage]
-	internal class CommandMessage
+	internal class CommandMessage : MessageBase
 	{
 		public readonly string Message;
 		public readonly CommandStatus Status;

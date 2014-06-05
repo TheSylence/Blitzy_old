@@ -412,7 +412,7 @@ namespace Blitzy.ViewModel
 		{
 			Task.Run( async () =>
 			{
-				LatestVersionInfo = await UpdateChecker.CheckVersion();
+				LatestVersionInfo = await UpdateChecker.CheckVersion( false );
 				if( LatestVersionInfo.Status == System.Net.HttpStatusCode.OK )
 				{
 					DispatcherHelper.CheckBeginInvokeOnUI( () => System.Windows.Input.CommandManager.InvalidateRequerySuggested() );

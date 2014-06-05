@@ -421,4 +421,22 @@
   <data name="AddWorkspaceItem" xml:space="preserve">
     <value>Add workspace item</value>
   </data>
+  <data name="DownloadFailedRetryQuestion" xml:space="preserve">
+    <value>Download failed. Do you want to retry?</value>
+  </data>
+  <data name="DownloadCorruptedRetryQuestion" xml:space="preserve">
+    <value>The downloaded file is corrupted. Do you want to retry?</value>
+  </data>
+  <data name="VersionUpToDateMessage" xml:space="preserve">
+    <value>Your version is up to date :)</value>
+  </data>
+  <data name="VersionUpToDate" xml:space="preserve">
+    <value>No updates available</value>
+  </data>
+  <data name="UpdateAvailable" xml:space="preserve">
+    <value>Update available</value>
+  </data>
+  <data name="NewVersionAvailable" xml:space="preserve">
+    <value>Version {0} is available for download. Click here for more information</value>
+  </data>
 </root>

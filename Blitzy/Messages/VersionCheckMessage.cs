@@ -2,21 +2,22 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using GalaSoft.MvvmLight.Messaging;
 
 namespace Blitzy.Messages
 {
 	[ExcludeFromCodeCoverage]
-	internal class VersionCheckMessage
+	internal class VersionCheckMessage : MessageBase
 	{
+		public readonly Version CurrentVersion;
 		public readonly string DownloadURL;
-
+		public readonly Version LatestVersion;
 		public readonly bool ShowIfNewest;
 
-		public readonly Version Version;
-
-		public VersionCheckMessage( Version version, string url, bool showIfNewest )
+		public VersionCheckMessage( Version currentVersion, Version latestVersion, string url, bool showIfNewest )
 		{
-			Version = version;
+			LatestVersion = latestVersion;
+			CurrentVersion = currentVersion;
 			DownloadURL = url;
 			ShowIfNewest = showIfNewest;
 		}

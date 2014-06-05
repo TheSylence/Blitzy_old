@@ -1,6 +1,7 @@
 ﻿// $Id$
 
 using Blitzy.Messages;
+using Blitzy.Utility;
 using GalaSoft.MvvmLight.Command;
 
 namespace Blitzy.ViewModel
@@ -9,6 +10,7 @@ namespace Blitzy.ViewModel
 	{
 		#region Constructor
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors" )]
 		public NotifyIconViewModel()
 		{
 			if( !RuntimeConfig.Tests )
@@ -18,6 +20,7 @@ namespace Blitzy.ViewModel
 			}
 
 			_IconSource = "/Blitzy;component/Resources/TrayIcon.ico";
+			Reset();
 		}
 
 		protected override void RegisterMessages()
@@ -25,6 +28,7 @@ namespace Blitzy.ViewModel
 			base.RegisterMessages();
 
 			MessengerInstance.Register<CommandMessage>( this, msg => OnCommand( msg ) );
+			MessengerInstance.Register<VersionCheckMessage>( this, msg => OnVersionCheck( msg ) );
 		}
 
 		#endregion Constructor
@@ -46,6 +50,20 @@ namespace Blitzy.ViewModel
 				case CommandStatus.Error:
 					IconSource = "/Blitzy;component/Resources/TrayIconFailure.ico";
 					break;
+			}
+		}
+
+		private void OnVersionCheck( VersionCheckMessage msg )
+		{
+			bool update = msg.LatestVersion > msg.CurrentVersion;
+			if( update )
+			{
+				string message = string.Format( "NewVersionAvailable".Localize(), msg.LatestVersion );
+				MessengerInstance.Send<BalloonTipMessage>( new BalloonTipMessage( "UpdateAvailable".Localize(), message, Hardcodet.Wpf.TaskbarNotification.BalloonIcon.Info, msg ) );
+			}
+			else if( msg.ShowIfNewest )
+			{
+				MessengerInstance.Send<BalloonTipMessage>( new BalloonTipMessage( "VersionUpToDate".Localize(), "VersionUpToDateMessage".Localize(), Hardcodet.Wpf.TaskbarNotification.BalloonIcon.Info ) );
 			}
 		}
 

@@ -33,10 +33,12 @@ namespace Blitzy.Model
 			}
 		}
 
-		internal static async Task<VersionInfo> CheckVersion()
+		internal static async Task<VersionInfo> CheckVersion( bool showIfNewest = false )
 		{
+			Version currentVersion = Assembly.GetExecutingAssembly().GetName().Version;
+
 			LogHelper.LogInfo( MethodInfo.GetCurrentMethod().DeclaringType, "Checking for updates..." );
-			VersionInfo versionInfo = await API.CheckVersion( Constants.SoftwareName, Assembly.GetExecutingAssembly().GetName().Version );
+			VersionInfo versionInfo = await API.CheckVersion( Constants.SoftwareName, currentVersion );
 			if( versionInfo.Status == System.Net.HttpStatusCode.OK )
 			{
 				LogHelper.LogInfo( MethodInfo.GetCurrentMethod().DeclaringType, "Latest available version is {0}", versionInfo.LatestVersion );
@@ -45,7 +47,8 @@ namespace Blitzy.Model
 				{
 					downloadLink = versionInfo.DownloadLink.ToString();
 				}
-				Messenger.Default.Send<VersionCheckMessage>( new VersionCheckMessage( versionInfo.LatestVersion, downloadLink, true ) );
+
+				Messenger.Default.Send<VersionCheckMessage>( new VersionCheckMessage( currentVersion, versionInfo.LatestVersion, downloadLink, showIfNewest ) );
 			}
 			else
 			{

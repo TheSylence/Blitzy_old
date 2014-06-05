@@ -417,4 +417,22 @@
   <data name="AddWorkspaceItem" xml:space="preserve">
     <value>Workspaceeintrag hinzufügen</value>
   </data>
+  <data name="DownloadFailedRetryQuestion" xml:space="preserve">
+    <value>Download fehlgeschlagen. Noch einmal versuchen?</value>
+  </data>
+  <data name="DownloadCorruptedRetryQuestion" xml:space="preserve">
+    <value>Die heruntergeladene Datei ist beschädigt. Noch einmal versuchen?</value>
+  </data>
+  <data name="VersionUpToDateMessage" xml:space="preserve">
+    <value>Die neuste Version ist bereits installiert :)</value>
+  </data>
+  <data name="VersionUpToDate" xml:space="preserve">
+    <value>Keine Updates verfügbar</value>
+  </data>
+  <data name="UpdateAvailable" xml:space="preserve">
+    <value>Update verfügbar</value>
+  </data>
+  <data name="NewVersionAvailable" xml:space="preserve">
+    <value>Version {0} ist als Download verfügbar. Für weitere Informationen hier klicken</value>
+  </data>
 </root>

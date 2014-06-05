@@ -349,6 +349,24 @@ namespace Blitzy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string DownloadCorruptedRetryQuestion {
+            get {
+                return ResourceManager.GetString("DownloadCorruptedRetryQuestion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Download failed. Do you want to retry?.
+        /// </summary>
+        public static string DownloadFailedRetryQuestion {
+            get {
+                return ResourceManager.GetString("DownloadFailedRetryQuestion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Downloading....
         /// </summary>
         public static string Downloading {
