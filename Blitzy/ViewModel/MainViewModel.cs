@@ -89,7 +89,12 @@ namespace Blitzy.ViewModel
 				Builder.Stop();
 			}
 
-			// TODO: Reset timer if one is set
+			if( RebuildTimer != null )
+			{
+				RebuildTimer.Stop();
+				RebuildTimer.Start();
+			}
+
 			Builder.Build();
 		}
 
