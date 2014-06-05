@@ -399,4 +399,22 @@
   <data name="ErrorRetrieveVersion" xml:space="preserve">
     <value>Fehler beim Abrufen der Information</value>
   </data>
+  <data name="AddWorkspace" xml:space="preserve">
+    <value>Workspace hinzufügen</value>
+  </data>
+  <data name="EnterWorkspaceName" xml:space="preserve">
+    <value>Name des Workspaces</value>
+  </data>
+  <data name="DeleteWorkspace" xml:space="preserve">
+    <value>Workspace löschen</value>
+  </data>
+  <data name="ConfirmDeleteWorkspace" xml:space="preserve">
+    <value>Soll der ausgewählte Workspace wirklich gelöscht werden?</value>
+  </data>
+  <data name="EnterWorkspaceCommand" xml:space="preserve">
+    <value>Befehl für Workspaceeintrag eingeben</value>
+  </data>
+  <data name="AddWorkspaceItem" xml:space="preserve">
+    <value>Workspaceeintrag hinzufügen</value>
+  </data>
 </root>

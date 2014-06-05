@@ -79,6 +79,24 @@ namespace Blitzy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Add workspace.
+        /// </summary>
+        public static string AddWorkspace {
+            get {
+                return ResourceManager.GetString("AddWorkspace", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add workspace item.
+        /// </summary>
+        public static string AddWorkspaceItem {
+            get {
+                return ResourceManager.GetString("AddWorkspaceItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Always stay on top.
         /// </summary>
         public static string AlawysStayOnTop {
@@ -250,6 +268,15 @@ namespace Blitzy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Do you really want to delete the selected workspace?.
+        /// </summary>
+        public static string ConfirmDeleteWorkspace {
+            get {
+                return ResourceManager.GetString("ConfirmDeleteWorkspace", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Do you really want to proceed with the selected operation?.
         /// </summary>
         public static string ConfirmOperation {
@@ -291,6 +318,15 @@ namespace Blitzy.Properties {
         public static string Defaults {
             get {
                 return ResourceManager.GetString("Defaults", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete workspace.
+        /// </summary>
+        public static string DeleteWorkspace {
+            get {
+                return ResourceManager.GetString("DeleteWorkspace", resourceCulture);
             }
         }
         
@@ -345,6 +381,24 @@ namespace Blitzy.Properties {
         public static string EmptyExpression {
             get {
                 return ResourceManager.GetString("EmptyExpression", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enter the command for this workspace item.
+        /// </summary>
+        public static string EnterWorkspaceCommand {
+            get {
+                return ResourceManager.GetString("EnterWorkspaceCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enter name for workspace.
+        /// </summary>
+        public static string EnterWorkspaceName {
+            get {
+                return ResourceManager.GetString("EnterWorkspaceName", resourceCulture);
             }
         }
         

@@ -75,7 +75,7 @@ namespace Blitzy.Model
 				param.ParameterName = "WorkspaceID";
 				param.Value = ID;
 				cmd.Parameters.Add( param );
-				cmd.CommandText = "SELECT ItemID FROM workspace_items WHERE WorkspaceID = @WorkspaceID";
+				cmd.CommandText = "SELECT ItemID FROM workspace_items WHERE WorkspaceID = @WorkspaceID ORDER BY ItemOrder";
 				cmd.Prepare();
 
 				using( SQLiteDataReader reader = cmd.ExecuteReader() )

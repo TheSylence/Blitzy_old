@@ -25,11 +25,11 @@ namespace Blitzy.Tests.ViewModel
 			VM.SelectedFolder = new Folder();
 			Assert.IsTrue( VM.AddExcludeCommand.CanExecute( null ) );
 
-			mock.Text = null;
+			mock.Value = null;
 			VM.AddExcludeCommand.Execute( null );
 			Assert.AreEqual( 0, VM.SelectedFolder.Excludes.Count );
 
-			mock.Text = "test";
+			mock.Value = "test";
 			VM.AddExcludeCommand.Execute( null );
 			CollectionAssert.Contains( VM.SelectedFolder.Excludes, "test" );
 		}
@@ -37,7 +37,7 @@ namespace Blitzy.Tests.ViewModel
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void AddFolderTest()
 		{
-			StringServiceMock mock = new StringServiceMock();
+			TextInputServiceMock mock = new TextInputServiceMock();
 			mock.Value = "C:\\temp";
 			DialogServiceManager.RegisterService( typeof( SelectFolderService ), mock );
 
@@ -68,11 +68,11 @@ namespace Blitzy.Tests.ViewModel
 			VM.SelectedFolder = new Folder();
 			Assert.IsTrue( VM.AddRuleCommand.CanExecute( null ) );
 
-			mock.Text = null;
+			mock.Value = null;
 			VM.AddRuleCommand.Execute( null );
 			Assert.AreEqual( 0, VM.SelectedFolder.Rules.Count );
 
-			mock.Text = "test";
+			mock.Value = "test";
 			VM.AddRuleCommand.Execute( null );
 			CollectionAssert.Contains( VM.SelectedFolder.Rules, "test" );
 		}

@@ -58,7 +58,7 @@ namespace Blitzy.Tests.ViewServices
 		public void ShowTest()
 		{
 			TextInputServiceMock mock = new TextInputServiceMock();
-			mock.Text = "test";
+			mock.Value = "test";
 
 			DialogServiceManager.RegisterService( typeof( TextInputService ), mock );
 			string result = DialogServiceManager.Show<TextInputService, string>();

@@ -23,7 +23,7 @@ namespace Blitzy.Tests.ViewModel
 
 			Assert.IsTrue( vm.BrowsePuttyCommand.CanExecute( null ) );
 
-			StringServiceMock mock = new StringServiceMock();
+			TextInputServiceMock mock = new TextInputServiceMock();
 			DialogServiceManager.RegisterService( typeof( OpenFileService ), mock );
 			mock.Value = null;
 

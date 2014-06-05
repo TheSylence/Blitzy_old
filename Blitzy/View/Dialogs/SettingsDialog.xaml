@@ -170,11 +170,11 @@
 								<RowDefinition Height="Auto" />
 							</Grid.RowDefinitions>
 
-							<ListBox Grid.Row="0" ItemsSource="{Binding Workspaces}" SelectedItem="{Binding SelectedWorkspace, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+							<ListBox Grid.Row="0" DisplayMemberPath="Name" ItemsSource="{Binding Workspaces}" SelectedItem="{Binding SelectedWorkspace, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
 							<StackPanel Orientation="Horizontal" Grid.Row="1" HorizontalAlignment="Right">
-								<Button Content="New" />
-								<Button Content="Delete" />
+								<Button Content="New" Command="{Binding AddWorkspaceCommand}" />
+								<Button Content="Delete" Command="{Binding DeleteWorkspaceCommand}" />
 							</StackPanel>
 						</Grid>
 					</GroupBox>
@@ -185,13 +185,26 @@
 								<ColumnDefinition Width="Auto" />
 							</Grid.ColumnDefinitions>
 
-							<ListBox />
+							<ListBox ItemsSource="{Binding SelectedWorkspace.Items}" DisplayMemberPath="ItemCommand"  SelectedItem="{Binding SelectedItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
 							<StackPanel Orientation="Vertical" Grid.Column="1">
-								<Button Content="New" />
-								<Button Content="" />
-								<Button Content="" />
-								<Button Content="Remove" />
+								<Button Content="New" Command="{Binding AddItemCommand}" />
+								<Grid Margin="5,0">
+									<Grid.Resources>
+										<Style TargetType="Button"></Style>
+									</Grid.Resources>
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition />
+										<ColumnDefinition />
+									</Grid.ColumnDefinitions>
+									<Button Command="{Binding MoveItemUpCommand}" Grid.Column="0" Margin="0,0,5,0">
+										<TextBlock Text="&#57368;" FontFamily="Segoe UI Symbol" />
+									</Button>
+									<Button Command="{Binding MoveItemDownCommand}" Grid.Column="1" Margin="5,0,0,0">
+										<TextBlock Text="&#57369;" FontFamily="Segoe UI Symbol" />
+									</Button>
+								</Grid>
+								<Button Content="Remove" Command="{Binding RemoveItemCommand}" />
 							</StackPanel>
 						</Grid>
 					</GroupBox>

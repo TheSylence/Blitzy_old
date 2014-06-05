@@ -116,7 +116,6 @@
     <Compile Include="Mocks\Services\CallCheckServiceMock.cs" />
     <Compile Include="Mocks\Services\DataManipulationServiceMock.cs" />
     <Compile Include="Mocks\Services\MessageBoxServiceMock.cs" />
-    <Compile Include="Mocks\Services\StringServiceMock.cs" />
     <Compile Include="Mocks\Services\TextInputServiceMock.cs" />
     <Compile Include="Mocks\SlowStream.cs" />
     <Compile Include="Model\CatalogBuilder_Tests.cs" />
@@ -157,6 +156,7 @@
     <Compile Include="ViewModel\NotifyIconViewModel_Tests.cs" />
     <Compile Include="ViewModel\PuttySettingsViewModel_Tests.cs" />
     <Compile Include="ViewModel\ViewModelLocator_Tests.cs" />
+    <Compile Include="ViewModel\WorkspaceSettingsViewModel_Tests.cs" />
     <Compile Include="ViewServices\DialogServiceManager_Tests.cs" />
     <Compile Include="ViewModel\DialogViewModelBase_Tests.cs" />
     <Compile Include="ViewModel\MainViewModel_Tests.cs" />

@@ -403,4 +403,22 @@
   <data name="ErrorRetrieveVersion" xml:space="preserve">
     <value>Error retrieving version information</value>
   </data>
+  <data name="AddWorkspace" xml:space="preserve">
+    <value>Add workspace</value>
+  </data>
+  <data name="EnterWorkspaceName" xml:space="preserve">
+    <value>Enter name for workspace</value>
+  </data>
+  <data name="DeleteWorkspace" xml:space="preserve">
+    <value>Delete workspace</value>
+  </data>
+  <data name="ConfirmDeleteWorkspace" xml:space="preserve">
+    <value>Do you really want to delete the selected workspace?</value>
+  </data>
+  <data name="EnterWorkspaceCommand" xml:space="preserve">
+    <value>Enter the command for this workspace item</value>
+  </data>
+  <data name="AddWorkspaceItem" xml:space="preserve">
+    <value>Add workspace item</value>
+  </data>
 </root>
