@@ -5,6 +5,7 @@ using System.IO;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using Blitzy.Messages;
 using Blitzy.Utility;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Threading;
@@ -24,16 +25,16 @@ namespace Blitzy.ViewModel.Dialogs
 			using( HttpClient client = new HttpClient() )
 			{
 				LogInfo( "Start download of {0}", DownloadLink );
-				//DownloadLink = "http://speedtest.qsc.de/100MB.qsc";
 
 				HttpResponseMessage response = await client.GetAsync( DownloadLink, HttpCompletionOption.ResponseHeadersRead );
 				try
 				{
 					response.EnsureSuccessStatusCode();
 				}
-				catch( HttpRequestException )
+				catch( HttpRequestException ex )
 				{
-					// TODO: Error handling
+					LogWarning( "Failed to download file: {0}", ex );
+					MessengerInstance.Send<DownloadStatusMessage>( new DownloadStatusMessage( TargetPath ), MessageTokens.DownloadFailed );
 				}
 
 				Stream responseStream = await response.Content.ReadAsStreamAsync();
@@ -95,13 +96,13 @@ namespace Blitzy.ViewModel.Dialogs
 
 						if( !computedHash.Equals( MD5, StringComparison.Ordinal ) )
 						{
-							// TODO: Downloaded file is broken
 							LogError( "Downloaded file is corrupted. Exepected Hash: {0} - Calculated: {1}", MD5, computedHash );
+							MessengerInstance.Send<DownloadStatusMessage>( new DownloadStatusMessage( TargetPath ), MessageTokens.DownloadCorrupted );
 						}
 					}
 				}
 
-				// TODO: Send message
+				MessengerInstance.Send<DownloadStatusMessage>( new DownloadStatusMessage( TargetPath ), MessageTokens.DownloadSucessful );
 			}
 
 			DispatcherHelper.CheckBeginInvokeOnUI( () => Close() );

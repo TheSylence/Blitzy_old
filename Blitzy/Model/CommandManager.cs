@@ -57,6 +57,20 @@ namespace Blitzy.Model
 			}
 		}
 
+		public void ResetExecutionCount()
+		{
+			foreach( int hash in CommandExecutionBuffer.Keys )
+			{
+				CommandExecutionBuffer[hash] = 0;
+			}
+
+			using( SQLiteCommand cmd = Connection.CreateCommand() )
+			{
+				cmd.CommandText = "DELETE FROM commands";
+				cmd.ExecuteNonQuery();
+			}
+		}
+
 		public void SearchItems( string text )
 		{
 			string[] parts = GetCommandParts( text );

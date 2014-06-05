@@ -24,19 +24,6 @@ namespace Blitzy.ViewModel
 		public SettingsViewModel()
 		{
 			FoldersToRemove = new List<Folder>();
-
-			if( !RuntimeConfig.Tests )
-			{
-#if DEBUG
-				API = new API( APIEndPoint.Localhost );
-#else
-				API = new btbapi.API( APIEndPoint.Default );
-#endif
-			}
-			else
-			{
-				API = new API( APIEndPoint.Localhost );
-			}
 			CurrentVersion = Assembly.GetExecutingAssembly().GetName().Version;
 
 			using( TextReader reader = new StreamReader( Assembly.GetExecutingAssembly().GetManifestResourceStream( "Blitzy.Resources.Docs.Changelog.txt" ) ) )
@@ -425,23 +412,13 @@ namespace Blitzy.ViewModel
 		{
 			Task.Run( async () =>
 			{
-				LogInfo( "Checking for updates..." );
-				LatestVersionInfo = await API.CheckVersion( Constants.SoftwareName, Assembly.GetExecutingAssembly().GetName().Version );
+				LatestVersionInfo = await UpdateChecker.CheckVersion();
 				if( LatestVersionInfo.Status == System.Net.HttpStatusCode.OK )
 				{
-					LogInfo( "Latest available version is {0}", LatestVersionInfo.LatestVersion );
-					string downloadLink = null;
-					if( LatestVersionInfo.DownloadLink != null )
-					{
-						downloadLink = LatestVersionInfo.DownloadLink.ToString();
-					}
-					MessengerInstance.Send<VersionCheckMessage>( new VersionCheckMessage( LatestVersionInfo.LatestVersion, downloadLink, true ) );
-
 					DispatcherHelper.CheckBeginInvokeOnUI( () => System.Windows.Input.CommandManager.InvalidateRequerySuggested() );
 				}
 				else
 				{
-					LogWarning( "Failed to retrieve latest version: {0}", LatestVersionInfo.Status );
 					VersionCheckError = true;
 				}
 			} );

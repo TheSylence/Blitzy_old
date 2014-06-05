@@ -114,11 +114,11 @@ namespace Blitzy.ViewModel
 					break;
 
 				case "version":
-					// TODO: Check for new version
+					Task.Run( async () => await UpdateChecker.CheckVersion() );
 					break;
 
 				case "reset":
-					// TODO: Reset execution count
+					CmdManager.ResetExecutionCount();
 					break;
 
 				case "history":
