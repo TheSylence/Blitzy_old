@@ -301,19 +301,27 @@ namespace Blitzy.ViewModel
 
 			List<string> commandParts = new List<string>( CmdManager.GetCommandParts( CommandInput ) );
 
-			// Autocomplete all commands up to root
+			// Autocomplete all commands until a command that accepts input data is reached
 			CommandItem item = CmdManager.CurrentItem;
 
-			// TODO: [calcy -> 3423423] -> tab ends in [calcy -> calcy] :(
-			if( !( commandParts.Last().Length == 0 && item.AcceptsData ) )
+			List<CommandItem> itemChain = new List<CommandItem>();
+			for( int i = commandParts.Count - 1; i >= 0; --i )
 			{
-				for( int i = commandParts.Count - 1; i >= 0; --i )
-				{
-					if( item == null )
-						break;
+				if( item == null )
+					break;
 
-					commandParts[i] = item.Name;
-					item = item.Parent;
+				itemChain.Add( item );
+				item = item.Parent;
+			}
+			itemChain.Reverse();
+
+			for( int i = 0; i < commandParts.Count; ++i )
+			{
+				commandParts[i] = itemChain[i].Name;
+
+				if( itemChain[i].AcceptsData )
+				{
+					break;
 				}
 			}
 

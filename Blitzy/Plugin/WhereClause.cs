@@ -32,7 +32,6 @@ namespace Blitzy.Plugin
 
 		internal string ToSql( SQLiteCommand cmd )
 		{
-			// FIXME: Escape parameters and co
 			return string.Join( " AND ", Entries.Select( e => e.ToSql( cmd ) ) );
 		}
 

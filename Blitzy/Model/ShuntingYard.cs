@@ -308,7 +308,7 @@ namespace Blitzy.Model
 			{
 				input = input.ToLowerInvariant().Trim();
 
-				// FIXME: This is a real bad workaround for negative numbers...
+				// HACK: This is a real bad workaround for negative numbers...
 				input = input.Replace( " ", "" ).Replace( "(-", "(0-" ).Replace( ",-", ",0-" );
 				if( input[0] == '-' )
 				{

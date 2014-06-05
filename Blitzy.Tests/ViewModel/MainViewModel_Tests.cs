@@ -206,6 +206,15 @@ namespace Blitzy.Tests.ViewModel
 			Assert.AreEqual( "medy" + vm.CmdManager.Separator + "play", vm.CommandInput );
 			Assert.IsNotNull( vm.CmdManager.CurrentItem );
 			Assert.AreEqual( "play", vm.CmdManager.CurrentItem.Name );
+
+			vm.CommandInput = "calcy";
+			Assert.IsTrue( vm.OnKeyTab() );
+			Assert.IsNotNull( vm.CmdManager.CurrentItem );
+
+			vm.CommandInput += "3423423";
+			Assert.IsTrue( vm.OnKeyTab() );
+			Assert.AreEqual( "calcy" + vm.CmdManager.Separator + "3423423", vm.CommandInput );
+			Assert.IsNotNull( vm.CmdManager.CurrentItem );
 		}
 	}
 }
