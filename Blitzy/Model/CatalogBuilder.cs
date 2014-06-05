@@ -11,9 +11,17 @@ using System.Threading;
 using Blitzy.Messages;
 using Blitzy.Model.Shell;
 using GalaSoft.MvvmLight.Messaging;
+using GalaSoft.MvvmLight.Threading;
 
 namespace Blitzy.Model
 {
+	internal enum CatalogProgressStep
+	{
+		None,
+		Parsing,
+		Saving
+	}
+
 	internal class CatalogBuilder : BaseObject
 	{
 		#region Constructor
@@ -22,6 +30,7 @@ namespace Blitzy.Model
 		{
 			CanProcess = ToDispose( new AutoResetEvent( false ) );
 			Settings = settings;
+			_ItemsToProcess = int.MaxValue;
 
 			IsRunning = true;
 			ThreadObject = new Thread( RunThreaded );
@@ -87,9 +96,11 @@ namespace Blitzy.Model
 				List<FileEntry> entries = new List<FileEntry>( files.Length );
 
 				IsBuilding = true;
-				Messenger.Default.Send<CatalogStatusMessage>( new CatalogStatusMessage( CatalogStatus.BuildStarted ) );
+				DispatcherHelper.CheckBeginInvokeOnUI( () => Messenger.Default.Send( new CatalogStatusMessage( CatalogStatus.BuildStarted ) ) );
 
 				ItemsProcessed = 0;
+				ItemsSaved = 0;
+				ProgressStep = CatalogProgressStep.Parsing;
 				ItemsToProcess = files.Length;
 				string tempPath = Path.GetTempPath();
 
@@ -171,8 +182,10 @@ namespace Blitzy.Model
 					entries.Add( new FileEntry( filePath, fileName, icon, ext, arguments ) );
 
 					ItemsProcessed++;
+					DispatcherHelper.CheckBeginInvokeOnUI( () => Messenger.Default.Send( new CatalogStatusMessage( CatalogStatus.ProgressUpdated ) ) );
 				}
 
+				ProgressStep = CatalogProgressStep.Saving;
 				IEnumerable<FileEntry> list = entries.Distinct();
 
 				SQLiteTransaction transaction = Settings.Connection.BeginTransaction( System.Data.IsolationLevel.ReadCommitted );
@@ -220,6 +233,8 @@ namespace Blitzy.Model
 
 						list = list.Skip( batchSize );
 						++count;
+						ItemsSaved += batchSize;
+						DispatcherHelper.CheckBeginInvokeOnUI( () => Messenger.Default.Send( new CatalogStatusMessage( CatalogStatus.ProgressUpdated ) ) );
 					}
 
 					if( !ShouldStop )
@@ -233,7 +248,8 @@ namespace Blitzy.Model
 					transaction.Rollback();
 				}
 
-				Messenger.Default.Send<CatalogStatusMessage>( new CatalogStatusMessage( CatalogStatus.BuildFinished ) );
+				ProgressStep = CatalogProgressStep.None;
+				DispatcherHelper.CheckBeginInvokeOnUI( () => Messenger.Default.Send<CatalogStatusMessage>( new CatalogStatusMessage( CatalogStatus.BuildFinished ) ) );
 				IsBuilding = false;
 			}
 		}
@@ -244,7 +260,12 @@ namespace Blitzy.Model
 			{
 				CanProcess.WaitOne();
 
-				ProcessFiles();
+				// Only parse files if the thread (and therefor the application)
+				// is still running
+				if( IsRunning )
+				{
+					ProcessFiles();
+				}
 			}
 		}
 
@@ -254,7 +275,9 @@ namespace Blitzy.Model
 
 		private bool _IsBuilding;
 		private int _ItemsProcessed;
+		private int _ItemsSaved;
 		private int _ItemsToProcess;
+		private CatalogProgressStep _ProgressStep;
 
 		public bool IsBuilding
 		{
@@ -296,6 +319,26 @@ namespace Blitzy.Model
 			}
 		}
 
+		public int ItemsSaved
+		{
+			get
+			{
+				return _ItemsSaved;
+			}
+
+			set
+			{
+				if( _ItemsSaved == value )
+				{
+					return;
+				}
+
+				RaisePropertyChanging( () => ItemsSaved );
+				_ItemsSaved = value;
+				RaisePropertyChanged( () => ItemsSaved );
+			}
+		}
+
 		public int ItemsToProcess
 		{
 			get
@@ -313,6 +356,26 @@ namespace Blitzy.Model
 				RaisePropertyChanging( () => ItemsToProcess );
 				_ItemsToProcess = value;
 				RaisePropertyChanged( () => ItemsToProcess );
+			}
+		}
+
+		public CatalogProgressStep ProgressStep
+		{
+			get
+			{
+				return _ProgressStep;
+			}
+
+			set
+			{
+				if( _ProgressStep == value )
+				{
+					return;
+				}
+
+				RaisePropertyChanging( () => ProgressStep );
+				_ProgressStep = value;
+				RaisePropertyChanged( () => ProgressStep );
 			}
 		}
 

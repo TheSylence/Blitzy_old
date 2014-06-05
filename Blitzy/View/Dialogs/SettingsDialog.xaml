@@ -148,7 +148,7 @@
 					<DockPanel Grid.Row="3" LastChildFill="True" Grid.ColumnSpan="2">
 						<Button Content="{lex:Loc UpdateCatalog}" DockPanel.Dock="Right" Command="{Binding UpdateCatalogCommand}" />
 						<Grid>
-							<ProgressBar VerticalAlignment="Center" MinHeight="20" IsIndeterminate="{Binding IsCatalogBuilding}" />
+							<ProgressBar VerticalAlignment="Center" MinHeight="20" IsEnabled="{Binding CatalogBuilder.IsBuilding}" Maximum="{Binding CatalogBuilder.ItemsToProcess}" Value="{Binding CatalogItemsProcessed}" />
 							<StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
 								<TextBlock Text="{Binding FilesProcessed}" />
 							</StackPanel>

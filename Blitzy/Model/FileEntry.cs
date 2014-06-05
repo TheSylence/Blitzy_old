@@ -84,8 +84,9 @@ namespace Blitzy.Model
 					param.Value = entry.Arguments;
 					cmd.Parameters.Add( param );
 
+					string ret = string.Format( "(@cmd{0}, @name{0}, @icon{0}, @type{0}, @args{0})", cnt );
 					cnt++;
-					return string.Format( "(@cmd{0}, @name{0}, @icon{0}, @type{0}, @args{0})", cnt );
+					return ret;
 				} ) ) );
 
 			cmd.CommandText = sb.ToString();

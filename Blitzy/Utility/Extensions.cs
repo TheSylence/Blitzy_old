@@ -70,6 +70,24 @@ namespace Blitzy.Utility
 			return value;
 		}
 
+		public static string FormatLocalized( this string str, params object[] args )
+		{
+			if( str == null )
+			{
+				throw new ArgumentNullException( "str" );
+			}
+
+			const string resRrefix = "Blitzy:Resources:";
+			if( !str.StartsWith( resRrefix, StringComparison.OrdinalIgnoreCase ) )
+			{
+				str = resRrefix + str;
+			}
+
+			string value = LocalizeDictionary.Instance.GetLocalizedObject( str, null, Thread.CurrentThread.CurrentUICulture ) as string;
+
+			return string.Format( value, args );
+		}
+
 		public static string WildcardToRegex( this string pattern, bool wholeString = false )
 		{
 			string ex = Regex.Escape( pattern ).Replace( @"\*", ".*" ).Replace( @"\?", "." );

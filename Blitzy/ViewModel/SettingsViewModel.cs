@@ -37,11 +37,14 @@ namespace Blitzy.ViewModel
 			}
 
 			_BuildDate = Assembly.GetExecutingAssembly().LinkerTimestamp();
+			_CatalogItemsProcessed = -1;
 		}
 
 		protected override void RegisterMessages()
 		{
 			base.RegisterMessages();
+
+			MessengerInstance.Register<CatalogStatusMessage>( this, msg => OnCatalogStatusUpdate( msg ) );
 		}
 
 		#endregion Constructor
@@ -76,6 +79,35 @@ namespace Blitzy.ViewModel
 			RebuildTime = Settings.GetValue<int>( SystemSetting.AutoCatalogRebuild );
 			BackupShortcuts = Settings.GetValue<bool>( SystemSetting.BackupShortcuts );
 			HistoryCount = Settings.GetValue<int>( SystemSetting.HistoryCount );
+		}
+
+		private void OnCatalogStatusUpdate( CatalogStatusMessage msg )
+		{
+			if( msg.Status == CatalogStatus.BuildStarted )
+			{
+				IsCatalogBuilding = true;
+			}
+			else if( msg.Status == CatalogStatus.BuildFinished )
+			{
+				FilesProcessed = "CatalogBuildCompletedOn".FormatLocalized( DateTime.Now.TimeOfDay.ToString( @"hh\:mm\:ss" ) );
+				IsCatalogBuilding = false;
+				CatalogItemsProcessed = -1;
+			}
+			else if( msg.Status == CatalogStatus.ProgressUpdated )
+			{
+				if( CatalogBuilder.ProgressStep == CatalogProgressStep.Parsing )
+				{
+					FilesProcessed = "ParsingCatalogProgress".FormatLocalized( CatalogBuilder.ItemsProcessed, CatalogBuilder.ItemsToProcess );
+					CatalogItemsProcessed = CatalogBuilder.ItemsProcessed;
+				}
+				else
+				{
+					FilesProcessed = "SavingCatalogProgress".FormatLocalized( CatalogBuilder.ItemsSaved, CatalogBuilder.ItemsToProcess );
+					CatalogItemsProcessed = CatalogBuilder.ItemsSaved;
+				}
+			}
+
+			System.Windows.Input.CommandManager.InvalidateRequerySuggested();
 		}
 
 		#endregion Methods
@@ -405,7 +437,7 @@ namespace Blitzy.ViewModel
 
 		private void ExecuteUpdateCatalogCommand()
 		{
-			throw new NotImplementedException();
+			MessengerInstance.Send<InternalCommandMessage>( new InternalCommandMessage( "catalog" ) );
 		}
 
 		private void ExecuteUpdateCheckCommand()
@@ -712,6 +744,9 @@ namespace Blitzy.ViewModel
 		#endregion SettingItems
 
 		private CatalogBuilder _CatalogBuilder;
+		private int _CatalogItemsProcessed;
+		private string _FilesProcessed;
+		private bool _IsCatalogBuilding;
 		private bool _IsNewerVersionAvailable;
 		private VersionInfo _LatestVersionInfo;
 		private string _SelectedExclude;
@@ -746,9 +781,69 @@ namespace Blitzy.ViewModel
 			}
 		}
 
+		public int CatalogItemsProcessed
+		{
+			get
+			{
+				return _CatalogItemsProcessed;
+			}
+
+			set
+			{
+				if( _CatalogItemsProcessed == value )
+				{
+					return;
+				}
+
+				RaisePropertyChanging( () => CatalogItemsProcessed );
+				_CatalogItemsProcessed = value;
+				RaisePropertyChanged( () => CatalogItemsProcessed );
+			}
+		}
+
 		public string Changelog { get; set; }
 
 		public Version CurrentVersion { get; set; }
+
+		public string FilesProcessed
+		{
+			get
+			{
+				return _FilesProcessed;
+			}
+
+			set
+			{
+				if( _FilesProcessed == value )
+				{
+					return;
+				}
+
+				RaisePropertyChanging( () => FilesProcessed );
+				_FilesProcessed = value;
+				RaisePropertyChanged( () => FilesProcessed );
+			}
+		}
+
+		public bool IsCatalogBuilding
+		{
+			get
+			{
+				return _IsCatalogBuilding;
+			}
+
+			set
+			{
+				if( _IsCatalogBuilding == value )
+				{
+					return;
+				}
+
+				RaisePropertyChanging( () => IsCatalogBuilding );
+				_IsCatalogBuilding = value;
+				RaisePropertyChanged( () => IsCatalogBuilding );
+			}
+		}
 
 		public bool IsNewerVersionAvailable
 		{

@@ -435,4 +435,13 @@
   <data name="NewVersionAvailable" xml:space="preserve">
     <value>Version {0} ist als Download verfügbar. Für weitere Informationen hier klicken</value>
   </data>
+  <data name="ParsingCatalogProgress" xml:space="preserve">
+    <value>{0} von {1} Dateien verarbeitet</value>
+  </data>
+  <data name="SavingCatalogProgress" xml:space="preserve">
+    <value>{0} von {1} Einträge gespeichert</value>
+  </data>
+  <data name="CatalogBuildCompletedOn" xml:space="preserve">
+    <value>Katalog um {0} zuletzt erstellt</value>
+  </data>
 </root>
