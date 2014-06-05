@@ -204,6 +204,7 @@
     <Compile Include="Utility\OperationAlreadyStartedException.cs" />
     <Compile Include="Utility\ProgressEventArgs.cs" />
     <Compile Include="Utility\ProgressStatistic.cs" />
+    <Compile Include="Utility\STAThread.cs" />
     <Compile Include="Utility\StreamHelper.cs" />
     <Compile Include="ViewModel\CloseViewEventArgs.cs" />
     <Compile Include="ViewModel\Dialogs\ChangelogDialogViewModel.cs" />

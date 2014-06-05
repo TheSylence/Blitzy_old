@@ -69,8 +69,13 @@ namespace Blitzy.Model
 			}
 		}
 
+		public void Stop()
+		{
+		}
+
 		internal void ProcessFiles()
 		{
+			ShouldStop = false;
 			string[] files;
 			lock( LockObject )
 			{
@@ -90,6 +95,11 @@ namespace Blitzy.Model
 
 				foreach( string path in files )
 				{
+					if( ShouldStop )
+					{
+						break;
+					}
+
 					string filePath = path;
 					string ext = Path.GetExtension( filePath );
 					string icon = filePath;
@@ -198,7 +208,7 @@ namespace Blitzy.Model
 						}
 					}
 
-					while( count < runs )
+					while( count < runs && !ShouldStop )
 					{
 						using( SQLiteCommand cmd = Settings.Connection.CreateCommand() )
 						{
@@ -212,7 +222,10 @@ namespace Blitzy.Model
 						++count;
 					}
 
-					transaction.Commit();
+					if( !ShouldStop )
+					{
+						transaction.Commit();
+					}
 				}
 				catch( Exception ex )
 				{
@@ -312,6 +325,7 @@ namespace Blitzy.Model
 		private List<string> FilesToProcess = new List<string>( 16384 );
 		private bool IsRunning;
 		private object LockObject = new object();
+		private volatile bool ShouldStop = false;
 		private Thread ThreadObject;
 
 		#endregion Attributes

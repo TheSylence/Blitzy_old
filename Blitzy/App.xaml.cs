@@ -59,6 +59,7 @@ namespace Blitzy
 
 		protected override void OnExit( ExitEventArgs e )
 		{
+			STAThread.Stop();
 			ViewModelLocator.Cleanup();
 
 			NotifyIcon.Dispose();

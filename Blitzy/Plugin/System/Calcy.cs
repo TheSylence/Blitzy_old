@@ -24,8 +24,7 @@ namespace Blitzy.Plugin.System
 			if( input.Count >= 2 )
 			{
 				string res = Calculator.Calculate( input[1] );
-				// FIXME: Call this on an STA-Thread
-				Clipboard.SetText( res, TextDataFormat.Text );
+				STAThread.QueueAction( () => Clipboard.SetText( res, TextDataFormat.Text ) );
 			}
 			return true;
 		}

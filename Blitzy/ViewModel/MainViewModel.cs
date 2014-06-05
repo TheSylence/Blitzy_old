@@ -6,6 +6,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using System.Windows.Threading;
 using Blitzy.Messages;
 using Blitzy.Model;
 using Blitzy.Plugin;
@@ -42,6 +43,15 @@ namespace Blitzy.ViewModel
 
 			CmdManager = ToDispose( new Blitzy.Model.CommandManager( Database.Connection, Settings, Plugins ) );
 
+			int rebuildTime = Settings.GetValue<int>( SystemSetting.AutoCatalogRebuild );
+			if( rebuildTime > 0 )
+			{
+				RebuildTimer = new DispatcherTimer();
+				RebuildTimer.Interval = TimeSpan.FromMinutes( rebuildTime );
+				RebuildTimer.Tick += RebuildTimer_Tick;
+				RebuildTimer.Start();
+			}
+
 			Builder = ToDispose( new CatalogBuilder( Settings ) );
 			History = ToDispose( new HistoryManager( Settings ) );
 
@@ -74,7 +84,11 @@ namespace Blitzy.ViewModel
 
 		private void BuildCatalog()
 		{
-			// TODO: Check if currently building
+			if( Builder.IsBuilding )
+			{
+				Builder.Stop();
+			}
+
 			// TODO: Reset timer if one is set
 			Builder.Build();
 		}
@@ -129,6 +143,11 @@ namespace Blitzy.ViewModel
 					LogInfo( "Unhandled internal command: {0}", command );
 					break;
 			}
+		}
+
+		private void RebuildTimer_Tick( object sender, EventArgs e )
+		{
+			BuildCatalog();
 		}
 
 		private void UpdateCommandInput()
@@ -616,6 +635,7 @@ namespace Blitzy.ViewModel
 		#region Attributes
 
 		internal HashSet<int> TaskList = new HashSet<int>();
+		private DispatcherTimer RebuildTimer;
 		private object TaskListLock = new object();
 
 		#endregion Attributes
