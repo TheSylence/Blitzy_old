@@ -521,6 +521,7 @@ namespace Blitzy.ViewModel
 			}
 		}
 
+		[ExcludeFromCodeCoverage]
 		private void ExecuteMouseExecuteCommand( MouseButtonEventArgs args )
 		{
 			if( args.ClickCount >= 2 )

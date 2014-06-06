@@ -41,6 +41,13 @@ namespace Blitzy.Tests.ViewModel
 			mock.Value = "test";
 			vm.AddItemCommand.Execute( null );
 			Assert.AreEqual( 1, vm.SelectedWorkspace.Items.Count );
+
+			mock.Value = "test2";
+			vm.AddItemCommand.Execute( null );
+			Assert.AreEqual( 2, vm.SelectedWorkspace.Items.Count );
+
+			Assert.AreEqual( 1, vm.SelectedWorkspace.Items[0].ItemID );
+			Assert.AreEqual( 2, vm.SelectedWorkspace.Items[1].ItemID );
 		}
 
 		[TestMethod, TestCategory( "ViewModel" )]
@@ -63,6 +70,13 @@ namespace Blitzy.Tests.ViewModel
 			mock.Value = "test";
 			vm.AddWorkspaceCommand.Execute( null );
 			Assert.AreEqual( 1, vm.Workspaces.Count );
+
+			mock.Value = "test2";
+			vm.AddWorkspaceCommand.Execute( null );
+			Assert.AreEqual( 2, vm.Workspaces.Count );
+
+			Assert.AreEqual( 1, vm.Workspaces[0].ID );
+			Assert.AreEqual( 2, vm.Workspaces[1].ID );
 		}
 
 		[TestMethod, TestCategory( "ViewModel" )]
@@ -125,6 +139,71 @@ namespace Blitzy.Tests.ViewModel
 			vm.DeleteWorkspaceCommand.Execute( null );
 			Assert.IsNull( vm.SelectedWorkspace );
 			Assert.AreEqual( 0, vm.Workspaces.Count );
+		}
+
+		[TestMethod, TestCategory( "ViewModel" )]
+		public void MoveItemTest()
+		{
+			SettingsViewModel baseVM = new SettingsViewModel();
+			baseVM.Settings = new Blitzy.Model.Settings( Connection );
+			baseVM.Reset();
+			WorkspaceSettingsViewModel vm = new WorkspaceSettingsViewModel( baseVM );
+
+			Assert.IsFalse( vm.MoveItemDownCommand.CanExecute( null ) );
+			Assert.IsFalse( vm.MoveItemUpCommand.CanExecute( null ) );
+
+			vm.SelectedWorkspace = new Blitzy.Model.Workspace();
+			vm.Workspaces.Add( vm.SelectedWorkspace );
+
+			Assert.IsFalse( vm.MoveItemDownCommand.CanExecute( null ) );
+			Assert.IsFalse( vm.MoveItemUpCommand.CanExecute( null ) );
+
+			vm.SelectedWorkspace.Items.Add( new Blitzy.Model.WorkspaceItem() { ItemID = 1 } );
+			vm.SelectedWorkspace.Items.Add( new Blitzy.Model.WorkspaceItem() { ItemID = 2 } );
+			vm.SelectedWorkspace.Items.Add( new Blitzy.Model.WorkspaceItem() { ItemID = 3 } );
+
+			vm.SelectedItem = vm.SelectedWorkspace.Items.First();
+			Assert.IsTrue( vm.MoveItemDownCommand.CanExecute( null ) );
+			Assert.IsFalse( vm.MoveItemUpCommand.CanExecute( null ) );
+
+			vm.SelectedItem = vm.SelectedWorkspace.Items.Last();
+			Assert.IsFalse( vm.MoveItemDownCommand.CanExecute( null ) );
+			Assert.IsTrue( vm.MoveItemUpCommand.CanExecute( null ) );
+
+			vm.SelectedItem = vm.SelectedWorkspace.Items[1];
+			Assert.IsTrue( vm.MoveItemDownCommand.CanExecute( null ) );
+			Assert.IsTrue( vm.MoveItemUpCommand.CanExecute( null ) );
+
+			// 1,3,2
+			vm.MoveItemDownCommand.Execute( null );
+
+			vm.SelectedItem = vm.SelectedWorkspace.Items.First();
+			// 3,1,2
+			vm.MoveItemDownCommand.Execute( null );
+
+			vm.SelectedItem = vm.SelectedWorkspace.Items.Last();
+			// 3,2,1
+			vm.MoveItemUpCommand.Execute( null );
+
+			Assert.AreEqual( 1, vm.SelectedWorkspace.Items[0].ItemOrder );
+			Assert.AreEqual( 2, vm.SelectedWorkspace.Items[1].ItemOrder );
+			Assert.AreEqual( 3, vm.SelectedWorkspace.Items[2].ItemOrder );
+
+			Assert.AreEqual( 3, vm.SelectedWorkspace.Items[0].ItemID );
+			Assert.AreEqual( 2, vm.SelectedWorkspace.Items[1].ItemID );
+			Assert.AreEqual( 1, vm.SelectedWorkspace.Items[2].ItemID );
+		}
+
+		[TestMethod, TestCategory( "ViewModel" )]
+		public void PropertyChangedTest()
+		{
+			SettingsViewModel baseVM = new SettingsViewModel();
+			baseVM.Settings = new Blitzy.Model.Settings( Connection );
+			baseVM.Reset();
+			WorkspaceSettingsViewModel vm = new WorkspaceSettingsViewModel( baseVM );
+
+			PropertyChangedListener listener = new PropertyChangedListener( vm );
+			Assert.IsTrue( listener.TestProperties() );
 		}
 	}
 }

@@ -1,10 +1,13 @@
 ﻿// $Id$
 
+using System;
 using System.Linq;
+using Blitzy.Messages;
 using Blitzy.Model;
 using Blitzy.Tests.Mocks.Services;
 using Blitzy.ViewModel;
 using Blitzy.ViewServices;
+using GalaSoft.MvvmLight.Messaging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Blitzy.Tests.ViewModel
@@ -84,6 +87,30 @@ namespace Blitzy.Tests.ViewModel
 
 			VM = new SettingsViewModel();
 			VM.Settings = new Blitzy.Model.Settings( Connection );
+		}
+
+		[TestMethod, TestCategory( "ViewModel" )]
+		public void CatalogTest()
+		{
+			VM.Reset();
+			VM.CatalogBuilder = new CatalogBuilder( VM.Settings );
+			VM.CatalogBuilder.ItemsProcessed = 123;
+			VM.CatalogBuilder.ItemsSaved = 456;
+			VM.CatalogBuilder.ProgressStep = CatalogProgressStep.Parsing;
+			DateTime oldDate = VM.LastCatalogBuild;
+			Messenger.Default.Send( new CatalogStatusMessage( CatalogStatus.BuildStarted ) );
+			Assert.IsTrue( VM.IsCatalogBuilding );
+
+			Messenger.Default.Send( new CatalogStatusMessage( CatalogStatus.ProgressUpdated ) );
+			Assert.AreEqual( VM.CatalogBuilder.ItemsProcessed, VM.CatalogItemsProcessed );
+
+			VM.CatalogBuilder.ProgressStep = CatalogProgressStep.Saving;
+			Messenger.Default.Send( new CatalogStatusMessage( CatalogStatus.ProgressUpdated ) );
+			Assert.AreEqual( VM.CatalogBuilder.ItemsSaved, VM.CatalogItemsProcessed );
+
+			Messenger.Default.Send( new CatalogStatusMessage( CatalogStatus.BuildFinished ) );
+			Assert.IsFalse( VM.IsCatalogBuilding );
+			Assert.AreNotEqual( oldDate, VM.LastCatalogBuild );
 		}
 
 		[TestMethod, TestCategory( "ViewModel" )]

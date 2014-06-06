@@ -1,5 +1,6 @@
 ﻿// $Id$
 
+using System;
 using Blitzy.Messages;
 using Blitzy.Model;
 
@@ -22,6 +23,10 @@ namespace Blitzy.ViewModel
 		{
 			switch( msg.Type )
 			{
+				case HistoryMessageType.Show:
+					Manager = msg.History;
+					break;
+
 				case HistoryMessageType.Down:
 					++SelectedIndex;
 					if( SelectedIndex >= Manager.Commands.Count )

@@ -36,5 +36,15 @@ namespace Blitzy.Tests.ViewModel
 
 			Assert.AreEqual( expected, vm.Changelog );
 		}
+
+		[TestMethod, TestCategory( "ViewModel" )]
+		public void DownloadTest()
+		{
+			ChangelogDialogViewModel vm = new ChangelogDialogViewModel();
+			Assert.IsFalse( vm.DownloadCommand.CanExecute( null ) );
+
+			vm.LatestVersionInfo = new VersionInfo( HttpStatusCode.OK, new Version(), new Uri( "http://localhost" ), string.Empty, 123, new Dictionary<Version, string>() );
+			Assert.IsTrue( vm.DownloadCommand.CanExecute( null ) );
+		}
 	}
 }

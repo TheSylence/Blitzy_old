@@ -1,10 +1,15 @@
 ﻿// $Id$
 
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Windows.Input;
 using Blitzy.Messages;
+using Blitzy.Model;
 using Blitzy.Tests.Mocks.Services;
 using Blitzy.ViewModel;
 using Blitzy.ViewServices;
 using GalaSoft.MvvmLight.Messaging;
+using Microsoft.QualityTools.Testing.Fakes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Blitzy.Tests.ViewModel
@@ -49,6 +54,7 @@ namespace Blitzy.Tests.ViewModel
 			Assert.IsTrue( vm.OnClosingCommand.CanExecute( null ) );
 			Assert.IsTrue( vm.OnDeactivatedCommand.CanExecute( null ) );
 			Assert.IsTrue( vm.KeyPreviewCommand.CanExecute( null ) );
+			Assert.IsTrue( vm.KeyUpCommand.CanExecute( null ) );
 		}
 
 		[TestMethod, TestCategory( "ViewModel" )]
@@ -67,6 +73,55 @@ namespace Blitzy.Tests.ViewModel
 			Assert.IsTrue( vm.OnDeactivatedCommand.CanExecute( null ) );
 			vm.OnDeactivatedCommand.Execute( null );
 			Assert.IsTrue( hidden );
+		}
+
+		[TestMethod, TestCategory( "ViewModel" )]
+		public void DownTestHistory()
+		{
+			MainViewModel vm = new MainViewModel();
+			vm.History.Commands = new ObservableCollection<string>( new[] { "test", "test2" } );
+			vm.History.SelectedItem = "historytest";
+			Messenger.Default.Unregister( vm.History );
+			bool receivedHistoryShow = false;
+			bool receivedHistoryDown = false;
+
+			Messenger.Default.Register<HistoryMessage>( this, ( msg ) =>
+			{
+				if( msg.Type == HistoryMessageType.Show )
+				{
+					receivedHistoryShow = true;
+					Assert.IsNotNull( msg.History );
+				}
+				else if( msg.Type == HistoryMessageType.Down )
+				{
+					receivedHistoryDown = true;
+				}
+			} );
+
+			using( ShimsContext.Create() )
+			{
+				HashSet<Key> pressedKeys = new HashSet<Key>();
+				pressedKeys.Add( Key.LeftCtrl );
+
+				System.Windows.Input.Fakes.ShimKeyboard.IsKeyDownKey = ( k ) =>
+				{
+					return pressedKeys.Contains( k );
+				};
+
+				Assert.IsTrue( vm.OnKeyDownArrow() );
+				Assert.IsTrue( receivedHistoryDown );
+				Assert.IsTrue( receivedHistoryShow );
+
+				receivedHistoryShow = false;
+				receivedHistoryDown = false;
+
+				pressedKeys.Clear();
+				pressedKeys.Add( Key.RightCtrl );
+
+				Assert.IsTrue( vm.OnKeyDownArrow() );
+				Assert.IsTrue( receivedHistoryDown );
+				Assert.IsTrue( receivedHistoryShow );
+			}
 		}
 
 		[TestMethod, TestCategory( "ViewModel" )]
@@ -134,6 +189,45 @@ namespace Blitzy.Tests.ViewModel
 			Assert.IsTrue( completed );
 
 			Assert.AreEqual( true, closed );
+		}
+
+		[TestMethod, TestCategory( "ViewModel" )]
+		public void ReturnHistoryTest()
+		{
+			MainViewModel vm = new MainViewModel();
+			vm.History.SelectedItem = "historytest";
+			bool receivedHistoryClose = false;
+			bool receivedNewCaret = false;
+
+			Messenger.Default.Register<HistoryMessage>( this, ( msg ) => receivedHistoryClose = msg.Type == HistoryMessageType.Hide );
+			Messenger.Default.Register<InputCaretPositionMessage>( this, ( msg ) => receivedNewCaret = true );
+
+			using( ShimsContext.Create() )
+			{
+				HashSet<Key> pressedKeys = new HashSet<Key>();
+				pressedKeys.Add( Key.LeftCtrl );
+
+				System.Windows.Input.Fakes.ShimKeyboard.IsKeyDownKey = ( k ) =>
+					{
+						return pressedKeys.Contains( k );
+					};
+
+				Assert.IsTrue( vm.OnKeyReturn() );
+				Assert.AreEqual( "historytest", vm.CommandInput );
+				Assert.IsTrue( receivedNewCaret );
+				Assert.IsTrue( receivedHistoryClose );
+
+				receivedHistoryClose = false;
+				receivedNewCaret = false;
+
+				pressedKeys.Clear();
+				pressedKeys.Add( Key.RightCtrl );
+
+				Assert.IsTrue( vm.OnKeyReturn() );
+				Assert.AreEqual( "historytest", vm.CommandInput );
+				Assert.IsTrue( receivedNewCaret );
+				Assert.IsTrue( receivedHistoryClose );
+			}
 		}
 
 		[TestMethod, TestCategory( "ViewModel" )]
@@ -215,6 +309,56 @@ namespace Blitzy.Tests.ViewModel
 			Assert.IsTrue( vm.OnKeyTab() );
 			Assert.AreEqual( "calcy" + vm.CmdManager.Separator + "3423423", vm.CommandInput );
 			Assert.IsNotNull( vm.CmdManager.CurrentItem );
+		}
+
+		[TestMethod, TestCategory( "ViewModel" )]
+		public void UpTestHistory()
+		{
+			MainViewModel vm = new MainViewModel();
+			vm.History.Commands = new ObservableCollection<string>( new[] { "test", "test2" } );
+			vm.History.SelectedItem = "historytest";
+
+			Messenger.Default.Unregister( vm.History );
+			bool receivedHistoryShow = false;
+			bool receivedHistoryUp = false;
+
+			Messenger.Default.Register<HistoryMessage>( this, ( msg ) =>
+				{
+					if( msg.Type == HistoryMessageType.Show )
+					{
+						receivedHistoryShow = true;
+						Assert.IsNotNull( msg.History );
+					}
+					else if( msg.Type == HistoryMessageType.Up )
+					{
+						receivedHistoryUp = true;
+					}
+				} );
+
+			using( ShimsContext.Create() )
+			{
+				HashSet<Key> pressedKeys = new HashSet<Key>();
+				pressedKeys.Add( Key.LeftCtrl );
+
+				System.Windows.Input.Fakes.ShimKeyboard.IsKeyDownKey = ( k ) =>
+				{
+					return pressedKeys.Contains( k );
+				};
+
+				Assert.IsTrue( vm.OnKeyUpArrow() );
+				Assert.IsTrue( receivedHistoryUp );
+				Assert.IsTrue( receivedHistoryShow );
+
+				receivedHistoryShow = false;
+				receivedHistoryUp = false;
+
+				pressedKeys.Clear();
+				pressedKeys.Add( Key.RightCtrl );
+
+				Assert.IsTrue( vm.OnKeyUpArrow() );
+				Assert.IsTrue( receivedHistoryUp );
+				Assert.IsTrue( receivedHistoryShow );
+			}
 		}
 	}
 }

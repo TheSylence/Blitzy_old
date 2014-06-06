@@ -81,6 +81,10 @@ namespace Blitzy.Tests
 			{
 				return new DateTime( 2013, 3, 14 );
 			}
+			else if( type == typeof( TimeSpan ) )
+			{
+				return new TimeSpan( 2342342 );
+			}
 
 			throw new NotSupportedException( type.ToString() );
 		}

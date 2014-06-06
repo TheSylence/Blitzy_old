@@ -16,6 +16,7 @@
 + Added command history
 + Added workspaces that allow to execute multiple commands at once
 - Removed URL shortening services
+- Removed sudo command. Instead to execute a command with elavated rights use ctrl+shift+return
 
 Version 0.8.29
 ----------------------

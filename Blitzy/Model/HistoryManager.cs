@@ -108,7 +108,7 @@ namespace Blitzy.Model
 
 		private string _SelectedItem;
 
-		public ObservableCollection<string> Commands { get; private set; }
+		public ObservableCollection<string> Commands { get; internal set; }
 
 		public string SelectedItem
 		{

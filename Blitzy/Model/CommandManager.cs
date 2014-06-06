@@ -85,7 +85,6 @@ namespace Blitzy.Model
 			else if( CurrentItem != null )
 			{
 				Collection<string> cmdParts = new Collection<string>( parts );
-				//items.AddRange( CurrentItem.Plugin.GetCommands( cmdParts ) );
 
 				IEnumerable<CommandItem> subCommands = CurrentItem.Plugin.GetSubCommands( CurrentItem, cmdParts );
 				if( subCommands.Count() == 0 )
@@ -98,6 +97,9 @@ namespace Blitzy.Model
 				}
 			}
 
+			// TODO: I guess this can be further optimized:
+			// Don't sort by dice coefficent
+			// Instead get items with the same order and only apply dice to these
 			foreach( CommandItem item in items.OrderByDescending( it => GetCommandExecutionCount( it ) )
 				.ThenByDescending( it => it.Name.GetDiceCoefficent( command ) ).Take( Settings.GetValue<int>( SystemSetting.MaxMatchingItems ) ) )
 			{
