@@ -26,6 +26,7 @@ using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Runtime.ExceptionServices;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
 using System.Text;
@@ -77,20 +78,6 @@ namespace Blitzy.Model.Shell
 		}
 
 		/// <value>
-		///   Gets or sets the argument list of the shortcut.
-		/// </value>
-		public string Arguments
-		{
-			get
-			{
-				StringBuilder sb = new StringBuilder( INFOTIPSIZE );
-				m_Link.GetArguments( sb, sb.Capacity );
-				return sb.ToString();
-			}
-			set { m_Link.SetArguments( value ); }
-		}
-
-		/// <value>
 		///   Gets or sets a description of the shortcut.
 		/// </value>
 		public string Description
@@ -101,7 +88,6 @@ namespace Blitzy.Model.Shell
 				m_Link.GetDescription( sb, sb.Capacity );
 				return sb.ToString();
 			}
-			set { m_Link.SetDescription( value ); }
 		}
 
 		/// <value>
@@ -125,23 +111,6 @@ namespace Blitzy.Model.Shell
 				//
 				dwHotkey = ( ( wHotkey & 0xFF00 ) << 8 ) | ( wHotkey & 0xFF );
 				return (Keys)dwHotkey;
-			}
-			set
-			{
-				short wHotkey;
-
-				if( ( value & Keys.Modifiers ) == 0 )
-					throw new ArgumentException( "Hotkey must include a modifier key." );
-
-				//
-				// Convert from Keys enumeration 32-bit value to IShellLink 16-bit format
-				// IShellLink: 0xMMVK
-				// Keys:  0x00MM00VK
-				//   MM = Modifier (Alt, Control, Shift)
-				//   VK = Virtual key code
-				//
-				wHotkey = unchecked( (short)( ( (int)( value & Keys.Modifiers ) >> 8 ) | (int)( value & Keys.KeyCode ) ) );
-				m_Link.SetHotkey( wHotkey );
 			}
 		}
 
@@ -190,7 +159,6 @@ namespace Blitzy.Model.Shell
 				m_Link.GetIconLocation( sb, sb.Capacity, out nIconIdx );
 				return nIconIdx;
 			}
-			set { m_Link.SetIconLocation( IconPath, value ); }
 		}
 
 		/// <value>
@@ -208,7 +176,6 @@ namespace Blitzy.Model.Shell
 				m_Link.GetIconLocation( sb, sb.Capacity, out nIconIdx );
 				return sb.ToString();
 			}
-			set { m_Link.SetIconLocation( value, IconIndex ); }
 		}
 
 		//
@@ -233,7 +200,6 @@ namespace Blitzy.Model.Shell
 				m_Link.GetPath( sb, sb.Capacity, out wfd, SLGP_FLAGS.SLGP_UNCPRIORITY );
 				return sb.ToString();
 			}
-			set { m_Link.SetPath( value ); }
 		}
 
 		/// <summary>
@@ -272,30 +238,6 @@ namespace Blitzy.Model.Shell
 						return ProcessWindowStyle.Normal;
 				}
 			}
-			set
-			{
-				int nWS;
-
-				switch( value )
-				{
-					case ProcessWindowStyle.Normal:
-						nWS = SW_SHOWNORMAL;
-						break;
-
-					case ProcessWindowStyle.Minimized:
-						nWS = SW_SHOWMINNOACTIVE;
-						break;
-
-					case ProcessWindowStyle.Maximized:
-						nWS = SW_SHOWMAXIMIZED;
-						break;
-
-					default: // ProcessWindowStyle.Hidden
-						throw new ArgumentException( "Unsupported ProcessWindowStyle value." );
-				}
-
-				m_Link.SetShowCmd( nWS );
-			}
 		}
 
 		/// <value>
@@ -309,7 +251,6 @@ namespace Blitzy.Model.Shell
 				m_Link.GetWorkingDirectory( sb, sb.Capacity );
 				return sb.ToString();
 			}
-			set { m_Link.SetWorkingDirectory( value ); }
 		}
 
 		public void Dispose()
@@ -318,13 +259,22 @@ namespace Blitzy.Model.Shell
 			GC.SuppressFinalize( this );
 		}
 
-		/// <summary>
-		///   Saves the shortcut to disk.
-		/// </summary>
-		public void Save()
+		/// <value>
+		///   Gets the argument list of the shortcut.
+		/// </value>
+		[HandleProcessCorruptedStateExceptions]
+		public string GetArguments()
 		{
-			IPersistFile pf = (IPersistFile)m_Link;
-			pf.Save( m_sPath, true );
+			try
+			{
+				StringBuilder sb = new StringBuilder( INFOTIPSIZE );
+				m_Link.GetArguments( sb, sb.Capacity );
+				return sb.ToString();
+			}
+			catch( AccessViolationException )
+			{
+				return string.Empty;
+			}
 		}
 
 		//

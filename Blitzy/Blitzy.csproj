@@ -147,6 +147,7 @@
     <Compile Include="Messages\DownloadStatusMessage.cs" />
     <Compile Include="Messages\MessageTokens.cs" />
     <Compile Include="Model\UpdateChecker.cs" />
+    <Compile Include="Plugin\System\Runny.cs" />
     <Compile Include="Utility\Extensions.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Utility\HotKey.cs" />

@@ -16,7 +16,7 @@ namespace Blitzy.Plugin.System
 		{
 		}
 
-		public bool ExecuteCommand( CommandItem command, IList<string> input, out string message )
+		public bool ExecuteCommand( CommandItem command, CommandExecutionMode mode, IList<string> input, out string message )
 		{
 			throw new NotImplementedException();
 		}

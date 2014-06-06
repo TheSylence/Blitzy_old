@@ -46,7 +46,7 @@ namespace Blitzy.Tests.Plugins
 			foreach( CommandItem cmd in commands )
 			{
 				string message;
-				plug.ExecuteCommand( cmd, new List<string>(), out message );
+				plug.ExecuteCommand( cmd, Plugin.CommandExecutionMode.Default, new List<string>(), out message );
 
 				Assert.IsNull( message );
 				Assert.AreEqual( Medy.WM_APPCOMMAND, received_message );

@@ -441,7 +441,10 @@
   <data name="SavingCatalogProgress" xml:space="preserve">
     <value>{0} von {1} Einträge gespeichert</value>
   </data>
-  <data name="CatalogBuildCompletedOn" xml:space="preserve">
-    <value>Katalog um {0} zuletzt erstellt</value>
+  <data name="LastCatalogBuild" xml:space="preserve">
+    <value>Katalog zuletzt erstellt am</value>
+  </data>
+  <data name="ItemsInCatalog" xml:space="preserve">
+    <value>Einträge im Katalog</value>
   </data>
 </root>

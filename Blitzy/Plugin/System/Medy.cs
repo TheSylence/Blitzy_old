@@ -17,7 +17,7 @@ namespace Blitzy.Plugin.System
 			RootItem = CommandItem.Create( "medy", "ControlMediaPlayer".Localize(), this, "Medy.png" );
 		}
 
-		public bool ExecuteCommand( Model.CommandItem command, IList<string> input, out string message )
+		public bool ExecuteCommand( Model.CommandItem command, CommandExecutionMode mode, IList<string> input, out string message )
 		{
 			int lp = 0;
 			switch( command.Name )
@@ -56,17 +56,17 @@ namespace Blitzy.Plugin.System
 			return true;
 		}
 
-		public IEnumerable<Model.CommandItem> GetCommands( IList<string> input )
+		public IEnumerable<CommandItem> GetCommands( IList<string> input )
 		{
 			yield return RootItem;
 		}
 
-		public string GetInfo( IList<string> data, Model.CommandItem item )
+		public string GetInfo( IList<string> data, CommandItem item )
 		{
 			return null;
 		}
 
-		public IEnumerable<CommandItem> GetSubCommands( Model.CommandItem parent, IList<string> input )
+		public IEnumerable<CommandItem> GetSubCommands( CommandItem parent, IList<string> input )
 		{
 			if( parent == RootItem )
 			{

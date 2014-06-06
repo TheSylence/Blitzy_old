@@ -47,7 +47,7 @@ namespace Blitzy.Tests.Plugins
 						return new System.Diagnostics.Fakes.StubProcess();
 					};
 
-					result = plug.ExecuteCommand( command, new[] { command.Name, "test" }, out message );
+					result = plug.ExecuteCommand( command, Plugin.CommandExecutionMode.Default, new[] { command.Name, "test" }, out message );
 				}
 
 				Assert.IsTrue( result );

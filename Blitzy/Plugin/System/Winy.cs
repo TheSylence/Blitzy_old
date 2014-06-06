@@ -23,7 +23,7 @@ namespace Blitzy.Plugin.System
 			Confirmations.Add( "logoff", Settings.GetValue<bool>( this, LogoffKey ) );
 		}
 
-		public bool ExecuteCommand( CommandItem command, IList<string> input, out string message )
+		public bool ExecuteCommand( CommandItem command, CommandExecutionMode mode, IList<string> input, out string message )
 		{
 			message = null;
 			if( Confirmations[command.Name] )

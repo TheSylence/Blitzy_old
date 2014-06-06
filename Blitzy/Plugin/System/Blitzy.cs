@@ -20,7 +20,7 @@ namespace Blitzy.Plugin.System
 			// Nothing to do
 		}
 
-		public bool ExecuteCommand( CommandItem command, IList<string> input, out string message )
+		public bool ExecuteCommand( CommandItem command, CommandExecutionMode mode, IList<string> input, out string message )
 		{
 			Messenger.Default.Send<InternalCommandMessage>( new InternalCommandMessage( command.Name ) );
 

@@ -56,6 +56,9 @@ namespace Blitzy.Model
 
 		[DefaultValue( 0 )]
 		RebuildCatalogOnChanges,
+
+		[DefaultValue( "2000-01-01 00:00:00" )]
+		LastCatalogBuild
 	}
 
 	internal class Settings : ObservableObject, Blitzy.Plugin.ISettings

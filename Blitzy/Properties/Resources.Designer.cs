@@ -349,7 +349,7 @@ namespace Blitzy.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to The downloaded file is corrupted. Do you want to retry?.
         /// </summary>
         public static string DownloadCorruptedRetryQuestion {
             get {
@@ -511,6 +511,15 @@ namespace Blitzy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Items in catalog.
+        /// </summary>
+        public static string ItemsInCatalog {
+            get {
+                return ResourceManager.GetString("ItemsInCatalog", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Keep input content.
         /// </summary>
         public static string KeppInputContent {
@@ -525,6 +534,15 @@ namespace Blitzy.Properties {
         public static string Language {
             get {
                 return ResourceManager.GetString("Language", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Catalog last build on.
+        /// </summary>
+        public static string LastCatalogBuild {
+            get {
+                return ResourceManager.GetString("LastCatalogBuild", resourceCulture);
             }
         }
         
@@ -637,11 +655,29 @@ namespace Blitzy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Version {0} is available for download. Click here for more information.
+        /// </summary>
+        public static string NewVersionAvailable {
+            get {
+                return ResourceManager.GetString("NewVersionAvailable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Ok.
         /// </summary>
         public static string Ok {
             get {
                 return ResourceManager.GetString("Ok", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Parsed {0} of {1} files.
+        /// </summary>
+        public static string ParsingCatalogProgress {
+            get {
+                return ResourceManager.GetString("ParsingCatalogProgress", resourceCulture);
             }
         }
         
@@ -799,6 +835,15 @@ namespace Blitzy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Saved {0} of {1} items.
+        /// </summary>
+        public static string SavingCatalogProgress {
+            get {
+                return ResourceManager.GetString("SavingCatalogProgress", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Settings.
         /// </summary>
         public static string Settings {
@@ -889,6 +934,15 @@ namespace Blitzy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Update available.
+        /// </summary>
+        public static string UpdateAvailable {
+            get {
+                return ResourceManager.GetString("UpdateAvailable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Update catalog.
         /// </summary>
         public static string UpdateCatalog {
@@ -939,6 +993,24 @@ namespace Blitzy.Properties {
         public static string VersionCheck {
             get {
                 return ResourceManager.GetString("VersionCheck", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No updates available.
+        /// </summary>
+        public static string VersionUpToDate {
+            get {
+                return ResourceManager.GetString("VersionUpToDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Your version is up to date :).
+        /// </summary>
+        public static string VersionUpToDateMessage {
+            get {
+                return ResourceManager.GetString("VersionUpToDateMessage", resourceCulture);
             }
         }
         

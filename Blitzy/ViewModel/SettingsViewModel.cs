@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data.SQLite;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -79,6 +80,18 @@ namespace Blitzy.ViewModel
 			RebuildTime = Settings.GetValue<int>( SystemSetting.AutoCatalogRebuild );
 			BackupShortcuts = Settings.GetValue<bool>( SystemSetting.BackupShortcuts );
 			HistoryCount = Settings.GetValue<int>( SystemSetting.HistoryCount );
+			LastCatalogBuild = Settings.GetValue<DateTime>( SystemSetting.LastCatalogBuild );
+			ItemsInCatalog = GetItemCount();
+		}
+
+		private int GetItemCount()
+		{
+			using( SQLiteCommand cmd = Settings.Connection.CreateCommand() )
+			{
+				cmd.CommandText = "SELECT COUNT(*) FROM files";
+
+				return Convert.ToInt32( cmd.ExecuteScalar() );
+			}
 		}
 
 		private void OnCatalogStatusUpdate( CatalogStatusMessage msg )
@@ -89,9 +102,12 @@ namespace Blitzy.ViewModel
 			}
 			else if( msg.Status == CatalogStatus.BuildFinished )
 			{
-				FilesProcessed = "CatalogBuildCompletedOn".FormatLocalized( DateTime.Now.TimeOfDay.ToString( @"hh\:mm\:ss" ) );
+				Settings.SetValue( SystemSetting.LastCatalogBuild, DateTime.Now );
+				LastCatalogBuild = DateTime.Now;
+				FilesProcessed = string.Empty;
 				IsCatalogBuilding = false;
 				CatalogItemsProcessed = -1;
+				ItemsInCatalog = CatalogBuilder.ItemsToProcess;
 			}
 			else if( msg.Status == CatalogStatus.ProgressUpdated )
 			{
@@ -748,6 +764,8 @@ namespace Blitzy.ViewModel
 		private string _FilesProcessed;
 		private bool _IsCatalogBuilding;
 		private bool _IsNewerVersionAvailable;
+		private int _ItemsInCatalog;
+		private DateTime _LastCatalogBuild;
 		private VersionInfo _LatestVersionInfo;
 		private string _SelectedExclude;
 		private Folder _SelectedFolder;
@@ -862,6 +880,46 @@ namespace Blitzy.ViewModel
 				RaisePropertyChanging( () => IsNewerVersionAvailable );
 				_IsNewerVersionAvailable = value;
 				RaisePropertyChanged( () => IsNewerVersionAvailable );
+			}
+		}
+
+		public int ItemsInCatalog
+		{
+			get
+			{
+				return _ItemsInCatalog;
+			}
+
+			set
+			{
+				if( _ItemsInCatalog == value )
+				{
+					return;
+				}
+
+				RaisePropertyChanging( () => ItemsInCatalog );
+				_ItemsInCatalog = value;
+				RaisePropertyChanged( () => ItemsInCatalog );
+			}
+		}
+
+		public DateTime LastCatalogBuild
+		{
+			get
+			{
+				return _LastCatalogBuild;
+			}
+
+			set
+			{
+				if( _LastCatalogBuild == value )
+				{
+					return;
+				}
+
+				RaisePropertyChanging( () => LastCatalogBuild );
+				_LastCatalogBuild = value;
+				RaisePropertyChanged( () => LastCatalogBuild );
 			}
 		}
 

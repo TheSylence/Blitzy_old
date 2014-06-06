@@ -32,7 +32,7 @@ namespace Blitzy.Model
 				return false;
 			}
 
-			return Command.Equals( other.Command, StringComparison.OrdinalIgnoreCase ) && Arguments.Equals( other.Arguments, StringComparison.OrdinalIgnoreCase );
+			return GetHashCode() == other.GetHashCode();
 		}
 
 		public override bool Equals( object obj )

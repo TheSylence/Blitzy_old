@@ -37,7 +37,7 @@ namespace Blitzy.Tests.Plugins
 				};
 
 				string message;
-				result = plug.ExecuteCommand( command, new[] { "test@localhost" }, out message );
+				result = plug.ExecuteCommand( command, CommandExecutionMode.Default, new[] { "test@localhost" }, out message );
 			}
 
 			Assert.IsTrue( result );

@@ -22,7 +22,7 @@ namespace Blitzy.Plugin.System
 			Items = null;
 		}
 
-		public bool ExecuteCommand( CommandItem command, IList<string> input, out string message )
+		public bool ExecuteCommand( CommandItem command, CommandExecutionMode mode, IList<string> input, out string message )
 		{
 			string url;
 			Uri uri;

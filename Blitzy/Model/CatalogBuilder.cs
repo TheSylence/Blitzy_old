@@ -10,6 +10,7 @@ using System.Linq;
 using System.Threading;
 using Blitzy.Messages;
 using Blitzy.Model.Shell;
+using Blitzy.Utility;
 using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Threading;
 
@@ -34,6 +35,7 @@ namespace Blitzy.Model
 
 			IsRunning = true;
 			ThreadObject = new Thread( RunThreaded );
+			ThreadObject.SetApartmentState( ApartmentState.STA );
 			ThreadObject.Priority = ThreadPriority.Lowest;
 			ThreadObject.Name = "CatalogThread";
 			ThreadObject.IsBackground = true;
@@ -84,6 +86,7 @@ namespace Blitzy.Model
 
 		internal void ProcessFiles()
 		{
+			DispatcherHelper.CheckBeginInvokeOnUI( () => Messenger.Default.Send( new CatalogStatusMessage( CatalogStatus.BuildStarted ) ) );
 			ShouldStop = false;
 			string[] files;
 			lock( LockObject )
@@ -96,13 +99,11 @@ namespace Blitzy.Model
 				List<FileEntry> entries = new List<FileEntry>( files.Length );
 
 				IsBuilding = true;
-				DispatcherHelper.CheckBeginInvokeOnUI( () => Messenger.Default.Send( new CatalogStatusMessage( CatalogStatus.BuildStarted ) ) );
 
 				ItemsProcessed = 0;
 				ItemsSaved = 0;
 				ProgressStep = CatalogProgressStep.Parsing;
 				ItemsToProcess = files.Length;
-				string tempPath = Path.GetTempPath();
 
 				foreach( string path in files )
 				{
@@ -122,7 +123,7 @@ namespace Blitzy.Model
 						string tmpFile;
 						if( Settings.GetValue<bool>( SystemSetting.BackupShortcuts ) )
 						{
-							tmpFile = Path.Combine( tempPath, string.Format( "blitzy_{0}", Path.GetFileName( filePath ) ) );
+							tmpFile = IOUtils.GetTempFileName( "lnk" );
 							File.Copy( filePath, tmpFile, true );
 						}
 						else
@@ -141,7 +142,7 @@ namespace Blitzy.Model
 									continue;
 								}
 
-								arguments = link.Arguments;
+								arguments = link.GetArguments();
 								filePath = targetPath;
 								ext = Path.GetExtension( targetPath );
 								icon = Environment.ExpandEnvironmentVariables( link.IconPath );
@@ -161,7 +162,14 @@ namespace Blitzy.Model
 						{
 							if( Settings.GetValue<bool>( SystemSetting.BackupShortcuts ) )
 							{
-								File.Delete( tmpFile );
+								try
+								{
+									File.Delete( tmpFile );
+								}
+								catch( Exception )
+								{
+									LogWarning( "Failed to delete temporary backup of shortcut" );
+								}
 							}
 						}
 					}
@@ -186,72 +194,12 @@ namespace Blitzy.Model
 				}
 
 				ProgressStep = CatalogProgressStep.Saving;
-				IEnumerable<FileEntry> list = entries.Distinct();
-
-				SQLiteTransaction transaction = Settings.Connection.BeginTransaction( System.Data.IsolationLevel.ReadCommitted );
-				try
-				{
-					using( SQLiteCommand cmd = Settings.Connection.CreateCommand() )
-					{
-						cmd.Transaction = transaction;
-						cmd.CommandText = "DELETE FROM files";
-						cmd.ExecuteNonQuery();
-					}
-
-					const int maxBatchSize = 500; // SQLite limit: SQLITE_MAX_COMPOUND_SELECT
-					const int maxParameters = 999; // SQLite limit: SQLITE_MAX_VARIABLE_NUMBER
-					const int columns = FileEntry.ParameterCount;
-					int batchSize = maxBatchSize;
-					int objectCount = list.Count();
-
-					int count = 0;
-					int runs = 0;
-					if( objectCount * columns <= maxParameters )
-					{
-						runs = (int)Math.Ceiling( objectCount / (double)batchSize );
-					}
-					else
-					{
-						runs = (int)Math.Ceiling( objectCount * columns / (double)maxParameters );
-						batchSize = (int)Math.Floor( objectCount / (double)runs );
-
-						if( runs * batchSize < objectCount )
-						{
-							++runs;
-						}
-					}
-
-					while( count < runs && !ShouldStop )
-					{
-						using( SQLiteCommand cmd = Settings.Connection.CreateCommand() )
-						{
-							cmd.Transaction = transaction;
-							FileEntry.CreateBatchStatement( cmd, list.Take( batchSize ) );
-							cmd.Prepare();
-							cmd.ExecuteNonQuery();
-						}
-
-						list = list.Skip( batchSize );
-						++count;
-						ItemsSaved += batchSize;
-						DispatcherHelper.CheckBeginInvokeOnUI( () => Messenger.Default.Send( new CatalogStatusMessage( CatalogStatus.ProgressUpdated ) ) );
-					}
-
-					if( !ShouldStop )
-					{
-						transaction.Commit();
-					}
-				}
-				catch( Exception ex )
-				{
-					LogError( "Failed updating the catalog: {0}", ex );
-					transaction.Rollback();
-				}
+				SaveEntries( entries.Distinct() );
 
 				ProgressStep = CatalogProgressStep.None;
-				DispatcherHelper.CheckBeginInvokeOnUI( () => Messenger.Default.Send<CatalogStatusMessage>( new CatalogStatusMessage( CatalogStatus.BuildFinished ) ) );
 				IsBuilding = false;
 			}
+			DispatcherHelper.CheckBeginInvokeOnUI( () => Messenger.Default.Send<CatalogStatusMessage>( new CatalogStatusMessage( CatalogStatus.BuildFinished ) ) );
 		}
 
 		private void RunThreaded()
@@ -266,6 +214,69 @@ namespace Blitzy.Model
 				{
 					ProcessFiles();
 				}
+			}
+		}
+
+		private void SaveEntries( IEnumerable<FileEntry> list )
+		{
+			SQLiteTransaction transaction = Settings.Connection.BeginTransaction( System.Data.IsolationLevel.ReadCommitted );
+			try
+			{
+				using( SQLiteCommand cmd = Settings.Connection.CreateCommand() )
+				{
+					cmd.Transaction = transaction;
+					cmd.CommandText = "DELETE FROM files";
+					cmd.ExecuteNonQuery();
+				}
+
+				const int maxBatchSize = 500; // SQLite limit: SQLITE_MAX_COMPOUND_SELECT
+				const int maxParameters = 999; // SQLite limit: SQLITE_MAX_VARIABLE_NUMBER
+				const int columns = FileEntry.ParameterCount;
+				int batchSize = maxBatchSize;
+				int objectCount = list.Count();
+
+				int count = 0;
+				int runs = 0;
+				if( objectCount * columns <= maxParameters )
+				{
+					runs = (int)Math.Ceiling( objectCount / (double)batchSize );
+				}
+				else
+				{
+					runs = (int)Math.Ceiling( objectCount * columns / (double)maxParameters );
+					batchSize = (int)Math.Floor( objectCount / (double)runs );
+
+					if( runs * batchSize < objectCount )
+					{
+						++runs;
+					}
+				}
+
+				while( count < runs && !ShouldStop )
+				{
+					using( SQLiteCommand cmd = Settings.Connection.CreateCommand() )
+					{
+						cmd.Transaction = transaction;
+						FileEntry.CreateBatchStatement( cmd, list.Take( batchSize ) );
+						cmd.Prepare();
+						cmd.ExecuteNonQuery();
+					}
+
+					list = list.Skip( batchSize );
+					++count;
+					ItemsSaved += batchSize;
+					DispatcherHelper.CheckBeginInvokeOnUI( () => Messenger.Default.Send( new CatalogStatusMessage( CatalogStatus.ProgressUpdated ) ) );
+				}
+
+				if( !ShouldStop )
+				{
+					transaction.Commit();
+				}
+			}
+			catch( Exception ex )
+			{
+				LogError( "Failed updating the catalog: {0}", ex );
+				transaction.Rollback();
 			}
 		}
 

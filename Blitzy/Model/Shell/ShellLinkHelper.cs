@@ -19,7 +19,7 @@ namespace Blitzy.Model.Shell
 			{
 				if( !File.Exists( value ) )
 				{
-					// Dirty hack to work around a "bug" (ok let's call it unexpected behaviour in Windows):
+					// Dirty hack to work around a "bug" (ok let's call it unexpected behaviour) in Windows:
 					// The "Program Files" folder is ALWAYS resvoled to "Program Files (x86)" in a 32bit app
 					// So we check if
 					// - the path contains the "Program Files" folder

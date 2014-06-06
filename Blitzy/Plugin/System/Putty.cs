@@ -21,7 +21,7 @@ namespace Blitzy.Plugin.System
 			RootItem = CommandItem.Create( "ssh", "PuttyDescription".Localize(), this, PuttyPath, false, null, new[] { "putty" } );
 		}
 
-		public bool ExecuteCommand( CommandItem command, IList<string> input, out string message )
+		public bool ExecuteCommand( CommandItem command, CommandExecutionMode mode, IList<string> input, out string message )
 		{
 			// Session loading: putty -load "session name"
 			// Connection: putty [user@]host

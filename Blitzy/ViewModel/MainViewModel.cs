@@ -423,6 +423,8 @@ namespace Blitzy.ViewModel
 		{
 			Collection<string> commandData = new Collection<string>( CmdManager.GetCommandParts( CommandInput ) );
 			CommandItem item = CmdManager.CurrentItem;
+			CommandExecutionMode mode = CommandExecutionMode.Default;
+			// TODO: Secondary mode
 
 			Action taskAction = () =>
 			{
@@ -435,7 +437,7 @@ namespace Blitzy.ViewModel
 
 				try
 				{
-					result = item.Plugin.ExecuteCommand( item, commandData, out msg );
+					result = item.Plugin.ExecuteCommand( item, mode, commandData, out msg );
 				}
 				catch( Exception ex )
 				{

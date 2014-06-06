@@ -7,6 +7,22 @@ using Blitzy.Model;
 namespace Blitzy.Plugin
 {
 	/// <summary>
+	/// Modes a command's execution can be requested in
+	/// </summary>
+	public enum CommandExecutionMode
+	{
+		/// <summary>
+		/// Default mode
+		/// </summary>
+		Default,
+
+		/// <summary>
+		/// Secondary mode for less often used actions
+		/// </summary>
+		Secondary
+	}
+
+	/// <summary>
 	/// Reason why a plugin is unloaded
 	/// </summary>
 	public enum PluginUnloadReason
@@ -40,10 +56,11 @@ namespace Blitzy.Plugin
 		/// Executes a command.
 		/// </summary>
 		/// <param name="command">The selected command that should be executed</param>
+		/// <param name="mode">The <see cref="CommandExecutionMode"/> this command should be executed in</param>
 		/// <param name="input">The currently entered command list</param>
 		/// <param name="message">A message that should be shown the user if the execution failed.</param>
 		/// <returns><c>true</c> if the command was executed successfully, otherwise <c>false</c></returns>
-		bool ExecuteCommand( CommandItem command, IList<string> input, out string message );
+		bool ExecuteCommand( CommandItem command, CommandExecutionMode mode, IList<string> input, out string message );
 
 		/// <summary>
 		/// Get all commands this plugin can execute.
