@@ -157,8 +157,9 @@ namespace Blitzy.Model
 
 			if( !CommandExecutionBuffer.ContainsKey( hash ) )
 			{
-				CommandExecutionBuffer.Add( hash, 0 );
-				return 0;
+				int count = ReadExecutionCount( item );
+				CommandExecutionBuffer.Add( hash, count );
+				return count;
 			}
 
 			return CommandExecutionBuffer[hash];
@@ -178,6 +179,26 @@ namespace Blitzy.Model
 				{
 					LogError( "Failed to load commands from plugin {0}: {1}", plugin.Name, ex );
 				}
+			}
+		}
+
+		private int ReadExecutionCount( CommandItem item )
+		{
+			using( SQLiteCommand cmd = Connection.CreateCommand() )
+			{
+				SQLiteParameter param = cmd.CreateParameter();
+				param.ParameterName = "PluginID";
+				param.Value = item.Plugin.PluginID;
+				cmd.Parameters.Add( param );
+
+				param = cmd.CreateParameter();
+				param.ParameterName = "Name";
+				param.Value = item.Name;
+				cmd.Parameters.Add( param );
+
+				cmd.CommandText = "SELECT ExecutionCount FROM commands WHERE Plugin = @PluginID AND Name = @Name";
+
+				return Convert.ToInt32( cmd.ExecuteScalar() );
 			}
 		}
 
