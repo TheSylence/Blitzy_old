@@ -3,6 +3,7 @@
 using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Windows;
 using Blitzy.View.Dialogs;
 using Blitzy.ViewModel;
 
@@ -11,7 +12,7 @@ namespace Blitzy.ViewServices
 	[ExcludeFromCodeCoverage]
 	internal class SettingsService : IDialogService
 	{
-		public object Show( System.Windows.Window parent, object parameter = null )
+		public object Show( Window parent, object parameter = null )
 		{
 			SettingsServiceParameters args = parameter as SettingsServiceParameters;
 			if( args == null )
@@ -19,8 +20,7 @@ namespace Blitzy.ViewServices
 				throw new ArgumentException( "SettingsService needs SettingsServiceParameters" );
 			}
 
-			SettingsDialog dlg = new SettingsDialog();
-			dlg.Owner = parent;
+			SettingsDialog dlg = new SettingsDialog { Owner = parent };
 
 			SettingsViewModel vm = dlg.DataContext as SettingsViewModel;
 			Debug.Assert( vm != null );

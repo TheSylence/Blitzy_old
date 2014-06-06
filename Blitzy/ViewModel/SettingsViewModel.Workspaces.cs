@@ -16,8 +16,8 @@ namespace Blitzy.ViewModel
 	{
 		#region Constructor
 
-		public WorkspaceSettingsViewModel( SettingsViewModel baseVM )
-			: base( baseVM )
+		public WorkspaceSettingsViewModel( SettingsViewModel baseVm )
+			: base( baseVm )
 		{
 			Workspaces = new ObservableCollection<Workspace>();
 
@@ -29,8 +29,7 @@ namespace Blitzy.ViewModel
 				{
 					while( reader.Read() )
 					{
-						Workspace workspace = new Workspace();
-						workspace.ID = reader.GetInt32( 0 );
+						Workspace workspace = new Workspace { ID = reader.GetInt32( 0 ) };
 
 						workspace.Load( Settings.Connection );
 						Workspaces.Add( workspace );
@@ -164,18 +163,20 @@ namespace Blitzy.ViewModel
 
 			if( !string.IsNullOrWhiteSpace( command ) )
 			{
-				WorkspaceItem item = new WorkspaceItem();
-				item.WorkspaceID = SelectedWorkspace.ID;
-				item.ItemCommand = command;
-				item.ItemOrder = 1;
+				WorkspaceItem item = new WorkspaceItem
+				{
+					WorkspaceID = SelectedWorkspace.ID,
+					ItemCommand = command,
+					ItemOrder = 1
+				};
 				if( SelectedWorkspace.Items.Count > 0 )
 				{
 					item.ItemOrder = SelectedWorkspace.Items.Max( i => i.ItemOrder ) + 1;
 				}
 
 				item.ItemID = 1;
-				IEnumerable<WorkspaceItem> allItems = Workspaces.SelectMany( ws => ws.Items );
-				if( allItems.Count() > 0 )
+				IEnumerable<WorkspaceItem> allItems = Workspaces.SelectMany( ws => ws.Items ).ToArray();
+				if( allItems.Any() )
 				{
 					item.ItemID = allItems.Max( i => i.ItemOrder ) + 1;
 				}
@@ -191,9 +192,7 @@ namespace Blitzy.ViewModel
 
 			if( !string.IsNullOrWhiteSpace( name ) )
 			{
-				Workspace ws = new Workspace();
-				ws.Name = name;
-				ws.ID = 1;
+				Workspace ws = new Workspace { Name = name, ID = 1 };
 				if( Workspaces.Count > 0 )
 				{
 					ws.ID = Workspaces.Max( w => w.ID ) + 1;

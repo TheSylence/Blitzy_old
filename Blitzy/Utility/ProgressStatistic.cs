@@ -18,7 +18,7 @@ namespace Blitzy.Utility
 			StartingTime = DateTime.MinValue;
 			FinishingTime = DateTime.MinValue;
 
-			progressChangedArgs = new ProgressEventArgs( this ); //Event args can be cached
+			ProgressChangedArgs = new ProgressEventArgs( this ); //Event args can be cached
 		}
 
 		#endregion Constructor
@@ -49,15 +49,15 @@ namespace Blitzy.Utility
 		public virtual void ProgressChange( long bytesRead, long totalBytesToRead )
 		{
 			if( bytesRead <= BytesRead )
-				throw new ArgumentException( "Operation cannot go backwards!", "bytesRead" );
+				throw new ArgumentException( @"Operation cannot go backwards!", "bytesRead" );
 
 			if( HasFinished )
 				throw new InvalidOperationException( "Operation has finished already!" );
 
-			if( !hasStarted )
+			if( !_HasStarted )
 			{
 				StartingTime = DateTime.Now;
-				hasStarted = true;
+				_HasStarted = true;
 				OnStarted();
 			}
 
@@ -82,7 +82,7 @@ namespace Blitzy.Utility
 		/// <summary>
 		/// Gets the average bytes per second.
 		/// </summary>
-		public double AverageBytesPerSecond { get { return (double)BytesRead / Duration.TotalSeconds; } }
+		public double AverageBytesPerSecond { get { return BytesRead / Duration.TotalSeconds; } }
 
 		/// <summary>
 		/// Gets the amount of bytes already read.
@@ -97,7 +97,7 @@ namespace Blitzy.Utility
 		/// <summary>
 		/// Gets whether the operation has started
 		/// </summary>
-		public bool HasStarted { get { return hasStarted; } }
+		public bool HasStarted { get { return _HasStarted; } }
 
 		/// <summary>
 		/// Gets whether the operation is still running
@@ -106,7 +106,7 @@ namespace Blitzy.Utility
 
 		#region Time
 
-		private EstimatingMethod estimatingMethod = EstimatingMethod.CurrentBytesPerSecond;
+		private EstimatingMethod _EstimatingMethod = EstimatingMethod.CurrentBytesPerSecond;
 
 		/// <summary>
 		/// The method which will be used for estimating duration and finishing time
@@ -136,10 +136,11 @@ namespace Blitzy.Utility
 			{
 				if( !HasStarted )
 					return TimeSpan.Zero;
-				else if( !HasFinished )
+
+				if( !HasFinished )
 					return DateTime.Now - StartingTime;
-				else
-					return FinishingTime - StartingTime;
+
+				return FinishingTime - StartingTime;
 			}
 		}
 
@@ -164,9 +165,11 @@ namespace Blitzy.Utility
 
 				double seconds = ( TotalBytesToRead - BytesRead ) / bytesPerSecond;
 				if( seconds > 60 * 60 * 24 * 200 ) //over 200 Days -> infinite
+				{
 					return TimeSpan.MaxValue;
-				else
-					return Duration + TimeSpan.FromSeconds( seconds );
+				}
+
+				return Duration + TimeSpan.FromSeconds( seconds );
 			}
 		}
 
@@ -201,12 +204,12 @@ namespace Blitzy.Utility
 		/// </summary>
 		public EstimatingMethod UsedEstimatingMethod
 		{
-			get { return estimatingMethod; }
+			get { return _EstimatingMethod; }
 			set
 			{
 				if( HasStarted )
 					throw new OperationAlreadyStartedException();
-				estimatingMethod = value;
+				_EstimatingMethod = value;
 			}
 		}
 
@@ -221,9 +224,11 @@ namespace Blitzy.Utility
 			get
 			{
 				if( TotalBytesToRead == -1 )
+				{
 					return -1;
-				else
-					return (double)BytesRead / (double)TotalBytesToRead;
+				}
+
+				return BytesRead / (double)TotalBytesToRead;
 			}
 		}
 
@@ -234,13 +239,13 @@ namespace Blitzy.Utility
 
 		#region CurrentBytesPerSecond
 
-		private TimeSpan currentBytesCalculationInterval = TimeSpan.FromSeconds( 0.5 );
+		private TimeSpan _CurrentBytesCalculationInterval = TimeSpan.FromSeconds( 0.5 );
 
-		private KeyValuePair<DateTime, long>[] currentBytesSamples = new KeyValuePair<DateTime, long>[6];
+		private KeyValuePair<DateTime, long>[] CurrentBytesSamples = new KeyValuePair<DateTime, long>[6];
 
-		private int currentSample = 0;
+		private int CurrentSample;
 
-		private DateTime lastSample;
+		private DateTime LastSample;
 
 		/// <summary>
 		/// Gets or sets the interval used for the calculation of the current bytes per second. Default is 500 ms.
@@ -249,12 +254,12 @@ namespace Blitzy.Utility
 		/// Thrown when trying to set although the operation has already started.</exception>
 		public TimeSpan CurrentBytesCalculationInterval
 		{
-			get { return currentBytesCalculationInterval; }
+			get { return _CurrentBytesCalculationInterval; }
 			set
 			{
 				if( HasStarted )
 					throw new InvalidOperationException( "Task has already started!" );
-				currentBytesCalculationInterval = value;
+				_CurrentBytesCalculationInterval = value;
 			}
 		}
 
@@ -270,14 +275,14 @@ namespace Blitzy.Utility
 		/// Thrown when trying to set although the operation has already started.</exception>
 		public int CurrentBytesSampleCount
 		{
-			get { return currentBytesSamples.Length; }
+			get { return CurrentBytesSamples.Length; }
 			set
 			{
 				if( HasStarted )
 					throw new InvalidOperationException( "Task has already started!" );
-				if( value != currentBytesSamples.Length )
+				if( value != CurrentBytesSamples.Length )
 				{
-					currentBytesSamples = new KeyValuePair<DateTime, long>[value];
+					CurrentBytesSamples = new KeyValuePair<DateTime, long>[value];
 				}
 			}
 		}
@@ -285,23 +290,27 @@ namespace Blitzy.Utility
 		//current sample index in currentBytesSamples
 		private void ProcessSample( long bytes )
 		{
-			if( ( DateTime.Now - lastSample ).Ticks > CurrentBytesCalculationInterval.Ticks / currentBytesSamples.Length )
+			if( ( DateTime.Now - LastSample ).Ticks > CurrentBytesCalculationInterval.Ticks / CurrentBytesSamples.Length )
 			{
-				lastSample = DateTime.Now;
+				LastSample = DateTime.Now;
 
 				KeyValuePair<DateTime, long> current = new KeyValuePair<DateTime, long>( DateTime.Now, bytes );
 
-				var old = currentBytesSamples[currentSample];
-				currentBytesSamples[currentSample] = current;
+				var old = CurrentBytesSamples[CurrentSample];
+				CurrentBytesSamples[CurrentSample] = current;
 
 				if( old.Key == DateTime.MinValue )
+				{
 					CurrentBytesPerSecond = AverageBytesPerSecond;
+				}
 				else
-					CurrentBytesPerSecond = (double)( current.Value - old.Value ) / ( current.Key - old.Key ).TotalSeconds;
+				{
+					CurrentBytesPerSecond = ( current.Value - old.Value ) / ( current.Key - old.Key ).TotalSeconds;
+				}
 
-				currentSample++;
-				if( currentSample >= currentBytesSamples.Length )
-					currentSample = 0;
+				CurrentSample++;
+				if( CurrentSample >= CurrentBytesSamples.Length )
+					CurrentSample = 0;
 			}
 		}
 
@@ -311,7 +320,7 @@ namespace Blitzy.Utility
 
 		#region Events
 
-		private readonly ProgressEventArgs progressChangedArgs;
+		private readonly ProgressEventArgs ProgressChangedArgs;
 
 		/// <summary>
 		/// Will be raised when the operation has finished
@@ -331,26 +340,26 @@ namespace Blitzy.Utility
 		protected virtual void OnFinished()
 		{
 			if( Finished != null )
-				Finished( this, progressChangedArgs );
+				Finished( this, ProgressChangedArgs );
 		}
 
 		protected virtual void OnProgressChanged()
 		{
 			if( ProgressChanged != null )
-				ProgressChanged( this, progressChangedArgs );
+				ProgressChanged( this, ProgressChangedArgs );
 		}
 
 		protected virtual void OnStarted()
 		{
 			if( Started != null )
-				Started( this, progressChangedArgs );
+				Started( this, ProgressChangedArgs );
 		}
 
 		#endregion Events
 
 		#region Attributes
 
-		private bool hasStarted = false;
+		private bool _HasStarted;
 
 		#endregion Attributes
 	}

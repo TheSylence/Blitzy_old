@@ -44,7 +44,7 @@ namespace Blitzy.Utility
 
 			bool runningFlag = true;
 
-			Action<Stream, Stream, int> copyMemory = ( Stream _target, Stream _source, int bufferSize ) =>
+			Action<Stream, Stream, int> copyMemory = ( _target, _source, bufferSize ) =>
 			//Raw copy-operation, "length" and "runningFlag" are enclosed as closure
 			{
 				int count;
@@ -63,7 +63,9 @@ namespace Blitzy.Utility
 
 			long totalLength = arguments.TotalLength;
 			if( totalLength == -1 && source.CanSeek )
-				totalLength = (long)source.Length;
+			{
+				totalLength = source.Length;
+			}
 
 			DateTime lastCallback = DateTime.Now;
 			long lastLength = 0;
@@ -107,7 +109,7 @@ namespace Blitzy.Utility
 		/// <returns>The number of bytes actually copied.</returns>
 		public static long CopyFrom( this Stream stream, Stream source, int bufferSize = 4096 )
 		{
-			int count = 0;
+			int count;
 			byte[] buffer = new byte[bufferSize];
 			long length = 0;
 

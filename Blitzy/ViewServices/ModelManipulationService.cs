@@ -1,6 +1,7 @@
 ﻿// $Id$
 
 using System;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows;
 using Blitzy.Model;
@@ -18,12 +19,13 @@ namespace Blitzy.ViewServices
 			get { return typeof( TModel ); }
 		}
 
-		public object Create( System.Windows.Window parent )
+		public object Create( Window parent )
 		{
 			TDialog wnd = (TDialog)Activator.CreateInstance( typeof( TDialog ) );
 			wnd.Owner = parent;
 
 			DialogViewModelBase<TModel> vm = wnd.DataContext as DialogViewModelBase<TModel>;
+			Debug.Assert( vm != null );
 			vm.Reset();
 			vm.New = true;
 
@@ -35,24 +37,18 @@ namespace Blitzy.ViewServices
 			return null;
 		}
 
-		public bool Edit( System.Windows.Window parent, object obj )
+		public bool Edit( Window parent, object obj )
 		{
 			TDialog wnd = (TDialog)Activator.CreateInstance( typeof( TDialog ) );
 			wnd.Owner = parent;
 
 			DialogViewModelBase<TModel> vm = wnd.DataContext as DialogViewModelBase<TModel>;
+			Debug.Assert( vm != null );
 			vm.Reset();
 			vm.Model = obj as TModel;
 			vm.New = false;
 
-			if( wnd.ShowDialog() == true )
-			{
-				return true;
-			}
-			else
-			{
-				return false;
-			}
+			return wnd.ShowDialog() == true;
 		}
 	}
 }

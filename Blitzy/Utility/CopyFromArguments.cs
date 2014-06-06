@@ -17,11 +17,10 @@ namespace Blitzy.Utility
 	/// </summary>
 	public sealed class CopyFromArguments
 	{
-		private int bufferSize = 4096;
+		private int _BufferSize = 4096;
 
-		private TimeSpan progressCallbackInterval = TimeSpan.FromSeconds( 0.2 );
-
-		private long totalLength = -1;
+		private long _TotalLength = -1;
+		private TimeSpan ProgressCallbackInterval = TimeSpan.FromSeconds( 0.2 );
 
 		/// <summary>
 		/// Creates the default arguments
@@ -68,7 +67,7 @@ namespace Blitzy.Utility
 		/// <summary>
 		/// Gets or sets the size of the buffer used for copying bytes. Default is 4096.
 		/// </summary>
-		public int BufferSize { get { return bufferSize; } set { bufferSize = value; } }
+		public int BufferSize { get { return _BufferSize; } set { _BufferSize = value; } }
 
 		/// <summary>
 		/// Gets or sets the callback for progress-report. Default is null.
@@ -80,8 +79,8 @@ namespace Blitzy.Utility
 		/// </summary>
 		public TimeSpan ProgressChangeCallbackInterval
 		{
-			get { return progressCallbackInterval; }
-			set { progressCallbackInterval = value; }
+			get { return ProgressCallbackInterval; }
+			set { ProgressCallbackInterval = value; }
 		}
 
 		/// <summary>
@@ -93,6 +92,6 @@ namespace Blitzy.Utility
 		/// Gets or sets the total length of stream. Set to -1 if the value has to be determined by stream.Length.
 		/// If the stream is not seekable, the total length in the progress report will be stay -1.
 		/// </summary>
-		public long TotalLength { get { return totalLength; } set { totalLength = value; } }
+		public long TotalLength { get { return _TotalLength; } set { _TotalLength = value; } }
 	}
 }

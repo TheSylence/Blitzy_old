@@ -17,7 +17,7 @@ namespace Blitzy.Tests.ViewModel
 		public void IconTest()
 		{
 			NotifyIconViewModel vm = new NotifyIconViewModel();
-			vm.MainVM = new MainViewModel();
+			vm.MainVm = new MainViewModel();
 			vm.Reset();
 
 			Messenger.Default.Send<CommandMessage>( new CommandMessage( CommandStatus.Finished, null, null ) );
@@ -43,7 +43,7 @@ namespace Blitzy.Tests.ViewModel
 		public void QuitTest()
 		{
 			NotifyIconViewModel vm = new NotifyIconViewModel();
-			vm.MainVM = new MainViewModel();
+			vm.MainVm = new MainViewModel();
 
 			bool quit = false;
 			Messenger.Default.Register<InternalCommandMessage>( this, msg => quit = msg.Command.Equals( "quit" ) );
@@ -57,7 +57,7 @@ namespace Blitzy.Tests.ViewModel
 		public void SettingsTest()
 		{
 			NotifyIconViewModel vm = new NotifyIconViewModel();
-			vm.MainVM = new MainViewModel();
+			vm.MainVm = new MainViewModel();
 
 			CallCheckServiceMock mock = new CallCheckServiceMock();
 			DialogServiceManager.RegisterService( typeof( SettingsService ), mock );
@@ -72,9 +72,9 @@ namespace Blitzy.Tests.ViewModel
 		public void ShowTest()
 		{
 			NotifyIconViewModel vm = new NotifyIconViewModel();
-			vm.MainVM = new MainViewModel();
+			vm.MainVm = new MainViewModel();
 			bool shown = false;
-			vm.MainVM.RequestShow += ( s, e ) => shown = true;
+			vm.MainVm.RequestShow += ( s, e ) => shown = true;
 
 			Assert.IsTrue( vm.ShowCommand.CanExecute( null ) );
 			vm.ShowCommand.Execute( null );
@@ -86,11 +86,11 @@ namespace Blitzy.Tests.ViewModel
 		public void VisibleTest()
 		{
 			NotifyIconViewModel vm = new NotifyIconViewModel();
-			vm.MainVM = new MainViewModel();
-			vm.MainVM.Settings.SetDefaults();
+			vm.MainVm = new MainViewModel();
+			vm.MainVm.Settings.SetDefaults();
 
 			Assert.IsTrue( vm.Visible );
-			vm.MainVM.Settings.SetValue( Blitzy.Model.SystemSetting.TrayIcon, false );
+			vm.MainVm.Settings.SetValue( Blitzy.Model.SystemSetting.TrayIcon, false );
 			Assert.IsFalse( vm.Visible );
 		}
 	}

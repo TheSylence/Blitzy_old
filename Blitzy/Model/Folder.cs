@@ -178,14 +178,9 @@ namespace Blitzy.Model
 				param.Value = IsRecursive ? 1 : 0;
 				cmd.Parameters.Add( param );
 
-				if( ExistsInDatabase )
-				{
-					cmd.CommandText = "UPDATE folders SET Path = @Path, Recursive = @Recursive WHERE FolderID = @folderID";
-				}
-				else
-				{
-					cmd.CommandText = "INSERT INTO folders (FolderID, Path, Recursive) VALUES (@folderID, @Path, @Recursive);";
-				}
+				cmd.CommandText = ExistsInDatabase ?
+					"UPDATE folders SET Path = @Path, Recursive = @Recursive WHERE FolderID = @folderID" :
+					"INSERT INTO folders (FolderID, Path, Recursive) VALUES (@folderID, @Path, @Recursive);";
 
 				cmd.Prepare();
 				cmd.ExecuteNonQuery();

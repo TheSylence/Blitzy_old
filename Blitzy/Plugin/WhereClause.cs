@@ -43,7 +43,7 @@ namespace Blitzy.Plugin
 
 		#region Attributes
 
-		private List<WhereEntry> Entries = new List<WhereEntry>();
+		private readonly List<WhereEntry> Entries = new List<WhereEntry>();
 
 		#endregion Attributes
 
@@ -51,9 +51,9 @@ namespace Blitzy.Plugin
 
 		private class WhereEntry
 		{
-			public readonly string Column;
-			public readonly WhereOperation Op;
-			public readonly object Value;
+			private readonly string Column;
+			private readonly WhereOperation Op;
+			private readonly object Value;
 
 			public WhereEntry( string column, object value, WhereOperation op )
 			{
@@ -72,9 +72,9 @@ namespace Blitzy.Plugin
 				return string.Format( "{0} {1} @{2}", Column, ToSql( Op ), param.ParameterName );
 			}
 
-			private static string ToSql( WhereOperation Op )
+			private static string ToSql( WhereOperation op )
 			{
-				switch( Op )
+				switch( op )
 				{
 					case WhereOperation.Equals:
 						return "=";

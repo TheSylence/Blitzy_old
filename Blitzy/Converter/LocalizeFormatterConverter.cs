@@ -1,6 +1,7 @@
 ﻿// $Id$
 
 using System;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 using Blitzy.Utility;
@@ -9,7 +10,7 @@ namespace Blitzy.Converter
 {
 	internal class LocalizeFormatterConverter : IMultiValueConverter
 	{
-		public object Convert( object[] values, Type targetType, object parameter, System.Globalization.CultureInfo culture )
+		public object Convert( object[] values, Type targetType, object parameter, CultureInfo culture )
 		{
 			if( parameter == null )
 			{
@@ -31,7 +32,7 @@ namespace Blitzy.Converter
 			return string.Format( keyStr, bindingParams );
 		}
 
-		public object[] ConvertBack( object value, Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture )
+		public object[] ConvertBack( object value, Type[] targetTypes, object parameter, CultureInfo culture )
 		{
 			throw new NotSupportedException();
 		}

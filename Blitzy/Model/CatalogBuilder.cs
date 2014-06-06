@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SQLite;
 using System.Diagnostics;
 using System.Globalization;
@@ -118,7 +119,7 @@ namespace Blitzy.Model
 					string arguments = string.Empty;
 					string fileName = Path.GetFileNameWithoutExtension( filePath );
 
-					if( ext.Equals( ".lnk" ) )
+					if( ext != null && ext.Equals( ".lnk" ) )
 					{
 						string tmpFile;
 						if( Settings.GetValue<bool>( SystemSetting.BackupShortcuts ) )
@@ -138,7 +139,7 @@ namespace Blitzy.Model
 								string targetPath = Environment.ExpandEnvironmentVariables( link.Path ).ToLowerInvariant();
 								if( string.IsNullOrWhiteSpace( targetPath ) )
 								{
-									Debug.WriteLine( string.Format( CultureInfo.InvariantCulture, "Failed to get target of {0}", filePath ) );
+									LogDebug( "Failed to get target of {0}", filePath );
 									continue;
 								}
 
@@ -180,7 +181,7 @@ namespace Blitzy.Model
 					}
 
 					// Make sure that the shortcut was resolved correctly
-					if( ext.Equals( ".lnk" ) || ext.Equals( "lnk" ) )
+					if( ext != null && ( ext.Equals( ".lnk" ) || ext.Equals( "lnk" ) ) )
 					{
 						LogWarning( "Shortcut was not resolved: {0}", path );
 						Debug.Assert( false );
@@ -199,7 +200,7 @@ namespace Blitzy.Model
 				ProgressStep = CatalogProgressStep.None;
 				IsBuilding = false;
 			}
-			DispatcherHelper.CheckBeginInvokeOnUI( () => Messenger.Default.Send<CatalogStatusMessage>( new CatalogStatusMessage( CatalogStatus.BuildFinished ) ) );
+			DispatcherHelper.CheckBeginInvokeOnUI( () => Messenger.Default.Send( new CatalogStatusMessage( CatalogStatus.BuildFinished ) ) );
 		}
 
 		private void RunThreaded()
@@ -219,7 +220,7 @@ namespace Blitzy.Model
 
 		private void SaveEntries( IEnumerable<FileEntry> list )
 		{
-			SQLiteTransaction transaction = Settings.Connection.BeginTransaction( System.Data.IsolationLevel.ReadCommitted );
+			SQLiteTransaction transaction = Settings.Connection.BeginTransaction( IsolationLevel.ReadCommitted );
 			try
 			{
 				using( SQLiteCommand cmd = Settings.Connection.CreateCommand() )
@@ -236,7 +237,7 @@ namespace Blitzy.Model
 				int objectCount = list.Count();
 
 				int count = 0;
-				int runs = 0;
+				int runs;
 				if( objectCount * columns <= maxParameters )
 				{
 					runs = (int)Math.Ceiling( objectCount / (double)batchSize );
@@ -394,13 +395,13 @@ namespace Blitzy.Model
 
 		#region Attributes
 
+		private readonly AutoResetEvent CanProcess;
+		private readonly List<string> FilesToProcess = new List<string>( 16384 );
+		private readonly object LockObject = new object();
 		private readonly Settings Settings;
-		private AutoResetEvent CanProcess;
-		private List<string> FilesToProcess = new List<string>( 16384 );
+		private readonly Thread ThreadObject;
 		private bool IsRunning;
-		private object LockObject = new object();
-		private volatile bool ShouldStop = false;
-		private Thread ThreadObject;
+		private volatile bool ShouldStop;
 
 		#endregion Attributes
 	}

@@ -18,7 +18,7 @@ namespace Blitzy.Tests.Plugins
 			Assert.IsNotNull( plug.Author, "Plugin Author" );
 			Assert.IsNotNull( plug.Description, "Plugin Description" );
 			Assert.IsNotNull( plug.Version, "Plugin Version" );
-			Assert.AreEqual( Constants.APIVersion, plug.ApiVersion, "Plugin APIVersion" );
+			Assert.AreEqual( Constants.ApiVersion, plug.ApiVersion, "Plugin APIVersion" );
 			Assert.AreNotEqual( Guid.Empty, plug.PluginID, "Plugin ID" );
 			Assert.IsNotNull( plug.Website, "Plugin Website" );
 			Assert.IsNotNull( plug.Name, "Plugin Name" );

@@ -1,15 +1,16 @@
 ﻿// $Id$
 
 using System;
+using System.Globalization;
 using System.Windows.Data;
 
 namespace Blitzy.Converter
 {
 	internal class FileSizeConverter : IValueConverter
 	{
-		public object Convert( object value, Type targetType, object parameter, System.Globalization.CultureInfo culture )
+		public object Convert( object value, Type targetType, object parameter, CultureInfo culture )
 		{
-			string[] suffixes = new string[]
+			string[] suffixes =
 			{
 				"B",
 				"KB",
@@ -30,7 +31,7 @@ namespace Blitzy.Converter
 			return string.Format( culture, "{0} {1}", Math.Round( size, 2 ), suffixes[idx] );
 		}
 
-		public object ConvertBack( object value, Type targetType, object parameter, System.Globalization.CultureInfo culture )
+		public object ConvertBack( object value, Type targetType, object parameter, CultureInfo culture )
 		{
 			throw new NotSupportedException();
 		}

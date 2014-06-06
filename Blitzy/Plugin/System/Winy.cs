@@ -17,10 +17,12 @@ namespace Blitzy.Plugin.System
 
 		public void ClearCache()
 		{
-			Confirmations = new Dictionary<string, bool>();
-			Confirmations.Add( "shutdown", Settings.GetValue<bool>( this, ShutdownKey ) );
-			Confirmations.Add( "restart", Settings.GetValue<bool>( this, RestartKey ) );
-			Confirmations.Add( "logoff", Settings.GetValue<bool>( this, LogoffKey ) );
+			Confirmations = new Dictionary<string, bool>
+			{
+				{"shutdown", Settings.GetValue<bool>(this, ShutdownKey)},
+				{"restart", Settings.GetValue<bool>(this, RestartKey)},
+				{"logoff", Settings.GetValue<bool>(this, LogoffKey)}
+			};
 		}
 
 		public bool ExecuteCommand( CommandItem command, CommandExecutionMode mode, IList<string> input, out string message )
@@ -30,7 +32,10 @@ namespace Blitzy.Plugin.System
 			{
 				MessageBoxParameter mbArgs = new MessageBoxParameter( "ConfirmOperation".Localize(), "ConfirmationRequired".Localize() );
 				MessageBoxResult result = DialogServiceManager.Show<MessageBoxService, MessageBoxResult>( mbArgs );
-				return true;
+				if( result == MessageBoxResult.No )
+				{
+					return true;
+				}
 			}
 
 			string cmd = string.Empty;
@@ -57,7 +62,7 @@ namespace Blitzy.Plugin.System
 			return true;
 		}
 
-		public IEnumerable<Model.CommandItem> GetCommands( IList<string> input )
+		public IEnumerable<CommandItem> GetCommands( IList<string> input )
 		{
 			yield return CommandItem.Create( "shutdown", "Shutdown".Localize(), this );
 			yield return CommandItem.Create( "restart", "Restart".Localize(), this );
@@ -110,11 +115,11 @@ namespace Blitzy.Plugin.System
 
 		#region Properties
 
-		private Guid? GUID;
+		private Guid? Guid;
 
 		public int ApiVersion
 		{
-			get { return Constants.APIVersion; }
+			get { return Constants.ApiVersion; }
 		}
 
 		public string Author
@@ -136,12 +141,12 @@ namespace Blitzy.Plugin.System
 		{
 			get
 			{
-				if( !GUID.HasValue )
+				if( !Guid.HasValue )
 				{
-					GUID = Guid.Parse( GuidString );
+					Guid = global::System.Guid.Parse( GuidString );
 				}
 
-				return GUID.Value;
+				return Guid.Value;
 			}
 		}
 

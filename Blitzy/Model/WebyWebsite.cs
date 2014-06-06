@@ -25,7 +25,7 @@ namespace Blitzy.Model
 			}
 		}
 
-		public override void Load( System.Data.SQLite.SQLiteConnection connection )
+		public override void Load( SQLiteConnection connection )
 		{
 			using( SQLiteCommand cmd = connection.CreateCommand() )
 			{
@@ -57,7 +57,7 @@ namespace Blitzy.Model
 			ExistsInDatabase = true;
 		}
 
-		public override void Save( System.Data.SQLite.SQLiteConnection connection )
+		public override void Save( SQLiteConnection connection )
 		{
 			using( SQLiteCommand cmd = connection.CreateCommand() )
 			{
@@ -86,14 +86,9 @@ namespace Blitzy.Model
 				param.Value = Icon;
 				cmd.Parameters.Add( param );
 
-				if( ExistsInDatabase )
-				{
-					cmd.CommandText = "UPDATE weby_websites SET Name = @Name, Description = @Description, URL = @URL, Icon = @icon WHERE WebyID = @webyID";
-				}
-				else
-				{
-					cmd.CommandText = "INSERT INTO weby_websites (WebyID, Name, Description, URL, Icon) VALUES (@webyID, @Name, @Description, @URL, @icon);";
-				}
+				cmd.CommandText = ExistsInDatabase ?
+					"UPDATE weby_websites SET Name = @Name, Description = @Description, URL = @URL, Icon = @icon WHERE WebyID = @webyID" :
+					"INSERT INTO weby_websites (WebyID, Name, Description, URL, Icon) VALUES (@webyID, @Name, @Description, @URL, @icon);";
 
 				cmd.Prepare();
 				cmd.ExecuteNonQuery();

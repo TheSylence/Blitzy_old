@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.ObjectModel;
+using System.Data;
 using System.Data.SQLite;
 using System.Linq;
 
@@ -62,7 +63,7 @@ namespace Blitzy.Model
 
 		public void Save()
 		{
-			SQLiteTransaction transaction = Settings.Connection.BeginTransaction( System.Data.IsolationLevel.ReadCommitted );
+			SQLiteTransaction transaction = Settings.Connection.BeginTransaction( IsolationLevel.ReadCommitted );
 			try
 			{
 				using( SQLiteCommand cmd = Settings.Connection.CreateCommand() )
@@ -134,7 +135,7 @@ namespace Blitzy.Model
 
 		#region Attributes
 
-		private Settings Settings;
+		private readonly Settings Settings;
 
 		#endregion Attributes
 	}

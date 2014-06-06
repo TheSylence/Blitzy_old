@@ -50,11 +50,11 @@ namespace Blitzy.Plugin.System
 
 		#region Properties
 
-		private Guid? GUID;
+		private Guid? Guid;
 
 		public int ApiVersion
 		{
-			get { return Constants.APIVersion; }
+			get { return Constants.ApiVersion; }
 		}
 
 		public string Author
@@ -76,12 +76,12 @@ namespace Blitzy.Plugin.System
 		{
 			get
 			{
-				if( !GUID.HasValue )
+				if( !Guid.HasValue )
 				{
-					GUID = Guid.Parse( "E27AF08C-62D9-45BF-95E2-28B7EA91A713" );
+					Guid = global::System.Guid.Parse( "E27AF08C-62D9-45BF-95E2-28B7EA91A713" );
 				}
 
-				return GUID.Value;
+				return Guid.Value;
 			}
 		}
 

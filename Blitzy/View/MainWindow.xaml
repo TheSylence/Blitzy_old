@@ -32,7 +32,7 @@
 			<ColumnDefinition Width="Auto" />
 		</Grid.ColumnDefinitions>
 
-		<Image Grid.Row="0" Grid.Column="2" Width="24" Height="24" Margin="0,2,3,2" VerticalAlignment="Center" Source="/Blitzy;component/Resources/Gears.png">
+		<Image Grid.Row="0" Grid.Column="1" Width="24" Height="24" Margin="0,2,3,2" VerticalAlignment="Center" Source="/Blitzy;component/Resources/Gears.png">
 			<i:Interaction.Triggers>
 				<i:EventTrigger EventName="MouseLeftButtonDown">
 					<commands:EventToCommand Command="{Binding SettingsCommand}" />
@@ -40,10 +40,12 @@
 			</i:Interaction.Triggers>
 		</Image>
 
-		<ctrl:CommandTextBox Text="{Binding CommandInput, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Grid.Row="0" Margin="1,5,5,5" x:Name="txtInput" />
-		<TextBlock Text="{Binding CommandInfo}" Grid.Row="1" Visibility="{Binding CommandInfo, Converter={StaticResource StringToVisibilityConv}}" />
+		<ctrl:CommandTextBox Text="{Binding CommandInput, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Grid.Row="0"
+		                     Grid.Column="0" Margin="1,5,5,5" x:Name="txtInput" />
+		<TextBlock Text="{Binding CommandInfo}" Grid.Row="1" Grid.Column="0"
+		           Visibility="{Binding CommandInfo, Converter={StaticResource StringToVisibilityConv}}" />
 
-		<Grid Grid.Row="2" Grid.ColumnSpan="2" Margin="2">
+		<Grid Grid.Row="2" Grid.ColumnSpan="2" Grid.Column="0" Margin="2">
 			<ctrl:CommandListView ItemsSource="{Binding Path=CmdManager.Items}" SelectedIndex="{Binding SelectedCommandIndex, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding CmdManager.CurrentItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
 				<ListView.ItemTemplate>
 					<DataTemplate>

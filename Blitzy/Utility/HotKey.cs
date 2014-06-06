@@ -18,11 +18,11 @@ namespace Blitzy.Utility
 	/// </summary>
 	internal class HotKey : INotifyPropertyChanged
 	{
-		private bool enabled;
+		private bool _Enabled;
 
-		private Key key;
+		private Key _Key;
 
-		private ModifierKeys modifiers;
+		private ModifierKeys _Modifiers;
 
 		/// <summary>
 		/// Creates an HotKey object. This instance has to be registered in an HotKeyHost.
@@ -66,13 +66,13 @@ namespace Blitzy.Utility
 		{
 			get
 			{
-				return enabled;
+				return _Enabled;
 			}
 			set
 			{
-				if( value != enabled )
+				if( value != _Enabled )
 				{
-					enabled = value;
+					_Enabled = value;
 					OnPropertyChanged( "Enabled" );
 				}
 			}
@@ -85,13 +85,13 @@ namespace Blitzy.Utility
 		{
 			get
 			{
-				return key;
+				return _Key;
 			}
 			set
 			{
-				if( key != value )
+				if( _Key != value )
 				{
-					key = value;
+					_Key = value;
 					OnPropertyChanged( "Key" );
 				}
 			}
@@ -104,13 +104,13 @@ namespace Blitzy.Utility
 		{
 			get
 			{
-				return modifiers;
+				return _Modifiers;
 			}
 			set
 			{
-				if( modifiers != value )
+				if( _Modifiers != value )
 				{
-					modifiers = value;
+					_Modifiers = value;
 					OnPropertyChanged( "Modifiers" );
 				}
 			}
@@ -139,7 +139,7 @@ namespace Blitzy.Utility
 		}
 	}
 
-	[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1064:ExceptionsShouldBePublic" )]
+	[SuppressMessage( "Microsoft.Design", "CA1064:ExceptionsShouldBePublic" )]
 	[Serializable]
 	internal class HotKeyAlreadyRegisteredException : Exception
 	{
@@ -173,9 +173,9 @@ namespace Blitzy.Utility
 	/// </summary>
 	internal sealed class HotKeyHost : IDisposable
 	{
-		private static readonly SerialCounter idGen = new SerialCounter( 1 );
+		private static readonly SerialCounter IDGen = new SerialCounter( 1 );
 
-		private Dictionary<int, HotKey> hotKeys = new Dictionary<int, HotKey>();
+		private readonly Dictionary<int, HotKey> _HotKeys = new Dictionary<int, HotKey>();
 
 		/// <summary>
 		/// Creates a new HotKeyHost
@@ -186,27 +186,27 @@ namespace Blitzy.Utility
 			if( hwndSource == null )
 				throw new ArgumentNullException( "hwndSource" );
 
-			this.hook = new HwndSourceHook( WndProc );
-			this.hwndSource = hwndSource;
-			hwndSource.AddHook( hook );
+			Hook = WndProc;
+			HwndSource = hwndSource;
+			hwndSource.AddHook( Hook );
 		}
 
 		#region HotKey Interop
 
-		internal const int WM_HotKey = 786;
+		internal const int WM_HOTKEY = 786;
 
 		#endregion HotKey Interop
 
 		#region Interop-Encapsulation
 
-		private HwndSourceHook hook;
-		private HwndSource hwndSource;
+		private readonly HwndSourceHook Hook;
+		private readonly HwndSource HwndSource;
 
 		private void RegisterHotKey( int id, HotKey hotKey )
 		{
-			if( (int)hwndSource.Handle != 0 )
+			if( (int)HwndSource.Handle != 0 )
 			{
-				int error = INativeMethods.Instance.RegisterHotKey_Wrapper( hwndSource.Handle, id, (int)hotKey.Modifiers, KeyInterop.VirtualKeyFromKey( hotKey.Key ) );
+				int error = INativeMethods.Instance.RegisterHotKey_Wrapper( HwndSource.Handle, id, (int)hotKey.Modifiers, KeyInterop.VirtualKeyFromKey( hotKey.Key ) );
 				if( error == 0 )
 				{
 					error = Marshal.GetLastWin32Error();
@@ -214,8 +214,8 @@ namespace Blitzy.Utility
 
 					if( error == 1409 )
 						throw new HotKeyAlreadyRegisteredException( e.Message, hotKey, e );
-					else
-						throw e;
+
+					throw e;
 				}
 			}
 			else
@@ -224,9 +224,9 @@ namespace Blitzy.Utility
 
 		private void UnregisterHotKey( int id )
 		{
-			if( (int)hwndSource.Handle != 0 )
+			if( (int)HwndSource.Handle != 0 )
 			{
-				int error = INativeMethods.Instance.UnregisterHotKey_Wrapper( hwndSource.Handle, id );
+				int error = INativeMethods.Instance.UnregisterHotKey_Wrapper( HwndSource.Handle, id );
 				if( error == 0 )
 				{
 					throw new Win32Exception( Marshal.GetLastWin32Error() );
@@ -244,7 +244,7 @@ namespace Blitzy.Utility
 		/// <summary>
 		/// All registered hotKeys
 		/// </summary>
-		public IEnumerable<HotKey> HotKeys { get { return hotKeys.Values; } }
+		public IEnumerable<HotKey> HotKeys { get { return _HotKeys.Values; } }
 
 		/// <summary>
 		/// Adds an hotKey.
@@ -255,15 +255,15 @@ namespace Blitzy.Utility
 			if( hotKey == null )
 				throw new ArgumentNullException( "hotKey" );
 			if( hotKey.Key == 0 )
-				throw new ArgumentNullException( "hotKey", "hotKey.Key == 0" );
-			if( hotKeys.ContainsValue( hotKey ) )
+				throw new ArgumentNullException( "hotKey", @"hotKey.Key == 0" );
+			if( _HotKeys.ContainsValue( hotKey ) )
 				throw new HotKeyAlreadyRegisteredException( "HotKey already registered!", hotKey );
 
-			int id = idGen.Next();
+			int id = IDGen.Next();
 			if( hotKey.Enabled )
 				RegisterHotKey( id, hotKey );
 			hotKey.PropertyChanged += hotKey_PropertyChanged;
-			hotKeys[id] = hotKey;
+			_HotKeys[id] = hotKey;
 		}
 
 		//Annotation: Can be replaced with "Random"-class
@@ -274,7 +274,7 @@ namespace Blitzy.Utility
 		/// <returns>True if success, otherwise false</returns>
 		public bool RemoveHotKey( HotKey hotKey )
 		{
-			var kvPair = hotKeys.FirstOrDefault( h => h.Value == hotKey );
+			var kvPair = _HotKeys.FirstOrDefault( h => h.Value == hotKey );
 			if( kvPair.Value != null )
 			{
 				kvPair.Value.PropertyChanged -= hotKey_PropertyChanged;
@@ -284,7 +284,7 @@ namespace Blitzy.Utility
 					{
 						UnregisterHotKey( kvPair.Key );
 					}
-					return hotKeys.Remove( kvPair.Key );
+					return _HotKeys.Remove( kvPair.Key );
 				}
 				catch( Win32Exception )
 				{
@@ -297,7 +297,7 @@ namespace Blitzy.Utility
 
 		private void hotKey_PropertyChanged( object sender, PropertyChangedEventArgs e )
 		{
-			var kvPair = hotKeys.FirstOrDefault( h => h.Value == sender );
+			var kvPair = _HotKeys.FirstOrDefault( h => h.Value == sender );
 			if( kvPair.Value != null )
 			{
 				if( e.PropertyName == "Enabled" )
@@ -320,14 +320,14 @@ namespace Blitzy.Utility
 
 		private IntPtr WndProc( IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled )
 		{
-			if( msg == WM_HotKey )
+			if( msg == WM_HOTKEY )
 			{
-				if( hotKeys.Count == 0 )
+				if( _HotKeys.Count == 0 )
 					Debugger.Break();
 
-				if( hotKeys.ContainsKey( (int)wParam ) )
+				if( _HotKeys.ContainsKey( (int)wParam ) )
 				{
-					HotKey h = hotKeys[(int)wParam];
+					HotKey h = _HotKeys[(int)wParam];
 					h.RaiseOnHotKeyPressed();
 					if( HotKeyPressed != null )
 						HotKeyPressed( this, new HotKeyEventArgs( h ) );
@@ -354,35 +354,35 @@ namespace Blitzy.Utility
 
 		#region Destructor
 
-		private bool disposed;
+		private bool Disposed;
 
 		~HotKeyHost()
 		{
-			this.Dispose( false );
+			Dispose( false );
 		}
 
 		public void Dispose()
 		{
-			this.Dispose( true );
+			Dispose( true );
 			GC.SuppressFinalize( this );
 		}
 
 		private void Dispose( bool disposing )
 		{
-			if( disposed )
+			if( Disposed )
 				return;
 
 			if( disposing )
 			{
-				hwndSource.RemoveHook( hook );
+				HwndSource.RemoveHook( Hook );
 			}
 
-			for( int i = hotKeys.Count - 1; i >= 0; i-- )
+			for( int i = _HotKeys.Count - 1; i >= 0; i-- )
 			{
-				RemoveHotKey( hotKeys.Values.ElementAt( i ) );
+				RemoveHotKey( _HotKeys.Values.ElementAt( i ) );
 			}
 
-			disposed = true;
+			Disposed = true;
 		}
 
 		#endregion Destructor

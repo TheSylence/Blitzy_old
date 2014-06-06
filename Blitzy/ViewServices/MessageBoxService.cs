@@ -9,7 +9,7 @@ namespace Blitzy.ViewServices
 	[ExcludeFromCodeCoverage]
 	public class MessageBoxService : IDialogService
 	{
-		public object Show( System.Windows.Window parent, object parameter = null )
+		public object Show( Window parent, object parameter = null )
 		{
 			MessageBoxParameter info = parameter as MessageBoxParameter;
 			if( info == null )

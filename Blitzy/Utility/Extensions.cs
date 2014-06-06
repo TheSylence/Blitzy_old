@@ -13,6 +13,24 @@ namespace Blitzy.Utility
 {
 	internal static class Extensions
 	{
+		public static string FormatLocalized( this string str, params object[] args )
+		{
+			if( str == null )
+			{
+				throw new ArgumentNullException( "str" );
+			}
+
+			const string resRrefix = "Blitzy:Resources:";
+			if( !str.StartsWith( resRrefix, StringComparison.OrdinalIgnoreCase ) )
+			{
+				str = resRrefix + str;
+			}
+
+			string value = LocalizeDictionary.Instance.GetLocalizedObject( str, null, Thread.CurrentThread.CurrentUICulture ) as string;
+
+			return string.Format( value, args );
+		}
+
 		public static double GetDiceCoefficent( this string str, string other, int n = 3 )
 		{
 			string[] strGrams = str.GetNGrams( n );
@@ -20,7 +38,7 @@ namespace Blitzy.Utility
 
 			int matches = strGrams.Intersect( otherGrams ).Count();
 
-			return ( 2.0 * matches ) / (double)( strGrams.Length + otherGrams.Length );
+			return ( 2.0 * matches ) / ( strGrams.Length + otherGrams.Length );
 		}
 
 		public static string GetNameFromExpression<T>( this Expression<Func<T, object>> exp )
@@ -70,24 +88,6 @@ namespace Blitzy.Utility
 			return value;
 		}
 
-		public static string FormatLocalized( this string str, params object[] args )
-		{
-			if( str == null )
-			{
-				throw new ArgumentNullException( "str" );
-			}
-
-			const string resRrefix = "Blitzy:Resources:";
-			if( !str.StartsWith( resRrefix, StringComparison.OrdinalIgnoreCase ) )
-			{
-				str = resRrefix + str;
-			}
-
-			string value = LocalizeDictionary.Instance.GetLocalizedObject( str, null, Thread.CurrentThread.CurrentUICulture ) as string;
-
-			return string.Format( value, args );
-		}
-
 		public static string WildcardToRegex( this string pattern, bool wholeString = false )
 		{
 			string ex = Regex.Escape( pattern ).Replace( @"\*", ".*" ).Replace( @"\?", "." );
@@ -103,8 +103,8 @@ namespace Blitzy.Utility
 		internal static DateTime LinkerTimestamp( this Assembly assembly )
 		{
 			string filePath = assembly.Location;
-			const int c_PeHeaderOffset = 60;
-			const int c_LinkerTimestampOffset = 8;
+			const int peHeaderOffset = 60;
+			const int linkerTimestampOffset = 8;
 			byte[] b = new byte[2048];
 			Stream s = null;
 
@@ -121,8 +121,8 @@ namespace Blitzy.Utility
 				}
 			}
 
-			int i = BitConverter.ToInt32( b, c_PeHeaderOffset );
-			int secondsSince1970 = BitConverter.ToInt32( b, i + c_LinkerTimestampOffset );
+			int i = BitConverter.ToInt32( b, peHeaderOffset );
+			int secondsSince1970 = BitConverter.ToInt32( b, i + linkerTimestampOffset );
 			DateTime dt = new DateTime( 1970, 1, 1, 0, 0, 0 );
 			dt = dt.AddSeconds( secondsSince1970 );
 			dt = dt.AddHours( TimeZone.CurrentTimeZone.GetUtcOffset( dt ).Hours );
@@ -133,7 +133,6 @@ namespace Blitzy.Utility
 		/// Gets the dice coefficent of this string with another string.
 		/// </summary>
 		/// <param name="str">This string.</param>
-		/// <param name="other">The other string to compute the coefficent with.</param>
 		/// <param name="n">The length of the N-Grams that is used</param>
 		/// <returns>A factor between 0 and 1 that coresponds to the Dice-Coefficent </returns>
 		private static string[] GetNGrams( this string str, int n )

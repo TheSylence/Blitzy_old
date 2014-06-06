@@ -109,10 +109,8 @@ namespace Blitzy.Model
 			{
 				return 1;
 			}
-			else
-			{
-				return n * Fac( n - 1 );
-			}
+
+			return n * Fac( n - 1 );
 		}
 	}
 

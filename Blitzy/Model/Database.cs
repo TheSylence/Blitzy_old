@@ -2,31 +2,34 @@
 
 using System;
 using System.Data.SQLite;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 
 namespace Blitzy.Model
 {
-	internal class Database : BaseObject, IDisposable
+	internal class Database : BaseObject
 	{
 		#region Constructor
 
 		public Database()
 		{
-			SQLiteConnectionStringBuilder connectionSB = new SQLiteConnectionStringBuilder();
-			connectionSB.JournalMode = SQLiteJournalModeEnum.Wal;
+			SQLiteConnectionStringBuilder connectionStringBuilder = new SQLiteConnectionStringBuilder
+			{
+				JournalMode = SQLiteJournalModeEnum.Wal
+			};
 
 			if( RuntimeConfig.Tests )
 			{
-				connectionSB.FullUri = ":memory:";
+				connectionStringBuilder.FullUri = ":memory:";
 				Existed = false;
 			}
 			else
 			{
-				connectionSB.DataSource = Path.Combine( Constants.DataPath, Constants.DataFileName );
-				Existed = File.Exists( connectionSB.DataSource );
+				connectionStringBuilder.DataSource = Path.Combine( Constants.DataPath, Constants.DataFileName );
+				Existed = File.Exists( connectionStringBuilder.DataSource );
 			}
 
-			Connection = ToDispose( new SQLiteConnection( connectionSB.ToString() ) );
+			Connection = ToDispose( new SQLiteConnection( connectionStringBuilder.ToString() ) );
 			Connection.Open();
 		}
 
@@ -34,7 +37,7 @@ namespace Blitzy.Model
 
 		#region Methods
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities" )]
+		[SuppressMessage( "Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities" )]
 		internal bool CheckExistance()
 		{
 			if( !Existed )
@@ -72,7 +75,7 @@ namespace Blitzy.Model
 
 		#region Attributes
 
-		private bool Existed;
+		private readonly bool Existed;
 
 		#endregion Attributes
 	}

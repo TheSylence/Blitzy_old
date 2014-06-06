@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
@@ -51,9 +52,10 @@ namespace Blitzy.Plugin.System
 		{
 			if( Items == null )
 			{
-				Items = new List<CommandItem>();
-
-				Items.Add( CommandItem.Create( "weby", "OpenWebsite".Localize(), this, "Weby.png" ) );
+				Items = new List<CommandItem>
+				{
+					CommandItem.Create( "weby", "OpenWebsite".Localize(), this, "Weby.png" )
+				};
 
 				IEnumerable<IDictionary<string, object>> sites = Host.Database.Select( this, "websites", new[] { "Name", "Description", "URL", "Icon" } );
 				foreach( IDictionary<string, object> site in sites )
@@ -84,14 +86,14 @@ namespace Blitzy.Plugin.System
 			yield return parent;
 		}
 
-		[global::System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities" )]
+		[SuppressMessage( "Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities" )]
 		public bool Load( IPluginHost host, string oldVersion = null )
 		{
 			Host = host;
 
 			if( oldVersion == null )
 			{
-				TableColumn[] columns = new TableColumn[]
+				TableColumn[] columns =
 				{
 					new TableColumn( "WebyID", ColumnType.Numeric ),
 					new TableColumn( "Name", ColumnType.Text, 50 ),
@@ -104,14 +106,14 @@ namespace Blitzy.Plugin.System
 					return false;
 				}
 
-				Dictionary<string, object>[] values = new Dictionary<string, object>[]
+				Dictionary<string, object>[] values =
 				{
 					new Dictionary<string,object>{ {"WebyID", 1 }, {"Name", "google" }, {"Url", "https://www.google.com/search?source=Blitzy&q={0}" }, {"Description", "Search the internet using Google"}, {"Icon", "https://www.google.de/images/google_favicon_128.png" } },
 					new Dictionary<string,object>{ {"WebyID", 2 }, {"Name", "wiki" }, {"Url", "http://en.wikipedia.org/wiki/{0}" }, {"Description", "Search in wikipedia (en)" }, {"Icon", "http://bits.wikimedia.org/favicon/wikipedia.ico"} },
 					new Dictionary<string,object>{ {"WebyID", 3 }, {"Name", "youtube" }, {"Url", "http://www.youtube.com/results?search_query={0}" }, {"Description", "Search in YouTube" }, {"Icon", "http://s.ytimg.com/yts/img/favicon-vfldLzJxy.ico" } },
 					new Dictionary<string,object>{ {"WebyID", 4 }, {"Name", "bing" }, {"Url", "http://www.bing.com/search?q={0}" }, {"Description", "Seach the internet using Bing" }, {"Icon", "http://www.bing.com/s/a/bing_p.ico" } },
 					new Dictionary<string,object>{ {"WebyID", 5 }, {"Name", "facebook" }, {"Url", "https://www.facebook.com/search/results.php?q={0}"}, {"Description", "Search in facebook" }, {"Icon", "https://fbstatic-a.akamaihd.net/rsrc.php/yl/r/H3nktOa7ZMg.ico" } },
-					new Dictionary<string,object>{ {"WebyID", 6 }, {"Name", "wolfram" }, {"Url", "http://www.wolframalpha.com/input/?i={0}" }, {"Description", "Compute something using Wolfram Alpha" }, {"Icon", "http://www.wolframalpha.com/favicon_calculate.ico"} },
+					new Dictionary<string,object>{ {"WebyID", 6 }, {"Name", "wolfram" }, {"Url", "http://www.wolframalpha.com/input/?i={0}" }, {"Description", "Compute something using Wolfram Alpha" }, {"Icon", "http://www.wolframalpha.com/favicon_calculate.ico"} }
 				};
 
 				DbTransaction transaction = Host.Database.BeginTransaction();
@@ -162,13 +164,13 @@ namespace Blitzy.Plugin.System
 
 		#region Properties
 
-		private Guid? GUID;
+		private Guid? Guid;
 		private IPluginHost Host;
 		private List<CommandItem> Items;
 
 		public int ApiVersion
 		{
-			get { return Constants.APIVersion; }
+			get { return Constants.ApiVersion; }
 		}
 
 		public string Author
@@ -190,12 +192,12 @@ namespace Blitzy.Plugin.System
 		{
 			get
 			{
-				if( !GUID.HasValue )
+				if( !Guid.HasValue )
 				{
-					GUID = Guid.Parse( GuidString );
+					Guid = global::System.Guid.Parse( GuidString );
 				}
 
-				return GUID.Value;
+				return Guid.Value;
 			}
 		}
 

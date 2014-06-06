@@ -9,11 +9,11 @@ namespace Blitzy.Model
 	internal class DatabaseUpgrader : BaseObject
 	{
 		internal const int DatabaseVersion = 0;
-		private List<string[]> Queries = new List<string[]>();
+		private readonly List<string[]> Queries = new List<string[]>();
 
 		internal DatabaseUpgrader()
 		{
-			Queries.Add( new string[] { string.Empty } );
+			Queries.Add( new[] { string.Empty } );
 		}
 
 		[SuppressMessage( "Microsoft.Security", "CA2100" )]
@@ -24,11 +24,7 @@ namespace Blitzy.Model
 			{
 				LogWarning( "Database version is newer than maximum supported version... this should not be !? Old: {0}, Db: {1}", oldVersion, DatabaseVersion );
 			}
-			else if( oldVersion == DatabaseVersion )
-			{
-				return;
-			}
-			else
+			else if( oldVersion < DatabaseVersion )
 			{
 				for( int i = oldVersion + 1; i <= DatabaseVersion; ++i )
 				{

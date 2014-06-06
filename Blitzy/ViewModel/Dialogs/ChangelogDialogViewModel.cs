@@ -4,7 +4,6 @@ using System;
 using System.Linq;
 using System.Text;
 using Blitzy.Model;
-using Blitzy.ViewServices;
 using btbapi;
 using GalaSoft.MvvmLight.Command;
 

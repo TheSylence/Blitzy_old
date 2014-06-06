@@ -1,8 +1,13 @@
 ﻿// $Id$
 
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.Windows;
 using Blitzy.Messages;
+using Blitzy.Model;
 using Blitzy.Utility;
 using GalaSoft.MvvmLight.Command;
+using Hardcodet.Wpf.TaskbarNotification;
 
 namespace Blitzy.ViewModel
 {
@@ -10,13 +15,14 @@ namespace Blitzy.ViewModel
 	{
 		#region Constructor
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors" )]
+		[SuppressMessage( "Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors" )]
 		public NotifyIconViewModel()
 		{
 			if( !RuntimeConfig.Tests )
 			{
-				ViewModelLocator vmloc = (ViewModelLocator)App.Current.FindResource( "Locator" );
-				MainVM = vmloc.Main;
+				ViewModelLocator vmloc = (ViewModelLocator)Application.Current.FindResource( "Locator" );
+				Debug.Assert( vmloc != null );
+				MainVm = vmloc.Main;
 			}
 
 			_IconSource = "/Blitzy;component/Resources/TrayIcon.ico";
@@ -27,8 +33,8 @@ namespace Blitzy.ViewModel
 		{
 			base.RegisterMessages();
 
-			MessengerInstance.Register<CommandMessage>( this, msg => OnCommand( msg ) );
-			MessengerInstance.Register<VersionCheckMessage>( this, msg => OnVersionCheck( msg ) );
+			MessengerInstance.Register<CommandMessage>( this, OnCommand );
+			MessengerInstance.Register<VersionCheckMessage>( this, OnVersionCheck );
 		}
 
 		#endregion Constructor
@@ -59,11 +65,11 @@ namespace Blitzy.ViewModel
 			if( update )
 			{
 				string message = string.Format( "NewVersionAvailable".Localize(), msg.VersionInfo.LatestVersion );
-				MessengerInstance.Send<BalloonTipMessage>( new BalloonTipMessage( "UpdateAvailable".Localize(), message, Hardcodet.Wpf.TaskbarNotification.BalloonIcon.Info, msg ) );
+				MessengerInstance.Send( new BalloonTipMessage( "UpdateAvailable".Localize(), message, BalloonIcon.Info, msg ) );
 			}
 			else if( msg.ShowIfNewest )
 			{
-				MessengerInstance.Send<BalloonTipMessage>( new BalloonTipMessage( "VersionUpToDate".Localize(), "VersionUpToDateMessage".Localize(), Hardcodet.Wpf.TaskbarNotification.BalloonIcon.Info ) );
+				MessengerInstance.Send( new BalloonTipMessage( "VersionUpToDate".Localize(), "VersionUpToDateMessage".Localize(), BalloonIcon.Info ) );
 			}
 		}
 
@@ -109,7 +115,7 @@ namespace Blitzy.ViewModel
 
 		private bool CanExecuteSettingsCommand()
 		{
-			return MainVM.SettingsCommand.CanExecute( null );
+			return MainVm.SettingsCommand.CanExecute( null );
 		}
 
 		private bool CanExecuteShowCommand()
@@ -119,17 +125,17 @@ namespace Blitzy.ViewModel
 
 		private void ExecuteQuitCommand()
 		{
-			MessengerInstance.Send<InternalCommandMessage>( new InternalCommandMessage( "quit" ) );
+			MessengerInstance.Send( new InternalCommandMessage( "quit" ) );
 		}
 
 		private void ExecuteSettingsCommand()
 		{
-			MainVM.SettingsCommand.Execute( null );
+			MainVm.SettingsCommand.Execute( null );
 		}
 
 		private void ExecuteShowCommand()
 		{
-			MainVM.RaiseShow();
+			MainVm.RaiseShow();
 		}
 
 		#endregion Commands
@@ -174,7 +180,7 @@ namespace Blitzy.ViewModel
 		{
 			get
 			{
-				bool visible = MainVM.Settings.GetValue<bool>( Model.SystemSetting.TrayIcon );
+				bool visible = MainVm.Settings.GetValue<bool>( SystemSetting.TrayIcon );
 				return visible;
 			}
 		}
@@ -183,7 +189,7 @@ namespace Blitzy.ViewModel
 
 		#region Attributes
 
-		internal MainViewModel MainVM;
+		internal MainViewModel MainVm;
 
 		#endregion Attributes
 	}

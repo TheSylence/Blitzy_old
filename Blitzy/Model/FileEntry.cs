@@ -3,6 +3,8 @@
 using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 
@@ -49,7 +51,7 @@ namespace Blitzy.Model
 			return hash;
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Security",
+		[SuppressMessage( "Microsoft.Security",
 			"CA2100:Review SQL queries for security vulnerabilities", Justification = "Query is prepared" )]
 		internal static void CreateBatchStatement( SQLiteCommand cmd, IEnumerable<FileEntry> entries )
 		{
@@ -60,27 +62,27 @@ namespace Blitzy.Model
 			sb.Append( string.Join( ",", entries.Select( entry =>
 				{
 					SQLiteParameter param = cmd.CreateParameter();
-					param.ParameterName = "cmd" + cnt.ToString();
+					param.ParameterName = "cmd" + cnt.ToString( CultureInfo.InvariantCulture );
 					param.Value = entry.Command;
 					cmd.Parameters.Add( param );
 
 					param = cmd.CreateParameter();
-					param.ParameterName = "name" + cnt.ToString();
+					param.ParameterName = "name" + cnt.ToString( CultureInfo.InvariantCulture );
 					param.Value = entry.Name;
 					cmd.Parameters.Add( param );
 
 					param = cmd.CreateParameter();
-					param.ParameterName = "icon" + cnt.ToString();
+					param.ParameterName = "icon" + cnt.ToString( CultureInfo.InvariantCulture );
 					param.Value = entry.Icon;
 					cmd.Parameters.Add( param );
 
 					param = cmd.CreateParameter();
-					param.ParameterName = "type" + cnt.ToString();
+					param.ParameterName = "type" + cnt.ToString( CultureInfo.InvariantCulture );
 					param.Value = entry.Type;
 					cmd.Parameters.Add( param );
 
 					param = cmd.CreateParameter();
-					param.ParameterName = "args" + cnt.ToString();
+					param.ParameterName = "args" + cnt.ToString( CultureInfo.InvariantCulture );
 					param.Value = entry.Arguments;
 					cmd.Parameters.Add( param );
 

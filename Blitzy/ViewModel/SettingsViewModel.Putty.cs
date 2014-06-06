@@ -11,11 +11,11 @@ namespace Blitzy.ViewModel
 	{
 		#region Constructor
 
-		public PuttySettingsViewModel( SettingsViewModel baseVM )
-			: base( baseVM )
+		public PuttySettingsViewModel( SettingsViewModel baseVm )
+			: base( baseVm )
 		{
-			_PuttyPath = BaseVM.Settings.GetPluginSetting<string>( Putty.GuidString, Putty.PathKey );
-			_ImportSessions = BaseVM.Settings.GetPluginSetting<bool>( Putty.GuidString, Putty.ImportKey );
+			_PuttyPath = BaseVm.Settings.GetPluginSetting<string>( Putty.GuidString, Putty.PathKey );
+			_ImportSessions = BaseVm.Settings.GetPluginSetting<bool>( Putty.GuidString, Putty.ImportKey );
 		}
 
 		#endregion Constructor
@@ -24,8 +24,8 @@ namespace Blitzy.ViewModel
 
 		public override void Save()
 		{
-			BaseVM.Settings.SetPluginSetting( Putty.GuidString, Putty.PathKey, PuttyPath );
-			BaseVM.Settings.SetPluginSetting( Putty.GuidString, Putty.ImportKey, ImportSessions );
+			BaseVm.Settings.SetPluginSetting( Putty.GuidString, Putty.PathKey, PuttyPath );
+			BaseVm.Settings.SetPluginSetting( Putty.GuidString, Putty.ImportKey, ImportSessions );
 		}
 
 		#endregion Methods

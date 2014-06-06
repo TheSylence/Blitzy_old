@@ -39,11 +39,6 @@ namespace Blitzy.Controls
 	{
 		#region Constructor
 
-		static CommandTextBox()
-		{
-			//DefaultStyleKeyProperty.OverrideMetadata( typeof( CommandTextBox ), new FrameworkPropertyMetadata( typeof( CommandTextBox ) ) );
-		}
-
 		public CommandTextBox()
 		{
 			AcceptsTab = true;

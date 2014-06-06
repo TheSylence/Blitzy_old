@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using GalaSoft.MvvmLight;
 using log4net;
@@ -24,13 +25,13 @@ namespace Blitzy
 
 		/// <summary>
 		/// Releases unmanaged resources and performs other cleanup operations before the
-		/// <see cref="DisposableContainer"/> is reclaimed by garbage collection.
+		/// <see cref="BaseObject"/> is reclaimed by garbage collection.
 		/// </summary>
-		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1063:ImplementIDisposableCorrectly", Justification = "Only for debugging purposes" )]
+		[SuppressMessage( "Microsoft.Design", "CA1063:ImplementIDisposableCorrectly", Justification = "Only for debugging purposes" )]
 		~BaseObject()
 		{
 #if DEBUG
-			Debug.WriteLine( string.Format( CultureInfo.InvariantCulture, "Finalizer called on object: {0}", this ) );
+			Debug.WriteLine( "Finalizer called on object: {0}", this );
 #endif
 
 			Dispose( false );
@@ -84,7 +85,7 @@ namespace Blitzy
 				}
 
 				onStack = ObjectsToDispose.Pop();
-			} while( onStack != obj );
+			} while( !Equals( onStack, obj ) );
 
 			onStack.Dispose();
 

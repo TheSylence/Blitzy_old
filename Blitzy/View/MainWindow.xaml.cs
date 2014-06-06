@@ -14,10 +14,7 @@ namespace Blitzy.View
 		{
 			InitializeComponent();
 
-			Activated += ( s, e ) =>
-				{
-					txtInput.Focus();
-				};
+			Activated += ( s, e ) => txtInput.Focus();
 
 			Messenger.Default.Register<HistoryMessage>( this, msg =>
 			{

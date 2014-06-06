@@ -2,6 +2,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Windows;
 using Blitzy.View.Dialogs;
 using Blitzy.ViewModel.Dialogs;
@@ -9,7 +10,7 @@ using btbapi;
 
 namespace Blitzy.ViewServices
 {
-	[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+	[ExcludeFromCodeCoverage]
 	internal class ViewChangelogService : IDialogService
 	{
 		public object Show( Window parent, object parameter = null )
@@ -20,8 +21,7 @@ namespace Blitzy.ViewServices
 				throw new ArgumentException( "ViewChangelogService needs VersionInfo" );
 			}
 
-			ChangelogDialog dlg = new ChangelogDialog();
-			dlg.Owner = parent;
+			ChangelogDialog dlg = new ChangelogDialog { Owner = parent };
 
 			ChangelogDialogViewModel vm = dlg.DataContext as ChangelogDialogViewModel;
 			Debug.Assert( vm != null );

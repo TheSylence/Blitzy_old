@@ -39,11 +39,6 @@ namespace Blitzy.View
 
 		private void model_RequestClose( object sender, CloseViewEventArgs e )
 		{
-			if( OwnedWindows.Count > e.MaxWindowCount )
-			{
-				return;
-			}
-
 			try
 			{
 				DialogResult = e.Result;

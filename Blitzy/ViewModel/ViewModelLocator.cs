@@ -29,7 +29,7 @@ namespace Blitzy.ViewModel
 	{
 		#region Constructor
 
-		private static List<Type> ViewModelTypes = new List<Type>();
+		private static readonly List<Type> ViewModelTypes = new List<Type>();
 
 		/// <summary>
 		/// Initializes a new instance of the ViewModelLocator class.
@@ -144,7 +144,7 @@ namespace Blitzy.ViewModel
 
 		public static void Cleanup()
 		{
-			LogHelper.LogInfo( MethodInfo.GetCurrentMethod().DeclaringType, "Cleaning up ViewModels..." );
+			LogHelper.LogInfo( MethodBase.GetCurrentMethod().DeclaringType, "Cleaning up ViewModels..." );
 
 			foreach( Type type in ViewModelTypes )
 			{
@@ -155,7 +155,7 @@ namespace Blitzy.ViewModel
 				}
 			}
 
-			LogHelper.LogInfo( MethodInfo.GetCurrentMethod().DeclaringType, "All ViewModels cleared" );
+			LogHelper.LogInfo( MethodBase.GetCurrentMethod().DeclaringType, "All ViewModels cleared" );
 		}
 	}
 }

@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Data.SQLite;
 using System.Linq;
 using System.Reflection;
+using Blitzy.Plugin;
 using GalaSoft.MvvmLight;
 
 namespace Blitzy.Model
@@ -61,7 +62,7 @@ namespace Blitzy.Model
 		LastCatalogBuild
 	}
 
-	internal class Settings : ObservableObject, Blitzy.Plugin.ISettings
+	internal class Settings : ObservableObject, ISettings
 	{
 		#region Constructor
 
@@ -157,8 +158,7 @@ namespace Blitzy.Model
 				{
 					while( reader.Read() )
 					{
-						Folder f = new Folder();
-						f.ID = reader.GetInt32( 0 );
+						Folder f = new Folder { ID = reader.GetInt32( 0 ) };
 						f.Load( Connection );
 
 						Folders.Add( f );
@@ -263,12 +263,12 @@ namespace Blitzy.Model
 
 		#region ISettings
 
-		T Plugin.ISettings.GetSystemSetting<T>( SystemSetting setting )
+		T ISettings.GetSystemSetting<T>( SystemSetting setting )
 		{
 			return GetValue<T>( setting );
 		}
 
-		T Plugin.ISettings.GetValue<T>( Plugin.IPlugin plugin, string key )
+		T ISettings.GetValue<T>( IPlugin plugin, string key )
 		{
 			if( plugin == null )
 			{
@@ -282,7 +282,7 @@ namespace Blitzy.Model
 			return GetPluginSetting<T>( plugin.PluginID, key );
 		}
 
-		void Plugin.ISettings.RemoveValue( Plugin.IPlugin plugin, string key )
+		void ISettings.RemoveValue( IPlugin plugin, string key )
 		{
 			if( plugin == null )
 			{
@@ -297,7 +297,7 @@ namespace Blitzy.Model
 			RemovePluginSetting( plugin.PluginID, key );
 		}
 
-		void Plugin.ISettings.SetValue( Plugin.IPlugin plugin, string key, object value )
+		void ISettings.SetValue( IPlugin plugin, string key, object value )
 		{
 			if( plugin == null )
 			{

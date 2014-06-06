@@ -1,13 +1,14 @@
 ﻿// $Id$
 
 using System.Collections.Generic;
+using System.Data;
 using System.Data.Common;
 
 namespace Blitzy.Plugin
 {
 	public interface IDatabase
 	{
-		DbTransaction BeginTransaction( global::System.Data.IsolationLevel isolationLevel = global::System.Data.IsolationLevel.ReadCommitted );
+		DbTransaction BeginTransaction( IsolationLevel isolationLevel = IsolationLevel.ReadCommitted );
 
 		bool CreateTable( IPlugin plugin, string tableName, TableColumn[] columns );
 

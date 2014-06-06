@@ -35,34 +35,19 @@ namespace Blitzy.Model
 		{
 			CommandItem oldItem = CurrentItem;
 			Items.Clear();
-			if( resetItem )
-			{
-				CurrentItem = null;
-			}
-			else
-			{
-				CurrentItem = oldItem;
-			}
+			CurrentItem = resetItem ? null : oldItem;
 		}
 
 		public string[] GetCommandParts( string text )
 		{
-			if( text.Trim().EndsWith( Separator ) )
-			{
-				return text.Split( new[] { Separator }, StringSplitOptions.None ).Concat( new[] { string.Empty } ).ToArray();
-			}
-			else
-			{
-				return text.Split( new[] { Separator }, StringSplitOptions.None );
-			}
+			return text.Trim().EndsWith( Separator ) ?
+				text.Split( new[] { Separator }, StringSplitOptions.None ).Concat( new[] { string.Empty } ).ToArray() :
+				text.Split( new[] { Separator }, StringSplitOptions.None );
 		}
 
 		public void ResetExecutionCount()
 		{
-			foreach( int hash in CommandExecutionBuffer.Keys )
-			{
-				CommandExecutionBuffer[hash] = 0;
-			}
+			CommandExecutionBuffer.Clear();
 
 			using( SQLiteCommand cmd = Connection.CreateCommand() )
 			{
@@ -86,8 +71,8 @@ namespace Blitzy.Model
 			{
 				Collection<string> cmdParts = new Collection<string>( parts );
 
-				IEnumerable<CommandItem> subCommands = CurrentItem.Plugin.GetSubCommands( CurrentItem, cmdParts );
-				if( subCommands.Count() == 0 )
+				IEnumerable<CommandItem> subCommands = CurrentItem.Plugin.GetSubCommands( CurrentItem, cmdParts ).ToArray();
+				if( !subCommands.Any() )
 				{
 					items.Add( CurrentItem );
 				}
@@ -100,17 +85,20 @@ namespace Blitzy.Model
 			// TODO: I guess this can be further optimized:
 			// Don't sort by dice coefficent
 			// Instead get items with the same order and only apply dice to these
-			foreach( CommandItem item in items.OrderByDescending( it => GetCommandExecutionCount( it ) )
+			foreach( CommandItem item in items.OrderByDescending( GetCommandExecutionCount )
 				.ThenByDescending( it => it.Name.GetDiceCoefficent( command ) ).Take( Settings.GetValue<int>( SystemSetting.MaxMatchingItems ) ) )
 			{
 				Items.Add( item );
 			}
 		}
 
-		public void UpdateExecutionCount( string itemName, Guid pluginId )
+		public void UpdateExecutionCount( CommandItem item )
 		{
+			string itemName = item.Name;
+			Guid pluginId = item.Plugin.PluginID;
+
 			// Check if command was executed before
-			bool registered = false;
+			bool registered;
 			using( SQLiteCommand cmd = Connection.CreateCommand() )
 			{
 				cmd.CommandText = "SELECT ExecutionCount FROM commands WHERE Plugin = @plugin AND Name = @name;";
@@ -140,20 +128,21 @@ namespace Blitzy.Model
 				param.Value = pluginId;
 				cmd.Parameters.Add( param );
 
-				if( registered )
-				{
-					cmd.CommandText = "UPDATE commands SET ExecutionCount = ExecutionCount + 1 WHERE Plugin = @plugin AND Name = @name;";
-				}
-				else
-				{
-					cmd.CommandText = "INSERT INTO commands (Plugin, Name, ExecutionCount) VALUES (@plugin, @name, 1);";
-				}
+				cmd.CommandText = registered ?
+					"UPDATE commands SET ExecutionCount = ExecutionCount + 1 WHERE Plugin = @plugin AND Name = @name;" :
+					"INSERT INTO commands (Plugin, Name, ExecutionCount) VALUES (@plugin, @name, 1);";
 
 				cmd.ExecuteNonQuery();
 			}
+
+			int hash = item.GetHashCode();
+			if( CommandExecutionBuffer.ContainsKey( hash ) )
+			{
+				CommandExecutionBuffer[hash]++;
+			}
 		}
 
-		private int GetCommandExecutionCount( CommandItem item )
+		internal int GetCommandExecutionCount( CommandItem item )
 		{
 			int hash = item.GetHashCode();
 
@@ -240,10 +229,10 @@ namespace Blitzy.Model
 
 		#region Attributes
 
-		private Dictionary<int, int> CommandExecutionBuffer = new Dictionary<int, int>();
-		private SQLiteConnection Connection;
-		private PluginManager Plugins;
-		private Settings Settings;
+		private readonly Dictionary<int, int> CommandExecutionBuffer = new Dictionary<int, int>();
+		private readonly SQLiteConnection Connection;
+		private readonly PluginManager Plugins;
+		private readonly Settings Settings;
 
 		#endregion Attributes
 	}

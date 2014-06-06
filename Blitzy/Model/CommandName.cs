@@ -54,7 +54,7 @@ namespace Blitzy.Model
 					match = true;
 					for( int i = 0; i < input.Length && i <= Words.Length; ++i )
 					{
-						if( !Words[i].StartsWith( input[i].ToString(), true, CultureInfo.CurrentUICulture ) )
+						if( !Words[i].StartsWith( input[i].ToString( CultureInfo.InvariantCulture ), true, CultureInfo.CurrentUICulture ) )
 						{
 							match = false;
 							break;
@@ -76,14 +76,14 @@ namespace Blitzy.Model
 
 		#region Attributes
 
-		private string Name;
-		private string[] Words;
+		private readonly string Name;
+		private readonly string[] Words;
 
 		#endregion Attributes
 
 		#region Constants
 
-		private static char[] SplitChars = new[] { ' ', '-', '.', ',', ';', '/', '\\', };
+		private static readonly char[] SplitChars = { ' ', '-', '.', ',', ';', '/', '\\' };
 
 		#endregion Constants
 	}

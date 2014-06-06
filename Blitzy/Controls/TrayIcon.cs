@@ -1,6 +1,7 @@
 ﻿// $Id$
 
 using System.Diagnostics.CodeAnalysis;
+using System.Windows;
 using Blitzy.Messages;
 using Blitzy.Utility;
 using GalaSoft.MvvmLight.Messaging;
@@ -15,10 +16,10 @@ namespace Blitzy.Controls
 
 		public TrayIcon()
 		{
-			Messenger.Default.Register<CommandMessage>( this, msg => OnCommand( msg ) );
-			Messenger.Default.Register<BalloonTipMessage>( this, msg => OnBallon( msg ) );
+			Messenger.Default.Register<CommandMessage>( this, OnCommand );
+			Messenger.Default.Register<BalloonTipMessage>( this, OnBallon );
 
-			this.TrayBalloonTipClicked += TrayIcon_TrayBalloonTipClicked;
+			TrayBalloonTipClicked += TrayIcon_TrayBalloonTipClicked;
 		}
 
 		#endregion Constructor
@@ -39,7 +40,7 @@ namespace Blitzy.Controls
 			}
 		}
 
-		private void TrayIcon_TrayBalloonTipClicked( object sender, System.Windows.RoutedEventArgs e )
+		private void TrayIcon_TrayBalloonTipClicked( object sender, RoutedEventArgs e )
 		{
 			Messenger.Default.Send( new BalloonActivatedMessage( BallonToken ) );
 		}

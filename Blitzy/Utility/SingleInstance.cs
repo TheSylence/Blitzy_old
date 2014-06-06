@@ -2,8 +2,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Threading;
 
 namespace Blitzy.Utility
@@ -12,7 +14,7 @@ namespace Blitzy.Utility
 	{
 		#region Constructor
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline" )]
+		[SuppressMessage( "Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline" )]
 		static SingleInstance()
 		{
 			WM_SHOWFIRSTINSTANCE = INativeMethods.Instance.RegisterWindowMessage_Wrapper( "WM_SHOWFIRSTINSTANCE|{0}", AssemblyGuid );
@@ -29,19 +31,17 @@ namespace Blitzy.Utility
 
 		internal static bool Start()
 		{
-			string name;
-
 #if DEBUG
-			name = "Blitzy.Debug";
+			string name = "Blitzy.Debug";
 			if( RuntimeConfig.Tests )
 			{
 				name += ".Test";
 			}
 #else
-			name = string.Format( System.Globalization.CultureInfo.InvariantCulture, "Local\\{0}", AssemblyGuid );
+			string name = string.Format( System.Globalization.CultureInfo.InvariantCulture, "Local\\{0}", AssemblyGuid );
 #endif
 
-			bool onlyInstance = false;
+			bool onlyInstance;
 			AppMutex = new Mutex( true, name, out onlyInstance );
 			return onlyInstance;
 		}
@@ -60,8 +60,8 @@ namespace Blitzy.Utility
 		{
 			get
 			{
-				IEnumerable<System.Runtime.InteropServices.GuidAttribute> attributes = Assembly.GetExecutingAssembly().GetCustomAttributes<System.Runtime.InteropServices.GuidAttribute>();
-				if( attributes == null || attributes.Count() == 0 )
+				IEnumerable<GuidAttribute> attributes = Assembly.GetExecutingAssembly().GetCustomAttributes<GuidAttribute>().ToArray();
+				if( !attributes.Any() )
 				{
 					return string.Empty;
 				}

@@ -13,6 +13,7 @@ using Blitzy.Plugin;
 using Blitzy.ViewServices;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Threading;
+using CommandManager = Blitzy.Model.CommandManager;
 
 namespace Blitzy.ViewModel
 {
@@ -37,17 +38,16 @@ namespace Blitzy.ViewModel
 				Settings.Load();
 			}
 
-			APIDatabase = ToDispose( new PluginDatabase( Database.Connection ) );
+			ApiDatabase = ToDispose( new PluginDatabase( Database.Connection ) );
 			Plugins = ToDispose( new PluginManager( this, Database.Connection ) );
 			Plugins.LoadPlugins();
 
-			CmdManager = ToDispose( new Blitzy.Model.CommandManager( Database.Connection, Settings, Plugins ) );
+			CmdManager = ToDispose( new CommandManager( Database.Connection, Settings, Plugins ) );
 
 			int rebuildTime = Settings.GetValue<int>( SystemSetting.AutoCatalogRebuild );
 			if( rebuildTime > 0 )
 			{
-				RebuildTimer = new DispatcherTimer();
-				RebuildTimer.Interval = TimeSpan.FromMinutes( rebuildTime );
+				RebuildTimer = new DispatcherTimer { Interval = TimeSpan.FromMinutes( rebuildTime ) };
 				RebuildTimer.Tick += RebuildTimer_Tick;
 				RebuildTimer.Start();
 			}
@@ -63,7 +63,7 @@ namespace Blitzy.ViewModel
 			base.RegisterMessages();
 
 			MessengerInstance.Register<InternalCommandMessage>( this, msg => OnInternalCommand( msg.Command ) );
-			MessengerInstance.Register<CommandMessage>( this, msg => OnCommand( msg ) );
+			MessengerInstance.Register<CommandMessage>( this, OnCommand );
 		}
 
 		#endregion Constructor
@@ -259,7 +259,7 @@ namespace Blitzy.ViewModel
 			if( CommandInput.EndsWith( CmdManager.Separator ) )
 			{
 				CommandInput = CommandInput.Substring( 0, CommandInput.Length - CmdManager.Separator.Length );
-				MessengerInstance.Send<InputCaretPositionMessage>( new InputCaretPositionMessage( CommandInput.Length ) );
+				MessengerInstance.Send( new InputCaretPositionMessage( CommandInput.Length ) );
 
 				return true;
 			}
@@ -271,16 +271,14 @@ namespace Blitzy.ViewModel
 		{
 			if( Keyboard.IsKeyDown( Key.LeftCtrl ) || Keyboard.IsKeyDown( Key.RightCtrl ) )
 			{
-				MessengerInstance.Send<HistoryMessage>( new HistoryMessage( HistoryMessageType.Show, History ) );
-				MessengerInstance.Send<HistoryMessage>( new HistoryMessage( HistoryMessageType.Down ) );
+				MessengerInstance.Send( new HistoryMessage( HistoryMessageType.Show, History ) );
+				MessengerInstance.Send( new HistoryMessage( HistoryMessageType.Down ) );
 				return true;
 			}
-			else
-			{
-				int idx = CmdManager.Items.IndexOf( CmdManager.CurrentItem );
-				SelectedCommandIndex = Math.Min( CmdManager.Items.Count, idx + 1 );
-				return true;
-			}
+
+			int idx = CmdManager.Items.IndexOf( CmdManager.CurrentItem );
+			SelectedCommandIndex = Math.Min( CmdManager.Items.Count, idx + 1 );
+			return true;
 		}
 
 		internal bool OnKeyEscape()
@@ -302,8 +300,8 @@ namespace Blitzy.ViewModel
 
 				CommandInput = hist;
 
-				MessengerInstance.Send<HistoryMessage>( new HistoryMessage( HistoryMessageType.Hide ) );
-				MessengerInstance.Send<InputCaretPositionMessage>( new InputCaretPositionMessage( CommandInput.Length ) );
+				MessengerInstance.Send( new HistoryMessage( HistoryMessageType.Hide ) );
+				MessengerInstance.Send( new InputCaretPositionMessage( CommandInput.Length ) );
 				return true;
 			}
 
@@ -356,11 +354,7 @@ namespace Blitzy.ViewModel
 			}
 			if( CmdManager.CurrentItem.AcceptsData )
 			{
-				bool add = false;
-				if( commandParts.Count == 1 )
-				{
-					add = true;
-				}
+				bool add = commandParts.Count == 1;
 
 				if( add )
 				{
@@ -369,7 +363,7 @@ namespace Blitzy.ViewModel
 			}
 
 			CommandInput = string.Join( CmdManager.Separator, commandParts );
-			MessengerInstance.Send<InputCaretPositionMessage>( new InputCaretPositionMessage( CommandInput.Length ) );
+			MessengerInstance.Send( new InputCaretPositionMessage( CommandInput.Length ) );
 			return true;
 		}
 
@@ -377,16 +371,14 @@ namespace Blitzy.ViewModel
 		{
 			if( Keyboard.IsKeyDown( Key.LeftCtrl ) || Keyboard.IsKeyDown( Key.RightCtrl ) )
 			{
-				MessengerInstance.Send<HistoryMessage>( new HistoryMessage( HistoryMessageType.Show, History ) );
-				MessengerInstance.Send<HistoryMessage>( new HistoryMessage( HistoryMessageType.Up ) );
+				MessengerInstance.Send( new HistoryMessage( HistoryMessageType.Show, History ) );
+				MessengerInstance.Send( new HistoryMessage( HistoryMessageType.Up ) );
 				return true;
 			}
-			else
-			{
-				int idx = CmdManager.Items.IndexOf( CmdManager.CurrentItem );
-				SelectedCommandIndex = Math.Max( 0, idx - 1 );
-				return true;
-			}
+
+			int idx = CmdManager.Items.IndexOf( CmdManager.CurrentItem );
+			SelectedCommandIndex = Math.Max( 0, idx - 1 );
+			return true;
 		}
 
 		private bool CanExecuteExecuteCommand()
@@ -428,10 +420,7 @@ namespace Blitzy.ViewModel
 
 			Action taskAction = () =>
 			{
-				DispatcherHelper.CheckBeginInvokeOnUI( () =>
-					{
-						MessengerInstance.Send<CommandMessage>( new CommandMessage( CommandStatus.Executing, null, Task.CurrentId ) );
-					} );
+				DispatcherHelper.CheckBeginInvokeOnUI( () => MessengerInstance.Send( new CommandMessage( CommandStatus.Executing, null, Task.CurrentId ) ) );
 				string msg = null;
 				bool result = false;
 
@@ -446,10 +435,7 @@ namespace Blitzy.ViewModel
 				}
 				finally
 				{
-					DispatcherHelper.CheckBeginInvokeOnUI( () =>
-					{
-						MessengerInstance.Send<CommandMessage>( new CommandMessage( result ? CommandStatus.Finished : CommandStatus.Error, msg, Task.CurrentId ) );
-					} );
+					DispatcherHelper.CheckBeginInvokeOnUI( () => MessengerInstance.Send( new CommandMessage( result ? CommandStatus.Finished : CommandStatus.Error, msg, Task.CurrentId ) ) );
 				}
 			};
 
@@ -468,9 +454,8 @@ namespace Blitzy.ViewModel
 			{
 				tmp = tmp.Parent;
 			}
-			string itemName = tmp.Name;
 
-			CmdManager.UpdateExecutionCount( itemName, item.Plugin.PluginID );
+			CmdManager.UpdateExecutionCount( tmp );
 			History.AddItem( CommandInput );
 
 			CommandInput = null;
@@ -517,7 +502,7 @@ namespace Blitzy.ViewModel
 		{
 			if( args.Key == Key.LeftCtrl || args.Key == Key.RightCtrl )
 			{
-				MessengerInstance.Send<HistoryMessage>( new HistoryMessage( HistoryMessageType.Hide ) );
+				MessengerInstance.Send( new HistoryMessage( HistoryMessageType.Hide ) );
 			}
 		}
 
@@ -562,7 +547,7 @@ namespace Blitzy.ViewModel
 		private string _CommandInput;
 		private int _SelectedCommandIndex;
 
-		public Blitzy.Model.CommandManager CmdManager { get; private set; }
+		public CommandManager CmdManager { get; private set; }
 
 		public string CommandInfo
 		{
@@ -643,20 +628,20 @@ namespace Blitzy.ViewModel
 		#region Attributes
 
 		internal HashSet<int> TaskList = new HashSet<int>();
-		private DispatcherTimer RebuildTimer;
-		private object TaskListLock = new object();
+		private readonly DispatcherTimer RebuildTimer;
+		private readonly object TaskListLock = new object();
 
 		#endregion Attributes
 
 		#region IPluginHost
 
-		private PluginDatabase APIDatabase;
+		private readonly PluginDatabase ApiDatabase;
 
 		IDatabase IPluginHost.Database
 		{
 			get
 			{
-				return APIDatabase;
+				return ApiDatabase;
 			}
 		}
 
@@ -665,7 +650,7 @@ namespace Blitzy.ViewModel
 			get { return Settings; }
 		}
 
-		bool IPluginHost.IsPluginLoaded( System.Guid id )
+		bool IPluginHost.IsPluginLoaded( Guid id )
 		{
 			return Plugins.IsLoaded( id );
 		}

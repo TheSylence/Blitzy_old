@@ -38,11 +38,6 @@ namespace Blitzy.Controls
 	{
 		#region Constructor
 
-		static CommandListView()
-		{
-			//DefaultStyleKeyProperty.OverrideMetadata( typeof( CommandListBox ), new FrameworkPropertyMetadata( typeof( CommandListBox ) ) );
-		}
-
 		public CommandListView()
 		{
 			DependencyPropertyDescriptor dpd = DependencyPropertyDescriptor.FromProperty( SelectedIndexProperty, typeof( ListView ) );

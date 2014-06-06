@@ -10,7 +10,7 @@ namespace Blitzy
 	{
 		#region Constants
 
-		internal const int APIVersion = 1;
+		internal const int ApiVersion = 1;
 		internal const string PluginsFolderName = "plugins";
 		internal const string SoftwareName = "Blitzy";
 
@@ -18,12 +18,10 @@ namespace Blitzy
 		{
 			get
 			{
-				string fileName;
-
 #if DEBUG
-				fileName = "data_debug.db";
+				string fileName = "data_debug.db";
 #else
-				fileName = "data.db";
+				string fileName = "data.db";
 #endif
 
 				if( RuntimeConfig.Tests )

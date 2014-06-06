@@ -23,11 +23,12 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
+using FILETIME = System.Runtime.InteropServices.ComTypes.FILETIME;
 
 namespace Blitzy.Model.Shell
 {
 	// IShellLink.GetPath fFlags
-	[Flags()]
+	[Flags]
 	public enum SLGP_FLAGS
 	{
 		SLGP_SHORTPATH = 0x1,
@@ -36,7 +37,7 @@ namespace Blitzy.Model.Shell
 	}
 
 	// IShellLink.Resolve fFlags
-	[Flags()]
+	[Flags]
 	public enum SLR_FLAGS
 	{
 		SLR_NO_UI = 0x1,
@@ -50,25 +51,25 @@ namespace Blitzy.Model.Shell
 	}
 
 	[
-	  ComImport(),
+	  ComImport,
 	  InterfaceType( ComInterfaceType.InterfaceIsIUnknown ),
 	  Guid( "000214F9-0000-0000-C000-000000000046" )
 	]
 	public interface IShellLinkW
 	{
 		void GetArguments(
-		  [Out(), MarshalAs( UnmanagedType.LPWStr )] StringBuilder pszArgs,
+		  [Out, MarshalAs( UnmanagedType.LPWStr )] StringBuilder pszArgs,
 		  int cchMaxPath );
 
 		void GetDescription(
-		  [Out(), MarshalAs( UnmanagedType.LPWStr )] StringBuilder pszName,
+		  [Out, MarshalAs( UnmanagedType.LPWStr )] StringBuilder pszName,
 		  int cchMaxName );
 
 		void GetHotkey(
 		  out short pwHotkey );
 
 		void GetIconLocation(
-		  [Out(), MarshalAs( UnmanagedType.LPWStr )] StringBuilder pszIconPath,
+		  [Out, MarshalAs( UnmanagedType.LPWStr )] StringBuilder pszIconPath,
 		  int cchIconPath,
 		  out int piIcon );
 
@@ -76,7 +77,7 @@ namespace Blitzy.Model.Shell
 		  out IntPtr ppidl );
 
 		void GetPath(
-		  [Out(), MarshalAs( UnmanagedType.LPWStr )] StringBuilder pszFile,
+		  [Out, MarshalAs( UnmanagedType.LPWStr )] StringBuilder pszFile,
 		  int cchMaxPath,
 		  out WIN32_FIND_DATAW pfd,
 		  SLGP_FLAGS fFlags );
@@ -85,7 +86,7 @@ namespace Blitzy.Model.Shell
 		  out int piShowCmd );
 
 		void GetWorkingDirectory(
-		  [Out(), MarshalAs( UnmanagedType.LPWStr )] StringBuilder pszDir,
+		  [Out, MarshalAs( UnmanagedType.LPWStr )] StringBuilder pszDir,
 		  int cchMaxPath );
 
 		void Resolve(
@@ -122,13 +123,13 @@ namespace Blitzy.Model.Shell
 		  [MarshalAs( UnmanagedType.LPWStr )] string pszDir );
 	}
 
-	[StructLayoutAttribute( LayoutKind.Sequential, CharSet = CharSet.Ansi )]
+	[StructLayout( LayoutKind.Sequential, CharSet = CharSet.Ansi )]
 	public struct WIN32_FIND_DATAA
 	{
 		public int dwFileAttributes;
-		public System.Runtime.InteropServices.ComTypes.FILETIME ftCreationTime;
-		public System.Runtime.InteropServices.ComTypes.FILETIME ftLastAccessTime;
-		public System.Runtime.InteropServices.ComTypes.FILETIME ftLastWriteTime;
+		public FILETIME ftCreationTime;
+		public FILETIME ftLastAccessTime;
+		public FILETIME ftLastWriteTime;
 		public int nFileSizeHigh;
 		public int nFileSizeLow;
 		public int dwReserved0;
@@ -143,13 +144,13 @@ namespace Blitzy.Model.Shell
 		private const int MAX_PATH = 260;
 	}
 
-	[StructLayoutAttribute( LayoutKind.Sequential, CharSet = CharSet.Unicode )]
+	[StructLayout( LayoutKind.Sequential, CharSet = CharSet.Unicode )]
 	public struct WIN32_FIND_DATAW
 	{
 		public int dwFileAttributes;
-		public System.Runtime.InteropServices.ComTypes.FILETIME ftCreationTime;
-		public System.Runtime.InteropServices.ComTypes.FILETIME ftLastAccessTime;
-		public System.Runtime.InteropServices.ComTypes.FILETIME ftLastWriteTime;
+		public FILETIME ftCreationTime;
+		public FILETIME ftLastAccessTime;
+		public FILETIME ftLastWriteTime;
 		public int nFileSizeHigh;
 		public int nFileSizeLow;
 		public int dwReserved0;
@@ -165,7 +166,7 @@ namespace Blitzy.Model.Shell
 	}
 
 	[
-	  ComImport(),
+	  ComImport,
 	  Guid( "00021401-0000-0000-C000-000000000046" )
 	]
 	public class ShellLink  // : IPersistFile, IShellLinkA, IShellLinkW

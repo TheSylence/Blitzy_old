@@ -1,11 +1,9 @@
 ﻿// $Id$
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
+using System.Net;
 using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
 using Blitzy.Messages;
 using Blitzy.Utility;
@@ -21,8 +19,8 @@ namespace Blitzy.Model
 
 		private UpdateChecker()
 		{
-			Messenger.Default.Register<BalloonActivatedMessage>( this, msg => OnBalloonActivated( msg ) );
-			Messenger.Default.Register<DownloadStatusMessage>( this, MessageTokens.DownloadSucessful, msg => OnSuccessfulDownload( msg ) );
+			Messenger.Default.Register<BalloonActivatedMessage>( this, OnBalloonActivated );
+			Messenger.Default.Register<DownloadStatusMessage>( this, MessageTokens.DownloadSucessful, OnSuccessfulDownload );
 		}
 
 		#endregion Constructor
@@ -33,22 +31,22 @@ namespace Blitzy.Model
 		{
 			Version currentVersion = Assembly.GetExecutingAssembly().GetName().Version;
 
-			LogHelper.LogInfo( MethodInfo.GetCurrentMethod().DeclaringType, "Checking for updates..." );
+			LogHelper.LogInfo( MethodBase.GetCurrentMethod().DeclaringType, "Checking for updates..." );
 			VersionInfo versionInfo = await API.CheckVersion( Constants.SoftwareName, currentVersion );
-			if( versionInfo.Status == System.Net.HttpStatusCode.OK )
+			if( versionInfo.Status == HttpStatusCode.OK )
 			{
-				LogHelper.LogInfo( MethodInfo.GetCurrentMethod().DeclaringType, "Latest available version is {0}", versionInfo.LatestVersion );
+				LogHelper.LogInfo( MethodBase.GetCurrentMethod().DeclaringType, "Latest available version is {0}", versionInfo.LatestVersion );
 				string downloadLink = null;
 				if( versionInfo.DownloadLink != null )
 				{
 					downloadLink = versionInfo.DownloadLink.ToString();
 				}
 
-				Messenger.Default.Send<VersionCheckMessage>( new VersionCheckMessage( currentVersion, versionInfo, showIfNewest ) );
+				Messenger.Default.Send( new VersionCheckMessage( currentVersion, versionInfo, showIfNewest ) );
 			}
 			else
 			{
-				LogHelper.LogWarning( MethodInfo.GetCurrentMethod().DeclaringType, "Failed to retrieve latest version: {0}", versionInfo.Status );
+				LogHelper.LogWarning( MethodBase.GetCurrentMethod().DeclaringType, "Failed to retrieve latest version: {0}", versionInfo.Status );
 			}
 
 			return versionInfo;
@@ -87,15 +85,7 @@ namespace Blitzy.Model
 
 		internal static UpdateChecker Instance
 		{
-			get
-			{
-				if( _Instance == null )
-				{
-					_Instance = new UpdateChecker();
-				}
-
-				return _Instance;
-			}
+			get { return _Instance ?? ( _Instance = new UpdateChecker() ); }
 		}
 
 		private API API
@@ -110,10 +100,8 @@ namespace Blitzy.Model
 				return new btbapi.API( APIEndPoint.Default );
 #endif
 				}
-				else
-				{
-					return new API( APIEndPoint.Localhost );
-				}
+
+				return new API( APIEndPoint.Localhost );
 			}
 		}
 

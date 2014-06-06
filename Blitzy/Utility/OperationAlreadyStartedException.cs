@@ -1,11 +1,13 @@
 ﻿// $Id$
 
 using System;
+using System.Diagnostics.CodeAnalysis;
+using System.Runtime.Serialization;
 
 namespace Blitzy.Utility
 {
 	[Serializable]
-	[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+	[ExcludeFromCodeCoverage]
 	public class OperationAlreadyStartedException : Exception
 	{
 		public OperationAlreadyStartedException()
@@ -23,8 +25,8 @@ namespace Blitzy.Utility
 		}
 
 		protected OperationAlreadyStartedException(
-		  System.Runtime.Serialization.SerializationInfo info,
-		  System.Runtime.Serialization.StreamingContext context )
+		  SerializationInfo info,
+		  StreamingContext context )
 			: base( info, context ) { }
 	}
 }

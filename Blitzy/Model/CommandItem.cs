@@ -33,7 +33,7 @@ namespace Blitzy.Model
 				throw new ArgumentNullException( "plugin" );
 			}
 
-			CommandItem item = new CommandItem()
+			CommandItem item = new CommandItem
 			{
 				Name = name,
 				Description = description,

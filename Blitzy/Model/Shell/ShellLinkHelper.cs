@@ -32,14 +32,9 @@ namespace Blitzy.Model.Shell
 
 					if( x64 == null )
 					{
-						if( Environment.Is64BitProcess )
-						{
-							x64 = Environment.GetFolderPath( Environment.SpecialFolder.ProgramFiles );
-						}
-						else
-						{
-							x64 = Environment.ExpandEnvironmentVariables( "%ProgramW6432%" );
-						}
+						x64 = Environment.Is64BitProcess ?
+							Environment.GetFolderPath( Environment.SpecialFolder.ProgramFiles ) :
+							Environment.ExpandEnvironmentVariables( "%ProgramW6432%" );
 					}
 
 					if( value.StartsWith( x86, StringComparison.OrdinalIgnoreCase ) )
@@ -56,8 +51,8 @@ namespace Blitzy.Model.Shell
 					if( windirenv == null )
 					{
 						windirenv = Environment.GetFolderPath( Environment.SpecialFolder.Windows );
-						sys32env = System.IO.Path.Combine( windirenv, "system32" );
-						sysNativeenv = System.IO.Path.Combine( windirenv, "sysnative" );
+						sys32env = Path.Combine( windirenv, "system32" );
+						sysNativeenv = Path.Combine( windirenv, "sysnative" );
 					}
 
 					if( value.StartsWith( sys32env, StringComparison.OrdinalIgnoreCase ) )
@@ -68,8 +63,8 @@ namespace Blitzy.Model.Shell
 					if( windir == null )
 					{
 						windir = "%windir%";
-						sys32 = System.IO.Path.Combine( windir, "system32" );
-						sysNative = System.IO.Path.Combine( windir, "sysnative" );
+						sys32 = Path.Combine( windir, "system32" );
+						sysNative = Path.Combine( windir, "sysnative" );
 					}
 
 					if( value.StartsWith( sys32, StringComparison.OrdinalIgnoreCase ) )

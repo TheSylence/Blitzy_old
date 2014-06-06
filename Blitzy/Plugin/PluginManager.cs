@@ -78,9 +78,9 @@ namespace Blitzy.Plugin
 					return;
 				}
 
-				if( plugin.ApiVersion != Constants.APIVersion )
+				if( plugin.ApiVersion != Constants.ApiVersion )
 				{
-					LogError( "Failed to load plugin because API Versions do not match. Current Version: {0}, Plugin Version: {1}", Constants.APIVersion, plugin.ApiVersion );
+					LogError( "Failed to load plugin because API Versions do not match. Current Version: {0}, Plugin Version: {1}", Constants.ApiVersion, plugin.ApiVersion );
 					return;
 				}
 
@@ -184,8 +184,8 @@ namespace Blitzy.Plugin
 
 		internal List<IPlugin> DisabledPlugins = new List<IPlugin>();
 		internal List<IPlugin> Plugins = new List<IPlugin>();
-		private SQLiteConnection Connection;
-		private IPluginHost Host;
+		private readonly SQLiteConnection Connection;
+		private readonly IPluginHost Host;
 
 		#endregion Attributes
 	}

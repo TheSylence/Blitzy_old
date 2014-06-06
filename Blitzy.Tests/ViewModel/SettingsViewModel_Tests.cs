@@ -151,7 +151,7 @@ namespace Blitzy.Tests.ViewModel
 		public void PropertyChangedTest()
 		{
 			PropertyChangedListener listener = new PropertyChangedListener( VM );
-			listener.Exclude<SettingsViewModel>( vm => vm.APIDatabase );
+			listener.Exclude<SettingsViewModel>( vm => vm.ApiDatabase );
 			listener.Exclude<SettingsViewModel>( vm => vm.BlitzyLicense );
 			listener.Exclude<SettingsViewModel>( vm => vm.Changelog );
 			listener.Exclude<SettingsViewModel>( vm => vm.CatalogBuilder );

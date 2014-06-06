@@ -5,10 +5,7 @@ using System.Collections.Generic;
 using System.Data.SQLite;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using Blitzy.Model;
 
 namespace Blitzy.Plugin.System
@@ -24,9 +21,11 @@ namespace Blitzy.Plugin.System
 
 		public bool ExecuteCommand( CommandItem command, CommandExecutionMode mode, IList<string> input, out string message )
 		{
-			ProcessStartInfo procInf = new ProcessStartInfo();
-			procInf.Arguments = command.UserData as string;
-			procInf.FileName = command.Description;
+			ProcessStartInfo procInf = new ProcessStartInfo
+			{
+				Arguments = command.UserData as string,
+				FileName = command.Description
+			};
 
 			if( mode == CommandExecutionMode.Secondary )
 			{
@@ -101,11 +100,11 @@ namespace Blitzy.Plugin.System
 
 		#region Properties
 
-		private Guid? GUID;
+		private Guid? Guid;
 
 		public int ApiVersion
 		{
-			get { return Constants.APIVersion; }
+			get { return Constants.ApiVersion; }
 		}
 
 		public string Author
@@ -127,12 +126,12 @@ namespace Blitzy.Plugin.System
 		{
 			get
 			{
-				if( !GUID.HasValue )
+				if( !Guid.HasValue )
 				{
-					GUID = Guid.Parse( "A41E22B3-52D0-42ED-8E27-76404108E393" );
+					Guid = global::System.Guid.Parse( "A41E22B3-52D0-42ED-8E27-76404108E393" );
 				}
 
-				return GUID.Value;
+				return Guid.Value;
 			}
 		}
 

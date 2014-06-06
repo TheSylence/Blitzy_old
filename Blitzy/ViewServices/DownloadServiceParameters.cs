@@ -1,10 +1,11 @@
 ﻿// $Id$
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Blitzy.ViewServices
 {
-	[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+	[ExcludeFromCodeCoverage]
 	internal class DownloadServiceParameters
 	{
 		public readonly Uri DownloadLink;

@@ -1,11 +1,13 @@
 ﻿// $Id$
 
+using System.Diagnostics.CodeAnalysis;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Interactivity;
 
 namespace Blitzy.Behaviors
 {
+	[ExcludeFromCodeCoverage]
 	public class HtmlBehavior : Behavior<WebBrowser>
 	{
 		public static readonly DependencyProperty HtmlProperty = DependencyProperty.RegisterAttached( "Html", typeof( string ),

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Data.SQLite;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
@@ -15,6 +16,7 @@ using Blitzy.ViewServices;
 using btbapi;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Threading;
+using CommandManager = System.Windows.Input.CommandManager;
 
 namespace Blitzy.ViewModel
 {
@@ -45,7 +47,7 @@ namespace Blitzy.ViewModel
 		{
 			base.RegisterMessages();
 
-			MessengerInstance.Register<CatalogStatusMessage>( this, msg => OnCatalogStatusUpdate( msg ) );
+			MessengerInstance.Register<CatalogStatusMessage>( this, OnCatalogStatusUpdate );
 		}
 
 		#endregion Constructor
@@ -123,7 +125,7 @@ namespace Blitzy.ViewModel
 				}
 			}
 
-			System.Windows.Input.CommandManager.InvalidateRequerySuggested();
+			CommandManager.InvalidateRequerySuggested();
 		}
 
 		#endregion Methods
@@ -351,7 +353,7 @@ namespace Blitzy.ViewModel
 				id = Settings.Folders.Max( f => f.ID ) + 1;
 			}
 
-			Settings.Folders.Add( new Folder() { Path = path, ID = id } );
+			Settings.Folders.Add( new Folder { Path = path, ID = id } );
 		}
 
 		private void ExecuteAddRuleCommand()
@@ -453,17 +455,17 @@ namespace Blitzy.ViewModel
 
 		private void ExecuteUpdateCatalogCommand()
 		{
-			MessengerInstance.Send<InternalCommandMessage>( new InternalCommandMessage( "catalog" ) );
+			MessengerInstance.Send( new InternalCommandMessage( "catalog" ) );
 		}
 
 		private void ExecuteUpdateCheckCommand()
 		{
 			Task.Run( async () =>
 			{
-				LatestVersionInfo = await UpdateChecker.Instance.CheckVersion( false );
-				if( LatestVersionInfo.Status == System.Net.HttpStatusCode.OK )
+				LatestVersionInfo = await UpdateChecker.Instance.CheckVersion();
+				if( LatestVersionInfo.Status == HttpStatusCode.OK )
 				{
-					DispatcherHelper.CheckBeginInvokeOnUI( () => System.Windows.Input.CommandManager.InvalidateRequerySuggested() );
+					DispatcherHelper.CheckBeginInvokeOnUI( CommandManager.InvalidateRequerySuggested );
 				}
 				else
 				{
@@ -775,7 +777,7 @@ namespace Blitzy.ViewModel
 
 		public API API { get; private set; }
 
-		public PluginDatabase APIDatabase { get; set; }
+		public PluginDatabase ApiDatabase { get; set; }
 
 		public string BlitzyLicense { get; set; }
 
@@ -1057,7 +1059,7 @@ namespace Blitzy.ViewModel
 
 		#region Attributes
 
-		private List<Folder> FoldersToRemove;
+		private readonly List<Folder> FoldersToRemove;
 
 		#endregion Attributes
 	}

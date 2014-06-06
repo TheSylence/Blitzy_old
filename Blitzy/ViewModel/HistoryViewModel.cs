@@ -1,6 +1,5 @@
 ﻿// $Id$
 
-using System;
 using Blitzy.Messages;
 using Blitzy.Model;
 
@@ -12,7 +11,7 @@ namespace Blitzy.ViewModel
 
 		public HistoryViewModel()
 		{
-			MessengerInstance.Register<HistoryMessage>( this, msg => OnMessage( msg ) );
+			MessengerInstance.Register<HistoryMessage>( this, OnMessage );
 		}
 
 		#endregion Constructor

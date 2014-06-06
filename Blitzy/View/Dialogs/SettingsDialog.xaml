@@ -146,7 +146,7 @@
 						</Grid>
 					</GroupBox>
 
-					<DockPanel Grid.Row="2" LastChildFill="True" Grid.ColumnSpan="2">
+					<DockPanel Grid.Row="2" LastChildFill="True" Grid.ColumnSpan="2" Grid.Column="0">
 						<Button Content="{lex:Loc UpdateCatalog}" DockPanel.Dock="Right" Command="{Binding UpdateCatalogCommand}" />
 						<Grid>
 							<ProgressBar VerticalAlignment="Center" MinHeight="20" IsEnabled="{Binding CatalogBuilder.IsBuilding}" Maximum="{Binding CatalogBuilder.ItemsToProcess}" Value="{Binding CatalogItemsProcessed}" />
@@ -156,7 +156,7 @@
 						</Grid>
 					</DockPanel>
 
-					<StackPanel Orientation="Horizontal" Grid.Row="3" Grid.ColumnSpan="2">
+					<StackPanel Orientation="Horizontal" Grid.Row="3" Grid.ColumnSpan="2" Grid.Column="0">
 						<TextBlock Text="{lex:LocText LastCatalogBuild, Suffix=':'}" />
 						<TextBlock Text="{Binding LastCatalogBuild}" Margin="5,0,20,0" />
 						<TextBlock Text="{lex:LocText ItemsInCatalog,Suffix=':'}" />
@@ -267,9 +267,11 @@
 							</Grid.ColumnDefinitions>
 
 							<TextBlock Text="{lex:Loc PathToPutty}" Grid.Row="0" Grid.ColumnSpan="2" />
-							<TextBox Text="{Binding PuttyPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1" VerticalAlignment="Center" Margin="5" Grid.ColumnSpan="2" />
+							<TextBox Text="{Binding PuttyPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1" VerticalAlignment="Center" Margin="5" Grid.ColumnSpan="2"
+							         Grid.Column="0" />
 							<Button Content="..." Command="{Binding BrowsePuttyCommand}" Grid.Row="1" Grid.Column="2" Width="25" MaxWidth="25" Style="{x:Null}" VerticalAlignment="Center" />
-							<CheckBox Content="{lex:Loc ImportSavedSessions}" IsChecked="{Binding ImportSessions}" Margin="5" Grid.Row="2" />
+							<CheckBox Content="{lex:Loc ImportSavedSessions}" IsChecked="{Binding ImportSessions}" Margin="5" Grid.Row="2"
+							          Grid.Column="0" />
 						</Grid>
 					</TabItem>
 				</TabControl>

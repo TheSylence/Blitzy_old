@@ -6,10 +6,8 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
 using System.Windows;
 using Blitzy.Model;
-using GalaSoft.MvvmLight.Threading;
 
 namespace Blitzy.ViewServices
 {
@@ -46,7 +44,7 @@ namespace Blitzy.ViewServices
 		/// </summary>
 		internal static void Clear()
 		{
-			Debug.Assert( App.Current == null );
+			Debug.Assert( Application.Current == null );
 
 			Services.Clear();
 			ManipServices.Clear();
@@ -79,7 +77,7 @@ namespace Blitzy.ViewServices
 		/// </summary>
 		internal static void RegisterManipService( Type type, IDataManipulationService service )
 		{
-			Debug.Assert( App.Current == null );
+			Debug.Assert( Application.Current == null );
 
 			ManipServices.Add( type, service );
 		}
@@ -89,7 +87,7 @@ namespace Blitzy.ViewServices
 		/// </summary>
 		internal static void RegisterService( Type type, IDialogService service )
 		{
-			Debug.Assert( App.Current == null );
+			Debug.Assert( Application.Current == null );
 
 			Services.Add( type, service );
 		}
@@ -99,17 +97,17 @@ namespace Blitzy.ViewServices
 		{
 			try
 			{
-				Type baseType = typeof( IDialogService );
-				foreach( Type type in Assembly.GetExecutingAssembly().GetTypes().Where( t => !t.IsAbstract && baseType.IsAssignableFrom( t ) ) )
+				Type[] baseType = { typeof( IDialogService ) };
+				foreach( Type type in Assembly.GetExecutingAssembly().GetTypes().Where( t => !t.IsAbstract && baseType[0].IsAssignableFrom( t ) ) )
 				{
-					LogHelper.LogDebug( MethodInfo.GetCurrentMethod().DeclaringType, "Registering DialogService {0}...", type );
+					LogHelper.LogDebug( MethodBase.GetCurrentMethod().DeclaringType, "Registering DialogService {0}...", type );
 					Services.Add( type, (IDialogService)Activator.CreateInstance( type ) );
 				}
 
-				baseType = typeof( IDataManipulationService );
-				foreach( Type type in Assembly.GetExecutingAssembly().GetTypes().Where( t => !t.IsAbstract && baseType.IsAssignableFrom( t ) ) )
+				baseType[0] = typeof( IDataManipulationService );
+				foreach( Type type in Assembly.GetExecutingAssembly().GetTypes().Where( t => !t.IsAbstract && baseType[0].IsAssignableFrom( t ) ) )
 				{
-					LogHelper.LogDebug( MethodInfo.GetCurrentMethod().DeclaringType, "Registering DataManipulationService {0}...", type );
+					LogHelper.LogDebug( MethodBase.GetCurrentMethod().DeclaringType, "Registering DataManipulationService {0}...", type );
 					IDataManipulationService srv = (IDataManipulationService)Activator.CreateInstance( type );
 					ManipServices.Add( srv.ModelType, srv );
 				}
@@ -124,8 +122,8 @@ namespace Blitzy.ViewServices
 				}
 			}
 
-			LogHelper.LogDebug( MethodInfo.GetCurrentMethod().DeclaringType, "{0} DataManipulationService registered", ManipServices.Count );
-			LogHelper.LogDebug( MethodInfo.GetCurrentMethod().DeclaringType, "{0} DialogServices registered", Services.Count );
+			LogHelper.LogDebug( MethodBase.GetCurrentMethod().DeclaringType, "{0} DataManipulationService registered", ManipServices.Count );
+			LogHelper.LogDebug( MethodBase.GetCurrentMethod().DeclaringType, "{0} DialogServices registered", Services.Count );
 		}
 
 		/// <summary>
@@ -140,15 +138,16 @@ namespace Blitzy.ViewServices
 
 		#region Properties
 
+		[ExcludeFromCodeCoverage]
 		private static Window ActiveWindow
 		{
 			get
 			{
 				// Trifft nur während Tests zu... hoffentlich
-				if( App.Current == null )
+				if( Application.Current == null )
 					return null;
 
-				return App.Current.Windows.Cast<Window>().Where( x => x.IsActive ).FirstOrDefault();
+				return Application.Current.Windows.Cast<Window>().FirstOrDefault( x => x.IsActive );
 			}
 		}
 
@@ -156,8 +155,8 @@ namespace Blitzy.ViewServices
 
 		#region Attributes
 
-		private static Dictionary<Type, IDataManipulationService> ManipServices = new Dictionary<Type, IDataManipulationService>();
-		private static Dictionary<Type, IDialogService> Services = new Dictionary<Type, IDialogService>();
+		private static readonly Dictionary<Type, IDataManipulationService> ManipServices = new Dictionary<Type, IDataManipulationService>();
+		private static readonly Dictionary<Type, IDialogService> Services = new Dictionary<Type, IDialogService>();
 
 		#endregion Attributes
 	}

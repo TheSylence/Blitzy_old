@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Linq;
 using System.Management;
 using System.Reflection;
+using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
 using Blitzy.Utility;
@@ -11,6 +13,7 @@ using Blitzy.ViewServices;
 using GalaSoft.MvvmLight.Threading;
 using Hardcodet.Wpf.TaskbarNotification;
 using WPFLocalizeExtension.Engine;
+using WPFLocalizeExtension.Providers;
 
 namespace Blitzy
 {
@@ -29,11 +32,11 @@ namespace Blitzy
 			if( !SingleInstance.Start() )
 			{
 				SingleInstance.ShowFirstInstance();
-				this.Shutdown( int.MinValue );
+				Shutdown( int.MinValue );
 				return;
 			}
 
-			System.Threading.Thread.CurrentThread.Name = "Main";
+			Thread.CurrentThread.Name = "Main";
 
 #if !DEBUG
 			DispatcherUnhandledException += new DispatcherUnhandledExceptionEventHandler( Application_DispatcherUnhandledException );
@@ -50,7 +53,7 @@ namespace Blitzy
 
 		private void Instance_MissingKeyEvent( object sender, MissingKeyEventArgs e )
 		{
-			LogHelper.LogDebug( MethodInfo.GetCurrentMethod().DeclaringType, "Missing resource key: {0}", e.Key );
+			LogHelper.LogDebug( MethodBase.GetCurrentMethod().DeclaringType, "Missing resource key: {0}", e.Key );
 		}
 
 		#endregion Constructor
@@ -74,16 +77,52 @@ namespace Blitzy
 			NotifyIcon = (TaskbarIcon)FindResource( "NotifyIcon" );
 		}
 
+		private static void LogEnvironmentInfo()
+		{
+			LogHelper.LogInfo( MethodBase.GetCurrentMethod().DeclaringType, "Version {0}", Assembly.GetExecutingAssembly().GetName().Version );
+			LogHelper.LogInfo( MethodBase.GetCurrentMethod().DeclaringType, "CLR: {0}", Environment.Version );
+			LogHelper.LogInfo( MethodBase.GetCurrentMethod().DeclaringType, "{0} ({1})", Environment.OSVersion.ToString(), Environment.Is64BitOperatingSystem ? "x64" : "x86" );
+			LogHelper.LogInfo( MethodBase.GetCurrentMethod().DeclaringType, "{0}bit process", Environment.Is64BitProcess ? 64 : 32 );
+			using( ManagementObjectSearcher searcher = new ManagementObjectSearcher( "select Name, NumberOfLogicalProcessors, NumberOfCores from Win32_Processor" ) )
+			{
+				try
+				{
+					foreach( ManagementObject obj in searcher.Get() )
+					{
+						LogHelper.LogInfo( MethodBase.GetCurrentMethod().DeclaringType, "CPU: {0} ({1} physical, {2} logical)", obj["Name"], obj["NumberOfCores"], obj["NumberOfLogicalProcessors"] );
+					}
+				}
+				catch
+				{
+					LogHelper.LogWarning( MethodBase.GetCurrentMethod().DeclaringType, "Failed to get CPU information" );
+				}
+			}
+
+			using( ManagementObjectSearcher searcher = new ManagementObjectSearcher( "select Capacity from Win32_PhysicalMemory" ) )
+			{
+				try
+				{
+					ulong mem = searcher.Get().Cast<ManagementObject>().Aggregate<ManagementObject, ulong>( 0, ( current, obj ) => current + Convert.ToUInt64( obj["Capacity"], CultureInfo.InvariantCulture ) );
+
+					LogHelper.LogInfo( MethodBase.GetCurrentMethod().DeclaringType, "RAM: {0}MB", mem / 1024.0 / 1024.0 );
+				}
+				catch
+				{
+					LogHelper.LogWarning( MethodBase.GetCurrentMethod().DeclaringType, "Failed to get RAM information" );
+				}
+			}
+
+			LogHelper.LogInfo( MethodBase.GetCurrentMethod().DeclaringType, "Command: {0}", Environment.CommandLine );
+		}
+
 		private void Application_DispatcherUnhandledException( object sender, DispatcherUnhandledExceptionEventArgs e )
 		{
 			try
 			{
-#if !DEBUG
 				Blitzy.View.Dialogs.ExceptionDialog dlg = new Blitzy.View.Dialogs.ExceptionDialog( e.Exception );
 				dlg.ShowDialog();
 
 				e.Handled = true;
-#endif
 			}
 			catch
 			{
@@ -92,57 +131,13 @@ namespace Blitzy
 			finally
 			{
 				SingleInstance.Stop();
-#if !DEBUG
 				System.Environment.Exit( -1 );
-#endif
 			}
 		}
 
-		private void DefaultProvider_ProviderError( object sender, WPFLocalizeExtension.Providers.ProviderErrorEventArgs args )
+		private void DefaultProvider_ProviderError( object sender, ProviderErrorEventArgs args )
 		{
-			LogHelper.LogWarning( MethodInfo.GetCurrentMethod().DeclaringType, "{0} for key {1} on {2}", args.Message, args.Key, args.Object );
-		}
-
-		private void LogEnvironmentInfo()
-		{
-			LogHelper.LogInfo( MethodInfo.GetCurrentMethod().DeclaringType, "Version {0}", Assembly.GetExecutingAssembly().GetName().Version );
-			LogHelper.LogInfo( MethodInfo.GetCurrentMethod().DeclaringType, "CLR: {0}", Environment.Version );
-			LogHelper.LogInfo( MethodInfo.GetCurrentMethod().DeclaringType, "{0} ({1})", Environment.OSVersion.ToString(), Environment.Is64BitOperatingSystem ? "x64" : "x86" );
-			LogHelper.LogInfo( MethodInfo.GetCurrentMethod().DeclaringType, "{0}bit process", Environment.Is64BitProcess ? 64 : 32 );
-			using( ManagementObjectSearcher searcher = new ManagementObjectSearcher( "select Name, NumberOfLogicalProcessors, NumberOfCores from Win32_Processor" ) )
-			{
-				try
-				{
-					foreach( ManagementObject obj in searcher.Get() )
-					{
-						LogHelper.LogInfo( MethodInfo.GetCurrentMethod().DeclaringType, "CPU: {0} ({1} physical, {2} logical)", obj["Name"], obj["NumberOfCores"], obj["NumberOfLogicalProcessors"] );
-					}
-				}
-				catch
-				{
-					LogHelper.LogWarning( MethodInfo.GetCurrentMethod().DeclaringType, "Failed to get CPU information" );
-				}
-			}
-
-			using( ManagementObjectSearcher searcher = new ManagementObjectSearcher( "select Capacity from Win32_PhysicalMemory" ) )
-			{
-				try
-				{
-					ulong mem = 0;
-					foreach( ManagementObject obj in searcher.Get() )
-					{
-						mem += Convert.ToUInt64( obj["Capacity"], CultureInfo.InvariantCulture );
-					}
-
-					LogHelper.LogInfo( MethodInfo.GetCurrentMethod().DeclaringType, "RAM: {0}MB", mem / 1024.0 / 1024.0 );
-				}
-				catch
-				{
-					LogHelper.LogWarning( MethodInfo.GetCurrentMethod().DeclaringType, "Failed to get RAM information" );
-				}
-			}
-
-			LogHelper.LogInfo( MethodInfo.GetCurrentMethod().DeclaringType, "Command: {0}", Environment.CommandLine );
+			LogHelper.LogWarning( MethodBase.GetCurrentMethod().DeclaringType, "{0} for key {1} on {2}", args.Message, args.Key, args.Object );
 		}
 
 		#endregion Methods

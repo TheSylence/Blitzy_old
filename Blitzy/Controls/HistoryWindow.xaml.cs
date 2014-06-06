@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Windows;
 using System.Windows.Controls;
 using Blitzy.Messages;
 using Blitzy.ViewModel;
@@ -18,7 +19,7 @@ namespace Blitzy.Controls
 		{
 			InitializeComponent();
 
-			Messenger.Default.Register<HistoryMessage>( this, msg => OnMessage( msg ) );
+			Messenger.Default.Register<HistoryMessage>( this, OnMessage );
 		}
 
 		#endregion Constructor
@@ -30,12 +31,12 @@ namespace Blitzy.Controls
 			switch( msg.Type )
 			{
 				case HistoryMessageType.Show:
-					this.Visibility = System.Windows.Visibility.Visible;
+					Visibility = Visibility.Visible;
 					VM.Manager = msg.History;
 					break;
 
 				case HistoryMessageType.Hide:
-					this.Visibility = System.Windows.Visibility.Collapsed;
+					Visibility = Visibility.Collapsed;
 					break;
 			}
 		}

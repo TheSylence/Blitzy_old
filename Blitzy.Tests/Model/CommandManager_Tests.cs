@@ -16,6 +16,25 @@ namespace Blitzy.Tests.Model
 	public class CommandManager_Tests : Plugins.PluginTestBase
 	{
 		[TestMethod, TestCategory( "Model" )]
+		public void ExecutionCountTest()
+		{
+			Settings settings = new Settings( Connection );
+			PluginManager plugins = new PluginManager( this, Connection );
+			Mocks.MockPlugin plug = new Mocks.MockPlugin();
+			CommandManager mgr = new CommandManager( Connection, settings, plugins );
+
+			CommandItem item = CommandItem.Create( "lorem", "", plug );
+
+			mgr.UpdateExecutionCount( item );
+			Assert.AreEqual( 1, mgr.GetCommandExecutionCount( item ) );
+			mgr.UpdateExecutionCount( item );
+			Assert.AreEqual( 2, mgr.GetCommandExecutionCount( item ) );
+
+			mgr.ResetExecutionCount();
+			Assert.AreEqual( 0, mgr.GetCommandExecutionCount( item ) );
+		}
+
+		[TestMethod, TestCategory( "Model" )]
 		public void PerformanceTest()
 		{
 			Settings settings = new Settings( Connection );

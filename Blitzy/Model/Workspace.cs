@@ -19,7 +19,7 @@ namespace Blitzy.Model
 
 		#region Methods
 
-		public override void Delete( System.Data.SQLite.SQLiteConnection connection )
+		public override void Delete( SQLiteConnection connection )
 		{
 			using( SQLiteCommand cmd = connection.CreateCommand() )
 			{
@@ -46,7 +46,7 @@ namespace Blitzy.Model
 			}
 		}
 
-		public override void Load( System.Data.SQLite.SQLiteConnection connection )
+		public override void Load( SQLiteConnection connection )
 		{
 			using( SQLiteCommand cmd = connection.CreateCommand() )
 			{
@@ -82,8 +82,7 @@ namespace Blitzy.Model
 				{
 					while( reader.Read() )
 					{
-						WorkspaceItem item = new WorkspaceItem();
-						item.ItemID = reader.GetInt32( 0 );
+						WorkspaceItem item = new WorkspaceItem { ItemID = reader.GetInt32( 0 ) };
 
 						item.Load( connection );
 						Items.Add( item );
@@ -94,7 +93,7 @@ namespace Blitzy.Model
 			ExistsInDatabase = true;
 		}
 
-		public override void Save( System.Data.SQLite.SQLiteConnection connection )
+		public override void Save( SQLiteConnection connection )
 		{
 			using( SQLiteCommand cmd = connection.CreateCommand() )
 			{
@@ -108,14 +107,9 @@ namespace Blitzy.Model
 				param.Value = Name;
 				cmd.Parameters.Add( param );
 
-				if( ExistsInDatabase )
-				{
-					cmd.CommandText = "UPDATE workspaces SET Name = @Name WHERE WorkspaceID = @WorkspaceID";
-				}
-				else
-				{
-					cmd.CommandText = "INSERT INTO workspaces (WorkspaceID, Name) VALUES (@WorkspaceID, @Name);";
-				}
+				cmd.CommandText = ExistsInDatabase ?
+					"UPDATE workspaces SET Name = @Name WHERE WorkspaceID = @WorkspaceID" :
+					"INSERT INTO workspaces (WorkspaceID, Name) VALUES (@WorkspaceID, @Name);";
 
 				cmd.Prepare();
 				cmd.ExecuteNonQuery();

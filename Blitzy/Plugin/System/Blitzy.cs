@@ -22,7 +22,7 @@ namespace Blitzy.Plugin.System
 
 		public bool ExecuteCommand( CommandItem command, CommandExecutionMode mode, IList<string> input, out string message )
 		{
-			Messenger.Default.Send<InternalCommandMessage>( new InternalCommandMessage( command.Name ) );
+			Messenger.Default.Send( new InternalCommandMessage( command.Name ) );
 
 			message = null;
 			return true;
@@ -69,11 +69,11 @@ namespace Blitzy.Plugin.System
 
 		#region Properties
 
-		private Guid? GUID;
+		private Guid? Guid;
 
 		public int ApiVersion
 		{
-			get { return Constants.APIVersion; }
+			get { return Constants.ApiVersion; }
 		}
 
 		public string Author
@@ -95,12 +95,12 @@ namespace Blitzy.Plugin.System
 		{
 			get
 			{
-				if( !GUID.HasValue )
+				if( !Guid.HasValue )
 				{
-					GUID = Guid.Parse( "DE0D9FF3-D089-4FFF-AA26-65785D2761E8" );
+					Guid = global::System.Guid.Parse( "DE0D9FF3-D089-4FFF-AA26-65785D2761E8" );
 				}
 
-				return GUID.Value;
+				return Guid.Value;
 			}
 		}
 

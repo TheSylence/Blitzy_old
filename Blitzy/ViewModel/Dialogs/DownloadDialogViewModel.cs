@@ -3,9 +3,11 @@
 using System;
 using System.IO;
 using System.Net.Http;
+using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 using Blitzy.Messages;
 using Blitzy.Utility;
 using Blitzy.ViewServices;
@@ -22,8 +24,8 @@ namespace Blitzy.ViewModel.Dialogs
 		{
 			base.RegisterMessages();
 
-			MessengerInstance.Register<DownloadStatusMessage>( this, MessageTokens.DownloadCorrupted, ( msg ) => OnDownloadCorrupted( msg ) );
-			MessengerInstance.Register<DownloadStatusMessage>( this, MessageTokens.DownloadFailed, ( msg ) => OnDownloadFailed( msg ) );
+			MessengerInstance.Register<DownloadStatusMessage>( this, MessageTokens.DownloadCorrupted, OnDownloadCorrupted );
+			MessengerInstance.Register<DownloadStatusMessage>( this, MessageTokens.DownloadFailed, OnDownloadFailed );
 		}
 
 		#endregion Constructor
@@ -46,15 +48,17 @@ namespace Blitzy.ViewModel.Dialogs
 					catch( HttpRequestException ex )
 					{
 						LogWarning( "Failed to download file: {0}", ex );
-						MessengerInstance.Send<DownloadStatusMessage>( new DownloadStatusMessage( TargetPath, DownloadLink, DownloadSize, MD5 ), MessageTokens.DownloadFailed );
+						MessengerInstance.Send( new DownloadStatusMessage( TargetPath, DownloadLink, DownloadSize, MD5 ), MessageTokens.DownloadFailed );
 						return;
 					}
 
 					Stream responseStream = await response.Content.ReadAsStreamAsync();
 					using( FileStream fileStream = File.OpenWrite( TargetPath ) )
 					{
-						ProgressStatistic stats = new ProgressStatistic();
-						stats.UsedEstimatingMethod = ProgressStatistic.EstimatingMethod.CurrentBytesPerSecond;
+						ProgressStatistic stats = new ProgressStatistic
+						{
+							UsedEstimatingMethod = ProgressStatistic.EstimatingMethod.CurrentBytesPerSecond
+						};
 
 						long totalLength = DownloadSize;
 						if( response.Content.Headers.ContentLength.HasValue )
@@ -69,7 +73,7 @@ namespace Blitzy.ViewModel.Dialogs
 						stats.Finished += stats_Finished;
 
 						CopyArguments = new CopyFromArguments( stats.ProgressChange, TimeSpan.FromSeconds( 0.5 ), totalLength );
-						DispatcherHelper.CheckBeginInvokeOnUI( () => System.Windows.Input.CommandManager.InvalidateRequerySuggested() );
+						DispatcherHelper.CheckBeginInvokeOnUI( CommandManager.InvalidateRequerySuggested );
 						fileStream.CopyFrom( responseStream, CopyArguments );
 						stats.Finish();
 
@@ -124,7 +128,7 @@ namespace Blitzy.ViewModel.Dialogs
 			else
 			{
 				CopyArguments = null;
-				using( System.Security.Cryptography.MD5 md5 = System.Security.Cryptography.MD5.Create() )
+				using( MD5 md5 = System.Security.Cryptography.MD5.Create() )
 				{
 					using( FileStream stream = File.OpenRead( TargetPath ) )
 					{
@@ -133,12 +137,12 @@ namespace Blitzy.ViewModel.Dialogs
 						if( !computedHash.Equals( MD5, StringComparison.Ordinal ) )
 						{
 							LogError( "Downloaded file is corrupted. Exepected Hash: {0} - Calculated: {1}", MD5, computedHash );
-							MessengerInstance.Send<DownloadStatusMessage>( new DownloadStatusMessage( TargetPath, DownloadLink, DownloadSize, MD5 ), MessageTokens.DownloadCorrupted );
+							MessengerInstance.Send( new DownloadStatusMessage( TargetPath, DownloadLink, DownloadSize, MD5 ), MessageTokens.DownloadCorrupted );
 						}
 					}
 				}
 
-				MessengerInstance.Send<DownloadStatusMessage>( new DownloadStatusMessage( TargetPath, DownloadLink, DownloadSize, MD5 ), MessageTokens.DownloadSucessful );
+				MessengerInstance.Send( new DownloadStatusMessage( TargetPath, DownloadLink, DownloadSize, MD5 ), MessageTokens.DownloadSucessful );
 			}
 
 			DispatcherHelper.CheckBeginInvokeOnUI( () => Close() );

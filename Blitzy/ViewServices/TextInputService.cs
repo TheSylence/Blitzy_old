@@ -3,6 +3,7 @@
 using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Windows;
 using Blitzy.View.Dialogs;
 using Blitzy.ViewModel.Dialogs;
 
@@ -11,7 +12,7 @@ namespace Blitzy.ViewServices
 	[ExcludeFromCodeCoverage]
 	internal class TextInputService : IDialogService
 	{
-		public object Show( System.Windows.Window parent, object parameter = null )
+		public object Show( Window parent, object parameter = null )
 		{
 			TextInputParameter args = parameter as TextInputParameter;
 			if( args == null )
@@ -19,8 +20,7 @@ namespace Blitzy.ViewServices
 				throw new ArgumentException( "TextInputService erwartet ein TextInputParameter objekt als Parameter" );
 			}
 
-			TextInputDialog dlg = new TextInputDialog();
-			dlg.Owner = parent;
+			TextInputDialog dlg = new TextInputDialog { Owner = parent };
 
 			TextInputDialogViewModel vm = dlg.DataContext as TextInputDialogViewModel;
 			Debug.Assert( vm != null );

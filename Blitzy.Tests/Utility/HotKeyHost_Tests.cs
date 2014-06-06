@@ -57,7 +57,7 @@ namespace Blitzy.Tests.Global
 					host.HotKeyPressed += ( s, e ) => raised = true;
 
 					IntPtr wParam = new IntPtr( 2 ); // I have no idea why this is a two...
-					INativeMethods.Instance.SendMessage_Wrapper( hwndSource.Handle, HotKeyHost.WM_HotKey, wParam, IntPtr.Zero );
+					INativeMethods.Instance.SendMessage_Wrapper( hwndSource.Handle, HotKeyHost.WM_HOTKEY, wParam, IntPtr.Zero );
 					Assert.IsTrue( raised );
 
 					host.RemoveHotKey( key );

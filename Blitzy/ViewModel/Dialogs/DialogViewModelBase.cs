@@ -12,10 +12,6 @@ namespace Blitzy.ViewModel.Dialogs
 	{
 		#region Constructor
 
-		public DialogViewModelBase()
-		{
-		}
-
 		#endregion Constructor
 
 		#region Methods
@@ -72,15 +68,9 @@ namespace Blitzy.ViewModel.Dialogs
 				_New = value;
 				RaisePropertyChanged( () => New );
 
-				string key;
-				if( _New )
-				{
-					key = "Add";
-				}
-				else
-				{
-					key = "Edit";
-				}
+				string key = _New ?
+					"Add" :
+					"Edit";
 
 				Title = key.Localize();
 			}

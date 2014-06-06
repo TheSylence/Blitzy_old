@@ -2,7 +2,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.Common;
 using System.Data.SQLite;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Blitzy.Plugin;
 
@@ -21,12 +24,12 @@ namespace Blitzy.Model
 
 		#region Methods
 
-		public System.Data.Common.DbTransaction BeginTransaction( System.Data.IsolationLevel isolationLevel = System.Data.IsolationLevel.ReadCommitted )
+		public DbTransaction BeginTransaction( IsolationLevel isolationLevel = IsolationLevel.ReadCommitted )
 		{
 			return Connection.BeginTransaction( isolationLevel );
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities",
+		[SuppressMessage( "Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities",
 			Justification = "Values are escpaed an we have tests for this" )]
 		public bool CreateTable( IPlugin plugin, string tableName, TableColumn[] columns )
 		{
@@ -75,7 +78,7 @@ namespace Blitzy.Model
 			return false;
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities",
+		[SuppressMessage( "Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities",
 			Justification = "Values are escpaed an we have tests for this" )]
 		public void Delete( IPlugin plugin, string tableName, WhereClause where = null )
 		{
@@ -101,11 +104,11 @@ namespace Blitzy.Model
 			}
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities",
+		[SuppressMessage( "Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities",
 			Justification = "Values are escpaed an we have tests for this" )]
 		public void DropTable( IPlugin plugin, string tableName )
 		{
-			tableName = GenerateTableName( plugin, tableName ); ;
+			tableName = GenerateTableName( plugin, tableName );
 
 			if( !MayAccess( plugin, tableName ) )
 			{
@@ -143,7 +146,7 @@ namespace Blitzy.Model
 			return Insert( plugin, tableName, new[] { values } );
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities",
+		[SuppressMessage( "Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities",
 			Justification = "Values are escpaed an we have tests for this" )]
 		public int Insert( IPlugin plugin, string tableName, IEnumerable<IDictionary<string, object>> values )
 		{
@@ -158,7 +161,6 @@ namespace Blitzy.Model
 
 			using( SQLiteCommand cmd = Connection.CreateCommand() )
 			{
-				int cnt = values.Count();
 				int i = 0;
 
 				string columnValues = string.Join( "),(", values.Select( row =>
@@ -181,7 +183,7 @@ namespace Blitzy.Model
 			}
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities",
+		[SuppressMessage( "Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities",
 			Justification = "Values are escpaed an we have tests for this" )]
 		public IEnumerable<IDictionary<string, object>> Select( IPlugin plugin, string tableName, string[] columns, WhereClause where = null )
 		{
@@ -220,7 +222,7 @@ namespace Blitzy.Model
 			}
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities",
+		[SuppressMessage( "Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities",
 			Justification = "Values are escpaed an we have tests for this" )]
 		public int Update( IPlugin plugin, string tableName, IDictionary<string, object> newValues, WhereClause where = null )
 		{
@@ -289,13 +291,9 @@ namespace Blitzy.Model
 		{
 			tableName = string.Format( "{0}_{1}", plugin.Name, tableName );
 
-			char[] replacements = new char[] { '[', ']', ';', '\"', '\'', ':' };
-			foreach( char c in replacements )
-			{
-				tableName = tableName.Replace( c, '_' );
-			}
+			char[] replacements = { '[', ']', ';', '\"', '\'', ':' };
 
-			return tableName;
+			return replacements.Aggregate( tableName, ( current, c ) => current.Replace( c, '_' ) );
 		}
 
 		#endregion Methods
@@ -306,7 +304,7 @@ namespace Blitzy.Model
 
 		#region Attributes
 
-		private SQLiteConnection Connection;
+		private readonly SQLiteConnection Connection;
 
 		#endregion Attributes
 	}

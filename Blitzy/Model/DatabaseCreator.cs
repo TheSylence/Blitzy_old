@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data.SQLite;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -12,7 +13,7 @@ namespace Blitzy.Model
 {
 	internal static class DatabaseCreator
 	{
-		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Security",
+		[SuppressMessage( "Microsoft.Security",
 			"CA2100:Review SQL queries for security vulnerabilities", Justification = "String is not affacted by user input" )]
 		internal static void CreateDatabase( SQLiteConnection connection )
 		{
@@ -112,7 +113,7 @@ namespace Blitzy.Model
 				MemberInfo member = type.GetMember( setting.ToString() ).First();
 				object defaultValue = member.GetCustomAttribute<DefaultValueAttribute>().Value;
 
-				sb.AppendFormat( "INSERT INTO settings ([Key], [Value]) VALUES( '{0}', '{1}' );", setting.ToString(), defaultValue.ToString() );
+				sb.AppendFormat( "INSERT INTO settings ([Key], [Value]) VALUES( '{0}', '{1}' );", setting.ToString(), defaultValue );
 			}
 
 			sb.AppendFormat( "PRAGMA user_version = {0};", DatabaseUpgrader.DatabaseVersion );

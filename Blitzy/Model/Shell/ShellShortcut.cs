@@ -60,8 +60,6 @@ namespace Blitzy.Model.Shell
 		///
 		public ShellShortcut( string linkPath )
 		{
-			IPersistFile pf;
-
 			m_sPath = linkPath;
 
 #if UNICODE
@@ -72,7 +70,7 @@ namespace Blitzy.Model.Shell
 
 			if( File.Exists( linkPath ) )
 			{
-				pf = (IPersistFile)m_Link;
+				IPersistFile pf = (IPersistFile)m_Link;
 				pf.Load( linkPath, 0 );
 			}
 		}
@@ -98,7 +96,6 @@ namespace Blitzy.Model.Shell
 			get
 			{
 				short wHotkey;
-				int dwHotkey;
 
 				m_Link.GetHotkey( out wHotkey );
 
@@ -109,7 +106,7 @@ namespace Blitzy.Model.Shell
 				//   MM = Modifier (Alt, Control, Shift)
 				//   VK = Virtual key code
 				//
-				dwHotkey = ( ( wHotkey & 0xFF00 ) << 8 ) | ( wHotkey & 0xFF );
+				int dwHotkey = ( ( wHotkey & 0xFF00 ) << 8 ) | ( wHotkey & 0xFF );
 				return (Keys)dwHotkey;
 			}
 		}
@@ -125,18 +122,16 @@ namespace Blitzy.Model.Shell
 			{
 				StringBuilder sb = new StringBuilder( MAX_PATH );
 				int nIconIdx;
-				IntPtr hIcon, hInst;
-				Icon ico, clone;
 
 				m_Link.GetIconLocation( sb, sb.Capacity, out nIconIdx );
-				hInst = Marshal.GetHINSTANCE( this.GetType().Module );
-				hIcon = INativeMethods.Instance.ExtractIcon_Wrapper( hInst, sb.ToString(), nIconIdx );
+				IntPtr hInst = Marshal.GetHINSTANCE( GetType().Module );
+				IntPtr hIcon = INativeMethods.Instance.ExtractIcon_Wrapper( hInst, sb.ToString(), nIconIdx );
 				if( hIcon == IntPtr.Zero )
 					return null;
 
 				// Return a cloned Icon, because we have to free the original ourselves.
-				ico = Icon.FromHandle( hIcon );
-				clone = (Icon)ico.Clone();
+				Icon ico = Icon.FromHandle( hIcon );
+				Icon clone = (Icon)ico.Clone();
 				ico.Dispose();
 				INativeMethods.Instance.DestroyIcon_Wrapper( hIcon );
 				return clone;

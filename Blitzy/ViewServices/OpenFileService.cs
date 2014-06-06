@@ -1,6 +1,7 @@
 ﻿// $Id$
 
 using System.Diagnostics.CodeAnalysis;
+using System.Windows;
 using Microsoft.Win32;
 
 namespace Blitzy.ViewServices
@@ -10,7 +11,7 @@ namespace Blitzy.ViewServices
 	{
 		#region Methods
 
-		public object Show( System.Windows.Window parent, object parameter = null )
+		public object Show( Window parent, object parameter = null )
 		{
 			OpenFileDialog dlg = new OpenFileDialog();
 

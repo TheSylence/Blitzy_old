@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using GalaSoft.MvvmLight;
 using log4net;
@@ -26,13 +27,13 @@ namespace Blitzy.ViewModel
 
 		/// <summary>
 		/// Releases unmanaged resources and performs other cleanup operations before the
-		/// <see cref="DisposableContainer"/> is reclaimed by garbage collection.
+		/// <see cref="ViewModelBaseEx"/> is reclaimed by garbage collection.
 		/// </summary>
-		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1063:ImplementIDisposableCorrectly", Justification = "Only for debugging purposes" )]
+		[SuppressMessage( "Microsoft.Design", "CA1063:ImplementIDisposableCorrectly", Justification = "Only for debugging purposes" )]
 		~ViewModelBaseEx()
 		{
 #if DEBUG
-			Debug.WriteLine( string.Format( CultureInfo.InvariantCulture, "Finalizer called on object: {0}", this ) );
+			LogDebug( "Finalizer called on object: {0}", this );
 #endif
 
 			Dispose( false );
@@ -126,11 +127,11 @@ namespace Blitzy.ViewModel
 			}
 		}
 
-		protected void Close( bool? result = null, int maxWindowCount = int.MaxValue )
+		protected void Close( bool? result = null )
 		{
 			if( RequestClose != null )
 			{
-				RequestClose( this, new CloseViewEventArgs( result, maxWindowCount ) );
+				RequestClose( this, new CloseViewEventArgs( result ) );
 			}
 		}
 
@@ -147,7 +148,7 @@ namespace Blitzy.ViewModel
 				}
 
 				onStack = ObjectsToDispose.Pop();
-			} while( onStack != obj );
+			} while( !Equals( onStack, obj ) );
 
 			onStack.Dispose();
 

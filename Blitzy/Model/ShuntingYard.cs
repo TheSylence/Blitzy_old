@@ -124,8 +124,8 @@ namespace Blitzy.Model
 		{
 			Valid = true;
 
-			List<string> tokens = Parse( input );
-			Queue<string> tokenQueue = ConvertToRPN( tokens );
+			IEnumerable<string> tokens = Parse( input );
+			Queue<string> tokenQueue = ConvertToRpn( tokens );
 
 			if( !Valid )
 			{
@@ -194,7 +194,7 @@ namespace Blitzy.Model
 			return string.Empty;
 		}
 
-		private Queue<string> ConvertToRPN( List<string> tokens )
+		private Queue<string> ConvertToRpn( IEnumerable<string> tokens )
 		{
 			Queue<string> output = new Queue<string>();
 			Stack<string> operators = new Stack<string>();
@@ -302,7 +302,7 @@ namespace Blitzy.Model
 			return output;
 		}
 
-		private List<string> Parse( string input )
+		private IEnumerable<string> Parse( string input )
 		{
 			if( !string.IsNullOrWhiteSpace( input ) )
 			{
@@ -339,21 +339,19 @@ namespace Blitzy.Model
 
 				return tokens;
 			}
-			else
-			{
-				return new List<string>();
-			}
+
+			return new List<string>();
 		}
 
 		#endregion Methods
 
 		#region Constants
 
-		private string[] Functions = new[] { "cos", "sin", "tan", "acos", "asin", "atan", "sqrt", "ln", "log", "rnd", "pow" };
-		private string[] Operators = new[] { "+", "-", "*", "/", "%", "!", "^" };
-		private Dictionary<string, IOperator> OpMap = new Dictionary<string, IOperator>();
+		private readonly string[] Functions = { "cos", "sin", "tan", "acos", "asin", "atan", "sqrt", "ln", "log", "rnd", "pow" };
+		private readonly string[] Operators = { "+", "-", "*", "/", "%", "!", "^" };
+		private readonly Dictionary<string, IOperator> OpMap = new Dictionary<string, IOperator>();
 
-		private Dictionary<string, string> Replacements = new Dictionary<string, string>
+		private readonly Dictionary<string, string> Replacements = new Dictionary<string, string>
 		{
 			{ "pi", Math.PI.ToString(CultureInfo.InvariantCulture) },
 			{ "e", Math.E.ToString(CultureInfo.InvariantCulture) }

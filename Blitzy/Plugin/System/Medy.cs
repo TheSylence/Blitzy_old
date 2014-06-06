@@ -17,9 +17,9 @@ namespace Blitzy.Plugin.System
 			RootItem = CommandItem.Create( "medy", "ControlMediaPlayer".Localize(), this, "Medy.png" );
 		}
 
-		public bool ExecuteCommand( Model.CommandItem command, CommandExecutionMode mode, IList<string> input, out string message )
+		public bool ExecuteCommand( CommandItem command, CommandExecutionMode mode, IList<string> input, out string message )
 		{
-			int lp = 0;
+			int lp;
 			switch( command.Name )
 			{
 				case "play":
@@ -94,13 +94,13 @@ namespace Blitzy.Plugin.System
 
 		#region Attributes
 
-		private Guid? GUID;
+		private Guid? Guid;
 
 		private CommandItem RootItem;
 
 		public int ApiVersion
 		{
-			get { return Constants.APIVersion; }
+			get { return Constants.ApiVersion; }
 		}
 
 		public string Author
@@ -122,12 +122,12 @@ namespace Blitzy.Plugin.System
 		{
 			get
 			{
-				if( !GUID.HasValue )
+				if( !Guid.HasValue )
 				{
-					GUID = Guid.Parse( "C3ED721C-AD70-47EB-B867-680B9DBAE8EA" );
+					Guid = global::System.Guid.Parse( "C3ED721C-AD70-47EB-B867-680B9DBAE8EA" );
 				}
 
-				return GUID.Value;
+				return Guid.Value;
 			}
 		}
 
@@ -152,7 +152,7 @@ namespace Blitzy.Plugin.System
 		internal const int APPCOMMAND_VOLUME_DOWN = 9;
 		internal const int APPCOMMAND_VOLUME_UP = 10;
 		internal const int WM_APPCOMMAND = 0x0319;
-		private IntPtr HWND_BROADCAST = (IntPtr)0xffff;
+		private readonly IntPtr HWND_BROADCAST = (IntPtr)0xffff;
 
 		#endregion Constants
 	}

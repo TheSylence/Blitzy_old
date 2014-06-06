@@ -29,14 +29,9 @@ namespace Blitzy.Plugin
 			string sqlType;
 			if( Type == ColumnType.Text )
 			{
-				if( Length == 0 )
-				{
-					sqlType = "TEXT";
-				}
-				else
-				{
-					sqlType = string.Format( "VARCHAR({0})", Length );
-				}
+				sqlType = Length == 0 ?
+					"TEXT" :
+					string.Format( "VARCHAR({0})", Length );
 			}
 			else
 			{

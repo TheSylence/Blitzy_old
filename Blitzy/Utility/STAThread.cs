@@ -2,11 +2,7 @@
 
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Blitzy.Utility
 {
@@ -19,8 +15,7 @@ namespace Blitzy.Utility
 			CanProcess = ToDispose( new AutoResetEvent( false ) );
 			ActionQueue = new ConcurrentQueue<Action>();
 
-			ThreadObject = new Thread( RunThreaded );
-			ThreadObject.Name = "STAThread";
+			ThreadObject = new Thread( RunThreaded ) { Name = "STAThread" };
 			ThreadObject.SetApartmentState( ApartmentState.STA );
 			IsRunning = true;
 			ThreadObject.Start();
@@ -80,10 +75,10 @@ namespace Blitzy.Utility
 		#region Attributes
 
 		private static STAThread Instance;
-		private ConcurrentQueue<Action> ActionQueue;
-		private AutoResetEvent CanProcess;
+		private readonly ConcurrentQueue<Action> ActionQueue;
+		private readonly AutoResetEvent CanProcess;
+		private readonly Thread ThreadObject;
 		private bool IsRunning;
-		private Thread ThreadObject;
 
 		#endregion Attributes
 	}

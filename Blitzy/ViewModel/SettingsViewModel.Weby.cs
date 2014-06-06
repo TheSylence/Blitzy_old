@@ -15,12 +15,12 @@ namespace Blitzy.ViewModel
 	{
 		#region Constructor
 
-		public WebySettingsViewModel( SettingsViewModel baseVM )
-			: base( baseVM )
+		public WebySettingsViewModel( SettingsViewModel baseVm )
+			: base( baseVm )
 		{
 			Websites = new ObservableCollection<WebyWebsite>();
 
-			using( SQLiteCommand cmd = BaseVM.Settings.Connection.CreateCommand() )
+			using( SQLiteCommand cmd = BaseVm.Settings.Connection.CreateCommand() )
 			{
 				cmd.CommandText = "SELECT WebyID FROM weby_websites";
 
@@ -28,10 +28,9 @@ namespace Blitzy.ViewModel
 				{
 					while( reader.Read() )
 					{
-						WebyWebsite site = new WebyWebsite();
-						site.ID = reader.GetInt32( 0 );
+						WebyWebsite site = new WebyWebsite { ID = reader.GetInt32( 0 ) };
 
-						site.Load( BaseVM.Settings.Connection );
+						site.Load( BaseVm.Settings.Connection );
 						Websites.Add( site );
 					}
 				}
@@ -46,12 +45,12 @@ namespace Blitzy.ViewModel
 		{
 			foreach( WebyWebsite site in WebsitesToRemove )
 			{
-				site.Delete( BaseVM.Settings.Connection );
+				site.Delete( BaseVm.Settings.Connection );
 			}
 
 			foreach( WebyWebsite site in Websites )
 			{
-				site.Save( BaseVM.Settings.Connection );
+				site.Save( BaseVm.Settings.Connection );
 			}
 		}
 
@@ -146,7 +145,7 @@ namespace Blitzy.ViewModel
 
 		#region Attributes
 
-		private List<WebyWebsite> WebsitesToRemove = new List<WebyWebsite>();
+		private readonly List<WebyWebsite> WebsitesToRemove = new List<WebyWebsite>();
 
 		#endregion Attributes
 	}
