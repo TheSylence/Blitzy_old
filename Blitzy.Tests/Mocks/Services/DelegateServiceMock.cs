@@ -1,14 +1,11 @@
 ﻿// $Id$
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Blitzy.ViewServices;
 
 namespace Blitzy.Tests.Mocks.Services
 {
+	[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	internal class DelegateServiceMock : IDialogService
 	{
 		public Func<object, object> Action;

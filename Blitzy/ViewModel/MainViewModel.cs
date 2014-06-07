@@ -196,7 +196,7 @@ namespace Blitzy.ViewModel
 			get
 			{
 				return _ExecuteCommand ??
-					( _ExecuteCommand = new RelayCommand( ExecuteExecuteCommand, CanExecuteExecuteCommand ) );
+					( _ExecuteCommand = new RelayCommand( () => ExecuteExecuteCommand(), CanExecuteExecuteCommand ) );
 			}
 		}
 
@@ -294,7 +294,14 @@ namespace Blitzy.ViewModel
 
 		internal bool OnKeyReturn()
 		{
-			if( Keyboard.IsKeyDown( Key.LeftCtrl ) || Keyboard.IsKeyDown( Key.RightCtrl ) )
+			CommandExecutionMode mode = CommandExecutionMode.Default;
+			if( Keyboard.IsKeyDown( Key.LeftCtrl ) && Keyboard.IsKeyDown( Key.LeftShift )
+				|| Keyboard.IsKeyDown( Key.RightCtrl ) && Keyboard.IsKeyDown( Key.RightShift ) )
+			{
+				mode = CommandExecutionMode.Secondary;
+			}
+
+			if( mode != CommandExecutionMode.Secondary && ( Keyboard.IsKeyDown( Key.LeftCtrl ) || Keyboard.IsKeyDown( Key.RightCtrl ) ) )
 			{
 				string hist = History.SelectedItem;
 
@@ -307,7 +314,7 @@ namespace Blitzy.ViewModel
 
 			if( CmdManager.CurrentItem != null )
 			{
-				ExecuteExecuteCommand();
+				ExecuteExecuteCommand( mode );
 				return true;
 			}
 
@@ -411,12 +418,10 @@ namespace Blitzy.ViewModel
 			return true;
 		}
 
-		private void ExecuteExecuteCommand()
+		private void ExecuteExecuteCommand( CommandExecutionMode mode = CommandExecutionMode.Default )
 		{
 			Collection<string> commandData = new Collection<string>( CmdManager.GetCommandParts( CommandInput ) );
 			CommandItem item = CmdManager.CurrentItem;
-			CommandExecutionMode mode = CommandExecutionMode.Default;
-			// TODO: Secondary mode
 
 			Action taskAction = () =>
 			{

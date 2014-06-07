@@ -370,6 +370,7 @@
     <EmbeddedResource Include="Resources\Icons\History.png" />
     <EmbeddedResource Include="Resources\Icons\Version.png" />
     <Resource Include="Resources\History.png" />
+    <EmbeddedResource Include="Resources\Icons\Workspace.png" />
     <Content Include="x64\SQLite.Interop.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

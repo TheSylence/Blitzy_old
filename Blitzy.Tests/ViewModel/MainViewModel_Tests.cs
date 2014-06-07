@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.Windows.Input;
 using Blitzy.Messages;
 using Blitzy.Model;
+using Blitzy.Tests.Mocks;
 using Blitzy.Tests.Mocks.Services;
 using Blitzy.ViewModel;
 using Blitzy.ViewServices;
@@ -194,8 +195,7 @@ namespace Blitzy.Tests.ViewModel
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void ReturnHistoryTest()
 		{
-			MainViewModel vm = new MainViewModel();
-			vm.History.SelectedItem = "historytest";
+			MainViewModel vm = new MainViewModel { History = { SelectedItem = "historytest" } };
 			bool receivedHistoryClose = false;
 			bool receivedNewCaret = false;
 
@@ -207,10 +207,7 @@ namespace Blitzy.Tests.ViewModel
 				HashSet<Key> pressedKeys = new HashSet<Key>();
 				pressedKeys.Add( Key.LeftCtrl );
 
-				System.Windows.Input.Fakes.ShimKeyboard.IsKeyDownKey = ( k ) =>
-					{
-						return pressedKeys.Contains( k );
-					};
+				System.Windows.Input.Fakes.ShimKeyboard.IsKeyDownKey = pressedKeys.Contains;
 
 				Assert.IsTrue( vm.OnKeyReturn() );
 				Assert.AreEqual( "historytest", vm.CommandInput );
@@ -227,6 +224,35 @@ namespace Blitzy.Tests.ViewModel
 				Assert.AreEqual( "historytest", vm.CommandInput );
 				Assert.IsTrue( receivedNewCaret );
 				Assert.IsTrue( receivedHistoryClose );
+			}
+		}
+
+		[TestMethod, TestCategory( "ViewModel" )]
+		public void ReturnSecondaryTest()
+		{
+			MainViewModel vm = new MainViewModel();
+			MockPlugin plug = new MockPlugin();
+			CommandItem item = CommandItem.Create( "test", "test", plug );
+
+			using( ShimsContext.Create() )
+			{
+				HashSet<Key> pressedKeys = new HashSet<Key>();
+				pressedKeys.Add( Key.LeftCtrl );
+				pressedKeys.Add( Key.LeftShift );
+
+				System.Windows.Input.Fakes.ShimKeyboard.IsKeyDownKey = pressedKeys.Contains;
+
+				vm.CommandInput = "test";
+				vm.CmdManager.CurrentItem = item;
+				Assert.IsTrue( vm.OnKeyReturn() );
+
+				pressedKeys.Clear();
+				pressedKeys.Add( Key.RightCtrl );
+				pressedKeys.Add( Key.RightShift );
+
+				vm.CommandInput = "test";
+				vm.CmdManager.CurrentItem = item;
+				Assert.IsTrue( vm.OnKeyReturn() );
 			}
 		}
 

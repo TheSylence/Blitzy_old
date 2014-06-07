@@ -23,9 +23,22 @@ namespace Blitzy.Plugin.System
 		{
 			ProcessStartInfo procInf = new ProcessStartInfo
 			{
-				Arguments = command.UserData as string,
 				FileName = command.Description
 			};
+
+			Workspace workspace = command.UserData as Workspace;
+			if( workspace != null )
+			{
+				// TODO: Execute workspace items
+				message = null;
+				return true;
+			}
+
+			string args = command.UserData as string;
+			if( args != null )
+			{
+				procInf.Arguments = args;
+			}
 
 			if( mode == CommandExecutionMode.Secondary )
 			{
@@ -33,7 +46,11 @@ namespace Blitzy.Plugin.System
 				procInf.Verb = "runas";
 			}
 
-			procInf.WorkingDirectory = Path.GetDirectoryName( command.Description );
+			string workingDirectory = Path.GetDirectoryName( command.Description );
+			if( workingDirectory != null )
+			{
+				procInf.WorkingDirectory = workingDirectory;
+			}
 
 			Process.Start( procInf );
 
@@ -91,6 +108,26 @@ namespace Blitzy.Plugin.System
 						string args = reader.GetString( 3 );
 
 						yield return CommandItem.Create( name, command, this, icon, args );
+					}
+				}
+			}
+
+			using( SQLiteCommand cmd = connection.CreateCommand() )
+			{
+				cmd.CommandText = "SELECT WorkspaceID FROM workspaces";
+
+				using( SQLiteDataReader reader = cmd.ExecuteReader() )
+				{
+					while( reader.Read() )
+					{
+						Workspace workspace = new Workspace
+						{
+							ID = reader.GetInt32( 0 )
+						};
+
+						workspace.Load( connection );
+
+						yield return CommandItem.Create( workspace.Name, workspace.Name, this, "Workspace.png", workspace );
 					}
 				}
 			}
