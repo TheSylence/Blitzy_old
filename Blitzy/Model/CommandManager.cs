@@ -82,11 +82,9 @@ namespace Blitzy.Model
 				}
 			}
 
-			// TODO: I guess this can be further optimized:
-			// Don't sort by dice coefficent
-			// Instead get items with the same order and only apply dice to these
-			foreach( CommandItem item in items.OrderByDescending( GetCommandExecutionCount )
-				.ThenByDescending( it => it.Name.GetDiceCoefficent( command ) ).Take( Settings.GetValue<int>( SystemSetting.MaxMatchingItems ) ) )
+			List<CommandItem> orderedItems = new List<CommandItem>( items.OrderByDescending( GetCommandExecutionCount ).Take( Settings.GetValue<int>( SystemSetting.MaxMatchingItems ) ) );
+			foreach( CommandItem item in orderedItems.OrderByDescending( GetCommandExecutionCount )
+				.ThenByDescending( it => it.Name.GetDiceCoefficent( command ) ) )
 			{
 				Items.Add( item );
 			}

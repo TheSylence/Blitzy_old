@@ -14,7 +14,7 @@ namespace Blitzy.Tests.ViewModel
 	[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	public class DownloadDialogViewModel_Tests : TestBase
 	{
-		[TestMethod]
+		[TestMethod, TestCategory("ViewModel")]
 		public void PropertyChangedTest()
 		{
 			DownloadDialogViewModel vm = new DownloadDialogViewModel();

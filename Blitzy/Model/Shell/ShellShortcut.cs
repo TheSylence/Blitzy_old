@@ -186,7 +186,7 @@ namespace Blitzy.Model.Shell
 			get
 			{
 #if UNICODE
-				WIN32_FIND_DATAW wfd = new WIN32_FIND_DATAW();
+				WIN32_FIND_DATAW wfd;
 #else
         WIN32_FIND_DATAA wfd = new WIN32_FIND_DATAA();
 #endif

@@ -1,7 +1,11 @@
 ﻿// $Id$
 
 using System;
+using System.Diagnostics;
+using System.Windows;
+using Blitzy.Tests.Mocks.Services;
 using Blitzy.ViewModel.Dialogs;
+using Blitzy.ViewServices;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Blitzy.Tests.ViewModel
@@ -13,7 +17,7 @@ namespace Blitzy.Tests.ViewModel
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void ExitTest()
 		{
-			ExceptionDialogViewModel vm = new ExceptionDialogViewModel( new Exception() );
+			ExceptionDialogViewModel vm = new ExceptionDialogViewModel( new Exception(), new StackTrace( true ) );
 
 			bool closed = false;
 			vm.RequestClose += ( s, e ) => closed = true;
@@ -27,16 +31,28 @@ namespace Blitzy.Tests.ViewModel
 		public void SendTest()
 		{
 			Exception ex = new Exception( "This is a test" );
-			ExceptionDialogViewModel vm = new ExceptionDialogViewModel( ex );
+			ExceptionDialogViewModel vm = new ExceptionDialogViewModel( ex, new StackTrace( true ) );
 
 			bool closed = false;
 			vm.RequestClose += ( s, e ) => closed = true;
 
+			bool success = false;
+			bool called = false;
+			DelegateServiceMock mock = new DelegateServiceMock();
+			mock.Action = ( args ) =>
+				{
+					called = true;
+					success = ( (MessageBoxParameter)args ).Icon == MessageBoxImage.Information;
+					return null;
+				};
+
+			DialogServiceManager.RegisterService( typeof( MessageBoxService ), mock );
+
 			Assert.IsTrue( vm.SendCommand.CanExecute( null ) );
 			vm.SendCommand.Execute( null );
+			Assert.IsTrue( called );
+			Assert.IsTrue( success );
 			Assert.IsTrue( closed );
-
-			// TODO: Test if error report was sent
 		}
 	}
 }

@@ -34,11 +34,11 @@ namespace Blitzy.Utility
 				throw new ArgumentNullException( "arguments" );
 			if( arguments.BufferSize < 128 )
 				throw new ArgumentOutOfRangeException( "arguments.BufferSize",
-					arguments.BufferSize, "BufferSize has to be greater or equal than 128." );
+					arguments.BufferSize, @"BufferSize has to be greater or equal than 128." );
 			if( arguments.ProgressChangeCallbackInterval.TotalSeconds < 0 )
 				throw new ArgumentOutOfRangeException( "arguments.ProgressChangeCallbackInterval",
 					arguments.ProgressChangeCallbackInterval,
-					"ProgressChangeCallbackInterval has to be greater or equal than 0." );
+					@"ProgressChangeCallbackInterval has to be greater or equal than 0." );
 
 			long length = 0;
 

@@ -447,4 +447,10 @@
   <data name="ItemsInCatalog" xml:space="preserve">
     <value>Einträge im Katalog</value>
   </data>
+  <data name="ErrorReportSend" xml:space="preserve">
+    <value>Fehlerbericht gesendet. Vielen Dank für die Hilfe</value>
+  </data>
+  <data name="ErrorReportError" xml:space="preserve">
+    <value>Fehler beim senden des Berichts. Trotzdem vielen Dank für die Hilfe</value>
+  </data>
 </root>

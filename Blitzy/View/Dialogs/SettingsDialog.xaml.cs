@@ -6,7 +6,7 @@ namespace Blitzy.View.Dialogs
 	/// Interaction logic for SettingsDialog.xaml
 	/// </summary>
 	[ExcludeFromCodeCoverage]
-	public partial class SettingsDialog : CloseableView
+	public partial class SettingsDialog
 	{
 		public SettingsDialog()
 		{

@@ -6,7 +6,7 @@ namespace Blitzy.View.Dialogs
 	/// Interaction logic for ChangelogDialog.xaml
 	/// </summary>
 	[ExcludeFromCodeCoverage]
-	public partial class ChangelogDialog : CloseableView
+	public partial class ChangelogDialog
 	{
 		public ChangelogDialog()
 		{

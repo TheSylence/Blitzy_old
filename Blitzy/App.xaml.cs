@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
@@ -8,6 +9,7 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
 using Blitzy.Utility;
+using Blitzy.View.Dialogs;
 using Blitzy.ViewModel;
 using Blitzy.ViewServices;
 using GalaSoft.MvvmLight.Threading;
@@ -21,7 +23,7 @@ namespace Blitzy
 	/// Interaction logic for App.xaml
 	/// </summary>
 	[ExcludeFromCodeCoverage]
-	public partial class App : Application
+	public partial class App
 	{
 		#region Constructor
 
@@ -119,7 +121,7 @@ namespace Blitzy
 		{
 			try
 			{
-				Blitzy.View.Dialogs.ExceptionDialog dlg = new Blitzy.View.Dialogs.ExceptionDialog( e.Exception );
+				ExceptionDialog dlg = new ExceptionDialog( e.Exception, new StackTrace( true ) );
 				dlg.ShowDialog();
 
 				e.Handled = true;
@@ -131,7 +133,7 @@ namespace Blitzy
 			finally
 			{
 				SingleInstance.Stop();
-				System.Environment.Exit( -1 );
+				Environment.Exit( -1 );
 			}
 		}
 

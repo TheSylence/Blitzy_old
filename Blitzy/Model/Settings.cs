@@ -103,11 +103,11 @@ namespace Blitzy.Model
 			Type targetType = typeof( T );
 			if( targetType == typeof( bool ) )
 			{
-				if( value.GetType() == typeof( int ) )
+				if( value is int )
 				{
 					value = ( (int)value ) == 1;
 				}
-				else if( value.GetType() == typeof( string ) )
+				else if( value is string )
 				{
 					value = Convert.ToInt32( value.ToString() ) == 1;
 				}
@@ -232,7 +232,7 @@ namespace Blitzy.Model
 		{
 			RemovePluginSetting( pluginID, key );
 
-			if( value.GetType() == typeof( bool ) )
+			if( value is bool )
 			{
 				value = ( (bool)value ) ? 1 : 0;
 			}

@@ -6,7 +6,7 @@ namespace Blitzy.View.Dialogs
 	/// Interaction logic for TextInputDialog.xaml
 	/// </summary>
 	[ExcludeFromCodeCoverage]
-	public partial class TextInputDialog : CloseableView
+	public partial class TextInputDialog
 	{
 		public TextInputDialog()
 		{

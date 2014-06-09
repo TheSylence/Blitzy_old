@@ -6,7 +6,7 @@ namespace Blitzy.View.Dialogs
 	/// Interaction logic for WebyWebsiteDialog.xaml
 	/// </summary>
 	[ExcludeFromCodeCoverage]
-	public partial class WebyWebsiteDialog : CloseableView
+	public partial class WebyWebsiteDialog
 	{
 		public WebyWebsiteDialog()
 		{

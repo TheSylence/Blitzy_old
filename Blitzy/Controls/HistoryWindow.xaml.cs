@@ -11,7 +11,7 @@ namespace Blitzy.Controls
 	/// Interaction logic for HistoryWindow.xaml
 	/// </summary>
 	[ExcludeFromCodeCoverage]
-	public partial class HistoryWindow : UserControl
+	public partial class HistoryWindow
 	{
 		#region Constructor
 

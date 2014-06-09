@@ -6,7 +6,7 @@ namespace Blitzy.View.Dialogs
 	/// Interaction logic for DownloadDialog.xaml
 	/// </summary>
 	[ExcludeFromCodeCoverage]
-	public partial class DownloadDialog : CloseableView
+	public partial class DownloadDialog
 	{
 		public DownloadDialog()
 		{

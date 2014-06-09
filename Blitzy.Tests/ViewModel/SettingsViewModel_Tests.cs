@@ -2,6 +2,7 @@
 
 using System;
 using System.Linq;
+using System.Windows.Documents;
 using Blitzy.Messages;
 using Blitzy.Model;
 using Blitzy.Tests.Mocks.Services;
@@ -130,24 +131,6 @@ namespace Blitzy.Tests.ViewModel
 		}
 
 		[TestMethod, TestCategory( "ViewModel" )]
-		public void LatestVersionTest()
-		{
-			VM.Reset();
-			//AutoResetEvent evt = new AutoResetEvent( false );
-			//Messenger.Default.Register<VersionCheckMessage>( this, ( msg ) =>
-			//	{
-			//		evt.Set();
-			//	} );
-
-			//Assert.IsNull( VM.LatestVersion );
-			//VM.UpdateCheckCommand.Execute( null );
-
-			//evt.WaitOne();
-
-			//Assert.IsNotNull( VM.LatestVersion );
-		}
-
-		[TestMethod, TestCategory( "ViewModel" )]
 		public void PropertyChangedTest()
 		{
 			PropertyChangedListener listener = new PropertyChangedListener( VM );
@@ -157,7 +140,6 @@ namespace Blitzy.Tests.ViewModel
 			listener.Exclude<SettingsViewModel>( vm => vm.CatalogBuilder );
 			listener.Exclude<SettingsViewModel>( vm => vm.CurrentVersion );
 			listener.Exclude<SettingsViewModel>( vm => vm.Settings );
-			listener.Exclude<SettingsViewModel>( vm => vm.LatestVersionInfo );
 			Assert.IsTrue( listener.TestProperties() );
 		}
 

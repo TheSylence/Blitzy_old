@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows;
 using Blitzy.ViewModel.Dialogs;
@@ -9,13 +10,13 @@ namespace Blitzy.View.Dialogs
 	/// Interaction logic for ExceptionDialog.xaml
 	/// </summary>
 	[ExcludeFromCodeCoverage]
-	public partial class ExceptionDialog : Window
+	public partial class ExceptionDialog
 	{
-		public ExceptionDialog( Exception ex )
+		public ExceptionDialog( Exception ex, StackTrace trace )
 		{
 			InitializeComponent();
 
-			DataContext = new ExceptionDialogViewModel( ex );
+			DataContext = new ExceptionDialogViewModel( ex, trace );
 		}
 	}
 }
