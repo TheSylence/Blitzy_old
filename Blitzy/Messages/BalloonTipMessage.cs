@@ -5,6 +5,7 @@ using Hardcodet.Wpf.TaskbarNotification;
 
 namespace Blitzy.Messages
 {
+	[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	internal class BalloonTipMessage : MessageBase
 	{
 		public readonly BalloonIcon Icon;

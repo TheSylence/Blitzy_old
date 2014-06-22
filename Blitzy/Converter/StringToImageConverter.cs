@@ -36,19 +36,13 @@ namespace Blitzy.Converter
 					string file = str.Substring( 0, idx );
 					str = str.Substring( idx + 1 );
 
-					if( str.Contains( "." ) ) // No icon but file name...
-					{
-						return null;
-					}
+					// This seems to be never reached
+					//if( str.Contains( "." ) ) // No icon but file name...
+					//{
+					//	return null;
+					//}
 					int icoIdx;
-					try
-					{
-						icoIdx = int.Parse( str, CultureInfo.InvariantCulture );
-					}
-					catch( FormatException )
-					{
-						return null;
-					}
+					icoIdx = int.Parse( str, CultureInfo.InvariantCulture );
 
 					IntPtr large = IntPtr.Zero;
 					IntPtr small = IntPtr.Zero;

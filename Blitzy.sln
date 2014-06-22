@@ -19,6 +19,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{FAB1AE4A-E62A-403B-9C64-90172B524A16}"
 	ProjectSection(SolutionItems) = preProject
 		release.msbuild = release.msbuild
+		tests.runsettings = tests.runsettings
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "btbapi", "btbapi\btbapi\btbapi.csproj", "{F656EA31-9755-4188-B662-02BEACC5652F}"

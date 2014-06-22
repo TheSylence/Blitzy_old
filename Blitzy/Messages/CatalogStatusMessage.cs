@@ -1,6 +1,5 @@
 ﻿// $Id$
 
-using System.Diagnostics.CodeAnalysis;
 using GalaSoft.MvvmLight.Messaging;
 
 namespace Blitzy.Messages
@@ -12,7 +11,7 @@ namespace Blitzy.Messages
 		BuildFinished
 	}
 
-	[ExcludeFromCodeCoverage]
+	[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	internal class CatalogStatusMessage : MessageBase
 	{
 		public readonly CatalogStatus Status;

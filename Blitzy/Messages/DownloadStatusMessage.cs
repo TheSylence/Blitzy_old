@@ -15,6 +15,7 @@ namespace Blitzy.Messages
 		public readonly string MD5;
 		public readonly string TargetPath;
 
+		[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 		public DownloadStatusMessage( string targetPath, string downloadLink, long downloadSize, string md5 )
 		{
 			TargetPath = targetPath;

@@ -18,7 +18,7 @@ namespace Blitzy.ViewModel.Dialogs
 
 		public ExceptionDialogViewModel( Exception ex, StackTrace trace )
 		{
-			ErrorReport = new ErrorReport( ex, trace );
+			_ErrorReport = new ErrorReport( ex, trace );
 		}
 
 		#endregion Constructor
@@ -60,13 +60,19 @@ namespace Blitzy.ViewModel.Dialogs
 			return true;
 		}
 
-		private void ExecuteExitCommand()
+		[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+		private void CloseDialog()
 		{
 			Close();
 			if( !RuntimeConfig.Tests )
 			{
 				Environment.Exit( -1 );
 			}
+		}
+
+		private void ExecuteExitCommand()
+		{
+			CloseDialog();
 		}
 
 		private void ExecuteSendCommand()
@@ -89,11 +95,7 @@ namespace Blitzy.ViewModel.Dialogs
 					"Error".Localize(), MessageBoxButton.OK, MessageBoxImage.Information ) );
 			}
 
-			Close();
-			if( !RuntimeConfig.Tests )
-			{
-				Environment.Exit( -1 );
-			}
+			CloseDialog();
 		}
 
 		#endregion Commands

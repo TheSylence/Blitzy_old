@@ -3,6 +3,7 @@
 using System;
 using Blitzy.View;
 using Blitzy.ViewModel;
+using Microsoft.QualityTools.Testing.Fakes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Blitzy.Tests.ViewModel
@@ -32,6 +33,23 @@ namespace Blitzy.Tests.ViewModel
 			RequestClose( this, CloseViewEventArgs.Default );
 
 			Assert.IsTrue( closed );
+
+			using( ShimsContext.Create() )
+			{
+				System.Windows.Fakes.ShimWindow.AllInstances.DialogResultSetNullableOfBoolean = ( window, value ) =>
+					{
+					};
+
+				closed = false;
+				v = new CloseableView();
+				v.DataContext = this;
+				v.Closed += ( s, e ) => closed = true;
+
+				Assert.IsNotNull( RequestClose );
+				RequestClose( this, CloseViewEventArgs.Default );
+
+				Assert.IsTrue( closed );
+			}
 		}
 
 		[TestMethod, TestCategory( "ViewModel" )]
@@ -47,8 +65,14 @@ namespace Blitzy.Tests.ViewModel
 			bool hidden = false;
 			v.Hidden += ( s, e ) => hidden = true;
 
-			RequestShow( this, EventArgs.Empty );
-			RequestHide( this, EventArgs.Empty );
+			using( ShimsContext.Create() )
+			{
+				System.Windows.Fakes.ShimWindow.AllInstances.Show = ( window ) => { };
+				System.Windows.Fakes.ShimWindow.AllInstances.Hide = ( window ) => { };
+
+				RequestShow( this, EventArgs.Empty );
+				RequestHide( this, EventArgs.Empty );
+			}
 
 			Assert.IsTrue( shown );
 			Assert.IsTrue( hidden );

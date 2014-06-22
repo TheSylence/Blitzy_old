@@ -2,10 +2,12 @@
 
 using System;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using System.Windows;
 using Blitzy.Tests.Mocks.Services;
 using Blitzy.ViewModel.Dialogs;
 using Blitzy.ViewServices;
+using Microsoft.QualityTools.Testing.Fakes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Blitzy.Tests.ViewModel
@@ -53,6 +55,33 @@ namespace Blitzy.Tests.ViewModel
 			Assert.IsTrue( called );
 			Assert.IsTrue( success );
 			Assert.IsTrue( closed );
+
+			called = false;
+			closed = false;
+			success = false;
+
+			mock.Action = ( args ) =>
+			{
+				called = true;
+				success = ( (MessageBoxParameter)args ).Icon == MessageBoxImage.Error;
+				return null;
+			};
+
+			using( ShimsContext.Create() )
+			{
+				btbapi.Fakes.ShimAPI.AllInstances.SendReportErrorReportStringVersion = ( report, text, version, task ) =>
+					{
+						return Task.Run<btbapi.ErrorReportResult>( () =>
+							{
+								return new btbapi.ErrorReportResult( System.Net.HttpStatusCode.BadRequest, null, false );
+							} );
+					};
+
+				vm.SendCommand.Execute( null );
+				Assert.IsTrue( called );
+				Assert.IsTrue( success );
+				Assert.IsTrue( closed );
+			}
 		}
 	}
 }

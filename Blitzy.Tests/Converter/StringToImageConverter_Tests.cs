@@ -49,6 +49,9 @@ namespace Blitzy.Tests.Converter
 
 			fileName = "C:\\temp\test,file.png,0";
 			Assert.IsNull( conv.Convert( fileName, null, null, null ), "Coma in file name" );
+
+			fileName = "C:\\temp\\test.png,0.ext";
+			Assert.IsNull( conv.Convert( fileName, null, null, null ), "File name as icon" );
 		}
 	}
 }

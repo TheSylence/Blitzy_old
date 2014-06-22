@@ -4,7 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using Blitzy.Tests.Mocks;
+using Blitzy.Tests.Mocks.Services;
 using Blitzy.ViewModel.Dialogs;
+using Blitzy.ViewServices;
 using btbapi;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -45,6 +47,20 @@ namespace Blitzy.Tests.ViewModel
 
 			vm.LatestVersionInfo = new VersionInfo( HttpStatusCode.OK, new Version(), new Uri( "http://localhost" ), string.Empty, 123, new Dictionary<Version, string>() );
 			Assert.IsTrue( vm.DownloadCommand.CanExecute( null ) );
+
+			CallCheckServiceMock mock = new CallCheckServiceMock();
+			DialogServiceManager.RegisterService( typeof( DownloadService ), mock );
+
+			vm.DownloadCommand.Execute( null );
+			Assert.IsTrue( mock.WasCalled );
+			Assert.IsInstanceOfType( mock.Parameter, typeof( DownloadServiceParameters ) );
+		}
+
+		[TestMethod, TestCategory( "ViewModel" )]
+		public void PropertyChangedTest()
+		{
+			PropertyChangedListener listener = new PropertyChangedListener( new ChangelogDialogViewModel() );
+			Assert.IsTrue( listener.TestProperties() );
 		}
 	}
 }

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Data.SQLite;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using Blitzy.Model;
 
@@ -21,38 +22,27 @@ namespace Blitzy.Plugin.System
 
 		public bool ExecuteCommand( CommandItem command, CommandExecutionMode mode, IList<string> input, out string message )
 		{
-			ProcessStartInfo procInf = new ProcessStartInfo
-			{
-				FileName = command.Description
-			};
+			string args;
+			string workingDirectory;
 
 			Workspace workspace = command.UserData as Workspace;
 			if( workspace != null )
 			{
-				// TODO: Execute workspace items
+				// TODO: Ensure that workspace items are full paths
+				foreach( WorkspaceItem item in workspace.Items.OrderBy( it => it.ItemOrder ) )
+				{
+					args = command.UserData as string;
+					workingDirectory = Path.GetDirectoryName( item.ItemCommand );
+					Run( item.ItemCommand, null, workingDirectory, mode == CommandExecutionMode.Secondary );
+				}
+
 				message = null;
 				return true;
 			}
 
-			string args = command.UserData as string;
-			if( args != null )
-			{
-				procInf.Arguments = args;
-			}
-
-			if( mode == CommandExecutionMode.Secondary )
-			{
-				procInf.UseShellExecute = true;
-				procInf.Verb = "runas";
-			}
-
-			string workingDirectory = Path.GetDirectoryName( command.Description );
-			if( workingDirectory != null )
-			{
-				procInf.WorkingDirectory = workingDirectory;
-			}
-
-			Process.Start( procInf );
+			args = command.UserData as string;
+			workingDirectory = Path.GetDirectoryName( command.Description );
+			Run( command.Description, args, workingDirectory, mode == CommandExecutionMode.Secondary );
 
 			message = null;
 			return true;
@@ -131,6 +121,30 @@ namespace Blitzy.Plugin.System
 					}
 				}
 			}
+		}
+
+		private void Run( string fileName, string args, string workingDir, bool asAdmin )
+		{
+			ProcessStartInfo procInf = new ProcessStartInfo
+			{
+				FileName = fileName
+			};
+
+			if( workingDir != null )
+			{
+				procInf.WorkingDirectory = workingDir;
+			}
+			if( args != null )
+			{
+				procInf.Arguments = args;
+			}
+			if( asAdmin )
+			{
+				procInf.UseShellExecute = true;
+				procInf.Verb = "runas";
+			}
+
+			Process.Start( procInf );
 		}
 
 		#endregion Methods

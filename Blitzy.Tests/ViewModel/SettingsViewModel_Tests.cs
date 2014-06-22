@@ -91,6 +91,30 @@ namespace Blitzy.Tests.ViewModel
 		}
 
 		[TestMethod, TestCategory( "ViewModel" )]
+		public void CancelTest()
+		{
+			bool closed = false;
+			VM.RequestClose += ( s, e ) => closed = true;
+
+			VM.CancelCommand.Execute( null );
+
+			Assert.IsTrue( closed );
+		}
+
+		[TestMethod, TestCategory( "ViewModel" )]
+		public void CatalogBuildTest()
+		{
+			VM.Settings.Folders.Add( new Folder() );
+			VM.CatalogBuilder = new CatalogBuilder( new Settings( Connection ) );
+
+			bool received = false;
+			Messenger.Default.Register<InternalCommandMessage>( this, ( msg ) => received = true );
+
+			VM.UpdateCatalogCommand.Execute( null );
+			Assert.IsTrue( received );
+		}
+
+		[TestMethod, TestCategory( "ViewModel" )]
 		public void CatalogTest()
 		{
 			VM.Reset();
@@ -128,6 +152,27 @@ namespace Blitzy.Tests.ViewModel
 			mock.Result = System.Windows.MessageBoxResult.Yes;
 			VM.DefaultsCommand.Execute( null );
 			Assert.AreEqual( 20, VM.Settings.GetValue<int>( SystemSetting.MaxMatchingItems ) );
+		}
+
+		[TestMethod, TestCategory( "ViewModel" )]
+		public void DownloadUpdateTest()
+		{
+			Assert.IsFalse( VM.DownloadUpdateCommand.CanExecute( null ) );
+
+			Uri downloadLink = null;
+			VM.LatestVersionInfo = new btbapi.VersionInfo( System.Net.HttpStatusCode.OK, new Version( 1, 2 ), downloadLink, "123", 123, new System.Collections.Generic.Dictionary<Version, string>() );
+			Assert.IsFalse( VM.DownloadUpdateCommand.CanExecute( null ) );
+
+			downloadLink = new Uri( "http://localhost/file.exe" );
+			VM.LatestVersionInfo = new btbapi.VersionInfo( System.Net.HttpStatusCode.OK, new Version( 1, 2 ), downloadLink, "123", 123, new System.Collections.Generic.Dictionary<Version, string>() );
+			Assert.IsTrue( VM.DownloadUpdateCommand.CanExecute( null ) );
+
+			CallCheckServiceMock mock = new CallCheckServiceMock();
+			DialogServiceManager.RegisterService( typeof( DownloadService ), mock );
+			VM.DownloadUpdateCommand.Execute( null );
+
+			Assert.IsTrue( mock.WasCalled );
+			Assert.IsInstanceOfType( mock.Parameter, typeof( DownloadServiceParameters ) );
 		}
 
 		[TestMethod, TestCategory( "ViewModel" )]
@@ -225,11 +270,25 @@ namespace Blitzy.Tests.ViewModel
 			Assert.IsTrue( VM.CancelCommand.CanExecute( null ) );
 			Assert.IsTrue( VM.DefaultsCommand.CanExecute( null ) );
 			Assert.IsTrue( VM.UpdateCheckCommand.CanExecute( null ) );
+			Assert.IsTrue( VM.ViewChangelogCommand.CanExecute( null ) );
 
 			Assert.IsFalse( VM.UpdateCatalogCommand.CanExecute( null ) );
 			VM.Settings.Folders.Add( new Folder() );
 			VM.CatalogBuilder = new CatalogBuilder( new Settings( Connection ) );
 			Assert.IsTrue( VM.UpdateCatalogCommand.CanExecute( null ) );
+		}
+
+		[TestMethod, TestCategory( "ViewModel" )]
+		public void ViewChangelogTest()
+		{
+			CallCheckServiceMock mock = new CallCheckServiceMock();
+			DialogServiceManager.RegisterService( typeof( ViewChangelogService ), mock );
+
+			VM.LatestVersionInfo = new btbapi.VersionInfo( System.Net.HttpStatusCode.OK, null, null, null, 0, null );
+			VM.ViewChangelogCommand.Execute( null );
+
+			Assert.IsTrue( mock.WasCalled );
+			Assert.IsInstanceOfType( mock.Parameter, typeof( btbapi.VersionInfo ) );
 		}
 	}
 }
