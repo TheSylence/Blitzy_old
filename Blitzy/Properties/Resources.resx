@@ -468,4 +468,10 @@ Your address won't be used for any other purposes than investigating this error.
   <data name="ErrorReportSend" xml:space="preserve">
     <value>Error report has been sent. Thanks for you help</value>
   </data>
+  <data name="History" xml:space="preserve">
+    <value>History</value>
+  </data>
+  <data name="HistorySize" xml:space="preserve">
+    <value>History size</value>
+  </data>
 </root>

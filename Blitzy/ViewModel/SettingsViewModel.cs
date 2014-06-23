@@ -2,7 +2,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Data.SQLite;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -41,6 +43,8 @@ namespace Blitzy.ViewModel
 
 			_BuildDate = Assembly.GetExecutingAssembly().LinkerTimestamp();
 			_CatalogItemsProcessed = -1;
+
+			AvailableLanguages = new ObservableCollection<CultureInfo>( WPFLocalizeExtension.Providers.ResxLocalizationProvider.Instance.AvailableCultures.Where( c => !string.IsNullOrWhiteSpace( c.IetfLanguageTag ) ) );
 		}
 
 		protected override void RegisterMessages()
@@ -84,6 +88,12 @@ namespace Blitzy.ViewModel
 			HistoryCount = Settings.GetValue<int>( SystemSetting.HistoryCount );
 			LastCatalogBuild = Settings.GetValue<DateTime>( SystemSetting.LastCatalogBuild );
 			ItemsInCatalog = GetItemCount();
+			SelectedLanguage = CultureInfo.CreateSpecificCulture( Settings.GetValue<string>( SystemSetting.Language ) );
+
+			while( !AvailableLanguages.Contains( SelectedLanguage ) && SelectedLanguage != null )
+			{
+				SelectedLanguage = SelectedLanguage.Parent;
+			}
 		}
 
 		private int GetItemCount()
@@ -126,6 +136,11 @@ namespace Blitzy.ViewModel
 			}
 
 			CommandManager.InvalidateRequerySuggested();
+		}
+
+		private void SetLanguage( CultureInfo culture )
+		{
+			MessengerInstance.Send( new LanguageMessage( culture ) );
 		}
 
 		#endregion Methods
@@ -444,6 +459,7 @@ namespace Blitzy.ViewModel
 			Settings.SetValue( SystemSetting.RebuildCatalogOnChanges, RebuildOnChange );
 			Settings.SetValue( SystemSetting.BackupShortcuts, BackupShortcuts );
 			Settings.SetValue( SystemSetting.HistoryCount, HistoryCount );
+			Settings.SetValue( SystemSetting.Language, SelectedLanguage.IetfLanguageTag );
 
 			Settings.Save();
 			WinySettings.Save();
@@ -771,6 +787,7 @@ namespace Blitzy.ViewModel
 		private VersionInfo _LatestVersionInfo;
 		private string _SelectedExclude;
 		private Folder _SelectedFolder;
+		private CultureInfo _SelectedLanguage;
 		private string _SelectedRule;
 		private Settings _Settings;
 		private bool _VersionCheckError;
@@ -778,6 +795,8 @@ namespace Blitzy.ViewModel
 		public API API { get; private set; }
 
 		public PluginDatabase ApiDatabase { get; set; }
+
+		public ObservableCollection<CultureInfo> AvailableLanguages { get; private set; }
 
 		public string BlitzyLicense { get; set; }
 
@@ -986,6 +1005,27 @@ namespace Blitzy.ViewModel
 				RaisePropertyChanging( () => SelectedFolder );
 				_SelectedFolder = value;
 				RaisePropertyChanged( () => SelectedFolder );
+			}
+		}
+
+		public CultureInfo SelectedLanguage
+		{
+			get
+			{
+				return _SelectedLanguage;
+			}
+
+			set
+			{
+				if( _SelectedLanguage == value )
+				{
+					return;
+				}
+
+				RaisePropertyChanging( () => SelectedLanguage );
+				_SelectedLanguage = value;
+				SetLanguage( value );
+				RaisePropertyChanged( () => SelectedLanguage );
 			}
 		}
 

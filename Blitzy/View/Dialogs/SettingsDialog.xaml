@@ -70,10 +70,7 @@
 								</Grid.RowDefinitions>
 
 								<TextBlock Text="{lex:Loc Language}" Grid.Row="0" />
-								<ComboBox Grid.Row="1" />
-
-								<TextBlock Text="{lex:Loc Skin}" Grid.Row="2" />
-								<ListBox Grid.Row="3" MinHeight="100" />
+								<ComboBox Grid.Row="1" ItemsSource="{Binding AvailableLanguages}" DisplayMemberPath="NativeName"  SelectedItem="{Binding SelectedLanguage, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 							</Grid>
 						</GroupBox>
 						<GroupBox Header="{lex:Loc History}">

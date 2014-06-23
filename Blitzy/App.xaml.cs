@@ -8,10 +8,12 @@ using System.Reflection;
 using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
+using Blitzy.Messages;
 using Blitzy.Utility;
 using Blitzy.View.Dialogs;
 using Blitzy.ViewModel;
 using Blitzy.ViewServices;
+using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Threading;
 using Hardcodet.Wpf.TaskbarNotification;
 using WPFLocalizeExtension.Engine;
@@ -51,6 +53,7 @@ namespace Blitzy
 
 			DispatcherHelper.Initialize();
 			DialogServiceManager.RegisterServices();
+			Messenger.Default.Register<LanguageMessage>( this, ChangeLanguage );
 		}
 
 		private void Instance_MissingKeyEvent( object sender, MissingKeyEventArgs e )
@@ -135,6 +138,12 @@ namespace Blitzy
 				SingleInstance.Stop();
 				Environment.Exit( -1 );
 			}
+		}
+
+		private void ChangeLanguage( LanguageMessage msg )
+		{
+			LocalizeDictionary.Instance.SetCurrentThreadCulture = true;
+			LocalizeDictionary.Instance.Culture = msg.Language;
 		}
 
 		private void DefaultProvider_ProviderError( object sender, ProviderErrorEventArgs args )

@@ -453,4 +453,10 @@
   <data name="ErrorReportError" xml:space="preserve">
     <value>Fehler beim senden des Berichts. Trotzdem vielen Dank für die Hilfe</value>
   </data>
+  <data name="History" xml:space="preserve">
+    <value>Verlauf</value>
+  </data>
+  <data name="HistorySize" xml:space="preserve">
+    <value>Verlaufslänge</value>
+  </data>
 </root>

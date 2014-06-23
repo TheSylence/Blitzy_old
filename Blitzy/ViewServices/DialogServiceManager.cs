@@ -44,7 +44,7 @@ namespace Blitzy.ViewServices
 		/// </summary>
 		internal static void Clear()
 		{
-			Debug.Assert( Application.Current == null );
+			Debug.Assert( RuntimeConfig.Tests );
 
 			Services.Clear();
 			ManipServices.Clear();
@@ -77,7 +77,7 @@ namespace Blitzy.ViewServices
 		/// </summary>
 		internal static void RegisterManipService( Type type, IDataManipulationService service )
 		{
-			Debug.Assert( Application.Current == null );
+			Debug.Assert( RuntimeConfig.Tests );
 
 			ManipServices.Add( type, service );
 		}
@@ -87,7 +87,7 @@ namespace Blitzy.ViewServices
 		/// </summary>
 		internal static void RegisterService( Type type, IDialogService service )
 		{
-			Debug.Assert( Application.Current == null );
+			Debug.Assert( RuntimeConfig.Tests );
 
 			Services.Add( type, service );
 		}
@@ -131,6 +131,7 @@ namespace Blitzy.ViewServices
 		/// </summary>
 		internal static void UnregisterService( Type type )
 		{
+			Debug.Assert( RuntimeConfig.Tests );
 			Services.Remove( type );
 		}
 

@@ -142,6 +142,34 @@ namespace Blitzy.Tests.ViewModel
 		}
 
 		[TestMethod, TestCategory( "ViewModel" )]
+		public void InternalCommandHistoryTest()
+		{
+			MainViewModel vm = new MainViewModel();
+			vm.History.AddItem( "item1" );
+			vm.History.AddItem( "item2" );
+			vm.History.AddItem( "item3" );
+			Assert.AreEqual( 3, vm.History.Commands.Count );
+
+			Messenger.Default.Send( new InternalCommandMessage( "history" ) );
+
+			Assert.AreEqual( 0, vm.History.Commands.Count );
+		}
+
+		[TestMethod, TestCategory( "ViewModel" )]
+		public void MouseCommandTest()
+		{
+			MainViewModel vm = new MainViewModel();
+			vm.Reset();
+			Assert.IsFalse( vm.ExecuteCommand.CanExecute( null ) );
+			Assert.IsFalse( vm.MouseExecuteCommand.CanExecute( null ) );
+
+			vm.CommandInput = "quit";
+
+			Assert.IsTrue( vm.ExecuteCommand.CanExecute( null ) );
+			Assert.IsTrue( vm.MouseExecuteCommand.CanExecute( null ) );
+		}
+
+		[TestMethod, TestCategory( "ViewModel" )]
 		public void PropertyChangedTest()
 		{
 			MainViewModel vm = new MainViewModel();

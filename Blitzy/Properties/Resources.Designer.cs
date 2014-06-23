@@ -540,6 +540,24 @@ namespace Blitzy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to History.
+        /// </summary>
+        public static string History {
+            get {
+                return ResourceManager.GetString("History", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to History size.
+        /// </summary>
+        public static string HistorySize {
+            get {
+                return ResourceManager.GetString("HistorySize", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Import saved sessions.
         /// </summary>
         public static string ImportSavedSessions {

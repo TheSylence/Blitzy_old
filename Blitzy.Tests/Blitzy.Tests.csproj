@@ -109,6 +109,7 @@
     <Compile Include="Global\BaseObject_Tests.cs" />
     <Compile Include="Mocks\Services\DelegateServiceMock.cs" />
     <Compile Include="Model\UpdateChecker_Tests.cs" />
+    <Compile Include="Plugins\Runny_Tests.cs" />
     <Compile Include="Utility\Extensions_Tests.cs" />
     <Compile Include="Utility\HotKeyHost_Tests.cs" />
     <Compile Include="Utility\HotKey_Tests.cs" />
@@ -182,6 +183,7 @@
     <Fakes Include="Fakes\PresentationFramework.fakes" />
     <Fakes Include="Fakes\PresentationCore.fakes" />
     <Fakes Include="Fakes\btbapi.fakes" />
+    <Fakes Include="Fakes\Blitzy.fakes" />
     <None Include="packages.config" />
     <None Include="TestData\Blitzy.exe.lnk">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
