@@ -25,6 +25,7 @@ namespace Blitzy.Tests.Model
 			File.AppendAllText( "builder_test/test.txt", "" );
 			File.AppendAllText( "builder_test/test1.txt", "" );
 			File.AppendAllText( "builder_test/test2.txt", "" );
+			File.Copy( "TestData/Blitzy.exe.lnk", "builder_test/Blitzy.exe.lnk" );
 
 			settings.Folders.Add( folder );
 			using( CatalogBuilder builder = new CatalogBuilder( settings ) )
@@ -51,6 +52,14 @@ namespace Blitzy.Tests.Model
 				Assert.IsTrue( started );
 				Assert.IsTrue( done );
 			}
+		}
+
+		[TestMethod, TestCategory( "Model" )]
+		public void PropertyChangedTest()
+		{
+			Settings settings = new Settings( Connection );
+			PropertyChangedListener listener = new PropertyChangedListener( new CatalogBuilder( settings ) );
+			Assert.IsTrue( listener.TestProperties() );
 		}
 	}
 }

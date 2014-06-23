@@ -77,6 +77,10 @@ namespace Blitzy.Tests
 			{
 				return CultureInfo.InvariantCulture;
 			}
+			else if( type.IsEnum )
+			{
+				return Enum.GetValues( type ).Cast<object>().Last();
+			}
 			else if( !type.IsValueType )
 			{
 				return Activator.CreateInstance( type );

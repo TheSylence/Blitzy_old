@@ -51,5 +51,6 @@ using System.Windows;
 [assembly: NeutralResourcesLanguage( "en", UltimateResourceFallbackLocation.Satellite )]
 [assembly: ThemeInfo( ResourceDictionaryLocation.None, ResourceDictionaryLocation.SourceAssembly )]
 [assembly: InternalsVisibleTo( "Blitzy.Tests" )]
+[assembly: InternalsVisibleTo( "Blitzy.Fakes" )]
 [assembly: log4net.Config.XmlConfigurator( Watch = true )]
 [assembly: CLSCompliant( false )]

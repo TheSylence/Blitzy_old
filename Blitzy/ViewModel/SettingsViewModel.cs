@@ -92,6 +92,12 @@ namespace Blitzy.ViewModel
 
 			while( !AvailableLanguages.Contains( SelectedLanguage ) && SelectedLanguage != null )
 			{
+				if( string.IsNullOrWhiteSpace( SelectedLanguage.Parent.Name ) )
+				{
+					SelectedLanguage = null;
+					break;
+				}
+
 				SelectedLanguage = SelectedLanguage.Parent;
 			}
 		}
@@ -275,6 +281,20 @@ namespace Blitzy.ViewModel
 			{
 				return _ViewChangelogCommand ??
 					( _ViewChangelogCommand = new RelayCommand( ExecuteViewChangelogCommand, CanExecuteViewChangelogCommand ) );
+			}
+		}
+
+		internal async Task UpdateCheckAsync()
+		{
+			VersionCheckError = false;
+			LatestVersionInfo = await UpdateChecker.Instance.CheckVersion();
+			if( LatestVersionInfo.Status == HttpStatusCode.OK )
+			{
+				DispatcherHelper.CheckBeginInvokeOnUI( CommandManager.InvalidateRequerySuggested );
+			}
+			else
+			{
+				VersionCheckError = true;
 			}
 		}
 
@@ -474,19 +494,12 @@ namespace Blitzy.ViewModel
 			MessengerInstance.Send( new InternalCommandMessage( "catalog" ) );
 		}
 
+		[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 		private void ExecuteUpdateCheckCommand()
 		{
 			Task.Run( async () =>
 			{
-				LatestVersionInfo = await UpdateChecker.Instance.CheckVersion();
-				if( LatestVersionInfo.Status == HttpStatusCode.OK )
-				{
-					DispatcherHelper.CheckBeginInvokeOnUI( CommandManager.InvalidateRequerySuggested );
-				}
-				else
-				{
-					VersionCheckError = true;
-				}
+				await UpdateCheckAsync();
 			} );
 		}
 

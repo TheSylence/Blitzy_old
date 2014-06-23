@@ -2,13 +2,16 @@
 
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Documents;
 using Blitzy.Messages;
 using Blitzy.Model;
 using Blitzy.Tests.Mocks.Services;
 using Blitzy.ViewModel;
 using Blitzy.ViewServices;
+using btbapi;
 using GalaSoft.MvvmLight.Messaging;
+using Microsoft.QualityTools.Testing.Fakes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Blitzy.Tests.ViewModel
@@ -276,6 +279,34 @@ namespace Blitzy.Tests.ViewModel
 			VM.Settings.Folders.Add( new Folder() );
 			VM.CatalogBuilder = new CatalogBuilder( new Settings( Connection ) );
 			Assert.IsTrue( VM.UpdateCatalogCommand.CanExecute( null ) );
+		}
+
+		[TestMethod, TestCategory( "ViewModel" )]
+		public void UpdateCheckTest()
+		{
+			using( ShimsContext.Create() )
+			{
+				Blitzy.Model.Fakes.ShimUpdateChecker.AllInstances.CheckVersionBoolean = ( checker, b ) =>
+					{
+						return Task.Run<VersionInfo>( () =>
+							{
+								return new VersionInfo( System.Net.HttpStatusCode.BadRequest, null, null, null, 0, null );
+							} );
+					};
+				VM.UpdateCheckAsync().Wait();
+				Assert.IsTrue( VM.VersionCheckError );
+
+				Blitzy.Model.Fakes.ShimUpdateChecker.AllInstances.CheckVersionBoolean = ( checker, b ) =>
+				{
+					return Task.Run<VersionInfo>( () =>
+					{
+						return new VersionInfo( System.Net.HttpStatusCode.OK, new Version( 1, 2 ), new Uri( "http://localhost/file.name" ), "123", 123, new System.Collections.Generic.Dictionary<Version, string>() );
+					} );
+				};
+
+				VM.UpdateCheckAsync().Wait();
+				Assert.IsFalse( VM.VersionCheckError );
+			}
 		}
 
 		[TestMethod, TestCategory( "ViewModel" )]

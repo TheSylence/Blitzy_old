@@ -43,6 +43,9 @@
     <Reference Include="btbapi.Fakes">
       <HintPath>FakesAssemblies\btbapi.Fakes.dll</HintPath>
     </Reference>
+	<Reference Include="Blitzy.Fakes">
+      <HintPath>FakesAssemblies\Blitzy.Fakes.dll</HintPath>
+    </Reference>
     <Reference Include="GalaSoft.MvvmLight.Extras.WPF45, Version=4.3.31.28649, Culture=neutral, PublicKeyToken=0e27b6f8be9b2ef7, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\MvvmLightLibs.4.4.32.1\lib\net45\GalaSoft.MvvmLight.Extras.dll</HintPath>

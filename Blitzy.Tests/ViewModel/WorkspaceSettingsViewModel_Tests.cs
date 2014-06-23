@@ -205,5 +205,29 @@ namespace Blitzy.Tests.ViewModel
 			PropertyChangedListener listener = new PropertyChangedListener( vm );
 			Assert.IsTrue( listener.TestProperties() );
 		}
+
+		[TestMethod, TestCategory( "ViewModel" )]
+		public void SaveLoadTest()
+		{
+			SettingsViewModel baseVM = new SettingsViewModel();
+			baseVM.Settings = new Blitzy.Model.Settings( Connection );
+			baseVM.Reset();
+			WorkspaceSettingsViewModel vm = new WorkspaceSettingsViewModel( baseVM );
+
+			vm.Workspaces.Add( new Blitzy.Model.Workspace
+				{
+					ID = 1,
+					Name = "Test"
+				} );
+
+			vm.Save();
+
+			vm = new WorkspaceSettingsViewModel( baseVM );
+			vm.Reset();
+
+			Assert.AreEqual( 1, vm.Workspaces.Count );
+			Assert.AreEqual( "Test", vm.Workspaces.First().Name );
+			Assert.AreEqual( 1, vm.Workspaces.First().ID );
+		}
 	}
 }

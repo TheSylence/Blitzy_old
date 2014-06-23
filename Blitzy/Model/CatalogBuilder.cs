@@ -201,6 +201,7 @@ namespace Blitzy.Model
 			DispatcherHelper.CheckBeginInvokeOnUI( () => Messenger.Default.Send( new CatalogStatusMessage( CatalogStatus.BuildFinished ) ) );
 		}
 
+		[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 		private void RunThreaded()
 		{
 			while( IsRunning )
