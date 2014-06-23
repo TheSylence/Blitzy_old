@@ -65,5 +65,24 @@ namespace Blitzy.Tests.ViewServices
 
 			Assert.AreEqual( "test", result );
 		}
+
+		[TestMethod, TestCategory( "ViewServices" ), ExpectedException( typeof( ArgumentException ) )]
+		public void UnregisterServiceTest()
+		{
+			CallCheckServiceMock mock = new CallCheckServiceMock();
+			DialogServiceManager.RegisterService( typeof( TextInputService ), mock );
+
+			try
+			{
+				DialogServiceManager.Show<TextInputService>();
+			}
+			catch
+			{
+				Assert.Fail();
+			}
+
+			DialogServiceManager.UnregisterService( typeof( TextInputService ) );
+			DialogServiceManager.Show<TextInputService>();
+		}
 	}
 }

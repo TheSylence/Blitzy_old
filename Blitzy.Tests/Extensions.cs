@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Threading;
@@ -71,6 +72,10 @@ namespace Blitzy.Tests
 			else if( type == typeof( VersionInfo ) )
 			{
 				return new VersionInfo( HttpStatusCode.OK, new Version( 1, 2 ), new Uri( "http://test.com" ), "123", 12344, new Dictionary<Version, string>() );
+			}
+			else if( type == typeof( CultureInfo ) )
+			{
+				return CultureInfo.InvariantCulture;
 			}
 			else if( !type.IsValueType )
 			{

@@ -167,11 +167,6 @@ namespace Blitzy.Model
 			}
 		}
 
-		internal void RemovePluginSetting( string pluginId, string key )
-		{
-			RemovePluginSetting( Guid.Parse( pluginId ), key );
-		}
-
 		internal void RemovePluginSetting( Guid pluginId, string key )
 		{
 			using( SQLiteCommand cmd = Connection.CreateCommand() )
@@ -216,8 +211,9 @@ namespace Blitzy.Model
 
 				transaction.Commit();
 			}
-			catch
+			catch( Exception ex )
 			{
+				LogHelper.LogError( MethodInfo.GetCurrentMethod().DeclaringType, "Failed to restore default values: {0}", ex );
 				transaction.Rollback();
 				throw;
 			}

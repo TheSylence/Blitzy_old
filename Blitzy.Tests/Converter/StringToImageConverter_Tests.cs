@@ -33,9 +33,10 @@ namespace Blitzy.Tests.Converter
 			Assert.IsNotNull( conv.Convert( fileName, null, null, null ), "Relative file name" );
 
 			fileName = Path.Combine( Directory.GetCurrentDirectory(), "Blitzy.exe" );
-			fileName += ",0";
-
 			Assert.IsNotNull( conv.Convert( fileName, null, null, null ), "Absolute file name" );
+
+			fileName += ",0";
+			Assert.IsNotNull( conv.Convert( fileName, null, null, null ), "Absolute file name with index" );
 
 			fileName += "_1";
 			Assert.IsNull( conv.Convert( fileName, null, null, null ), "Absolute file name with wrong icon index" );

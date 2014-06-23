@@ -7,6 +7,7 @@ using System.Text;
 
 namespace Blitzy
 {
+	[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	internal class NativeMethods : INativeMethods
 	{
 		#region INativeMethods

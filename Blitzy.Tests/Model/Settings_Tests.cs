@@ -16,6 +16,18 @@ namespace Blitzy.Tests.Model
 	public class Settings_Tests : TestBase
 	{
 		[TestMethod, TestCategory( "Model" )]
+		public void ConvertValueTest()
+		{
+			Settings cfg = new Settings( Connection );
+
+			Assert.AreEqual( 0L, cfg.ConvertValue<long>( null ) );
+			Assert.AreEqual( 0L, cfg.ConvertValue<long>( DBNull.Value ) );
+
+			Assert.AreEqual( true, cfg.ConvertValue<bool>( 1 ) );
+			Assert.AreEqual( false, cfg.ConvertValue<bool>( 0 ) );
+		}
+
+		[TestMethod, TestCategory( "Model" )]
 		public void DefaultsTest()
 		{
 			Settings cfg = new Settings( Connection );
@@ -30,6 +42,13 @@ namespace Blitzy.Tests.Model
 
 				Assert.AreEqual( defaultValue.ToString(), cfg.GetValue<string>( setting ) );
 			}
+		}
+
+		[TestMethod, TestCategory( "Model" ), ExpectedException( typeof( ArgumentNullException ) )]
+		public void InvalidGetPluginSettingTest()
+		{
+			Settings cfg = new Settings( Connection );
+			cfg.GetPluginSetting<string>( null, null );
 		}
 
 		[TestMethod, TestCategory( "Plugins" ), ExpectedException( typeof( ArgumentNullException ) )]
@@ -78,6 +97,15 @@ namespace Blitzy.Tests.Model
 		{
 			ISettings cfg = new Settings( Connection );
 			cfg.SetValue( null, "test", null );
+		}
+
+		[TestMethod, TestCategory( "Plugins" )]
+		public void ISettings_RemovePluginTest()
+		{
+			MockPlugin plug = new MockPlugin();
+			ISettings cfg = new Settings( Connection );
+
+			cfg.RemoveValue( plug, "test" );
 		}
 
 		[TestMethod, TestCategory( "Plugins" )]

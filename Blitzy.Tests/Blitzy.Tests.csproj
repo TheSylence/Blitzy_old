@@ -110,6 +110,7 @@
     <Compile Include="Mocks\Services\DelegateServiceMock.cs" />
     <Compile Include="Model\UpdateChecker_Tests.cs" />
     <Compile Include="Plugins\Runny_Tests.cs" />
+    <Compile Include="Global\Constants_Tests.cs" />
     <Compile Include="Utility\Extensions_Tests.cs" />
     <Compile Include="Utility\HotKeyHost_Tests.cs" />
     <Compile Include="Utility\HotKey_Tests.cs" />
