@@ -40,6 +40,17 @@ namespace Blitzy
 				return;
 			}
 
+			//const string fileName = "../Blity.Tests/TestData/Blitzy.exe.lnk";
+			//using( Blitzy.Model.Shell.ShellShortcut sh = new Blitzy.Model.Shell.ShellShortcut( fileName ) )
+			//{
+			//	string path = sh.Path;
+			//	string icon = sh.IconPath;
+			//	string desc = sh.Description;
+			//	string args = sh.GetArguments();
+
+			//	Debugger.Break();
+			//}
+
 			Thread.CurrentThread.Name = "Main";
 
 #if !DEBUG

@@ -10,7 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using Blitzy.Messages;
-using Blitzy.Model.Shell;
+using Blitzy.Model;
 using Blitzy.Utility;
 using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Threading;
@@ -134,24 +134,22 @@ namespace Blitzy.Model
 
 						try
 						{
-							using( ShellShortcut link = new ShellShortcut( tmpFile ) )
+							ShellShortcut link = new ShellShortcut( tmpFile );
+							string targetPath = Environment.ExpandEnvironmentVariables( link.Path ).ToLowerInvariant();
+							if( string.IsNullOrWhiteSpace( targetPath ) )
 							{
-								string targetPath = Environment.ExpandEnvironmentVariables( link.Path ).ToLowerInvariant();
-								if( string.IsNullOrWhiteSpace( targetPath ) )
-								{
-									LogDebug( "Failed to get target of {0}", filePath );
-									continue;
-								}
+								LogDebug( "Failed to get target of {0}", filePath );
+								continue;
+							}
 
-								arguments = link.GetArguments();
-								filePath = targetPath;
-								ext = Path.GetExtension( targetPath );
-								icon = Environment.ExpandEnvironmentVariables( link.IconPath );
+							arguments = link.Arguments;
+							filePath = targetPath;
+							ext = Path.GetExtension( targetPath );
+							icon = Environment.ExpandEnvironmentVariables( link.IconPath );
 
-								if( icon.StartsWith( ",", true, CultureInfo.CurrentUICulture ) )
-								{
-									icon = Environment.ExpandEnvironmentVariables( targetPath + icon );
-								}
+							if( icon.StartsWith( ",", true, CultureInfo.CurrentUICulture ) )
+							{
+								icon = Environment.ExpandEnvironmentVariables( targetPath + icon );
 							}
 						}
 						catch( Exception ex )
