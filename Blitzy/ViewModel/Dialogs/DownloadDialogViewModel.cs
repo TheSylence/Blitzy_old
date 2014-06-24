@@ -32,7 +32,7 @@ namespace Blitzy.ViewModel.Dialogs
 
 		#region Methods
 
-		public async void StartDownload()
+		public async Task StartDownload()
 		{
 			await Task.Run( async () =>
 			{
@@ -53,13 +53,13 @@ namespace Blitzy.ViewModel.Dialogs
 					}
 
 					Stream responseStream = await response.Content.ReadAsStreamAsync();
+					ProgressStatistic stats = new ProgressStatistic
+					{
+						UsedEstimatingMethod = ProgressStatistic.EstimatingMethod.CurrentBytesPerSecond
+					};
+
 					using( FileStream fileStream = File.OpenWrite( TargetPath ) )
 					{
-						ProgressStatistic stats = new ProgressStatistic
-						{
-							UsedEstimatingMethod = ProgressStatistic.EstimatingMethod.CurrentBytesPerSecond
-						};
-
 						long totalLength = DownloadSize;
 						if( response.Content.Headers.ContentLength.HasValue )
 						{
@@ -70,17 +70,62 @@ namespace Blitzy.ViewModel.Dialogs
 
 						DownloadSize = totalLength;
 						stats.ProgressChanged += stats_ProgressChanged;
-						stats.Finished += stats_Finished;
 
 						CopyArguments = new CopyFromArguments( stats.ProgressChange, TimeSpan.FromSeconds( 0.5 ), totalLength );
 						DispatcherHelper.CheckBeginInvokeOnUI( CommandManager.InvalidateRequerySuggested );
 						fileStream.CopyFrom( responseStream, CopyArguments );
-						stats.Finish();
+					}
 
-						LogInfo( "Download completed" );
+					stats.Finish();
+					LogInfo( "Download completed" );
+				}
+
+				FinishDownload();
+			} );
+		}
+
+		private void FinishDownload()
+		{
+			if( CopyArguments.StopEvent != null )
+			{
+				LogInfo( "User cancelled download" );
+				// User cancelled operation. Don't compute hashes
+				try
+				{
+					File.Delete( TargetPath );
+				}
+				catch( IOException )
+				{
+					// Temporary file... Windows will take care of this
+					LogWarning( "Failed to delete temporarry file {0}", TargetPath );
+				}
+			}
+			else
+			{
+				bool success = true;
+				CopyArguments = null;
+				using( MD5 md5 = System.Security.Cryptography.MD5.Create() )
+				{
+					using( FileStream stream = File.OpenRead( TargetPath ) )
+					{
+						string computedHash = BitConverter.ToString( md5.ComputeHash( stream ) ).Replace( "-", "" ).ToLower();
+
+						if( !computedHash.Equals( MD5, StringComparison.Ordinal ) )
+						{
+							LogError( "Downloaded file is corrupted. Exepected Hash: {0} - Calculated: {1}", MD5, computedHash );
+							MessengerInstance.Send( new DownloadStatusMessage( TargetPath, DownloadLink, DownloadSize, MD5 ), MessageTokens.DownloadCorrupted );
+							success = false;
+						}
 					}
 				}
-			} );
+
+				if( success )
+				{
+					MessengerInstance.Send( new DownloadStatusMessage( TargetPath, DownloadLink, DownloadSize, MD5 ), MessageTokens.DownloadSucessful );
+				}
+			}
+
+			DispatcherHelper.CheckBeginInvokeOnUI( () => Close() );
 		}
 
 		private void OnDownloadCorrupted( DownloadStatusMessage msg )
@@ -107,45 +152,6 @@ namespace Blitzy.ViewModel.Dialogs
 					DialogServiceManager.Show<DownloadService>( downloadArgs );
 				}
 			} );
-		}
-
-		private void stats_Finished( object sender, ProgressEventArgs e )
-		{
-			if( CopyArguments.StopEvent != null )
-			{
-				LogInfo( "User cancelled download" );
-				// User cancelled operation. Don't compute hashes
-				try
-				{
-					File.Delete( TargetPath );
-				}
-				catch( IOException )
-				{
-					// Temporary file... Windows will take care of this
-					LogWarning( "Failed to delete temporarry file {0}", TargetPath );
-				}
-			}
-			else
-			{
-				CopyArguments = null;
-				using( MD5 md5 = System.Security.Cryptography.MD5.Create() )
-				{
-					using( FileStream stream = File.OpenRead( TargetPath ) )
-					{
-						string computedHash = BitConverter.ToString( md5.ComputeHash( stream ) ).Replace( "-", "" ).ToLower();
-
-						if( !computedHash.Equals( MD5, StringComparison.Ordinal ) )
-						{
-							LogError( "Downloaded file is corrupted. Exepected Hash: {0} - Calculated: {1}", MD5, computedHash );
-							MessengerInstance.Send( new DownloadStatusMessage( TargetPath, DownloadLink, DownloadSize, MD5 ), MessageTokens.DownloadCorrupted );
-						}
-					}
-				}
-
-				MessengerInstance.Send( new DownloadStatusMessage( TargetPath, DownloadLink, DownloadSize, MD5 ), MessageTokens.DownloadSucessful );
-			}
-
-			DispatcherHelper.CheckBeginInvokeOnUI( () => Close() );
 		}
 
 		private void stats_ProgressChanged( object sender, ProgressEventArgs e )

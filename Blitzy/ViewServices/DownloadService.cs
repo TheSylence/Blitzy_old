@@ -3,6 +3,7 @@
 using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading.Tasks;
 using System.Windows;
 using Blitzy.View.Dialogs;
 using Blitzy.ViewModel.Dialogs;
@@ -30,7 +31,7 @@ namespace Blitzy.ViewServices
 			vm.TargetPath = args.TargetPath;
 			vm.DownloadSize = args.FileSize;
 
-			vm.StartDownload();
+			Task.Run( async () => await vm.StartDownload() );
 			return dlg.ShowDialog();
 		}
 	}
