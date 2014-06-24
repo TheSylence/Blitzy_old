@@ -43,7 +43,7 @@
     <Reference Include="btbapi.Fakes">
       <HintPath>FakesAssemblies\btbapi.Fakes.dll</HintPath>
     </Reference>
-	<Reference Include="Blitzy.Fakes">
+    <Reference Include="Blitzy.Fakes">
       <HintPath>FakesAssemblies\Blitzy.Fakes.dll</HintPath>
     </Reference>
     <Reference Include="GalaSoft.MvvmLight.Extras.WPF45, Version=4.3.31.28649, Culture=neutral, PublicKeyToken=0e27b6f8be9b2ef7, processorArchitecture=MSIL">
@@ -114,10 +114,12 @@
     <Compile Include="Model\UpdateChecker_Tests.cs" />
     <Compile Include="Plugins\Runny_Tests.cs" />
     <Compile Include="Global\Constants_Tests.cs" />
+    <Compile Include="Utility\CopyFromArguments_Tests.cs" />
     <Compile Include="Utility\Extensions_Tests.cs" />
     <Compile Include="Utility\HotKeyHost_Tests.cs" />
     <Compile Include="Utility\HotKey_Tests.cs" />
     <Compile Include="Global\Log_Tests.cs" />
+    <Compile Include="Utility\ProgressStatistic_Tests.cs" />
     <Compile Include="Utility\SingleInstance_Tests.cs" />
     <Compile Include="LogChecker.cs" />
     <Compile Include="Mocks\MockLogObject.cs" />

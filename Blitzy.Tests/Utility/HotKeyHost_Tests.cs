@@ -4,6 +4,7 @@ using System;
 using System.Linq;
 using System.Windows.Interop;
 using Blitzy.Utility;
+using Microsoft.QualityTools.Testing.Fakes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Blitzy.Tests.Global
@@ -87,6 +88,45 @@ namespace Blitzy.Tests.Global
 		public void NullConstructorTest()
 		{
 			HotKeyHost host = new HotKeyHost( null );
+		}
+
+		[TestMethod, TestCategory( "Utility" )]
+		public void PropertyChangedTest()
+		{
+			HwndSourceParameters p = new HwndSourceParameters();
+
+			using( HwndSource hwndSource = new HwndSource( p ) )
+			{
+				using( HotKeyHost host = new HotKeyHost( hwndSource ) )
+				{
+					HotKey key = new HotKey( System.Windows.Input.Key.A, System.Windows.Input.ModifierKeys.Windows );
+					host.AddHotKey( key );
+
+					using( ShimsContext.Create() )
+					{
+						bool registered = false;
+						Blitzy.Utility.Fakes.ShimHotKeyHost.AllInstances.RegisterHotKeyInt32HotKey = ( h, i, k ) => registered = true;
+						bool unregistered = false;
+						Blitzy.Utility.Fakes.ShimHotKeyHost.AllInstances.UnregisterHotKeyInt32 = ( h, k ) => unregistered = true;
+
+						key.Enabled = false;
+						Assert.IsTrue( unregistered );
+
+						key.Enabled = true;
+						Assert.IsTrue( registered );
+
+						unregistered = registered = false;
+						key.Modifiers = System.Windows.Input.ModifierKeys.Control;
+						Assert.IsTrue( unregistered );
+						Assert.IsTrue( registered );
+
+						unregistered = registered = false;
+						key.Key = System.Windows.Input.Key.S;
+						Assert.IsTrue( unregistered );
+						Assert.IsTrue( registered );
+					}
+				}
+			}
 		}
 	}
 }
