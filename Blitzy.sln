@@ -18,6 +18,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{D77692FA
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{FAB1AE4A-E62A-403B-9C64-90172B524A16}"
 	ProjectSection(SolutionItems) = preProject
+		bumpVersion.bat = bumpVersion.bat
 		release.msbuild = release.msbuild
 		tests.runsettings = tests.runsettings
 	EndProjectSection
