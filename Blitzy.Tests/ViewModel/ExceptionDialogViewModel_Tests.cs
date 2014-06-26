@@ -7,6 +7,7 @@ using System.Windows;
 using Blitzy.Tests.Mocks.Services;
 using Blitzy.ViewModel.Dialogs;
 using Blitzy.ViewServices;
+using btbapi;
 using Microsoft.QualityTools.Testing.Fakes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -27,6 +28,14 @@ namespace Blitzy.Tests.ViewModel
 			Assert.IsTrue( vm.ExitCommand.CanExecute( null ) );
 			vm.ExitCommand.Execute( null );
 			Assert.IsTrue( closed );
+		}
+
+		[TestMethod, TestCategory( "ViewModel" )]
+		public void PropertyChangedTest()
+		{
+			ExceptionDialogViewModel vm = new ExceptionDialogViewModel( new Exception(), new StackTrace( true ) );
+			PropertyChangedListener listener = new PropertyChangedListener( vm );
+			Assert.IsTrue( listener.TestProperties() );
 		}
 
 		[TestMethod, TestCategory( "ViewModel" )]
@@ -51,7 +60,18 @@ namespace Blitzy.Tests.ViewModel
 			DialogServiceManager.RegisterService( typeof( MessageBoxService ), mock );
 
 			Assert.IsTrue( vm.SendCommand.CanExecute( null ) );
-			vm.SendCommand.Execute( null );
+			using( ShimsContext.Create() )
+			{
+				btbapi.Fakes.ShimAPI.AllInstances.SendReportErrorReportStringVersion = ( api, report, software, version ) =>
+				{
+					return Task.Run<ErrorReportResult>( () =>
+					{
+						return new ErrorReportResult( System.Net.HttpStatusCode.OK, new Uri( "http://localhost/issue" ), false );
+					} );
+				};
+
+				vm.SendCommand.Execute( null );
+			}
 			Assert.IsTrue( called );
 			Assert.IsTrue( success );
 			Assert.IsTrue( closed );

@@ -73,6 +73,10 @@ namespace Blitzy.Tests
 			{
 				return new VersionInfo( HttpStatusCode.OK, new Version( 1, 2 ), new Uri( "http://test.com" ), "123", 12344, new Dictionary<Version, string>() );
 			}
+			else if( type == typeof( ErrorReport ) )
+			{
+				return new ErrorReport( new Exception(), new System.Diagnostics.StackTrace( true ) );
+			}
 			else if( type == typeof( CultureInfo ) )
 			{
 				return CultureInfo.InvariantCulture;

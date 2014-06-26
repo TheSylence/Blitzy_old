@@ -39,6 +39,11 @@ namespace Blitzy.ViewModel.Dialogs
 				using( HttpClient client = new HttpClient() )
 				{
 					LogInfo( "Start download of {0}", DownloadLink );
+					ProgressStatistic stats = new ProgressStatistic
+					{
+						UsedEstimatingMethod = ProgressStatistic.EstimatingMethod.CurrentBytesPerSecond
+					};
+					CopyArguments = new CopyFromArguments( stats.ProgressChange, TimeSpan.FromSeconds( 0.5 ), 0 );
 
 					HttpResponseMessage response = await client.GetAsync( DownloadLink, HttpCompletionOption.ResponseHeadersRead );
 					try
@@ -53,10 +58,6 @@ namespace Blitzy.ViewModel.Dialogs
 					}
 
 					Stream responseStream = await response.Content.ReadAsStreamAsync();
-					ProgressStatistic stats = new ProgressStatistic
-					{
-						UsedEstimatingMethod = ProgressStatistic.EstimatingMethod.CurrentBytesPerSecond
-					};
 
 					using( FileStream fileStream = File.OpenWrite( TargetPath ) )
 					{
@@ -71,7 +72,7 @@ namespace Blitzy.ViewModel.Dialogs
 						DownloadSize = totalLength;
 						stats.ProgressChanged += stats_ProgressChanged;
 
-						CopyArguments = new CopyFromArguments( stats.ProgressChange, TimeSpan.FromSeconds( 0.5 ), totalLength );
+						CopyArguments.TotalLength = totalLength;
 						DispatcherHelper.CheckBeginInvokeOnUI( CommandManager.InvalidateRequerySuggested );
 						fileStream.CopyFrom( responseStream, CopyArguments );
 					}

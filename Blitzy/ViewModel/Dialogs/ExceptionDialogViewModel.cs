@@ -133,7 +133,7 @@ namespace Blitzy.ViewModel.Dialogs
 #if DEBUG
 					return new API( APIEndPoint.Localhost );
 #else
-				return new btbapi.API( APIEndPoint.Default );
+					return new btbapi.API( APIEndPoint.Default );
 #endif
 				}
 
