@@ -97,6 +97,9 @@ namespace Blitzy.ViewModel
 			}
 			RaisePropertyChanged( () => PluginPages );
 
+			WorkspaceSettings = new WorkspaceSettingsViewModel( Settings );
+			RaisePropertyChanged( () => WorkspaceSettings );
+
 			UpdateCheck = Settings.GetValue<bool>( SystemSetting.AutoUpdate );
 			StayOnTop = Settings.GetValue<bool>( SystemSetting.StayOnTop );
 			TrayIcon = Settings.GetValue<bool>( SystemSetting.TrayIcon );
@@ -449,6 +452,10 @@ namespace Blitzy.ViewModel
 			if( result == MessageBoxResult.Yes )
 			{
 				Settings.SetDefaults();
+				foreach( PluginPage page in PluginPages )
+				{
+					page.DataContext.RestoreDefaults();
+				}
 			}
 		}
 
@@ -527,6 +534,8 @@ namespace Blitzy.ViewModel
 					LogWarning( "Failed to save settings for {0}: {1}", page.Title, ex );
 				}
 			}
+
+			WorkspaceSettings.Save();
 
 			Close();
 		}
@@ -1170,6 +1179,8 @@ namespace Blitzy.ViewModel
 				RaisePropertyChanged( () => VersionCheckError );
 			}
 		}
+
+		public WorkspaceSettingsViewModel WorkspaceSettings { get; private set; }
 
 		#endregion Properties
 
