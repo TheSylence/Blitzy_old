@@ -12,6 +12,22 @@
 	</PropertyGroup>
 
 	<Import Project="$(MSBuildCommunityTasksPath)\MSBuild.Community.Tasks.Targets" />
+	<UsingTask TaskName="TokenReplace" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v12.0.dll">
+		<ParameterGroup>
+			<Path ParameterType="System.String" Required="true" />
+			<Token ParameterType="System.String" Required="true" />
+			<Replacement ParameterType="System.String" Required="true" />
+		</ParameterGroup>
+		<Task>
+			<Code Type="Fragment" Language="cs">
+				<![CDATA[
+string content = File.ReadAllText(Path);
+content = content.Replace(Token, Replacement);
+File.WriteAllText(Path, content);
+]]>
+			</Code>
+		</Task>
+	</UsingTask>
 
 	<Target Name="Cleanup">
 		<RemoveDir Directories="$(OutputPath)" />
@@ -21,6 +37,8 @@
 		<CallTarget Targets="Cleanup" />
 
 		<MSBuild Projects="$(SolutionDir)\Blitzy.sln" Properties="Configuration=Release;Platform=$(Platform);OutputPath=$(OutputPath)" />
+
+		<TokenReplace Path="$(OutputPath)\Blitzy.exe.config" Token="&lt;appender-ref ref=&quot;DebugAppender&quot; /&gt;" Replacement="&lt;appender-ref ref=&quot;LogFileAppender&quot; /&gt;" />
 	</Target>
 
 	<Target Name="Test">
