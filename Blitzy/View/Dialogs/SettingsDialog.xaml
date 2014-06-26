@@ -219,7 +219,7 @@
 				<TabControl ItemsSource="{Binding PluginPages}" SelectedItem="{Binding SelectedPluginPage,Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}">
 					<TabControl.ContentTemplate>
 						<DataTemplate>
-							<ContentPresenter Content="{Binding Content}" DataContext="{Binding DataContext}" />
+							<ContentPresenter Content="{Binding Content}" />
 						</DataTemplate>
 					</TabControl.ContentTemplate>
 					<TabControl.ItemTemplate>

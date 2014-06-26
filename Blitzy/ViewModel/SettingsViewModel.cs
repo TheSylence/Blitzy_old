@@ -56,6 +56,7 @@ namespace Blitzy.ViewModel
 			_BuildDate = Assembly.GetExecutingAssembly().LinkerTimestamp();
 			_CatalogItemsProcessed = -1;
 
+			PluginPages = new ObservableCollection<PluginPage>();
 			AvailableLanguages = new ObservableCollection<CultureInfo>( WPFLocalizeExtension.Providers.ResxLocalizationProvider.Instance.AvailableCultures.Where( c => !string.IsNullOrWhiteSpace( c.IetfLanguageTag ) ) );
 		}
 
@@ -74,14 +75,15 @@ namespace Blitzy.ViewModel
 		{
 			base.Reset();
 
-			PluginPages = new ObservableCollection<PluginPage>();
+			PluginPages.Clear();
 			foreach( IPlugin plugin in PluginManager.Plugins.Where( p => p.HasSettings ) )
 			{
 				PluginPage page = new PluginPage();
 				page.Title = plugin.Name;
-				page.Content = plugin.GetSettingsUI();
 				page.Plugin = plugin;
 				page.DataContext = plugin.GetSettingsDataContext();
+				page.Content = plugin.GetSettingsUI();
+				page.Content.DataContext = page.DataContext;
 
 				if( page.DataContext == null )
 				{
@@ -1115,7 +1117,6 @@ namespace Blitzy.ViewModel
 
 				RaisePropertyChanging( () => SelectedPluginPage );
 				_SelectedPluginPage = value;
-				// TODO: When changed the old page still wants to use its databindings...
 				RaisePropertyChanged( () => SelectedPluginPage );
 			}
 		}

@@ -89,7 +89,9 @@ namespace Blitzy.Plugin
 		/// <summary>
 		/// Called when the SettingsDialog is about to show the settings for this Plugin.
 		/// </summary>
-		/// <remarks>This method won't be called if <see cref="HasSettings"/> is <c>false</c></remarks>
+		/// <remarks>This method won't be called if <see cref="HasSettings"/> is <c>false</c>.
+		/// Note: The DataContext of the returned control will be set to <see cref="GetSettingsDataContext"/>
+		/// by the application.</remarks>
 		/// <returns>The UI for the settings to display.</returns>
 		Control GetSettingsUI();
 
