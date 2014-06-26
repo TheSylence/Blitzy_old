@@ -58,8 +58,11 @@ namespace Blitzy.Tests.Model
 		public void PropertyChangedTest()
 		{
 			Settings settings = new Settings( Connection );
-			PropertyChangedListener listener = new PropertyChangedListener( new CatalogBuilder( settings ) );
-			Assert.IsTrue( listener.TestProperties() );
+			using( CatalogBuilder builder = new CatalogBuilder( settings ) )
+			{
+				PropertyChangedListener listener = new PropertyChangedListener( builder );
+				Assert.IsTrue( listener.TestProperties() );
+			}
 		}
 	}
 }

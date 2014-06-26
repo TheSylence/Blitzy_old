@@ -38,7 +38,7 @@ namespace Blitzy.Utility
 				name += ".Test";
 			}
 #else
-			string name = string.Format( System.Globalization.CultureInfo.InvariantCulture, "Local\\{0}", AssemblyGuid );
+			string name = "Blitzy." + AssemblyGuid.ToString( System.Globalization.CultureInfo.InvariantCulture ).Replace( "-", "" );
 #endif
 
 			bool onlyInstance;

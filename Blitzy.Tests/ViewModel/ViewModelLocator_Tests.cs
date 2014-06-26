@@ -1,5 +1,6 @@
 ﻿// $Id$
 
+using System;
 using System.Reflection;
 using Blitzy.ViewModel;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -16,7 +17,10 @@ namespace Blitzy.Tests.ViewModel
 			ViewModelLocator vm = new ViewModelLocator();
 			foreach( PropertyInfo info in vm.GetType().GetProperties() )
 			{
-				Assert.IsNotNull( info.GetValue( vm ) );
+				using( IDisposable obj = info.GetValue( vm ) as IDisposable )
+				{
+					Assert.IsNotNull( obj );
+				}
 			}
 		}
 	}
