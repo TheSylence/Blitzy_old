@@ -136,6 +136,7 @@
       <DependentUpon>HistoryWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\TrayIcon.cs" />
+    <Compile Include="Converter\DebugConverter.cs" />
     <Compile Include="Converter\ElementNotNullConverter.cs" />
     <Compile Include="Converter\FileSizeConverter.cs" />
     <Compile Include="Converter\LocalizeFormatterConverter.cs" />
@@ -149,9 +150,15 @@
     <Compile Include="Messages\MessageTokens.cs" />
     <Compile Include="Model\UpdateChecker.cs" />
     <Compile Include="Plugin\IPluginViewModel.cs" />
+    <Compile Include="Plugin\SystemPlugins\PuttyUI.xaml.cs">
+      <DependentUpon>PuttyUI.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Plugin\SystemPlugins\Runny.cs" />
     <Compile Include="Plugin\SystemPlugins\WebyUI.xaml.cs">
       <DependentUpon>WebyUI.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Plugin\SystemPlugins\WinyUI.xaml.cs">
+      <DependentUpon>WinyUI.xaml</DependentUpon>
     </Compile>
     <Compile Include="Utility\Extensions.cs" />
     <Compile Include="GlobalSuppressions.cs" />
@@ -233,7 +240,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Plugin\SystemPlugins\PuttyUI.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Plugin\SystemPlugins\WebyUI.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Plugin\SystemPlugins\WinyUI.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

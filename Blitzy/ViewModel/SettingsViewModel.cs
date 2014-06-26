@@ -82,8 +82,20 @@ namespace Blitzy.ViewModel
 				page.Content = plugin.GetSettingsUI();
 				page.Plugin = plugin;
 				page.DataContext = plugin.GetSettingsDataContext();
+
+				if( page.DataContext == null )
+				{
+					LogWarning( "Plugin {0} does not provide a DataContext", plugin.Name );
+				}
+
+				if( page.Content == null )
+				{
+					LogWarning( "Plugin {0} does not provide Content although HasSettings is true", plugin.Name );
+				}
+
 				PluginPages.Add( page );
 			}
+			RaisePropertyChanged( () => PluginPages );
 
 			UpdateCheck = Settings.GetValue<bool>( SystemSetting.AutoUpdate );
 			StayOnTop = Settings.GetValue<bool>( SystemSetting.StayOnTop );
@@ -821,26 +833,17 @@ namespace Blitzy.ViewModel
 		#endregion SettingItems
 
 		private CatalogBuilder _CatalogBuilder;
-
 		private int _CatalogItemsProcessed;
-
 		private string _FilesProcessed;
-
 		private bool _IsCatalogBuilding;
-
 		private bool _IsNewerVersionAvailable;
-
 		private int _ItemsInCatalog;
-
 		private DateTime _LastCatalogBuild;
-
 		private VersionInfo _LatestVersionInfo;
-
 		private string _SelectedExclude;
-
 		private Folder _SelectedFolder;
-
 		private CultureInfo _SelectedLanguage;
+		private PluginPage _SelectedPluginPage;
 
 		private string _SelectedRule;
 
@@ -1084,6 +1087,27 @@ namespace Blitzy.ViewModel
 				_SelectedLanguage = value;
 				SetLanguage( value );
 				RaisePropertyChanged( () => SelectedLanguage );
+			}
+		}
+
+		public PluginPage SelectedPluginPage
+		{
+			get
+			{
+				return _SelectedPluginPage;
+			}
+
+			set
+			{
+				if( _SelectedPluginPage == value )
+				{
+					return;
+				}
+
+				RaisePropertyChanging( () => SelectedPluginPage );
+				_SelectedPluginPage = value;
+				// TODO: When changed the old page still wants to use its databindings...
+				RaisePropertyChanged( () => SelectedPluginPage );
 			}
 		}
 

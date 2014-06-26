@@ -88,7 +88,7 @@ namespace Blitzy.Plugin.SystemPlugins
 
 		public System.Windows.Controls.Control GetSettingsUI()
 		{
-			return null;
+			return new WebyUI();
 		}
 
 		public IEnumerable<CommandItem> GetSubCommands( CommandItem parent, IList<string> input )

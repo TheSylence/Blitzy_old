@@ -64,7 +64,7 @@ namespace Blitzy.Plugin.SystemPlugins
 
 		public System.Windows.Controls.Control GetSettingsUI()
 		{
-			return null;
+			return new PuttyUI();
 		}
 
 		public IEnumerable<CommandItem> GetSubCommands( CommandItem parent, IList<string> input )
