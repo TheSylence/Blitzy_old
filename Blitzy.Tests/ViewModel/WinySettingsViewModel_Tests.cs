@@ -1,6 +1,7 @@
 ﻿// $Id$
 
-using Blitzy.Plugin.System;
+using Blitzy.Plugin.SystemPlugins;
+using Blitzy.Tests.Mocks;
 using Blitzy.ViewModel;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -13,29 +14,32 @@ namespace Blitzy.Tests.ViewModel
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void LoadSaveTest()
 		{
-			SettingsViewModel basevm = new SettingsViewModel();
-			basevm.Settings = new Blitzy.Model.Settings( Connection );
+			SettingsViewModel baseVM = new SettingsViewModel();
+			baseVM.Settings = new Blitzy.Model.Settings( Connection );
+			MockPluginHost host = new MockPluginHost( baseVM.Settings );
+			baseVM.PluginManager = new Plugin.PluginManager( host, Connection );
+			baseVM.PluginManager.LoadPlugins();
 
 			Winy winy = new Winy();
-			winy.SetDefaultSettings( basevm.Settings );
+			winy.SetDefaultSettings( baseVM.Settings );
 
-			basevm.Reset();
+			baseVM.Reset();
 
-			Assert.IsTrue( basevm.WinySettings.LogoffConfirmation );
-			Assert.IsTrue( basevm.WinySettings.RestartConfirmation );
-			Assert.IsTrue( basevm.WinySettings.ShutdownConfirmation );
+			Assert.IsTrue( baseVM.GetPluginContext<WinySettingsViewModel>( "Winy" ).LogoffConfirmation );
+			Assert.IsTrue( baseVM.GetPluginContext<WinySettingsViewModel>( "Winy" ).RestartConfirmation );
+			Assert.IsTrue( baseVM.GetPluginContext<WinySettingsViewModel>( "Winy" ).ShutdownConfirmation );
 
-			basevm.WinySettings.LogoffConfirmation = false;
-			basevm.WinySettings.RestartConfirmation = false;
-			basevm.WinySettings.ShutdownConfirmation = false;
+			baseVM.GetPluginContext<WinySettingsViewModel>( "Winy" ).LogoffConfirmation = false;
+			baseVM.GetPluginContext<WinySettingsViewModel>( "Winy" ).RestartConfirmation = false;
+			baseVM.GetPluginContext<WinySettingsViewModel>( "Winy" ).ShutdownConfirmation = false;
 
-			basevm.SaveCommand.Execute( null );
+			baseVM.SaveCommand.Execute( null );
 
-			basevm.Reset();
+			baseVM.Reset();
 
-			Assert.IsFalse( basevm.WinySettings.LogoffConfirmation );
-			Assert.IsFalse( basevm.WinySettings.RestartConfirmation );
-			Assert.IsFalse( basevm.WinySettings.ShutdownConfirmation );
+			Assert.IsFalse( baseVM.GetPluginContext<WinySettingsViewModel>( "Winy" ).LogoffConfirmation );
+			Assert.IsFalse( baseVM.GetPluginContext<WinySettingsViewModel>( "Winy" ).RestartConfirmation );
+			Assert.IsFalse( baseVM.GetPluginContext<WinySettingsViewModel>( "Winy" ).ShutdownConfirmation );
 		}
 	}
 }

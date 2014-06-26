@@ -16,8 +16,8 @@ namespace Blitzy.ViewModel
 	{
 		#region Constructor
 
-		public WorkspaceSettingsViewModel( SettingsViewModel baseVm )
-			: base( baseVm )
+		public WorkspaceSettingsViewModel( Settings settings )
+			: base( settings )
 		{
 			Workspaces = new ObservableCollection<Workspace>();
 

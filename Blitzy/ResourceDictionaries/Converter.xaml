@@ -8,4 +8,5 @@
 	<conv:LocalizeFormatterConverter x:Key="LocalizeFormatterConv" />
 	<conv:FileSizeConverter x:Key="FileSizeConv" />
 	<conv:TimeSpanConverter x:Key="TimeSpanConv" />
+	<conv:DebugConverter x:Key="DebugConv" />
 </ResourceDictionary>

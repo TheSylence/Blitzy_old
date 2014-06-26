@@ -1,28 +1,35 @@
 ﻿// $Id$
 
-using Blitzy.Plugin.System;
+using Blitzy.Model;
+using Blitzy.Plugin;
+using Blitzy.Plugin.SystemPlugins;
 
 namespace Blitzy.ViewModel
 {
-	internal class WinySettingsViewModel : SettingsViewModelBase
+	internal class WinySettingsViewModel : SettingsViewModelBase, IPluginViewModel
 	{
 		#region Constructor
 
-		public WinySettingsViewModel( SettingsViewModel baseVm )
-			: base( baseVm )
+		public WinySettingsViewModel( Settings settings )
+			: base( settings )
 		{
-			_LogoffConfirmation = BaseVm.Settings.GetPluginSetting<bool>( Winy.GuidString, Winy.LogoffKey );
-			_ShutdownConfirmation = BaseVm.Settings.GetPluginSetting<bool>( Winy.GuidString, Winy.ShutdownKey );
-			_RestartConfirmation = BaseVm.Settings.GetPluginSetting<bool>( Winy.GuidString, Winy.RestartKey );
+			_LogoffConfirmation = Settings.GetPluginSetting<bool>( Winy.GuidString, Winy.LogoffKey );
+			_ShutdownConfirmation = Settings.GetPluginSetting<bool>( Winy.GuidString, Winy.ShutdownKey );
+			_RestartConfirmation = Settings.GetPluginSetting<bool>( Winy.GuidString, Winy.RestartKey );
 		}
 
 		#endregion Constructor
 
+		public void RestoreDefaults()
+		{
+			throw new System.NotImplementedException();
+		}
+
 		public override void Save()
 		{
-			BaseVm.Settings.SetPluginSetting( Winy.GuidString, Winy.LogoffKey, LogoffConfirmation );
-			BaseVm.Settings.SetPluginSetting( Winy.GuidString, Winy.ShutdownKey, ShutdownConfirmation );
-			BaseVm.Settings.SetPluginSetting( Winy.GuidString, Winy.RestartKey, RestartConfirmation );
+			Settings.SetPluginSetting( Winy.GuidString, Winy.LogoffKey, LogoffConfirmation );
+			Settings.SetPluginSetting( Winy.GuidString, Winy.ShutdownKey, ShutdownConfirmation );
+			Settings.SetPluginSetting( Winy.GuidString, Winy.RestartKey, RestartConfirmation );
 		}
 
 		#region Methods

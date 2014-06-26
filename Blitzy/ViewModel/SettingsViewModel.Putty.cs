@@ -1,31 +1,38 @@
 ﻿// $Id$
 
-using Blitzy.Plugin.System;
+using Blitzy.Model;
+using Blitzy.Plugin;
+using Blitzy.Plugin.SystemPlugins;
 using Blitzy.Utility;
 using Blitzy.ViewServices;
 using GalaSoft.MvvmLight.Command;
 
 namespace Blitzy.ViewModel
 {
-	internal class PuttySettingsViewModel : SettingsViewModelBase
+	internal class PuttySettingsViewModel : SettingsViewModelBase, IPluginViewModel
 	{
 		#region Constructor
 
-		public PuttySettingsViewModel( SettingsViewModel baseVm )
-			: base( baseVm )
+		public PuttySettingsViewModel( Settings settings )
+			: base( settings )
 		{
-			_PuttyPath = BaseVm.Settings.GetPluginSetting<string>( Putty.GuidString, Putty.PathKey );
-			_ImportSessions = BaseVm.Settings.GetPluginSetting<bool>( Putty.GuidString, Putty.ImportKey );
+			_PuttyPath = Settings.GetPluginSetting<string>( Putty.GuidString, Putty.PathKey );
+			_ImportSessions = Settings.GetPluginSetting<bool>( Putty.GuidString, Putty.ImportKey );
 		}
 
 		#endregion Constructor
 
 		#region Methods
 
+		public void RestoreDefaults()
+		{
+			throw new System.NotImplementedException();
+		}
+
 		public override void Save()
 		{
-			BaseVm.Settings.SetPluginSetting( Putty.GuidString, Putty.PathKey, PuttyPath );
-			BaseVm.Settings.SetPluginSetting( Putty.GuidString, Putty.ImportKey, ImportSessions );
+			Settings.SetPluginSetting( Putty.GuidString, Putty.PathKey, PuttyPath );
+			Settings.SetPluginSetting( Putty.GuidString, Putty.ImportKey, ImportSessions );
 		}
 
 		#endregion Methods

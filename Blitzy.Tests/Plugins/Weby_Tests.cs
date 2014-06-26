@@ -3,7 +3,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Blitzy.Model;
-using Blitzy.Plugin.System;
+using Blitzy.Plugin.SystemPlugins;
 using Microsoft.QualityTools.Testing.Fakes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 

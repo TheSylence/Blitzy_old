@@ -5,22 +5,23 @@ using System.Collections.ObjectModel;
 using System.Data.SQLite;
 using System.Windows;
 using Blitzy.Model;
+using Blitzy.Plugin;
 using Blitzy.Utility;
 using Blitzy.ViewServices;
 using GalaSoft.MvvmLight.Command;
 
 namespace Blitzy.ViewModel
 {
-	internal class WebySettingsViewModel : SettingsViewModelBase
+	internal class WebySettingsViewModel : SettingsViewModelBase, IPluginViewModel
 	{
 		#region Constructor
 
-		public WebySettingsViewModel( SettingsViewModel baseVm )
-			: base( baseVm )
+		public WebySettingsViewModel( Settings settings )
+			: base( settings )
 		{
 			Websites = new ObservableCollection<WebyWebsite>();
 
-			using( SQLiteCommand cmd = BaseVm.Settings.Connection.CreateCommand() )
+			using( SQLiteCommand cmd = Settings.Connection.CreateCommand() )
 			{
 				cmd.CommandText = "SELECT WebyID FROM weby_websites";
 
@@ -30,7 +31,7 @@ namespace Blitzy.ViewModel
 					{
 						WebyWebsite site = new WebyWebsite { ID = reader.GetInt32( 0 ) };
 
-						site.Load( BaseVm.Settings.Connection );
+						site.Load( Settings.Connection );
 						Websites.Add( site );
 					}
 				}
@@ -41,16 +42,21 @@ namespace Blitzy.ViewModel
 
 		#region Methods
 
+		public void RestoreDefaults()
+		{
+			throw new System.NotImplementedException();
+		}
+
 		public override void Save()
 		{
 			foreach( WebyWebsite site in WebsitesToRemove )
 			{
-				site.Delete( BaseVm.Settings.Connection );
+				site.Delete( Settings.Connection );
 			}
 
 			foreach( WebyWebsite site in Websites )
 			{
-				site.Save( BaseVm.Settings.Connection );
+				site.Save( Settings.Connection );
 			}
 		}
 
