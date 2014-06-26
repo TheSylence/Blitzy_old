@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Blitzy.Tests.Mocks;
 using Blitzy.Tests.Mocks.Services;
 using Blitzy.ViewModel;
 using Blitzy.ViewServices;
@@ -19,10 +20,12 @@ namespace Blitzy.Tests.ViewModel
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void AddItemTest()
 		{
+			MockPluginHost host = new MockPluginHost();
 			SettingsViewModel baseVM = new SettingsViewModel();
 			baseVM.Settings = new Blitzy.Model.Settings( Connection );
+			baseVM.PluginManager = new Plugin.PluginManager( host, Connection );
 			baseVM.Reset();
-			WorkspaceSettingsViewModel vm = new WorkspaceSettingsViewModel( baseVM );
+			WorkspaceSettingsViewModel vm = new WorkspaceSettingsViewModel( baseVM.Settings );
 
 			Assert.IsFalse( vm.AddItemCommand.CanExecute( null ) );
 
@@ -53,10 +56,12 @@ namespace Blitzy.Tests.ViewModel
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void AddWorkspaceTest()
 		{
+			MockPluginHost host = new MockPluginHost();
 			SettingsViewModel baseVM = new SettingsViewModel();
 			baseVM.Settings = new Blitzy.Model.Settings( Connection );
+			baseVM.PluginManager = new Plugin.PluginManager( host, Connection );
 			baseVM.Reset();
-			WorkspaceSettingsViewModel vm = new WorkspaceSettingsViewModel( baseVM );
+			WorkspaceSettingsViewModel vm = new WorkspaceSettingsViewModel( baseVM.Settings );
 
 			Assert.IsTrue( vm.AddWorkspaceCommand.CanExecute( null ) );
 
@@ -82,10 +87,12 @@ namespace Blitzy.Tests.ViewModel
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void DeleteItemTest()
 		{
+			MockPluginHost host = new MockPluginHost();
 			SettingsViewModel baseVM = new SettingsViewModel();
 			baseVM.Settings = new Blitzy.Model.Settings( Connection );
+			baseVM.PluginManager = new Plugin.PluginManager( host, Connection );
 			baseVM.Reset();
-			WorkspaceSettingsViewModel vm = new WorkspaceSettingsViewModel( baseVM );
+			WorkspaceSettingsViewModel vm = new WorkspaceSettingsViewModel( baseVM.Settings );
 
 			Assert.IsFalse( vm.RemoveItemCommand.CanExecute( null ) );
 
@@ -115,10 +122,12 @@ namespace Blitzy.Tests.ViewModel
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void DeleteWorkspaceTest()
 		{
+			MockPluginHost host = new MockPluginHost();
 			SettingsViewModel baseVM = new SettingsViewModel();
 			baseVM.Settings = new Blitzy.Model.Settings( Connection );
+			baseVM.PluginManager = new Plugin.PluginManager( host, Connection );
 			baseVM.Reset();
-			WorkspaceSettingsViewModel vm = new WorkspaceSettingsViewModel( baseVM );
+			WorkspaceSettingsViewModel vm = new WorkspaceSettingsViewModel( baseVM.Settings );
 
 			Assert.IsFalse( vm.DeleteWorkspaceCommand.CanExecute( null ) );
 
@@ -144,10 +153,12 @@ namespace Blitzy.Tests.ViewModel
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void MoveItemTest()
 		{
+			MockPluginHost host = new MockPluginHost();
 			SettingsViewModel baseVM = new SettingsViewModel();
 			baseVM.Settings = new Blitzy.Model.Settings( Connection );
+			baseVM.PluginManager = new Plugin.PluginManager( host, Connection );
 			baseVM.Reset();
-			WorkspaceSettingsViewModel vm = new WorkspaceSettingsViewModel( baseVM );
+			WorkspaceSettingsViewModel vm = new WorkspaceSettingsViewModel( baseVM.Settings );
 
 			Assert.IsFalse( vm.MoveItemDownCommand.CanExecute( null ) );
 			Assert.IsFalse( vm.MoveItemUpCommand.CanExecute( null ) );
@@ -197,10 +208,12 @@ namespace Blitzy.Tests.ViewModel
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void PropertyChangedTest()
 		{
+			MockPluginHost host = new MockPluginHost();
 			SettingsViewModel baseVM = new SettingsViewModel();
 			baseVM.Settings = new Blitzy.Model.Settings( Connection );
+			baseVM.PluginManager = new Plugin.PluginManager( host, Connection );
 			baseVM.Reset();
-			WorkspaceSettingsViewModel vm = new WorkspaceSettingsViewModel( baseVM );
+			WorkspaceSettingsViewModel vm = new WorkspaceSettingsViewModel( baseVM.Settings );
 
 			PropertyChangedListener listener = new PropertyChangedListener( vm );
 			Assert.IsTrue( listener.TestProperties() );
@@ -209,10 +222,12 @@ namespace Blitzy.Tests.ViewModel
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void SaveLoadTest()
 		{
+			MockPluginHost host = new MockPluginHost();
 			SettingsViewModel baseVM = new SettingsViewModel();
 			baseVM.Settings = new Blitzy.Model.Settings( Connection );
+			baseVM.PluginManager = new Plugin.PluginManager( host, Connection );
 			baseVM.Reset();
-			WorkspaceSettingsViewModel vm = new WorkspaceSettingsViewModel( baseVM );
+			WorkspaceSettingsViewModel vm = new WorkspaceSettingsViewModel( baseVM.Settings );
 
 			vm.Workspaces.Add( new Blitzy.Model.Workspace
 				{
@@ -222,7 +237,7 @@ namespace Blitzy.Tests.ViewModel
 
 			vm.Save();
 
-			vm = new WorkspaceSettingsViewModel( baseVM );
+			vm = new WorkspaceSettingsViewModel( baseVM.Settings );
 			vm.Reset();
 
 			Assert.AreEqual( 1, vm.Workspaces.Count );

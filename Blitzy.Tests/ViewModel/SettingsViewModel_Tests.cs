@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows.Documents;
 using Blitzy.Messages;
 using Blitzy.Model;
+using Blitzy.Tests.Mocks;
 using Blitzy.Tests.Mocks.Services;
 using Blitzy.ViewModel;
 using Blitzy.ViewServices;
@@ -91,6 +92,16 @@ namespace Blitzy.Tests.ViewModel
 
 			VM = new SettingsViewModel();
 			VM.Settings = new Blitzy.Model.Settings( Connection );
+			MockPluginHost host = new MockPluginHost( VM.Settings );
+			VM.PluginManager = new Plugin.PluginManager( host, Connection );
+			VM.PluginManager.LoadPlugins();
+
+			/*SettingsViewModel baseVM = new SettingsViewModel();
+			baseVM.Settings = new Blitzy.Model.Settings( Connection );
+			MockPluginHost host = new MockPluginHost( baseVM.Settings );
+			baseVM.PluginManager = new Plugin.PluginManager( host, Connection );
+			baseVM.PluginManager.LoadPlugins();
+			baseVM.Reset();*/
 		}
 
 		[TestMethod, TestCategory( "ViewModel" )]
@@ -188,6 +199,7 @@ namespace Blitzy.Tests.ViewModel
 			listener.Exclude<SettingsViewModel>( vm => vm.CatalogBuilder );
 			listener.Exclude<SettingsViewModel>( vm => vm.CurrentVersion );
 			listener.Exclude<SettingsViewModel>( vm => vm.Settings );
+			listener.Exclude<SettingsViewModel>( vm => vm.PluginManager );
 			Assert.IsTrue( listener.TestProperties() );
 		}
 

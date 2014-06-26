@@ -148,8 +148,9 @@
     <Compile Include="Messages\LanguageMessage.cs" />
     <Compile Include="Messages\MessageTokens.cs" />
     <Compile Include="Model\UpdateChecker.cs" />
-    <Compile Include="Plugin\System\Runny.cs" />
-    <Compile Include="Plugin\System\WebyUI.xaml.cs">
+    <Compile Include="Plugin\IPluginViewModel.cs" />
+    <Compile Include="Plugin\SystemPlugins\Runny.cs" />
+    <Compile Include="Plugin\SystemPlugins\WebyUI.xaml.cs">
       <DependentUpon>WebyUI.xaml</DependentUpon>
     </Compile>
     <Compile Include="Utility\Extensions.cs" />
@@ -191,13 +192,13 @@
     <Compile Include="Plugin\IPluginHost.cs" />
     <Compile Include="Plugin\ISettings.cs" />
     <Compile Include="Plugin\PluginManager.cs" />
-    <Compile Include="Plugin\System\Blitzy.cs" />
-    <Compile Include="Plugin\System\Calcy.cs" />
-    <Compile Include="Plugin\System\Medy.cs" />
-    <Compile Include="Plugin\System\Putty.cs" />
-    <Compile Include="Plugin\System\Shelly.cs" />
-    <Compile Include="Plugin\System\Weby.cs" />
-    <Compile Include="Plugin\System\Winy.cs" />
+    <Compile Include="Plugin\SystemPlugins\Blitzy.cs" />
+    <Compile Include="Plugin\SystemPlugins\Calcy.cs" />
+    <Compile Include="Plugin\SystemPlugins\Medy.cs" />
+    <Compile Include="Plugin\SystemPlugins\Putty.cs" />
+    <Compile Include="Plugin\SystemPlugins\Shelly.cs" />
+    <Compile Include="Plugin\SystemPlugins\Weby.cs" />
+    <Compile Include="Plugin\SystemPlugins\Winy.cs" />
     <Compile Include="Plugin\TableColumn.cs" />
     <Compile Include="Plugin\WhereClause.cs" />
     <Compile Include="RuntimeConfig.cs" />
@@ -232,7 +233,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Plugin\System\WebyUI.xaml">
+    <Page Include="Plugin\SystemPlugins\WebyUI.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

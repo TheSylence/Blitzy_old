@@ -10,6 +10,13 @@ namespace Blitzy.Tests.Model
 	[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	public class WebyWebsite_Tests : TestBase
 	{
+		[TestInitialize]
+		public override void BeforeTestRun()
+		{
+			base.BeforeTestRun();
+			CreatePluginTables();
+		}
+
 		[TestMethod, TestCategory( "Model" ), ExpectedException( typeof( TypeLoadException ) )]
 		public void LoadNonExistingTest()
 		{

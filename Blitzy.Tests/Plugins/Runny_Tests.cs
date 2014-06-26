@@ -16,7 +16,7 @@ namespace Blitzy.Tests.Plugins
 		[TestMethod, TestCategory( "Plugins" )]
 		public void InterfaceTest()
 		{
-			PluginTester tester = new PluginTester( new Blitzy.Plugin.System.Runny() );
+			PluginTester tester = new PluginTester( new Blitzy.Plugin.SystemPlugins.Runny() );
 			Assert.IsTrue( tester.TestRunComplete );
 		}
 	}

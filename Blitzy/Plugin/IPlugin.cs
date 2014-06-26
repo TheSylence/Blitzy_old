@@ -81,6 +81,12 @@ namespace Blitzy.Plugin
 		string GetInfo( IList<string> data, CommandItem item );
 
 		/// <summary>
+		/// Called along with <see cref="GetSettingsUI"/> to get access to the ViewModel for this plugin's settings
+		/// </summary>
+		/// <returns></returns>
+		IPluginViewModel GetSettingsDataContext();
+
+		/// <summary>
 		/// Called when the SettingsDialog is about to show the settings for this Plugin.
 		/// </summary>
 		/// <remarks>This method won't be called if <see cref="HasSettings"/> is <c>false</c></remarks>

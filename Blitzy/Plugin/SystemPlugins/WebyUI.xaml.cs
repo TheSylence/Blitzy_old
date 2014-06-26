@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Blitzy.Plugin.System
+namespace Blitzy.Plugin.SystemPlugins
 {
 	/// <summary>
 	/// Interaction logic for WebyUI.xaml

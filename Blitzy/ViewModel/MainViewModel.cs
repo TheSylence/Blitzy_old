@@ -540,7 +540,7 @@ namespace Blitzy.ViewModel
 
 		private void ExecuteSettingsCommand()
 		{
-			SettingsServiceParameters args = new SettingsServiceParameters( Settings, Builder );
+			SettingsServiceParameters args = new SettingsServiceParameters( Settings, Builder, Plugins );
 			DialogServiceManager.Show<SettingsService>( args );
 		}
 

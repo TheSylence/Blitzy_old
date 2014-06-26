@@ -1,6 +1,6 @@
 ﻿// $Id$
 
-using Blitzy.Plugin.System;
+using Blitzy.Plugin.SystemPlugins;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Blitzy.Tests.Plugins

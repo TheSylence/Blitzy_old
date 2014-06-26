@@ -34,7 +34,7 @@ namespace Blitzy.Tests.Plugins
 			PluginManager pmgr = new PluginManager( host, Connection );
 			pmgr.LoadPlugins();
 
-			Blitzy.Plugin.System.Blitzy plug = new Plugin.System.Blitzy();
+			Blitzy.Plugin.SystemPlugins.Blitzy plug = new Plugin.SystemPlugins.Blitzy();
 
 			Assert.IsTrue( pmgr.IsLoaded( plug.PluginID ) );
 		}

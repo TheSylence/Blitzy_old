@@ -9,7 +9,7 @@ using System.Linq;
 using System.Reflection;
 using Blitzy.Model;
 
-namespace Blitzy.Plugin.System
+namespace Blitzy.Plugin.SystemPlugins
 {
 	internal class Runny : IPlugin
 	{
@@ -62,6 +62,16 @@ namespace Blitzy.Plugin.System
 		}
 
 		public string GetInfo( IList<string> data, CommandItem item )
+		{
+			return null;
+		}
+
+		public IPluginViewModel GetSettingsDataContext()
+		{
+			return null;
+		}
+
+		public System.Windows.Controls.Control GetSettingsUI()
 		{
 			return null;
 		}
@@ -167,6 +177,8 @@ namespace Blitzy.Plugin.System
 		{
 			get { return "Execution of files"; }
 		}
+
+		public bool HasSettings { get { return false; } }
 
 		public string Name
 		{

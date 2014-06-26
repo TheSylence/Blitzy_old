@@ -1,6 +1,7 @@
 ﻿// $Id$
 
-using Blitzy.Plugin.System;
+using Blitzy.Plugin.SystemPlugins;
+using Blitzy.Tests.Mocks;
 using Blitzy.Tests.Mocks.Services;
 using Blitzy.ViewModel;
 using Blitzy.ViewServices;
@@ -17,9 +18,12 @@ namespace Blitzy.Tests.ViewModel
 		{
 			SettingsViewModel baseVM = new SettingsViewModel();
 			baseVM.Settings = new Blitzy.Model.Settings( Connection );
+			MockPluginHost host = new MockPluginHost( baseVM.Settings );
+			baseVM.PluginManager = new Plugin.PluginManager( host, Connection );
+			baseVM.PluginManager.LoadPlugins();
 			baseVM.Reset();
 
-			PuttySettingsViewModel vm = baseVM.PuttySettings;
+			PuttySettingsViewModel vm = baseVM.GetPluginContext<PuttySettingsViewModel>( "Putty" );
 
 			Assert.IsTrue( vm.BrowsePuttyCommand.CanExecute( null ) );
 
@@ -40,9 +44,12 @@ namespace Blitzy.Tests.ViewModel
 		{
 			SettingsViewModel baseVM = new SettingsViewModel();
 			baseVM.Settings = new Blitzy.Model.Settings( Connection );
+			MockPluginHost host = new MockPluginHost( baseVM.Settings );
+			baseVM.PluginManager = new Plugin.PluginManager( host, Connection );
+			baseVM.PluginManager.LoadPlugins();
 			baseVM.Reset();
 
-			PuttySettingsViewModel vm = baseVM.PuttySettings;
+			PuttySettingsViewModel vm = baseVM.GetPluginContext<PuttySettingsViewModel>( "Putty" );
 			vm.PuttyPath = null;
 
 			PropertyChangedListener listener = new PropertyChangedListener( vm );
@@ -54,9 +61,12 @@ namespace Blitzy.Tests.ViewModel
 		{
 			SettingsViewModel baseVM = new SettingsViewModel();
 			baseVM.Settings = new Blitzy.Model.Settings( Connection );
+			MockPluginHost host = new MockPluginHost( baseVM.Settings );
+			baseVM.PluginManager = new Plugin.PluginManager( host, Connection );
+			baseVM.PluginManager.LoadPlugins();
 			baseVM.Reset();
 
-			PuttySettingsViewModel vm = baseVM.PuttySettings;
+			PuttySettingsViewModel vm = baseVM.GetPluginContext<PuttySettingsViewModel>( "Putty" );
 
 			vm.PuttyPath = "testpath";
 			vm.ImportSessions = !vm.ImportSessions;
