@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using Blitzy.Messages;
 using Blitzy.Model;
+using Blitzy.Plugin;
 using Blitzy.Utility;
 using Blitzy.ViewServices;
 using btbapi;
@@ -22,6 +23,13 @@ using CommandManager = System.Windows.Input.CommandManager;
 
 namespace Blitzy.ViewModel
 {
+	internal class PluginPage
+	{
+		public System.Windows.Controls.Control Content { get; set; }
+
+		public string Title { get; set; }
+	}
+
 	internal class SettingsViewModel : ViewModelBaseEx
 	{
 		#region Constructor
@@ -61,6 +69,13 @@ namespace Blitzy.ViewModel
 		public override void Reset()
 		{
 			base.Reset();
+
+			foreach( IPlugin plugin in PluginManager.Plugins.Where( p => p.HasSettings ) )
+			{
+				PluginPage page = new PluginPage();
+				page.Title = plugin.Name;
+				page.Content = plugin.GetSettingsUI();
+			}
 
 			WebySettings = new WebySettingsViewModel( this );
 			RaisePropertyChanged( () => WebySettings );
@@ -791,18 +806,31 @@ namespace Blitzy.ViewModel
 		#endregion SettingItems
 
 		private CatalogBuilder _CatalogBuilder;
+
 		private int _CatalogItemsProcessed;
+
 		private string _FilesProcessed;
+
 		private bool _IsCatalogBuilding;
+
 		private bool _IsNewerVersionAvailable;
+
 		private int _ItemsInCatalog;
+
 		private DateTime _LastCatalogBuild;
+
 		private VersionInfo _LatestVersionInfo;
+
 		private string _SelectedExclude;
+
 		private Folder _SelectedFolder;
+
 		private CultureInfo _SelectedLanguage;
+
 		private string _SelectedRule;
+
 		private Settings _Settings;
+
 		private bool _VersionCheckError;
 
 		public API API { get; private set; }
@@ -978,6 +1006,10 @@ namespace Blitzy.ViewModel
 				IsNewerVersionAvailable = CurrentVersion < LatestVersionInfo.LatestVersion;
 			}
 		}
+
+		public PluginManager PluginManager { get; set; }
+
+		public ObservableCollection<PluginPage> PluginPages { get; private set; }
 
 		public PuttySettingsViewModel PuttySettings { get; private set; }
 

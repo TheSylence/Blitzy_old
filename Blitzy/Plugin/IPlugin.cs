@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Windows.Controls;
 using Blitzy.Model;
 
 namespace Blitzy.Plugin
@@ -80,6 +81,13 @@ namespace Blitzy.Plugin
 		string GetInfo( IList<string> data, CommandItem item );
 
 		/// <summary>
+		/// Called when the SettingsDialog is about to show the settings for this Plugin.
+		/// </summary>
+		/// <remarks>This method won't be called if <see cref="HasSettings"/> is <c>false</c></remarks>
+		/// <returns>The UI for the settings to display.</returns>
+		Control GetSettingsUI();
+
+		/// <summary>
 		/// Get all sub commands the given command offers.
 		/// You may return different results based upon <paramref name="input"/>
 		/// </summary>
@@ -125,6 +133,11 @@ namespace Blitzy.Plugin
 		/// Gets a short description of the plugin.
 		/// </summary>
 		string Description { get; }
+
+		/// <summary>
+		/// Gets a flag whether this plugin offers configurable settings for the user.
+		/// </summary>
+		bool HasSettings { get; }
 
 		/// <summary>
 		/// Gets the name of the plugin.

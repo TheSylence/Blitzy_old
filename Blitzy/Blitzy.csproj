@@ -149,6 +149,9 @@
     <Compile Include="Messages\MessageTokens.cs" />
     <Compile Include="Model\UpdateChecker.cs" />
     <Compile Include="Plugin\System\Runny.cs" />
+    <Compile Include="Plugin\System\WebyUI.xaml.cs">
+      <DependentUpon>WebyUI.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Utility\Extensions.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Utility\HotKey.cs" />
@@ -226,6 +229,10 @@
     <Compile Include="ViewModel\ViewModelBaseEx.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Page Include="Controls\HistoryWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Plugin\System\WebyUI.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

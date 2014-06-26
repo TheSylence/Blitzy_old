@@ -26,6 +26,7 @@ namespace Blitzy.ViewServices
 			Debug.Assert( vm != null );
 			vm.Settings = args.Settings;
 			vm.CatalogBuilder = args.Builder;
+			vm.PluginManager = args.PluginManager;
 			vm.Reset();
 
 			return dlg.ShowDialog();
