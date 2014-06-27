@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using System.Xml;
 using btbapi;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
@@ -48,9 +49,34 @@ namespace ReleaseHelper.ViewModel
 
 		#region Methods
 
+		private bool CreateNewWixProductID()
+		{
+			XmlDocument doc = new XmlDocument();
+			WixNamespaceManager namespaceManager = new WixNamespaceManager( doc.NameTable );
+
+			doc.Load( BuildInfo.WixFile );
+
+			XmlNode node = doc.SelectSingleNode( "w:Wix/w:Product", namespaceManager );
+			node.Attributes.GetNamedItem( "Id" ).Value = Guid.NewGuid().ToString();
+
+			doc.PreserveWhitespace = true;
+			doc.Save( BuildInfo.WixFile );
+
+			return true;
+		}
+
 		private bool CreateTag()
 		{
-			return false;
+			ProcessStartInfo inf = new ProcessStartInfo();
+			inf.FileName = BuildInfo.GitPath;
+			inf.Arguments = "tag -a " + TargetVersion.ToString();
+
+			Process proc = new Process();
+			proc.StartInfo = inf;
+			proc.Start();
+			proc.WaitForExit();
+
+			return proc.ExitCode == 0;
 		}
 
 		private bool PublishVersion()
@@ -117,10 +143,17 @@ namespace ReleaseHelper.ViewModel
 		{
 			DispatcherHelper.CheckBeginInvokeOnUI( () =>
 			{
-				MaximumSteps = 5;
+				MaximumSteps = 6;
 			} );
 
 			int step = 0;
+			Worker.ReportProgress( step++, "Updating installer ID..." );
+			if( !CreateNewWixProductID() )
+			{
+				e.Result = "Failed to update installer";
+				return;
+			}
+
 			Worker.ReportProgress( step++, "Building solution..." );
 			if( !RunMSBuild() )
 			{
@@ -182,6 +215,13 @@ namespace ReleaseHelper.ViewModel
 		{
 			MaximumSteps = int.MaxValue;
 			CurrentStep = 0;
+			ProgressText = "ERROR";
+
+			if( e.Error != null )
+			{
+				MessageBox.Show( e.Error.ToString(), "Error", MessageBoxButton.OK, MessageBoxImage.Error );
+				return;
+			}
 
 			if( e.Result != null )
 			{
