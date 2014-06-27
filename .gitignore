@@ -187,3 +187,4 @@ FakesAssemblies/
 
 # Custom ignores
 /Blitzy/Properties/AssemblyInfo.cs
+/Output
