@@ -1,8 +1,10 @@
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 using btbapi;
 using GalaSoft.MvvmLight;
@@ -11,170 +13,6 @@ using GalaSoft.MvvmLight.Threading;
 
 namespace ReleaseHelper.ViewModel
 {
-	public class BuildInformation : ObservableObject
-	{
-		#region Constructor
-
-		public BuildInformation()
-		{
-			string currentDir = Directory.GetCurrentDirectory();
-			SolutionDir = Directory.GetParent( currentDir ).Parent.Parent.FullName;
-			OutputPath = Path.Combine( SolutionDir, "Output" );
-			WixFile = Path.Combine( SolutionDir, "Setup", Constants.Files.WixProjectFile );
-			BuildFile = Path.Combine( SolutionDir, "release.msbuild" );
-			SetupFile = Path.Combine( OutputPath, "Setup", "Blitzy.msi" );
-
-			GitPath = FindGit();
-		}
-
-		#endregion Constructor
-
-		#region Methods
-
-		private string FindGit()
-		{
-			string path = Environment.GetEnvironmentVariable( "Path", EnvironmentVariableTarget.Machine );
-			string[] paths = path.Split( ';' );
-
-			string folder = paths.Where( p => p.ToLower().Contains( @"git\cmd" ) ).FirstOrDefault();
-
-			return Path.Combine( folder, "git.exe" );
-		}
-
-		#endregion Methods
-
-		#region Properties
-
-		private string _BuildFile;
-		private string _GitPath;
-		private string _OutputPath;
-		private string _SetupFile;
-		private string _SolutionDir;
-		private string _WixFile;
-
-		public string BuildFile
-		{
-			get
-			{
-				return _BuildFile;
-			}
-
-			set
-			{
-				if( _BuildFile == value )
-				{
-					return;
-				}
-
-				RaisePropertyChanging( () => BuildFile );
-				_BuildFile = value;
-				RaisePropertyChanged( () => BuildFile );
-			}
-		}
-
-		public string GitPath
-		{
-			get
-			{
-				return _GitPath;
-			}
-
-			set
-			{
-				if( _GitPath == value )
-				{
-					return;
-				}
-
-				RaisePropertyChanging( () => GitPath );
-				_GitPath = value;
-				RaisePropertyChanged( () => GitPath );
-			}
-		}
-
-		public string OutputPath
-		{
-			get
-			{
-				return _OutputPath;
-			}
-
-			set
-			{
-				if( _OutputPath == value )
-				{
-					return;
-				}
-
-				RaisePropertyChanging( () => OutputPath );
-				_OutputPath = value;
-				RaisePropertyChanged( () => OutputPath );
-			}
-		}
-
-		public string SetupFile
-		{
-			get
-			{
-				return _SetupFile;
-			}
-
-			set
-			{
-				if( _SetupFile == value )
-				{
-					return;
-				}
-
-				RaisePropertyChanging( () => SetupFile );
-				_SetupFile = value;
-				RaisePropertyChanged( () => SetupFile );
-			}
-		}
-
-		public string SolutionDir
-		{
-			get
-			{
-				return _SolutionDir;
-			}
-
-			set
-			{
-				if( _SolutionDir == value )
-				{
-					return;
-				}
-
-				RaisePropertyChanging( () => SolutionDir );
-				_SolutionDir = value;
-				RaisePropertyChanged( () => SolutionDir );
-			}
-		}
-
-		public string WixFile
-		{
-			get
-			{
-				return _WixFile;
-			}
-
-			set
-			{
-				if( _WixFile == value )
-				{
-					return;
-				}
-
-				RaisePropertyChanging( () => WixFile );
-				_WixFile = value;
-				RaisePropertyChanged( () => WixFile );
-			}
-		}
-
-		#endregion Properties
-	}
-
 	public class MainViewModel : ViewModelBase
 	{
 		#region Constructor
@@ -210,24 +48,38 @@ namespace ReleaseHelper.ViewModel
 
 		#region Methods
 
-		private void CreateTag()
+		private bool CreateTag()
 		{
+			return false;
 		}
 
-		private void PublishVersion()
+		private bool PublishVersion()
 		{
+			return false;
 		}
 
-		private void RunMSBuild()
+		private bool RunMSBuild()
 		{
+			ProcessStartInfo inf = new ProcessStartInfo();
+			inf.FileName = BuildInfo.MSBuildPath;
+			inf.Arguments = BuildInfo.BuildFile;
+
+			Process proc = new Process();
+			proc.StartInfo = inf;
+			proc.Start();
+			proc.WaitForExit();
+
+			return proc.ExitCode == 0;
 		}
 
-		private void UploadToFtp()
+		private bool UploadToFtp()
 		{
+			return false;
 		}
 
-		private void WriteBlogPost()
+		private bool WriteBlogPost()
 		{
+			return false;
 		}
 
 		#endregion Methods
@@ -256,6 +108,7 @@ namespace ReleaseHelper.ViewModel
 			Worker.DoWork += Worker_DoWork;
 			Worker.ProgressChanged += Worker_ProgressChanged;
 			Worker.RunWorkerCompleted += Worker_RunWorkerCompleted;
+			Worker.WorkerReportsProgress = true;
 
 			Worker.RunWorkerAsync();
 		}
@@ -269,30 +122,50 @@ namespace ReleaseHelper.ViewModel
 
 			int step = 0;
 			Worker.ReportProgress( step++, "Building solution..." );
-			RunMSBuild();
+			if( !RunMSBuild() )
+			{
+				e.Result = "Failed to build solution";
+				return;
+			}
 
 			Worker.ReportProgress( step++, "Creating Tag..." );
 			if( ShouldCreateTag )
 			{
-				CreateTag();
+				if( !CreateTag() )
+				{
+					e.Result = "Failed to create tag";
+					return;
+				}
 			}
 
 			Worker.ReportProgress( step++, "Uploading to FTP..." );
 			if( ShouldUpload )
 			{
-				UploadToFtp();
+				if( !UploadToFtp() )
+				{
+					e.Result = "Failed to upload";
+					return;
+				}
 			}
 
 			Worker.ReportProgress( step++, "Publishing Version..." );
 			if( ShouldPublish )
 			{
-				PublishVersion();
+				if( !PublishVersion() )
+				{
+					e.Result = "Failed to publish";
+					return;
+				}
 			}
 
 			Worker.ReportProgress( step++, "Writing Blog post..." );
 			if( ShouldBlogPost )
 			{
-				WriteBlogPost();
+				if( !WriteBlogPost() )
+				{
+					e.Result = "Failed to write blog post";
+					return;
+				}
 			}
 		}
 
@@ -309,6 +182,11 @@ namespace ReleaseHelper.ViewModel
 		{
 			MaximumSteps = int.MaxValue;
 			CurrentStep = 0;
+
+			if( e.Result != null )
+			{
+				MessageBox.Show( (string)e.Result, "Error", MessageBoxButton.OK, MessageBoxImage.Error );
+			}
 		}
 
 		#endregion Commands

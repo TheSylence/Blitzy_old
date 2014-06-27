@@ -63,6 +63,7 @@
 					<RowDefinition Height="Auto" />
 					<RowDefinition Height="Auto" />
 					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
 				</Grid.RowDefinitions>
 
 				<TextBlock Text="Solution Dir" />
@@ -77,6 +78,8 @@
 				<TextBlock Text="{Binding SetupFile}" Grid.Row="5" Grid.Column="1" />
 				<TextBlock Text="Git" Grid.Row="6" />
 				<TextBlock Text="{Binding GitPath}" Grid.Row="6" Grid.Column="1" />
+				<TextBlock Text="MSBuild" Grid.Row="7" />
+				<TextBlock Text="{Binding MSBuildPath}" Grid.Row="7" Grid.Column="1" />
 			</Grid>
 		</GroupBox>
 		<GroupBox Header="Changelog" Grid.Row="2">
