@@ -1,4 +1,6 @@
 using System;
+using System.ComponentModel;
+using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using btbapi;
@@ -8,6 +10,134 @@ using GalaSoft.MvvmLight.Threading;
 
 namespace ReleaseHelper.ViewModel
 {
+	public class BuildInformation : ObservableObject
+	{
+		#region Constructor
+
+		public BuildInformation()
+		{
+			string currentDir = Directory.GetCurrentDirectory();
+			SolutionDir = Directory.GetParent( currentDir ).Parent.Parent.FullName;
+			OutputPath = Path.Combine( SolutionDir, "Output" );
+			WixFile = Path.Combine( SolutionDir, "Setup", Constants.Files.WixProjectFile );
+			BuildFile = Path.Combine( SolutionDir, "release.msbuild" );
+
+			SetupFile = Path.Combine( OutputPath, "Setup", "Blitzy.msi" );
+		}
+
+		#endregion Constructor
+
+		#region Properties
+
+		private string _BuildFile;
+		private string _OutputPath;
+		private string _SetupFile;
+		private string _SolutionDir;
+		private string _WixFile;
+
+		public string BuildFile
+		{
+			get
+			{
+				return _BuildFile;
+			}
+
+			set
+			{
+				if( _BuildFile == value )
+				{
+					return;
+				}
+
+				RaisePropertyChanging( () => BuildFile );
+				_BuildFile = value;
+				RaisePropertyChanged( () => BuildFile );
+			}
+		}
+
+		public string OutputPath
+		{
+			get
+			{
+				return _OutputPath;
+			}
+
+			set
+			{
+				if( _OutputPath == value )
+				{
+					return;
+				}
+
+				RaisePropertyChanging( () => OutputPath );
+				_OutputPath = value;
+				RaisePropertyChanged( () => OutputPath );
+			}
+		}
+
+		public string SetupFile
+		{
+			get
+			{
+				return _SetupFile;
+			}
+
+			set
+			{
+				if( _SetupFile == value )
+				{
+					return;
+				}
+
+				RaisePropertyChanging( () => SetupFile );
+				_SetupFile = value;
+				RaisePropertyChanged( () => SetupFile );
+			}
+		}
+
+		public string SolutionDir
+		{
+			get
+			{
+				return _SolutionDir;
+			}
+
+			set
+			{
+				if( _SolutionDir == value )
+				{
+					return;
+				}
+
+				RaisePropertyChanging( () => SolutionDir );
+				_SolutionDir = value;
+				RaisePropertyChanged( () => SolutionDir );
+			}
+		}
+
+		public string WixFile
+		{
+			get
+			{
+				return _WixFile;
+			}
+
+			set
+			{
+				if( _WixFile == value )
+				{
+					return;
+				}
+
+				RaisePropertyChanging( () => WixFile );
+				_WixFile = value;
+				RaisePropertyChanged( () => WixFile );
+			}
+		}
+
+		#endregion Properties
+	}
+
 	public class MainViewModel : ViewModelBase
 	{
 		#region Constructor
@@ -29,59 +159,45 @@ namespace ReleaseHelper.ViewModel
 					CurrentVersion = info.LatestVersion;
 					DispatcherHelper.CheckBeginInvokeOnUI( () => CommandManager.InvalidateRequerySuggested() );
 				} );
-			////if (IsInDesignMode)
-			////{
-			////    // Code runs in Blend --> create design time data.
-			////}
-			////else
-			////{
-			////    // Code runs "for real"
-			////}
 
+			TargetVersion = new Version( File.ReadAllText( "../../../Blitzy/Properties/Version.txt" ).Trim() );
+
+			MaximumSteps = int.MaxValue;
 			ShouldCreateTag = true;
 			ShouldPublish = true;
 			ShouldUpload = true;
+			BuildInfo = new BuildInformation();
 		}
 
 		#endregion Constructor
 
 		#region Methods
 
+		private void CreateTag()
+		{
+		}
+
+		private void PublishVersion()
+		{
+		}
+
+		private void RunMSBuild()
+		{
+		}
+
+		private void UploadToFtp()
+		{
+		}
+
+		private void WriteBlogPost()
+		{
+		}
+
 		#endregion Methods
 
 		#region Commands
 
-		private RelayCommand _BuildVersionCommand;
-		private RelayCommand _MajorVersionCommand;
-		private RelayCommand _MinorVersionCommand;
 		private RelayCommand _ReleaseCommand;
-
-		public RelayCommand BuildVersionCommand
-		{
-			get
-			{
-				return _BuildVersionCommand ??
-					( _BuildVersionCommand = new RelayCommand( ExecuteBuildVersionCommand, CanExecuteBuildVersionCommand ) );
-			}
-		}
-
-		public RelayCommand MajorVersionCommand
-		{
-			get
-			{
-				return _MajorVersionCommand ??
-					( _MajorVersionCommand = new RelayCommand( ExecuteMajorVersionCommand, CanExecuteMajorVersionCommand ) );
-			}
-		}
-
-		public RelayCommand MinorVersionCommand
-		{
-			get
-			{
-				return _MinorVersionCommand ??
-					( _MinorVersionCommand = new RelayCommand( ExecuteMinorVersionCommand, CanExecuteMinorVersionCommand ) );
-			}
-		}
 
 		public RelayCommand ReleaseCommand
 		{
@@ -92,57 +208,108 @@ namespace ReleaseHelper.ViewModel
 			}
 		}
 
-		private bool CanExecuteBuildVersionCommand()
-		{
-			return CurrentVersion != null;
-		}
-
-		private bool CanExecuteMajorVersionCommand()
-		{
-			return CurrentVersion != null;
-		}
-
-		private bool CanExecuteMinorVersionCommand()
-		{
-			return CurrentVersion != null;
-		}
-
 		private bool CanExecuteReleaseCommand()
 		{
 			return VersionOk && TargetVersion != null;
 		}
 
-		private void ExecuteBuildVersionCommand()
-		{
-			TargetVersion = new Version( CurrentVersion.Major, CurrentVersion.Minor, CurrentVersion.Build + 1 );
-		}
-
-		private void ExecuteMajorVersionCommand()
-		{
-			TargetVersion = new Version( CurrentVersion.Major + 1, 0, 0 );
-		}
-
-		private void ExecuteMinorVersionCommand()
-		{
-			TargetVersion = new Version( CurrentVersion.Major, CurrentVersion.Minor + 1, 0 );
-		}
-
 		private void ExecuteReleaseCommand()
 		{
+			Worker = new BackgroundWorker();
+			Worker.DoWork += Worker_DoWork;
+			Worker.ProgressChanged += Worker_ProgressChanged;
+			Worker.RunWorkerCompleted += Worker_RunWorkerCompleted;
+
+			Worker.RunWorkerAsync();
+		}
+
+		private void Worker_DoWork( object sender, DoWorkEventArgs e )
+		{
+			DispatcherHelper.CheckBeginInvokeOnUI( () =>
+			{
+				MaximumSteps = 5;
+			} );
+
+			int step = 0;
+			Worker.ReportProgress( step++, "Building solution..." );
+			RunMSBuild();
+
+			Worker.ReportProgress( step++, "Creating Tag..." );
+			if( ShouldCreateTag )
+			{
+				CreateTag();
+			}
+
+			Worker.ReportProgress( step++, "Uploading to FTP..." );
+			if( ShouldUpload )
+			{
+				UploadToFtp();
+			}
+
+			Worker.ReportProgress( step++, "Publishing Version..." );
+			if( ShouldPublish )
+			{
+				PublishVersion();
+			}
+
+			Worker.ReportProgress( step++, "Writing Blog post..." );
+			if( ShouldBlogPost )
+			{
+				WriteBlogPost();
+			}
+		}
+
+		private void Worker_ProgressChanged( object sender, ProgressChangedEventArgs e )
+		{
+			DispatcherHelper.CheckBeginInvokeOnUI( () =>
+				{
+					CurrentStep = e.ProgressPercentage;
+					ProgressText = (string)e.UserState;
+				} );
+		}
+
+		private void Worker_RunWorkerCompleted( object sender, RunWorkerCompletedEventArgs e )
+		{
+			MaximumSteps = int.MaxValue;
+			CurrentStep = 0;
 		}
 
 		#endregion Commands
 
 		#region Properties
 
+		private BuildInformation _BuildInfo;
 		private string _Changelog;
+		private int _CurrentStep;
 		private Version _CurrentVersion;
+		private int _MaximumSteps;
+		private string _ProgressText;
 		private bool _ShouldBlogPost;
 		private bool _ShouldCreateTag;
 		private bool _ShouldPublish;
 		private bool _ShouldUpload;
 		private Version _TargetVersion;
 		private bool _VersionOk;
+
+		public BuildInformation BuildInfo
+		{
+			get
+			{
+				return _BuildInfo;
+			}
+
+			set
+			{
+				if( _BuildInfo == value )
+				{
+					return;
+				}
+
+				RaisePropertyChanging( () => BuildInfo );
+				_BuildInfo = value;
+				RaisePropertyChanged( () => BuildInfo );
+			}
+		}
 
 		public string Changelog
 		{
@@ -164,6 +331,26 @@ namespace ReleaseHelper.ViewModel
 			}
 		}
 
+		public int CurrentStep
+		{
+			get
+			{
+				return _CurrentStep;
+			}
+
+			set
+			{
+				if( _CurrentStep == value )
+				{
+					return;
+				}
+
+				RaisePropertyChanging( () => CurrentStep );
+				_CurrentStep = value;
+				RaisePropertyChanged( () => CurrentStep );
+			}
+		}
+
 		public Version CurrentVersion
 		{
 			get
@@ -181,6 +368,46 @@ namespace ReleaseHelper.ViewModel
 				RaisePropertyChanging( () => CurrentVersion );
 				_CurrentVersion = value;
 				RaisePropertyChanged( () => CurrentVersion );
+			}
+		}
+
+		public int MaximumSteps
+		{
+			get
+			{
+				return _MaximumSteps;
+			}
+
+			set
+			{
+				if( _MaximumSteps == value )
+				{
+					return;
+				}
+
+				RaisePropertyChanging( () => MaximumSteps );
+				_MaximumSteps = value;
+				RaisePropertyChanged( () => MaximumSteps );
+			}
+		}
+
+		public string ProgressText
+		{
+			get
+			{
+				return _ProgressText;
+			}
+
+			set
+			{
+				if( _ProgressText == value )
+				{
+					return;
+				}
+
+				RaisePropertyChanging( () => ProgressText );
+				_ProgressText = value;
+				RaisePropertyChanged( () => ProgressText );
 			}
 		}
 
@@ -309,6 +536,7 @@ namespace ReleaseHelper.ViewModel
 		#region Attributes
 
 		private API Api;
+		private BackgroundWorker Worker;
 
 		#endregion Attributes
 	}
