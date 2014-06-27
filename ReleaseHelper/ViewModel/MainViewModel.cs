@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using btbapi;
@@ -21,15 +22,31 @@ namespace ReleaseHelper.ViewModel
 			OutputPath = Path.Combine( SolutionDir, "Output" );
 			WixFile = Path.Combine( SolutionDir, "Setup", Constants.Files.WixProjectFile );
 			BuildFile = Path.Combine( SolutionDir, "release.msbuild" );
-
 			SetupFile = Path.Combine( OutputPath, "Setup", "Blitzy.msi" );
+
+			GitPath = FindGit();
 		}
 
 		#endregion Constructor
 
+		#region Methods
+
+		private string FindGit()
+		{
+			string path = Environment.GetEnvironmentVariable( "Path", EnvironmentVariableTarget.Machine );
+			string[] paths = path.Split( ';' );
+
+			string folder = paths.Where( p => p.ToLower().Contains( @"git\cmd" ) ).FirstOrDefault();
+
+			return Path.Combine( folder, "git.exe" );
+		}
+
+		#endregion Methods
+
 		#region Properties
 
 		private string _BuildFile;
+		private string _GitPath;
 		private string _OutputPath;
 		private string _SetupFile;
 		private string _SolutionDir;
@@ -52,6 +69,26 @@ namespace ReleaseHelper.ViewModel
 				RaisePropertyChanging( () => BuildFile );
 				_BuildFile = value;
 				RaisePropertyChanged( () => BuildFile );
+			}
+		}
+
+		public string GitPath
+		{
+			get
+			{
+				return _GitPath;
+			}
+
+			set
+			{
+				if( _GitPath == value )
+				{
+					return;
+				}
+
+				RaisePropertyChanging( () => GitPath );
+				_GitPath = value;
+				RaisePropertyChanged( () => GitPath );
 			}
 		}
 
