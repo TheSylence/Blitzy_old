@@ -1,6 +1,7 @@
 ﻿<Window x:Class="ReleaseHelper.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		DataContext="{Binding Source={StaticResource Locator}, Path=Main}"
         Title="Release Helper" Height="350" Width="450">
 	<Window.Resources>
 		<Style TargetType="CheckBox">
@@ -41,7 +42,7 @@
 				<TextBlock Text="{Binding CurrentVersion}" IsEnabled="False" Grid.Column="1" />
 
 				<TextBlock Text="Target Version" Grid.Column="2" />
-				<TextBox Text="{Binding TargetVersion}" Grid.Column="3" VerticalAlignment="Center" />
+				<TextBlock Text="{Binding TargetVersion}" Grid.Column="3" />
 
 				<Button Content="Major" Command="{Binding MajorVersionCommand}" Grid.Row="1" />
 				<Button Content="Minor" Command="{Binding MinorVersionCommand}" Grid.Row="1" Grid.Column="1" />
