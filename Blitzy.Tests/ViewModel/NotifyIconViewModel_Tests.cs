@@ -17,17 +17,19 @@ namespace Blitzy.Tests.ViewModel
 		public void IconTest()
 		{
 			NotifyIconViewModel vm = new NotifyIconViewModel();
-			vm.MainVm = new MainViewModel();
-			vm.Reset();
+			using( vm.MainVm = new MainViewModel() )
+			{
+				vm.Reset();
 
-			Messenger.Default.Send<CommandMessage>( new CommandMessage( CommandStatus.Finished, null, null ) );
-			Assert.IsTrue( vm.IconSource.Contains( "TrayIcon.ico" ) );
+				Messenger.Default.Send<CommandMessage>( new CommandMessage( CommandStatus.Finished, null, null ) );
+				Assert.IsTrue( vm.IconSource.Contains( "TrayIcon.ico" ) );
 
-			Messenger.Default.Send<CommandMessage>( new CommandMessage( CommandStatus.Error, null, null ) );
-			Assert.IsTrue( vm.IconSource.Contains( "TrayIconFailure.ico" ) );
+				Messenger.Default.Send<CommandMessage>( new CommandMessage( CommandStatus.Error, null, null ) );
+				Assert.IsTrue( vm.IconSource.Contains( "TrayIconFailure.ico" ) );
 
-			Messenger.Default.Send<CommandMessage>( new CommandMessage( CommandStatus.Executing, null, null ) );
-			Assert.IsTrue( vm.IconSource.Contains( "CommandExecuting.ico" ) );
+				Messenger.Default.Send<CommandMessage>( new CommandMessage( CommandStatus.Executing, null, null ) );
+				Assert.IsTrue( vm.IconSource.Contains( "CommandExecuting.ico" ) );
+			}
 		}
 
 		[TestMethod, TestCategory( "ViewModel" )]
@@ -43,55 +45,61 @@ namespace Blitzy.Tests.ViewModel
 		public void QuitTest()
 		{
 			NotifyIconViewModel vm = new NotifyIconViewModel();
-			vm.MainVm = new MainViewModel();
+			using( vm.MainVm = new MainViewModel() )
+			{
+				bool quit = false;
+				Messenger.Default.Register<InternalCommandMessage>( this, msg => quit = msg.Command.Equals( "quit" ) );
 
-			bool quit = false;
-			Messenger.Default.Register<InternalCommandMessage>( this, msg => quit = msg.Command.Equals( "quit" ) );
-
-			Assert.IsTrue( vm.QuitCommand.CanExecute( null ) );
-			vm.QuitCommand.Execute( null );
-			Assert.IsTrue( quit );
+				Assert.IsTrue( vm.QuitCommand.CanExecute( null ) );
+				vm.QuitCommand.Execute( null );
+				Assert.IsTrue( quit );
+			}
 		}
 
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void SettingsTest()
 		{
 			NotifyIconViewModel vm = new NotifyIconViewModel();
-			vm.MainVm = new MainViewModel();
+			using( vm.MainVm = new MainViewModel() )
+			{
+				CallCheckServiceMock mock = new CallCheckServiceMock();
+				DialogServiceManager.RegisterService( typeof( SettingsService ), mock );
 
-			CallCheckServiceMock mock = new CallCheckServiceMock();
-			DialogServiceManager.RegisterService( typeof( SettingsService ), mock );
+				Assert.IsTrue( vm.SettingsCommand.CanExecute( null ) );
+				vm.SettingsCommand.Execute( null );
 
-			Assert.IsTrue( vm.SettingsCommand.CanExecute( null ) );
-			vm.SettingsCommand.Execute( null );
-
-			Assert.IsTrue( mock.WasCalled );
+				Assert.IsTrue( mock.WasCalled );
+			}
 		}
 
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void ShowTest()
 		{
 			NotifyIconViewModel vm = new NotifyIconViewModel();
-			vm.MainVm = new MainViewModel();
-			bool shown = false;
-			vm.MainVm.RequestShow += ( s, e ) => shown = true;
+			using( vm.MainVm = new MainViewModel() )
+			{
+				bool shown = false;
+				vm.MainVm.RequestShow += ( s, e ) => shown = true;
 
-			Assert.IsTrue( vm.ShowCommand.CanExecute( null ) );
-			vm.ShowCommand.Execute( null );
+				Assert.IsTrue( vm.ShowCommand.CanExecute( null ) );
+				vm.ShowCommand.Execute( null );
 
-			Assert.IsTrue( shown );
+				Assert.IsTrue( shown );
+			}
 		}
 
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void VisibleTest()
 		{
 			NotifyIconViewModel vm = new NotifyIconViewModel();
-			vm.MainVm = new MainViewModel();
-			vm.MainVm.Settings.SetDefaults();
+			using( vm.MainVm = new MainViewModel() )
+			{
+				vm.MainVm.Settings.SetDefaults();
 
-			Assert.IsTrue( vm.Visible );
-			vm.MainVm.Settings.SetValue( Blitzy.Model.SystemSetting.TrayIcon, false );
-			Assert.IsFalse( vm.Visible );
+				Assert.IsTrue( vm.Visible );
+				vm.MainVm.Settings.SetValue( Blitzy.Model.SystemSetting.TrayIcon, false );
+				Assert.IsFalse( vm.Visible );
+			}
 		}
 	}
 }
