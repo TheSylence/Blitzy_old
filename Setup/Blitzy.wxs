@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+	<Product Id="6ea20cb1-3911-4a28-84c4-c41cfd819723" Name="Blitzy" Language="1033" Version="!(bind.FileVersion.exe)" Manufacturer="btbsoft.org" UpgradeCode="2b18ed51-32b9-463b-8459-8b32ee807a79">
+		<!-- Package information -->
+		<Package InstallerVersion="405" Compressed="yes" Manufacturer="btbsoft.org" Description=".NET Keystroke launcher" Comments="Blitzy installer" />
+		<!-- Properties -->
+		<WixVariable Id="WixUISupportPerUser" Value="0" />
+		<WixVariable Id="WixUISupportPerMachine" Value="1" />
+		<Property Id="WixAppFolder" Value="WixPerMachineFolder" />
+		<Property Id="ApplicationFolderName" Value="btbsoft\Blitzy" />
+		<Property Id="ALLUSERS" Value="1" />
+		<Property Id="LAUNCHPRODUCT">1</Property>
+		<Property Id="APPLICATIONFOLDER">
+			<RegistrySearch Id="BlitzyRegistry" Type="raw" Root="HKCU" Key="Software\btbsoft\Blitzy" Name="InstallDir" />
+		</Property>
+		<!-- Conditions -->
+		<PropertyRef Id="NETFRAMEWORK45" />
+		<Condition Message="This application requires .NET Framework 4.5. Please install the .NET Framework then run this installer again."><![CDATA[Installed OR NETFRAMEWORK45]]></Condition>
+		<Condition Message="Only Windows Vista or newer is supported"><![CDATA[VersionNT >= 600]]></Condition>
+		<!-- Upgrade -->
+		<MajorUpgrade Schedule="afterInstallFinalize" DowngradeErrorMessage="A later version of Blitzy is already installed. Setup will now exit." MigrateFeatures="yes" />
+		<!-- Media -->
+		<Media Id="1" Cabinet="Blitzy.cab" EmbedCab="yes" />
+
+		<!-- Data -->
+		<Directory Id="TARGETDIR" Name="SourceDir">
+			<!-- ProgramFiles -->
+			<Directory Id="ProgramFilesFolder">
+				<Directory Id="APPLICATIONFOLDER" Name="btbsoft">
+					<Component Id="Blitzy" Guid="0C7AC4FA-32DD-4A2D-8A04-20483F76CF02">
+						<File Id="exe" Name="$(var.Blitzy.TargetFileName)" DiskId="1" Source="$(var.Blitzy.TargetPath)" Checksum="yes" />
+						<RemoveFile On="uninstall" Id="exe" Name="$(var.Blitzy.TargetFileName)" />
+					</Component>
+					<Component Id="Autostart" Guid="">
+						<RegistryValue Id="Autostart_registry" Key="Software\Microsoft\Windows\CurrentVersion\Run" Root="HKCU" Name="Blitzy" Value="[APPLICATIONFOLDER]Blitzy.exe" Type="string" />
+					</Component>
+				</Directory>
+				<Directory Id="BlitzyDocumentation" Name="doc">
+					<Directory Id="DeveloperDocumentation" Name="developer">
+						<Component Id="Blitzy_devdoc" Guid="7536C3AB-718D-4B05-91AF-2619BA51336C">
+							<File Id="dev_manual" Name="DeveloperGuide.html" Source="..\Documentation\" />
+							<RemoveFile Id="dev_manual" On="uninstall" Name="DeveloperGuide.html" />
+						</Component>
+					</Directory>
+					<Component Id="Blitzy_doc" Guid="20FAB883-692E-402A-AFA3-CF7A394D6F16">
+						<File Id="doc_manual" Name="UserGuide.html" Source="..\Documentation\" />
+						<RemoveFile On="uninstall" Id="doc_manual" Name="UserGuide.html" />
+					</Component>
+				</Directory>
+			</Directory>
+			<!-- AppData -->
+			<Directory Id="LocalAppDataFolder" Name="appdata">
+				<Directory Id="cfg_baseDir" Name="btbsoft">
+					<Directory Id="cfg_productdir" Name="Blitzy">
+						<Component Id="Blitzy_settings" Guid="85DCECE5-B5B3-495E-8769-06A5024B5FE4">
+							<RegistryKey Root="HKCU" Key="SOFTWARE\btbsoft\Blitzy">
+								<RegistryValue Type="string" Value="dummy" KeyPath="yes" />
+							</RegistryKey>
+							<RemoveFile On="uninstall" Name="log.txt" Id="Blitzy_log" />
+							<RemoveFile On="uninstall" Name="data.db" Id="Blitzy_data" />
+							<RemoveFolder On="uninstall" Id="cfg_productdir" />
+							<RemoveRegistryKey Action="removeOnUninstall" Root="HKCU" Key="SOFTWARE\btbsoft\Blitzy" />
+						</Component>
+					</Directory>
+					<Component Id="dummy_appdata" Guid="384FF8F3-2A74-425C-9CD9-702EFB2670B8">
+						<!--
+							This component purely exists to satisfy wix... You know that wix almost sounds like 'wichse' in german which means jizz
+							Now I don't think this is a coincidence anymore...
+						-->
+						<RegistryKey Root="HKCU" Key="SOFTWARE\btbsoft\Blitzy">
+							<RegistryValue Type="string" Value="dummy" KeyPath="yes" />
+						</RegistryKey>
+						<RemoveRegistryKey Action="removeOnUninstall" Root="HKCU" Key="SOFTWARE\btbsoft\Blitzy" />
+						<RemoveFolder On="uninstall" Id="cfg_baseDir" />
+					</Component>
+				</Directory>
+			</Directory>
+			<!-- Start menu -->
+			<Directory Id="ProgramMenuFolder">
+				<Directory Id="ApplicationProgramsFolder" Name="btbsoft">
+					<Component Id="shortcut" Guid="863F1BCA-119A-4AAB-B8C5-DA04869B00E5">
+						<Shortcut Id="ApplicationStartMenuShortcut" Name="Blitzy" Description=".NET Keystroke Launcher" Target="[APPLICATIONFOLDER]Blitzy.exe" WorkingDirectory="APPLICATIONFOLDER" />
+						<RemoveFolder Id="ApplicationProgramsFolder" On="uninstall" />
+						<RegistryValue Root="HKCU" Key="SOFTWARE\btbsoft\Blitzy" Name="installed" Type="integer" Value="1" KeyPath="yes" />
+					</Component>
+				</Directory>
+			</Directory>
+		</Directory>
+
+		<!-- Blitzy -->
+		<Feature Id="Blitzy" Title="Blitzy" Description="Main program files and documentation" Level="1" Absent="disallow" AllowAdvertise="no" Display="expand">
+			<ComponentRef Id="Blitzy" />
+			<ComponentRef Id="Blitzy_doc" />
+			<ComponentRef Id="Blitzy_settings" />
+			<ComponentRef Id="dummy_appdata" />
+			<ComponentRef Id="shortcut" />
+			<!-- Note: The following ComponentGroupRef is required to pull in generated authoring from project references. -->
+			<!--<ComponentGroupRef Id="Product.Generated" />-->
+
+			<Feature Id="Autostart" Title="Autostart" Description="Start with Windows" Absent="allow" InstallDefault="followParent">
+				<ComponentRef Id="Autostart" />
+			</Feature>
+		</Feature>
+		<!-- Developer Documentation -->
+		<Feature Id="dev" Title="Developer Documentation" Description="Provides documentation and samples for developers who wants to create plugins" Level="2" AllowAdvertise="no">
+			<ComponentRef Id="Blitzy_devdoc" />
+			<!--<ComponentRef Id="Blitzy_HelloWorldPlugin" />-->
+		</Feature>
+
+		<!-- UI -->
+		<Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="Launch Blitzy" />
+		<Property Id="WixShellExecTarget" Value="[#exe]" />
+		<CustomAction Id="LaunchApplication" BinaryKey="WixCA" DllEntry="WixShellExec" Impersonate="yes" />
+		<UI>
+			<UIRef Id="WixUI_Advanced" />
+			<Publish Dialog="ExitDialog" Control="Finish" Event="DoAction" Value="LaunchApplication">WIXUI_EXITDIALOGOPTIONALCHECKBOX = 1 and NOT Installed</Publish>
+		</UI>
+		<CustomAction Id="LaunchFile" FileKey="exe" ExeCommand="" Return="asyncNoWait" />
+	</Product>
+</Wix>
