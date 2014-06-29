@@ -29,6 +29,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "btbapi.tests", "btbapi\btba
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReleaseHelper", "ReleaseHelper\ReleaseHelper.csproj", "{D0BFFEB0-A806-4572-B362-8EC6D57249B3}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentation", "{18D197C5-C406-4487-A311-905A1A453F6F}"
+	ProjectSection(SolutionItems) = preProject
+		Documentation\DeveloperGuide.html = Documentation\DeveloperGuide.html
+		Documentation\UserGuide.html = Documentation\UserGuide.html
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

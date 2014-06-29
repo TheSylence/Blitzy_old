@@ -72,6 +72,7 @@ namespace Blitzy.Tests.ViewModel
 
 				vm.SendCommand.Execute( null );
 			}
+
 			Assert.IsTrue( called );
 			Assert.IsTrue( success );
 			Assert.IsTrue( closed );

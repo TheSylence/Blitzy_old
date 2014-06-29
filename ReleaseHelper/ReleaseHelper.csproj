@@ -70,7 +70,7 @@
     <Compile Include="ViewModel\BuildInformation.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
-    <Compile Include="WixNamespaceManager.cs" />
+    <Compile Include="ViewModel\WixNamespaceManager.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

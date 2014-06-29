@@ -34,7 +34,7 @@ namespace Blitzy.Tests.Utility
 				{
 					updateCalls++;
 
-					Assert.IsTrue( e.ProgressStatistic.EstimatedDuration.Ticks > 0 );
+					Assert.IsTrue( e.ProgressStatistic.EstimatedDuration.Ticks >= 0 );
 					Assert.IsTrue( e.ProgressStatistic.EstimatedFinishingTime > startTime );
 					Assert.IsTrue( e.ProgressStatistic.AverageBytesPerSecond > 0 );
 					Assert.IsTrue( e.ProgressStatistic.BytesRead > 0 );

@@ -70,6 +70,7 @@ namespace Blitzy.Tests.Global
 				Assert.AreEqual( "Fatal", log.Messages[3] );
 			}
 
+#if DEBUG
 			using( LogChecker log = new LogChecker( Level.Debug ) )
 			{
 				LogHelper.LogDebug( type, "Debug" );
@@ -85,6 +86,7 @@ namespace Blitzy.Tests.Global
 				Assert.AreEqual( "Error", log.Messages[3] );
 				Assert.AreEqual( "Fatal", log.Messages[4] );
 			}
+#endif
 		}
 
 		[TestMethod, TestCategory( "Global" )]
@@ -146,6 +148,7 @@ namespace Blitzy.Tests.Global
 				Assert.AreEqual( "Fatal", log.Messages[3] );
 			}
 
+#if DEBUG
 			using( LogChecker log = new LogChecker( Level.Debug ) )
 			{
 				obj.Debug( "Debug" );
@@ -161,6 +164,7 @@ namespace Blitzy.Tests.Global
 				Assert.AreEqual( "Error", log.Messages[3] );
 				Assert.AreEqual( "Fatal", log.Messages[4] );
 			}
+#endif
 		}
 
 		[TestMethod, TestCategory( "ViewModel" )]
@@ -221,6 +225,7 @@ namespace Blitzy.Tests.Global
 				Assert.AreEqual( "Fatal", log.Messages[3] );
 			}
 
+#if DEBUG
 			using( LogChecker log = new LogChecker( Level.Debug ) )
 			{
 				obj.Debug( "Debug" );
@@ -236,6 +241,7 @@ namespace Blitzy.Tests.Global
 				Assert.AreEqual( "Error", log.Messages[3] );
 				Assert.AreEqual( "Fatal", log.Messages[4] );
 			}
+#endif
 		}
 	}
 }

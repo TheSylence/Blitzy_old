@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 
-namespace ReleaseHelper
+namespace ReleaseHelper.ViewModel
 {
 	internal class WixNamespaceManager : XmlNamespaceManager
 	{
