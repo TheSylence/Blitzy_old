@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -37,12 +38,15 @@ namespace ReleaseHelper.ViewModel
 				} );
 
 			TargetVersion = new Version( File.ReadAllText( "../../../Blitzy/Properties/Version.txt" ).Trim() );
+			BuildInfo = new BuildInformation();
+
+			TargetFileName = string.Format( "Blitzy.{0}.msi", TargetVersion );
+			SourcePath = Path.Combine( BuildInfo.OutputPath, TargetFileName );
 
 			MaximumSteps = int.MaxValue;
 			ShouldCreateTag = true;
 			ShouldPublish = true;
 			ShouldUpload = true;
-			BuildInfo = new BuildInformation();
 		}
 
 		#endregion Constructor
@@ -81,7 +85,10 @@ namespace ReleaseHelper.ViewModel
 
 		private bool PublishVersion()
 		{
-			return false;
+			Task<PublishResult> task = Api.PublishUpdate( Constants.ProjectName, TargetVersion, Changelog, TargetFileName, Constants.DownloadTitle );
+			task.Wait();
+			PublishResult result = task.Result;
+			return result.Status == HttpStatusCode.OK;
 		}
 
 		private bool RunMSBuild()
@@ -100,6 +107,10 @@ namespace ReleaseHelper.ViewModel
 
 		private bool UploadToFtp()
 		{
+			Task<FileUploadResult> task = Api.UploadFile( SourcePath, TargetFileName, new NetworkCredential( Constants.FTP.User, Constants.FTP.Password ) );
+			task.Wait();
+			FileUploadResult result = task.Result;
+
 			return false;
 		}
 
@@ -243,7 +254,11 @@ namespace ReleaseHelper.ViewModel
 		private bool _ShouldCreateTag;
 		private bool _ShouldPublish;
 		private bool _ShouldUpload;
+		private string _SourcePath;
+		private string _TargetFileName;
+
 		private Version _TargetVersion;
+
 		private bool _VersionOk;
 
 		public BuildInformation BuildInfo
@@ -443,6 +458,46 @@ namespace ReleaseHelper.ViewModel
 				RaisePropertyChanging( () => ShouldUpload );
 				_ShouldUpload = value;
 				RaisePropertyChanged( () => ShouldUpload );
+			}
+		}
+
+		public string SourcePath
+		{
+			get
+			{
+				return _SourcePath;
+			}
+
+			set
+			{
+				if( _SourcePath == value )
+				{
+					return;
+				}
+
+				RaisePropertyChanging( () => SourcePath );
+				_SourcePath = value;
+				RaisePropertyChanged( () => SourcePath );
+			}
+		}
+
+		public string TargetFileName
+		{
+			get
+			{
+				return _TargetFileName;
+			}
+
+			set
+			{
+				if( _TargetFileName == value )
+				{
+					return;
+				}
+
+				RaisePropertyChanging( () => TargetFileName );
+				_TargetFileName = value;
+				RaisePropertyChanged( () => TargetFileName );
 			}
 		}
 
