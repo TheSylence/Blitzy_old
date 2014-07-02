@@ -340,6 +340,15 @@ namespace Blitzy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Disable.
+        /// </summary>
+        public static string Disable {
+            get {
+                return ResourceManager.GetString("Disable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Download.
         /// </summary>
         public static string Download {
@@ -399,6 +408,24 @@ namespace Blitzy.Properties {
         public static string EmptyExpression {
             get {
                 return ResourceManager.GetString("EmptyExpression", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enable.
+        /// </summary>
+        public static string Enable {
+            get {
+                return ResourceManager.GetString("Enable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enabled.
+        /// </summary>
+        public static string Enabled {
+            get {
+                return ResourceManager.GetString("Enabled", resourceCulture);
             }
         }
         
@@ -576,6 +603,15 @@ namespace Blitzy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Install plugin.
+        /// </summary>
+        public static string InstallPlugin {
+            get {
+                return ResourceManager.GetString("InstallPlugin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Items in catalog.
         /// </summary>
         public static string ItemsInCatalog {
@@ -644,6 +680,15 @@ namespace Blitzy.Properties {
         public static string MakeBackupOfShortcuts {
             get {
                 return ResourceManager.GetString("MakeBackupOfShortcuts", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Manage plugins.
+        /// </summary>
+        public static string ManagePlugins {
+            get {
+                return ResourceManager.GetString("ManagePlugins", resourceCulture);
             }
         }
         
@@ -761,6 +806,15 @@ namespace Blitzy.Properties {
         public static string PeriodicallyRebuildCatalog {
             get {
                 return ResourceManager.GetString("PeriodicallyRebuildCatalog", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Plugin.
+        /// </summary>
+        public static string Plugin {
+            get {
+                return ResourceManager.GetString("Plugin", resourceCulture);
             }
         }
         

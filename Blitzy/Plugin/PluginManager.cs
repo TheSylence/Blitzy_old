@@ -178,13 +178,15 @@ namespace Blitzy.Plugin
 
 		#region Properties
 
+		internal SQLiteConnection Connection { get; private set; }
+
 		#endregion Properties
 
 		#region Attributes
 
 		internal List<IPlugin> DisabledPlugins = new List<IPlugin>();
 		internal List<IPlugin> Plugins = new List<IPlugin>();
-		private readonly SQLiteConnection Connection;
+
 		private readonly IPluginHost Host;
 
 		#endregion Attributes

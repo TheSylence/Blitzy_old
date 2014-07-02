@@ -222,6 +222,7 @@
     <Compile Include="ViewModel\Dialogs\ChangelogDialogViewModel.cs" />
     <Compile Include="ViewModel\Dialogs\DialogViewModelBase.cs" />
     <Compile Include="ViewModel\Dialogs\ExceptionDialogViewModel.cs" />
+    <Compile Include="ViewModel\Dialogs\PluginsDialogViewModel.cs" />
     <Compile Include="ViewModel\Dialogs\TextInputDialogViewModel.cs" />
     <Compile Include="ViewModel\Dialogs\WebyWebsiteDialogViewModel.cs" />
     <Compile Include="ViewModel\Dialogs\DownloadDialogViewModel.cs" />
@@ -236,6 +237,8 @@
     <Compile Include="ViewModel\SettingsViewModelBase.cs" />
     <Compile Include="ViewModel\ViewModelBaseEx.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
+    <Compile Include="ViewServices\PluginSettingsService.cs" />
+    <Compile Include="View\StockIcons.cs" />
     <Page Include="Controls\HistoryWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -273,6 +276,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\Dialogs\ExceptionDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Dialogs\PluginsDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -322,6 +329,9 @@
     </Compile>
     <Compile Include="View\Dialogs\ExceptionDialog.xaml.cs">
       <DependentUpon>ExceptionDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Dialogs\PluginsDialog.xaml.cs">
+      <DependentUpon>PluginsDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\Dialogs\SettingsDialog.xaml.cs">
       <DependentUpon>SettingsDialog.xaml</DependentUpon>

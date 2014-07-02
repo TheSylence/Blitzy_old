@@ -216,18 +216,31 @@
 				</Grid>
 			</TabItem>
 			<TabItem Header="{lex:Loc Plugins}">
-				<TabControl ItemsSource="{Binding PluginPages}" SelectedItem="{Binding SelectedPluginPage,Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}">
-					<TabControl.ContentTemplate>
-						<DataTemplate>
-							<ContentPresenter Content="{Binding Content}" />
-						</DataTemplate>
-					</TabControl.ContentTemplate>
-					<TabControl.ItemTemplate>
-						<DataTemplate>
-							<TextBlock Text="{Binding Title}" />
-						</DataTemplate>
-					</TabControl.ItemTemplate>
-				</TabControl>
+				<Grid>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto" />
+						<RowDefinition />
+					</Grid.RowDefinitions>
+
+					<ContentControl Grid.Row="0" HorizontalAlignment="Right">
+						<Hyperlink Command="{Binding PluginsDialogCommand}">
+							<TextBlock Text="{lex:Loc ManagePlugins}" />
+						</Hyperlink>
+					</ContentControl>
+
+					<TabControl Grid.Row="1" ItemsSource="{Binding PluginPages}" SelectedItem="{Binding SelectedPluginPage,Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}">
+						<TabControl.ContentTemplate>
+							<DataTemplate>
+								<ContentPresenter Content="{Binding Content}" />
+							</DataTemplate>
+						</TabControl.ContentTemplate>
+						<TabControl.ItemTemplate>
+							<DataTemplate>
+								<TextBlock Text="{Binding Title}" />
+							</DataTemplate>
+						</TabControl.ItemTemplate>
+					</TabControl>
+				</Grid>
 			</TabItem>
 			<TabItem Header="{lex:Loc About}">
 				<TabControl>

@@ -1,0 +1,41 @@
+﻿<Window x:Class="Blitzy.View.Dialogs.PluginsDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:v="clr-namespace:Blitzy.View"
+		xmlns:lex="http://wpflocalizeextension.codeplex.com"
+		lex:LocalizeDictionary.DesignCulture="en"
+		DataContext="{Binding Source={StaticResource Locator}, Path=PluginsDialog}"
+        lex:ResxLocalizationProvider.DefaultAssembly="Blitzy"
+        lex:ResxLocalizationProvider.DefaultDictionary="Resources"
+		WindowStartupLocation="CenterOwner" WindowStyle="ToolWindow"
+        Title="{lex:Loc Plugins}" Height="300" Width="300">
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+		<DataGrid ItemsSource="{Binding Plugins}" AutoGenerateColumns="False" Margin="5" SelectedItem="{Binding SelectedPlugin, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+				  CanUserAddRows="False" CanUserDeleteRows="False" HeadersVisibility="Column" IsReadOnly="True">
+			<DataGrid.Columns>
+				<DataGridTextColumn Header="{lex:Loc Blitzy:Resources:Plugin}" Binding="{Binding Name}" />
+				<DataGridCheckBoxColumn Header="{lex:Loc Blitzy:Resources:Enabled}" Binding="{Binding Enabled}" />
+			</DataGrid.Columns>
+		</DataGrid>
+		<StackPanel Orientation="Horizontal" Grid.Row="1">
+			<StackPanel.Resources>
+				<Style TargetType="Button">
+					<Setter Property="Margin" Value="5" />
+					<Setter Property="MinWidth" Value="75" />
+				</Style>
+			</StackPanel.Resources>
+			<Button Content="{lex:Loc Enable}" Command="{Binding EnableCommand}" />
+			<Button Content="{lex:Loc Disable}" Command="{Binding DisableCommand}" />
+			<Button Command="{Binding InstallCommand}">
+				<DockPanel LastChildFill="True">
+					<Image Source="{v:StockIcon Shield, Small=true}" Stretch="None" />
+					<TextBlock Text="{lex:Loc InstallPlugin}" DockPanel.Dock="Right" />
+				</DockPanel>
+			</Button>
+		</StackPanel>
+	</Grid>
+</Window>

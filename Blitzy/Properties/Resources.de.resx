@@ -459,4 +459,29 @@
   <data name="HistorySize" xml:space="preserve">
     <value>Verlaufslänge</value>
   </data>
+  <data name="ExceptionDialogTitle" xml:space="preserve">
+    <value>Ein Fehler ist aufgetreten</value>
+  </data>
+  <data name="ExceptionDetails" xml:space="preserve">
+    <value>Es gab einen schwerwiegenden Fehler in der Anwendung. Alle ungespeicherten Daten sind wahrscheinlich verloren.
+Um den Fehler beheben zu können kann ein Fehlerbericht an die Entwickler gesendet werden. Nachfolgend eine Auflistung an Daten, welche gesendet werden.</value>
+  </data>
+  <data name="Disable" xml:space="preserve">
+    <value>Deaktivieren</value>
+  </data>
+  <data name="InstallPlugin" xml:space="preserve">
+    <value>Plugin installieren</value>
+  </data>
+  <data name="Plugin" xml:space="preserve">
+    <value>Plugin</value>
+  </data>
+  <data name="Enabled" xml:space="preserve">
+    <value>Aktiviert</value>
+  </data>
+  <data name="ManagePlugins" xml:space="preserve">
+    <value>Plugins verwalten</value>
+  </data>
+  <data name="Enable" xml:space="preserve">
+    <value>Aktivieren</value>
+  </data>
 </root>

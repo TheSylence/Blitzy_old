@@ -198,6 +198,7 @@ namespace Blitzy.ViewModel
 		private RelayCommand _CancelCommand;
 		private RelayCommand _DefaultsCommand;
 		private RelayCommand _DownloadUpdateCommand;
+		private RelayCommand _PluginsDialogCommand;
 		private RelayCommand _RemoveExcludeCommand;
 		private RelayCommand _RemoveFolderCommand;
 		private RelayCommand _RemoveRuleCommand;
@@ -257,6 +258,15 @@ namespace Blitzy.ViewModel
 			{
 				return _DownloadUpdateCommand ??
 					( _DownloadUpdateCommand = new RelayCommand( ExecuteDownloadUpdateCommand, CanExecuteDownloadUpdateCommand ) );
+			}
+		}
+
+		public RelayCommand PluginsDialogCommand
+		{
+			get
+			{
+				return _PluginsDialogCommand ??
+					( _PluginsDialogCommand = new RelayCommand( ExecutePluginsDialogCommand, CanExecutePluginsDialogCommand ) );
 			}
 		}
 
@@ -367,6 +377,11 @@ namespace Blitzy.ViewModel
 			return LatestVersionInfo != null && LatestVersionInfo.DownloadLink != null;
 		}
 
+		private bool CanExecutePluginsDialogCommand()
+		{
+			return true;
+		}
+
 		private bool CanExecuteRemoveExcludeCommand()
 		{
 			return SelectedFolder != null && SelectedExclude != null;
@@ -465,6 +480,11 @@ namespace Blitzy.ViewModel
 		{
 			DownloadServiceParameters args = new DownloadServiceParameters( LatestVersionInfo.DownloadLink, "test.exe", 0, "234" );
 			DialogServiceManager.Show<DownloadService>( args );
+		}
+
+		private void ExecutePluginsDialogCommand()
+		{
+			DialogServiceManager.Show<PluginSettingsService>( PluginManager );
 		}
 
 		private void ExecuteRemoveExcludeCommand()

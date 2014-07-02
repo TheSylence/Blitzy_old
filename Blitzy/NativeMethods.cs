@@ -73,6 +73,11 @@ namespace Blitzy
 			return SetForegroundWindow( hWnd );
 		}
 
+		public override int SHGetStockIconInfo_Wrapper( View.StockIconIdentifier identifier, View.StockIconOptions flags, ref View.StockIconInfo info )
+		{
+			return SHGetStockIconInfo( identifier, flags, ref info );
+		}
+
 		public override void ShowToFront_Wrapper( IntPtr window )
 		{
 			ShowWindow( window, SW_SHOWNORMAL );
@@ -123,6 +128,9 @@ namespace Blitzy
 		#endregion user32.dll
 
 		#region shell32.dll
+
+		[DllImport( "Shell32.dll", CharSet = CharSet.Unicode, ExactSpelling = true, SetLastError = false )]
+		internal static extern int SHGetStockIconInfo( View.StockIconIdentifier identifier, View.StockIconOptions flags, ref View.StockIconInfo info );
 
 		[DllImport( "shell32.dll", CharSet = CharSet.Unicode )]
 		private static extern IntPtr ExtractIcon( IntPtr hInst, string lpszExeFileName, int nIconIndex );
