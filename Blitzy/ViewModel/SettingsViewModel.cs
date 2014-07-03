@@ -65,6 +65,7 @@ namespace Blitzy.ViewModel
 			base.RegisterMessages();
 
 			MessengerInstance.Register<CatalogStatusMessage>( this, OnCatalogStatusUpdate );
+			MessengerInstance.Register<PluginMessage>( this, HandlePluginActions );
 		}
 
 		#endregion Constructor
@@ -78,23 +79,7 @@ namespace Blitzy.ViewModel
 			PluginPages.Clear();
 			foreach( IPlugin plugin in PluginManager.Plugins.Where( p => p.HasSettings ) )
 			{
-				PluginPage page = new PluginPage();
-				page.Title = plugin.Name;
-				page.Plugin = plugin;
-				page.DataContext = plugin.GetSettingsDataContext();
-				page.Content = plugin.GetSettingsUI();
-				page.Content.DataContext = page.DataContext;
-
-				if( page.DataContext == null )
-				{
-					LogWarning( "Plugin {0} does not provide a DataContext", plugin.Name );
-				}
-
-				if( page.Content == null )
-				{
-					LogWarning( "Plugin {0} does not provide Content although HasSettings is true", plugin.Name );
-				}
-
+				PluginPage page = CreatePluginPage( plugin );
 				PluginPages.Add( page );
 			}
 			RaisePropertyChanged( () => PluginPages );
@@ -141,6 +126,31 @@ namespace Blitzy.ViewModel
 			return page.DataContext as TContext;
 		}
 
+		private PluginPage CreatePluginPage( IPlugin plugin )
+		{
+			PluginPage page = new PluginPage();
+			page.Title = plugin.Name;
+			page.Plugin = plugin;
+			page.DataContext = plugin.GetSettingsDataContext();
+			page.Content = plugin.GetSettingsUI();
+
+			if( page.Content == null )
+			{
+				LogWarning( "Plugin {0} does not provide Content although HasSettings is true", plugin.Name );
+			}
+			else
+			{
+				page.Content.DataContext = page.DataContext;
+
+				if( page.DataContext == null )
+				{
+					LogWarning( "Plugin {0} does not provide a DataContext", plugin.Name );
+				}
+			}
+
+			return page;
+		}
+
 		private int GetItemCount()
 		{
 			using( SQLiteCommand cmd = Settings.Connection.CreateCommand() )
@@ -148,6 +158,28 @@ namespace Blitzy.ViewModel
 				cmd.CommandText = "SELECT COUNT(*) FROM files";
 
 				return Convert.ToInt32( cmd.ExecuteScalar() );
+			}
+		}
+
+		private void HandlePluginActions( PluginMessage msg )
+		{
+			if( msg.Action == PluginAction.Disabled )
+			{
+				foreach( PluginPage page in PluginPages )
+				{
+					if( page.Plugin == msg.Plugin )
+					{
+						PluginPages.Remove( page );
+						break;
+					}
+				}
+			}
+			else if( msg.Action == PluginAction.Enabled )
+			{
+				if( msg.Plugin.HasSettings )
+				{
+					PluginPages.Add( CreatePluginPage( msg.Plugin ) );
+				}
 			}
 		}
 

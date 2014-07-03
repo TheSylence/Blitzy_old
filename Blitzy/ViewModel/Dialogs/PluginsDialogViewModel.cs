@@ -1,12 +1,18 @@
-﻿// $Id$
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data.Common;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Blitzy.Messages;
+using Blitzy.Plugin;
+using Blitzy.Plugin.SystemPlugins;
+
+// $Id$
+using Blitzy.Utility;
+using Blitzy.ViewServices;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 
@@ -16,9 +22,31 @@ namespace Blitzy.ViewModel.Dialogs
 	{
 		#region Properties
 
-		public bool Enabled { get; set; }
+		private bool _Enabled;
+
+		public bool Enabled
+		{
+			get
+			{
+				return _Enabled;
+			}
+
+			set
+			{
+				if( _Enabled == value )
+				{
+					return;
+				}
+
+				RaisePropertyChanging( () => Enabled );
+				_Enabled = value;
+				RaisePropertyChanged( () => Enabled );
+			}
+		}
 
 		public Guid Id { get; set; }
+
+		public IPlugin Instance { get; set; }
 
 		public string Name { get; set; }
 
@@ -33,7 +61,8 @@ namespace Blitzy.ViewModel.Dialogs
 		{
 			base.Reset();
 
-			Plugins = new ObservableCollection<PluginInformation>( PluginManager.Plugins.Select( p => new PluginInformation() { Id = p.PluginID, Name = p.Name, Enabled = !PluginManager.DisabledPlugins.Contains( p ) } ) );
+			Plugins = new ObservableCollection<PluginInformation>( PluginManager.Plugins.Concat( PluginManager.DisabledPlugins ).Where( plug => !( plug is ISystemPlugin ) )
+				.Select( p => new PluginInformation() { Id = p.PluginID, Name = p.Name, Instance = p, Enabled = !PluginManager.DisabledPlugins.Contains( p ) } ) );
 		}
 
 		#endregion Methods
@@ -102,6 +131,8 @@ namespace Blitzy.ViewModel.Dialogs
 				cmd.ExecuteNonQuery();
 
 				SelectedPlugin.Enabled = false;
+
+				MessengerInstance.Send( new PluginMessage( SelectedPlugin.Instance, PluginAction.Disabled ) );
 			}
 		}
 
@@ -120,11 +151,18 @@ namespace Blitzy.ViewModel.Dialogs
 				cmd.ExecuteNonQuery();
 
 				SelectedPlugin.Enabled = true;
+
+				MessengerInstance.Send( new PluginMessage( SelectedPlugin.Instance, PluginAction.Enabled ) );
 			}
 		}
 
 		private void ExecuteInstallCommand()
 		{
+			FileDialogParameters param = new FileDialogParameters( "BPDFilter".Localize( null, "|*.bpd" ) );
+			string file = DialogServiceManager.Show<OpenFileService, string>( param );
+			if( File.Exists( file ) )
+			{
+			}
 		}
 
 		#endregion Commands

@@ -11,7 +11,7 @@ using GalaSoft.MvvmLight.Messaging;
 
 namespace Blitzy.Plugin.SystemPlugins
 {
-	internal class Blitzy : IPlugin
+	internal class Blitzy : ISystemPlugin
 	{
 		#region Methods
 

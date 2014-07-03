@@ -178,6 +178,15 @@ namespace Blitzy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Blitzy Plugin Defition Files.
+        /// </summary>
+        public static string BPDFilter {
+            get {
+                return ResourceManager.GetString("BPDFilter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Calculate a wide set of mathematical.
         /// </summary>
         public static string CalcyDescription {

@@ -6,6 +6,8 @@ using System.Data.SQLite;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using Blitzy.Messages;
+using GalaSoft.MvvmLight.Messaging;
 
 namespace Blitzy.Plugin
 {
@@ -17,6 +19,8 @@ namespace Blitzy.Plugin
 		{
 			Connection = connection;
 			Host = host;
+
+			Messenger.Default.Register<PluginMessage>( this, HandlePluginAction );
 		}
 
 		#endregion Constructor
@@ -67,6 +71,118 @@ namespace Blitzy.Plugin
 			return Plugins.Concat( DisabledPlugins ).Where( p => p.Name.Equals( name ) ).FirstOrDefault();
 		}
 
+		private string GetLastInstalledPluginVersion( IPlugin plugin )
+		{
+			string version = null;
+			bool disabled = false;
+
+			using( SQLiteCommand cmd = Connection.CreateCommand() )
+			{
+				SQLiteParameter param = cmd.CreateParameter();
+				param.ParameterName = "pluginID";
+				param.Value = plugin.PluginID;
+				cmd.Parameters.Add( param );
+
+				cmd.CommandText = "SELECT Version, Disabled FROM plugins WHERE PluginID = @pluginID;";
+				cmd.Prepare();
+
+				using( SQLiteDataReader reader = cmd.ExecuteReader() )
+				{
+					if( reader.Read() )
+					{
+						version = reader.GetString( 0 );
+						disabled = reader.GetInt32( 1 ) == 1;
+					}
+				}
+			}
+
+			if( disabled )
+			{
+				LogInfo( "Plugin {0} was disabled by the user", plugin.Name );
+				DisabledPlugins.Add( plugin );
+				return null;
+			}
+
+			if( version == null )
+			{
+				LogInfo( "Plugin {0} is started for the first time", plugin.Name );
+				using( SQLiteCommand cmd = Connection.CreateCommand() )
+				{
+					SQLiteParameter param = cmd.CreateParameter();
+					param.ParameterName = "pluginID";
+					param.Value = plugin.PluginID;
+					cmd.Parameters.Add( param );
+
+					param = cmd.CreateParameter();
+					param.ParameterName = "version";
+					param.Value = plugin.Version;
+					cmd.Parameters.Add( param );
+
+					cmd.CommandText = "INSERT INTO plugins (PluginID, Version) VALUES (@pluginID, @version);";
+					cmd.Prepare();
+
+					cmd.ExecuteNonQuery();
+				}
+			}
+			else if( !version.Equals( plugin.Version ) )
+			{
+				LogInfo( "Plugin {0} is updated from version {1} to {2}", plugin.Name, version, plugin.Version );
+
+				using( SQLiteCommand cmd = Connection.CreateCommand() )
+				{
+					SQLiteParameter param = cmd.CreateParameter();
+					param.ParameterName = "pluginID";
+					param.Value = plugin.PluginID;
+					cmd.Parameters.Add( param );
+
+					param = cmd.CreateParameter();
+					param.ParameterName = "version";
+					param.Value = plugin.Version;
+					cmd.Parameters.Add( param );
+
+					cmd.CommandText = "UPDATE plugins SET Version = @version WHERE PluginID = @pluginID;";
+					cmd.Prepare();
+
+					cmd.ExecuteNonQuery();
+				}
+			}
+
+			return version;
+		}
+
+		private void HandlePluginAction( PluginMessage msg )
+		{
+			if( msg.Action == PluginAction.Enabled )
+			{
+				try
+				{
+					string version = GetLastInstalledPluginVersion( msg.Plugin );
+					msg.Plugin.Load( Host, version );
+				}
+				catch( Exception ex )
+				{
+					LogError( "Failed to load plugin {0}: {1}", msg.Plugin.Name, ex );
+				}
+
+				Plugins.Remove( msg.Plugin );
+				DisabledPlugins.Add( msg.Plugin );
+			}
+			else if( msg.Action == PluginAction.Disabled )
+			{
+				try
+				{
+					msg.Plugin.Unload( PluginUnloadReason.Unload );
+				}
+				catch( Exception ex )
+				{
+					LogWarning( "Failed to unload plugin {0} properly: {1}", msg.Plugin.Name, ex );
+				}
+
+				DisabledPlugins.Remove( msg.Plugin );
+				Plugins.Add( msg.Plugin );
+			}
+		}
+
 		private void LoadPlugin( Assembly asm, Type type )
 		{
 			try
@@ -84,79 +200,7 @@ namespace Blitzy.Plugin
 					return;
 				}
 
-				string version = null;
-				bool disabled = false;
-
-				using( SQLiteCommand cmd = Connection.CreateCommand() )
-				{
-					SQLiteParameter param = cmd.CreateParameter();
-					param.ParameterName = "pluginID";
-					param.Value = plugin.PluginID;
-					cmd.Parameters.Add( param );
-
-					cmd.CommandText = "SELECT Version, Disabled FROM plugins WHERE PluginID = @pluginID;";
-					cmd.Prepare();
-
-					using( SQLiteDataReader reader = cmd.ExecuteReader() )
-					{
-						if( reader.Read() )
-						{
-							version = reader.GetString( 0 );
-							disabled = reader.GetInt32( 1 ) == 1;
-						}
-					}
-				}
-
-				if( disabled )
-				{
-					LogInfo( "Plugin {0} was disabled by the user", plugin.Name );
-					DisabledPlugins.Add( plugin );
-					return;
-				}
-
-				if( version == null )
-				{
-					LogInfo( "Plugin {0} is started for the first time", plugin.Name );
-					using( SQLiteCommand cmd = Connection.CreateCommand() )
-					{
-						SQLiteParameter param = cmd.CreateParameter();
-						param.ParameterName = "pluginID";
-						param.Value = plugin.PluginID;
-						cmd.Parameters.Add( param );
-
-						param = cmd.CreateParameter();
-						param.ParameterName = "version";
-						param.Value = plugin.Version;
-						cmd.Parameters.Add( param );
-
-						cmd.CommandText = "INSERT INTO plugins (PluginID, Version) VALUES (@pluginID, @version);";
-						cmd.Prepare();
-
-						cmd.ExecuteNonQuery();
-					}
-				}
-				else if( !version.Equals( plugin.Version ) )
-				{
-					LogInfo( "Plugin {0} is updated from version {1} to {2}", plugin.Name, version, plugin.Version );
-
-					using( SQLiteCommand cmd = Connection.CreateCommand() )
-					{
-						SQLiteParameter param = cmd.CreateParameter();
-						param.ParameterName = "pluginID";
-						param.Value = plugin.PluginID;
-						cmd.Parameters.Add( param );
-
-						param = cmd.CreateParameter();
-						param.ParameterName = "version";
-						param.Value = plugin.Version;
-						cmd.Parameters.Add( param );
-
-						cmd.CommandText = "UPDATE plugins SET Version = @version WHERE PluginID = @pluginID;";
-						cmd.Prepare();
-
-						cmd.ExecuteNonQuery();
-					}
-				}
+				string version = GetLastInstalledPluginVersion( plugin );
 
 				if( plugin.Load( Host, version ) )
 				{

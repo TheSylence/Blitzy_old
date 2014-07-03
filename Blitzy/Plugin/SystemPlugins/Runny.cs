@@ -11,7 +11,7 @@ using Blitzy.Model;
 
 namespace Blitzy.Plugin.SystemPlugins
 {
-	internal class Runny : IPlugin
+	internal class Runny : ISystemPlugin
 	{
 		#region Methods
 

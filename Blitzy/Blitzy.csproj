@@ -148,8 +148,10 @@
     <Compile Include="Messages\DownloadStatusMessage.cs" />
     <Compile Include="Messages\LanguageMessage.cs" />
     <Compile Include="Messages\MessageTokens.cs" />
+    <Compile Include="Messages\PluginMessage.cs" />
     <Compile Include="Model\UpdateChecker.cs" />
     <Compile Include="Plugin\IPluginViewModel.cs" />
+    <Compile Include="Plugin\SystemPlugins\ISystemPlugin.cs" />
     <Compile Include="Plugin\SystemPlugins\PuttyUI.xaml.cs">
       <DependentUpon>PuttyUI.xaml</DependentUpon>
     </Compile>
@@ -203,7 +205,6 @@
     <Compile Include="Plugin\SystemPlugins\Calcy.cs" />
     <Compile Include="Plugin\SystemPlugins\Medy.cs" />
     <Compile Include="Plugin\SystemPlugins\Putty.cs" />
-    <Compile Include="Plugin\SystemPlugins\Shelly.cs" />
     <Compile Include="Plugin\SystemPlugins\Weby.cs" />
     <Compile Include="Plugin\SystemPlugins\Winy.cs" />
     <Compile Include="Plugin\TableColumn.cs" />
