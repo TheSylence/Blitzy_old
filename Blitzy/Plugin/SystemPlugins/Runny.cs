@@ -52,7 +52,6 @@ namespace Blitzy.Plugin.SystemPlugins
 		{
 			if( ItemCache.Count == 0 )
 			{
-				// TODO: Would be great if this was possible without bypassing the plugin API
 				SQLiteConnection connection = ( (Settings)Host.Settings ).Connection;
 
 				ItemCache = new List<CommandItem>( ReadAllCommands( connection ) );

@@ -33,6 +33,11 @@ namespace Blitzy
 			}
 		}
 
+		internal static class CommandLine
+		{
+			internal static string InstallPlugin = "installplugin";
+		}
+
 		#endregion Constants
 
 		#region Properites

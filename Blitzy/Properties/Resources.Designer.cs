@@ -178,15 +178,6 @@ namespace Blitzy.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Blitzy Plugin Defition Files.
-        /// </summary>
-        public static string BPDFilter {
-            get {
-                return ResourceManager.GetString("BPDFilter", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Calculate a wide set of mathematical.
         /// </summary>
         public static string CalcyDescription {
@@ -354,6 +345,15 @@ namespace Blitzy.Properties {
         public static string Disable {
             get {
                 return ResourceManager.GetString("Disable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to DLL files.
+        /// </summary>
+        public static string DLLFiles {
+            get {
+                return ResourceManager.GetString("DLLFiles", resourceCulture);
             }
         }
         
@@ -1175,6 +1175,15 @@ namespace Blitzy.Properties {
         public static string Workspaces {
             get {
                 return ResourceManager.GetString("Workspaces", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Zip Archives.
+        /// </summary>
+        public static string ZipArchive {
+            get {
+                return ResourceManager.GetString("ZipArchive", resourceCulture);
             }
         }
     }

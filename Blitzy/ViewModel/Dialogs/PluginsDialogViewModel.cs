@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data.Common;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Blitzy.Messages;
@@ -158,10 +160,21 @@ namespace Blitzy.ViewModel.Dialogs
 
 		private void ExecuteInstallCommand()
 		{
-			FileDialogParameters param = new FileDialogParameters( "BPDFilter".Localize( null, "|*.bpd" ) );
+			FileDialogParameters param = new FileDialogParameters( "ZipArchive".Localize( null, "|*.zip" ) + "|" + "DLLFiles".Localize( null, "|*.dll" ) );
 			string file = DialogServiceManager.Show<OpenFileService, string>( param );
 			if( File.Exists( file ) )
 			{
+				Process proc = new Process();
+				proc.StartInfo.UseShellExecute = true;
+				proc.StartInfo.Verb = "runas";
+				proc.StartInfo.Arguments = string.Format( "{0} \"{1}\"", Constants.CommandLine.InstallPlugin, file );
+				proc.StartInfo.FileName = Assembly.GetExecutingAssembly().Location;
+				proc.EnableRaisingEvents = true;
+
+				proc.Start();
+				proc.WaitForExit();
+
+				// TODO: Read new plugin from database
 			}
 		}
 

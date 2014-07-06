@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Reflection;
 using Blitzy.Messages;
@@ -35,7 +36,6 @@ namespace Blitzy.Plugin
 		public void LoadPlugins()
 		{
 			string pluginsDir = Path.Combine( Path.GetDirectoryName( Assembly.GetExecutingAssembly().Location ), Constants.PluginsFolderName );
-			Type interfaceFace = typeof( IPlugin );
 
 			IEnumerable<string> files = new[] { Assembly.GetExecutingAssembly().Location };
 			if( Directory.Exists( pluginsDir ) )
@@ -49,13 +49,7 @@ namespace Blitzy.Plugin
 
 			foreach( string file in files )
 			{
-				LogDebug( "Loading plugins from {0}...", file );
-
-				Assembly asm = Assembly.LoadFrom( file );
-				foreach( Type type in asm.GetTypes().Where( t => !t.IsAbstract && interfaceFace.IsAssignableFrom( t ) ) )
-				{
-					LoadPlugin( asm, type );
-				}
+				LoadPluginsFromAssembly( file );
 			}
 
 			LogInfo( "Loaded {0} plugins and {1} disabled plugins", Plugins.Count, DisabledPlugins.Count );
@@ -69,6 +63,47 @@ namespace Blitzy.Plugin
 		internal IPlugin GetPlugin( string name )
 		{
 			return Plugins.Concat( DisabledPlugins ).Where( p => p.Name.Equals( name ) ).FirstOrDefault();
+		}
+
+		internal void InstallPlugin( string path )
+		{
+			LogInfo( "Installing plugin from {0}", path );
+			string ext = Path.GetExtension( path );
+
+			if( ext.Equals( ".dll", StringComparison.OrdinalIgnoreCase ) )
+			{
+				File.Copy( path, Path.Combine( Constants.PluginPath, Path.GetFileName( path ) ) );
+			}
+			else if( ext.Equals( ".zip", StringComparison.OrdinalIgnoreCase ) )
+			{
+				const string metaFileName = "plugin.pkg";
+				using( ZipArchive archive = ZipFile.OpenRead( path ) )
+				{
+					ZipArchiveEntry metaEntry = archive.Entries.FirstOrDefault( e => e.FullName.Equals( metaFileName, StringComparison.OrdinalIgnoreCase ) );
+					if( metaEntry == null )
+					{
+						LogWarning( "Failed to install plugin. No plugin.pkg found inside {0}", path );
+						return;
+					}
+
+					using( TextReader reader = new StreamReader( metaEntry.Open() ) )
+					{
+						path = Path.Combine( Constants.PluginPath, reader.ReadLine().Trim() );
+					}
+
+					foreach( ZipArchiveEntry entry in archive.Entries.Where( e => !e.FullName.Equals( metaFileName, StringComparison.OrdinalIgnoreCase ) ) )
+					{
+						entry.ExtractToFile( Path.Combine( Constants.PluginPath, entry.FullName ) );
+					}
+				}
+			}
+			else
+			{
+				LogWarning( "Failed to install plugin. Unsupported file format" );
+				return;
+			}
+
+			LoadPluginsFromAssembly( path );
 		}
 
 		private string GetLastInstalledPluginVersion( IPlugin plugin )
@@ -201,20 +236,35 @@ namespace Blitzy.Plugin
 				}
 
 				string version = GetLastInstalledPluginVersion( plugin );
-
-				if( plugin.Load( Host, version ) )
+				if( version != null )
 				{
-					LogInfo( "Loaded plugin {0}", plugin.Name );
-					Plugins.Add( plugin );
-				}
-				else
-				{
-					LogError( "Failed to load plugin {0}", plugin.Name );
+					if( plugin.Load( Host, version ) )
+					{
+						LogInfo( "Loaded plugin {0}", plugin.Name );
+						Plugins.Add( plugin );
+					}
+					else
+					{
+						LogError( "Failed to load plugin {0}", plugin.Name );
+					}
 				}
 			}
 			catch( Exception ex )
 			{
 				LogError( "Failed to load plugin: {0}", ex );
+			}
+		}
+
+		private void LoadPluginsFromAssembly( string file )
+		{
+			Type interfaceFace = typeof( IPlugin );
+
+			LogDebug( "Loading plugins from {0}...", file );
+
+			Assembly asm = Assembly.LoadFrom( file );
+			foreach( Type type in asm.GetTypes().Where( t => !t.IsAbstract && interfaceFace.IsAssignableFrom( t ) ) )
+			{
+				LoadPlugin( asm, type );
 			}
 		}
 

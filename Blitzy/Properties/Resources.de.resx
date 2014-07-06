@@ -484,7 +484,10 @@ Um den Fehler beheben zu können kann ein Fehlerbericht an die Entwickler gesend
   <data name="Enable" xml:space="preserve">
     <value>Aktivieren</value>
   </data>
-  <data name="BPDFilter" xml:space="preserve">
-    <value>Blitzy Plugin Defitionsdateien</value>
+  <data name="ZipArchive" xml:space="preserve">
+    <value>Zip Archive</value>
+  </data>
+  <data name="DLLFiles" xml:space="preserve">
+    <value>DLL Dateien</value>
   </data>
 </root>

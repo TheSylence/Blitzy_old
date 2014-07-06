@@ -158,7 +158,6 @@
     <Compile Include="Plugins\PluginTestBase.cs" />
     <Compile Include="Plugins\PluginTester.cs" />
     <Compile Include="Plugins\Putty_Tests.cs" />
-    <Compile Include="Plugins\Shelly_Tests.cs" />
     <Compile Include="Plugins\Weby_Tests.cs" />
     <Compile Include="Plugins\WhereClause_Tests.cs" />
     <Compile Include="Plugins\Winy_Tests.cs" />

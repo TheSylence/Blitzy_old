@@ -492,7 +492,10 @@ Your address won't be used for any other purposes than investigating this error.
   <data name="Enable" xml:space="preserve">
     <value>Enable</value>
   </data>
-  <data name="BPDFilter" xml:space="preserve">
-    <value>Blitzy Plugin Defition Files</value>
+  <data name="ZipArchive" xml:space="preserve">
+    <value>Zip Archives</value>
+  </data>
+  <data name="DLLFiles" xml:space="preserve">
+    <value>DLL files</value>
   </data>
 </root>
