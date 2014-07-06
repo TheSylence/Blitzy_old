@@ -3,6 +3,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Reflection;
 
 namespace Blitzy
 {
@@ -30,6 +31,14 @@ namespace Blitzy
 				}
 
 				return fileName;
+			}
+		}
+
+		internal static string PluginPath
+		{
+			get
+			{
+				return Path.Combine( Path.GetDirectoryName( Assembly.GetExecutingAssembly().Location ), PluginsFolderName );
 			}
 		}
 
