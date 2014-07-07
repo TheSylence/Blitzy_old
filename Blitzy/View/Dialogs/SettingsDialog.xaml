@@ -193,7 +193,7 @@
 							<ListBox ItemsSource="{Binding SelectedWorkspace.Items}" DisplayMemberPath="ItemCommand"  SelectedItem="{Binding SelectedItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
 							<StackPanel Orientation="Vertical" Grid.Column="1">
-								<Button Content="New" Command="{Binding AddItemCommand}" />
+								<Button Content="{lex:Loc Add}" Command="{Binding AddItemCommand}" />
 								<Grid Margin="5,0">
 									<Grid.Resources>
 										<Style TargetType="Button"></Style>
@@ -209,7 +209,7 @@
 										<TextBlock Text="&#57369;" FontFamily="Segoe UI Symbol" />
 									</Button>
 								</Grid>
-								<Button Content="Remove" Command="{Binding RemoveItemCommand}" />
+								<Button Content="{lex:Loc Remove}" Command="{Binding RemoveItemCommand}" />
 							</StackPanel>
 						</Grid>
 					</GroupBox>

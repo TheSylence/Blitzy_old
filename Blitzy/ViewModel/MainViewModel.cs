@@ -10,6 +10,7 @@ using System.Windows.Threading;
 using Blitzy.Messages;
 using Blitzy.Model;
 using Blitzy.Plugin;
+using Blitzy.Utility;
 using Blitzy.ViewServices;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Threading;
@@ -437,6 +438,7 @@ namespace Blitzy.ViewModel
 				{
 					result = false;
 					LogError( "Failed to execute command ({1}): {0}", ex, CommandInput );
+					msg = ex.Message;
 				}
 				finally
 				{

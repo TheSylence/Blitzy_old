@@ -48,6 +48,8 @@ namespace Blitzy.Model
 
 		public override void Load( SQLiteConnection connection )
 		{
+			Items.Clear();
+
 			using( SQLiteCommand cmd = connection.CreateCommand() )
 			{
 				SQLiteParameter param = cmd.CreateParameter();
@@ -189,9 +191,5 @@ namespace Blitzy.Model
 		}
 
 		#endregion Properties
-
-		#region Attributes
-
-		#endregion Attributes
 	}
 }

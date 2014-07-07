@@ -28,7 +28,8 @@ namespace Blitzy.Plugin.SystemPlugins
 			Workspace workspace = command.UserData as Workspace;
 			if( workspace != null )
 			{
-				// TODO: Ensure that workspace items are full paths
+				workspace.Load( ( (Settings)Host.Settings ).Connection );
+
 				foreach( WorkspaceItem item in workspace.Items.OrderBy( it => it.ItemOrder ) )
 				{
 					args = command.UserData as string;
