@@ -236,17 +236,14 @@ namespace Blitzy.Plugin
 				}
 
 				string version = GetLastInstalledPluginVersion( plugin );
-				if( version != null )
+				if( plugin.Load( Host, version ) )
 				{
-					if( plugin.Load( Host, version ) )
-					{
-						LogInfo( "Loaded plugin {0}", plugin.Name );
-						Plugins.Add( plugin );
-					}
-					else
-					{
-						LogError( "Failed to load plugin {0}", plugin.Name );
-					}
+					LogInfo( "Loaded plugin {0}", plugin.Name );
+					Plugins.Add( plugin );
+				}
+				else
+				{
+					LogError( "Failed to load plugin {0}", plugin.Name );
 				}
 			}
 			catch( Exception ex )
