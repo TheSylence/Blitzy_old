@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+﻿<?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
@@ -28,6 +28,17 @@
 			color: black;
 		}
 
+		#infocontent {
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			right: 0;
+			width: 200px;
+			overflow: hidden;
+			background: #ccc;
+			color: black;
+		}
+
 		a, a:visited, a:hover {
 			color: Black;
 		}
@@ -36,7 +47,7 @@
 			position: fixed;
 			top: 0;
 			left: 250px;
-			right: 0;
+			right: 200px;
 			bottom: 0;
 			overflow: auto;
 			background: #fff;
@@ -202,7 +213,12 @@
 				<div id="history">
 					<h2>Command history</h2>
 					<p>
-						TODO
+						If you have enabled the history in the <a href="#settings_general">settings</a> you can bring up the
+						history view by holding control while pressing the up or down arrow in the Main Window.
+						All commands that you previously entered are displayed in the list that now showed up.
+						By pressing the up or down arrow while holding control you can navigate through the list.
+						If you have found the command you want to enter again press return while still holding the control key.
+						The selected command will now be inserted into the input field and you can press return to execute the command.
 					</p>
 				</div>
 			</div>
@@ -518,6 +534,11 @@
 					faster where your mail belongs to.
 				</p>
 			</div>
+		</div>
+	</div>
+	<div id="infocontent">
+		<div class="innertube">
+			This is a test
 		</div>
 	</div>
 </body>
