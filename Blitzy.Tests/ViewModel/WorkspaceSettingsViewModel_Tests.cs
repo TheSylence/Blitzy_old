@@ -35,7 +35,7 @@ namespace Blitzy.Tests.ViewModel
 			Assert.IsTrue( vm.AddItemCommand.CanExecute( null ) );
 
 			TextInputServiceMock mock = new TextInputServiceMock();
-			DialogServiceManager.RegisterService( typeof( TextInputService ), mock );
+			DialogServiceManager.RegisterService( typeof( OpenFileService ), mock );
 			mock.Value = null;
 
 			vm.AddItemCommand.Execute( null );
