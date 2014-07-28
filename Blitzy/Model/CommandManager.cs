@@ -45,6 +45,23 @@ namespace Blitzy.Model
 				text.Split( new[] { Separator }, StringSplitOptions.None );
 		}
 
+		public void LoadPluginCommands()
+		{
+			AvailableCommands.Clear();
+
+			foreach( IPlugin plugin in Plugins.Plugins )
+			{
+				try
+				{
+					AvailableCommands.AddRange( plugin.GetCommands( new Collection<string>() ) );
+				}
+				catch( Exception ex )
+				{
+					LogError( "Failed to load commands from plugin {0}: {1}", plugin.Name, ex );
+				}
+			}
+		}
+
 		public void ResetExecutionCount()
 		{
 			CommandExecutionBuffer.Clear();
@@ -152,23 +169,6 @@ namespace Blitzy.Model
 			}
 
 			return CommandExecutionBuffer[hash];
-		}
-
-		private void LoadPluginCommands()
-		{
-			AvailableCommands.Clear();
-
-			foreach( IPlugin plugin in Plugins.Plugins )
-			{
-				try
-				{
-					AvailableCommands.AddRange( plugin.GetCommands( new Collection<string>() ) );
-				}
-				catch( Exception ex )
-				{
-					LogError( "Failed to load commands from plugin {0}: {1}", plugin.Name, ex );
-				}
-			}
 		}
 
 		private int ReadExecutionCount( CommandItem item )

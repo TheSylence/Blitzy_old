@@ -69,6 +69,7 @@ namespace Blitzy.ViewModel
 
 			MessengerInstance.Register<InternalCommandMessage>( this, msg => OnInternalCommand( msg.Command ) );
 			MessengerInstance.Register<CommandMessage>( this, OnCommand );
+			MessengerInstance.Register<SettingsChangedMessage>( this, OnSettingsChanged );
 		}
 
 		#endregion Constructor
@@ -153,6 +154,12 @@ namespace Blitzy.ViewModel
 					LogInfo( "Unhandled internal command: {0}", command );
 					break;
 			}
+		}
+
+		private void OnSettingsChanged( SettingsChangedMessage msg )
+		{
+			Plugins.ClearCache();
+			CmdManager.LoadPluginCommands();
 		}
 
 		private void RebuildTimer_Tick( object sender, EventArgs e )

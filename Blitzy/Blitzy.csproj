@@ -152,6 +152,7 @@
     <Compile Include="Messages\LanguageMessage.cs" />
     <Compile Include="Messages\MessageTokens.cs" />
     <Compile Include="Messages\PluginMessage.cs" />
+    <Compile Include="Messages\SettingsChangedMessage.cs" />
     <Compile Include="Model\UpdateChecker.cs" />
     <Compile Include="Plugin\IPluginViewModel.cs" />
     <Compile Include="Plugin\SystemPlugins\ISystemPlugin.cs" />

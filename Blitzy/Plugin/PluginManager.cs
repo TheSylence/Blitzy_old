@@ -55,6 +55,21 @@ namespace Blitzy.Plugin
 			LogInfo( "Loaded {0} plugins and {1} disabled plugins", Plugins.Count, DisabledPlugins.Count );
 		}
 
+		internal void ClearCache()
+		{
+			foreach( IPlugin plugin in Plugins )
+			{
+				try
+				{
+					plugin.ClearCache();
+				}
+				catch( Exception ex )
+				{
+					LogWarning( "Failed to clear cache of plugin {0}: {1}", plugin.Name, ex );
+				}
+			}
+		}
+
 		internal IPlugin GetPlugin( Guid id )
 		{
 			return Plugins.Concat( DisabledPlugins ).Where( p => p.PluginID.Equals( id ) ).FirstOrDefault();

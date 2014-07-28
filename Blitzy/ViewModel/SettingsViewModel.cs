@@ -18,6 +18,7 @@ using Blitzy.Utility;
 using Blitzy.ViewServices;
 using btbapi;
 using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Threading;
 using CommandManager = System.Windows.Input.CommandManager;
 
@@ -584,6 +585,7 @@ namespace Blitzy.ViewModel
 
 			WorkspaceSettings.Save();
 
+			MessengerInstance.Send( new SettingsChangedMessage() );
 			Close();
 		}
 
