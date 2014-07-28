@@ -71,6 +71,7 @@
 					<a href="#using">Using Blitzy</a>
 					<ul>
 						<li><a href="#commands">Entering commands</a></li>
+						<li><a href="#admin_commands">Executing commands with evalated rights</a></li>
 						<li><a href="#predefined_commands">Predefined commands</a></li>
 						<li><a href="#history">Command history</a></li>
 					</ul>
@@ -193,6 +194,22 @@
 					<p>
 						Blitzy has the abilitiy to learn what commands you use often and places items you use more often at the top of the suggestion list.
 						So the longer you use Blitzy the less you have to type since the command you want to execute is already placed top!
+					</p>
+				</div>
+				<div id="admin_commands">
+					<h2>Executing commands with elevated rights</h2>
+					<p>
+						Blitzy has the ability to execute commands with elevated rights (a.k.a. as an administrator).
+						To do so you need to have access to the account of an administrator on your local machine.
+					</p>
+					<p>
+						If you want to execute a command with elevated rights you simply need to type in the command as you would normally do
+						and select the right command from the command list.
+						After that hold Control and Shift while pressing return. Whatever command you selected will be executed with elevated rights.
+					</p>
+					<p>
+						<strong>Note:</strong> Executing some commands with elevated is useless. For example there is no benefit in rebuilding
+						the catalog with administrative rights. In fact the UAC prompt (if enabled) won't even pop up for certain commands.
 					</p>
 				</div>
 				<div id="predefined_commands">
@@ -554,7 +571,7 @@
 				<div id="plugin_dev">
 					<h2>Creating own plugins</h2>
 					<p>
-						TODO
+						If you want to create your own plugins there is a <a href="DeveloperGuide.html">guide available</a> for you.
 					</p>
 				</div>
 			</div>
