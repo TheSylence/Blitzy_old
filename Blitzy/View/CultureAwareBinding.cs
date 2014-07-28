@@ -13,12 +13,13 @@ using GalaSoft.MvvmLight.Messaging;
 
 namespace Blitzy.View
 {
+	[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	internal class CultureAwareBinding : Binding
 	{
 		public CultureAwareBinding( string path )
 			: base( path )
 		{
-			Converter = (IValueConverter)Application.Current.FindResource( "LocalizedConv" );
+			Converter = (IValueConverter)Application.Current.FindResource( "CultureAwareConv" );
 			//ConverterCulture = Thread.CurrentThread.CurrentUICulture;
 		}
 	}

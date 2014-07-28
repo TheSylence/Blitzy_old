@@ -16,6 +16,7 @@ namespace Blitzy.Messages
 		Disabled
 	}
 
+	[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	internal class PluginMessage : MessageBase
 	{
 		public readonly PluginAction Action;

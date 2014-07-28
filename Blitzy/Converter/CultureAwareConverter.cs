@@ -10,7 +10,7 @@ using System.Windows.Data;
 
 namespace Blitzy.Converter
 {
-	internal class LocalizedConverter : IValueConverter
+	internal class CultureAwareConverter : IValueConverter
 	{
 		public object Convert( object value, Type targetType, object parameter, System.Globalization.CultureInfo culture )
 		{

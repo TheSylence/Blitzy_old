@@ -107,6 +107,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="Converter\CultureAwareConverter_Tests.cs" />
     <Compile Include="Converter\ElementNotNullConverter_Tests.cs" />
     <Compile Include="Converter\FileSizeConverter_Tests.cs" />
     <Compile Include="Converter\LocalizeFormatterConverter_Tests.cs" />
@@ -175,6 +176,7 @@
     <Compile Include="ViewModel\ExceptionDialogViewModel_Tests.cs" />
     <Compile Include="ViewModel\HistoryViewModel_Tests.cs" />
     <Compile Include="ViewModel\NotifyIconViewModel_Tests.cs" />
+    <Compile Include="ViewModel\PluginsDialogViewModel_Tests.cs" />
     <Compile Include="ViewModel\PuttySettingsViewModel_Tests.cs" />
     <Compile Include="ViewModel\ViewModelLocator_Tests.cs" />
     <Compile Include="ViewModel\WorkspaceSettingsViewModel_Tests.cs" />

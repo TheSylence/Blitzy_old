@@ -214,8 +214,8 @@ namespace Blitzy.Plugin
 					LogError( "Failed to load plugin {0}: {1}", msg.Plugin.Name, ex );
 				}
 
-				Plugins.Remove( msg.Plugin );
-				DisabledPlugins.Add( msg.Plugin );
+				DisabledPlugins.Remove( msg.Plugin );
+				Plugins.Add( msg.Plugin );
 			}
 			else if( msg.Action == PluginAction.Disabled )
 			{
@@ -228,8 +228,8 @@ namespace Blitzy.Plugin
 					LogWarning( "Failed to unload plugin {0} properly: {1}", msg.Plugin.Name, ex );
 				}
 
-				DisabledPlugins.Remove( msg.Plugin );
-				Plugins.Add( msg.Plugin );
+				DisabledPlugins.Add( msg.Plugin );
+				Plugins.Remove( msg.Plugin );
 			}
 		}
 

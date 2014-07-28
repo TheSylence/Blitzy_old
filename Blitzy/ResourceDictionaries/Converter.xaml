@@ -7,5 +7,5 @@
 	<conv:FileSizeConverter x:Key="FileSizeConv" />
 	<conv:TimeSpanConverter x:Key="TimeSpanConv" />
 	<conv:DebugConverter x:Key="DebugConv" />
-	<conv:LocalizedConverter x:Key="LocalizedConv" />
+	<conv:CultureAwareConverter x:Key="CultureAwareConv" />
 </ResourceDictionary>

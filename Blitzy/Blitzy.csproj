@@ -141,7 +141,7 @@
     <Compile Include="Converter\DebugConverter.cs" />
     <Compile Include="Converter\ElementNotNullConverter.cs" />
     <Compile Include="Converter\FileSizeConverter.cs" />
-    <Compile Include="Converter\LocalizedConverter.cs" />
+    <Compile Include="Converter\CultureAwareConverter.cs" />
     <Compile Include="Converter\LocalizeFormatterConverter.cs" />
     <Compile Include="Converter\StringToImageConverter.cs" />
     <Compile Include="Converter\StringToVisibilityConverter.cs" />

@@ -1,5 +1,6 @@
 ﻿// $Id$
 
+using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
 using Blitzy.Plugin;
@@ -19,6 +20,18 @@ namespace Blitzy.Tests.Plugins
 			using( SQLiteCommand cmd = Connection.CreateCommand() )
 			{
 				Assert.AreEqual( string.Empty, where.ToSql( cmd ) );
+			}
+		}
+
+		[TestMethod, TestCategory( "Plugins" ), ExpectedException( typeof( ArgumentException ) )]
+		public void InvalidOperationTest()
+		{
+			WhereClause where = new WhereClause();
+			where.AddCondition( "test", 123, (WhereOperation)1234 );
+
+			using( SQLiteCommand cmd = Connection.CreateCommand() )
+			{
+				where.ToSql( cmd );
 			}
 		}
 
