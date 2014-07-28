@@ -21,7 +21,7 @@
 			top: 0;
 			bottom: 0;
 			left: 0;
-			width: 250px;
+			width: 300px;
 			height: 100%;
 			overflow: hidden;
 			background: #ccc;
@@ -35,7 +35,7 @@
 		#maincontent {
 			position: fixed;
 			top: 0;
-			left: 250px;
+			left: 300px;
 			bottom: 0;
 			overflow: auto;
 			background: #fff;
@@ -46,7 +46,7 @@
 		}
 
 		* html body {
-			padding: 0 0 0 250px;
+			padding: 0 0 0 300px;
 		}
 
 		#maincontent div.listing {
@@ -198,8 +198,50 @@
 				<div id="predefined_commands">
 					<h2>Predefined commands</h2>
 					<p>
-						TODO
+						There are some commands built into Blitzy that can be used no matter what plugins are installed or not.
+						Below is a list of all these commands:
 					</p>
+					<table>
+						<thead>
+							<tr>
+								<th>Command</th>
+								<th>Description</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>quit</td>
+								<td>Exits the application</td>
+							</tr>
+							<tr>
+								<td>reset</td>
+								<td>
+									Resets the command execution count. After executing this command the order in which
+									commands are listed when you type is reset to default values.<br />
+									This can be useful if you messed up the counting, don't longer use a command you previously used or
+									you simply want to start from scratch with your ordering.
+								</td>
+							</tr>
+							<tr>
+								<td>catalog</td>
+								<td>
+									Manually rebuilds the catalog. This can be useful if you added new files to the folders you watch
+									but your next automatic rebuild (if enabled) is too far in the future.
+								</td>
+							</tr>
+							<tr>
+								<td>version</td>
+								<td>Checks if a newer version of the application is available for download.</td>
+							</tr>
+							<tr>
+								<td>history</td>
+								<td>
+									Clears the command history. After executing this you won't see any commands in the history
+									until you executed further commands.
+								</td>
+							</tr>
+						</tbody>
+					</table>
 				</div>
 				<div id="history">
 					<h2>Command history</h2>
