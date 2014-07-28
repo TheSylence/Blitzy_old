@@ -157,8 +157,12 @@ namespace Blitzy
 
 		private void ChangeLanguage( LanguageMessage msg )
 		{
+			LogHelper.LogInfo( MethodInfo.GetCurrentMethod().DeclaringType, "Changing language to {0}", msg.Language );
+
+			LogHelper.LogDebug( MethodInfo.GetCurrentMethod().DeclaringType, "Current UI: {0}, Current Culture: {0}", Thread.CurrentThread.CurrentUICulture, Thread.CurrentThread.CurrentCulture );
 			LocalizeDictionary.Instance.SetCurrentThreadCulture = true;
 			LocalizeDictionary.Instance.Culture = msg.Language;
+			LogHelper.LogDebug( MethodInfo.GetCurrentMethod().DeclaringType, "Current UI: {0}, Current Culture: {0}", Thread.CurrentThread.CurrentUICulture, Thread.CurrentThread.CurrentCulture );
 		}
 
 		private void DefaultProvider_ProviderError( object sender, ProviderErrorEventArgs args )

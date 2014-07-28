@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -38,6 +39,9 @@ namespace Blitzy.ViewModel
 			{
 				Settings.Load();
 			}
+
+			CultureInfo currentLanguage = LanguageHelper.GetLanguage( Settings.GetValue<string>( SystemSetting.Language ) );
+			MessengerInstance.Send( new LanguageMessage( currentLanguage ) );
 
 			ApiDatabase = ToDispose( new PluginDatabase( Database.Connection ) );
 			Plugins = ToDispose( new PluginManager( this, Database.Connection ) );

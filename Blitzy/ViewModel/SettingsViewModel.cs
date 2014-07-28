@@ -57,7 +57,7 @@ namespace Blitzy.ViewModel
 			_CatalogItemsProcessed = -1;
 
 			PluginPages = new ObservableCollection<PluginPage>();
-			AvailableLanguages = new ObservableCollection<CultureInfo>( WPFLocalizeExtension.Providers.ResxLocalizationProvider.Instance.AvailableCultures.Where( c => !string.IsNullOrWhiteSpace( c.IetfLanguageTag ) ) );
+			AvailableLanguages = new ObservableCollection<CultureInfo>( LanguageHelper.GetAvailableLanguages() );
 		}
 
 		protected override void RegisterMessages()
@@ -101,18 +101,10 @@ namespace Blitzy.ViewModel
 			HistoryCount = Settings.GetValue<int>( SystemSetting.HistoryCount );
 			LastCatalogBuild = Settings.GetValue<DateTime>( SystemSetting.LastCatalogBuild );
 			ItemsInCatalog = GetItemCount();
-			SelectedLanguage = CultureInfo.CreateSpecificCulture( Settings.GetValue<string>( SystemSetting.Language ) );
 
-			while( !AvailableLanguages.Contains( SelectedLanguage ) && SelectedLanguage != null )
-			{
-				if( string.IsNullOrWhiteSpace( SelectedLanguage.Parent.Name ) )
-				{
-					SelectedLanguage = null;
-					break;
-				}
-
-				SelectedLanguage = SelectedLanguage.Parent;
-			}
+			// Don't raise a system wide language change
+			_SelectedLanguage = LanguageHelper.GetLanguage( Settings.GetValue<string>( SystemSetting.Language ) );
+			RaisePropertyChanged( () => SelectedLanguage );
 		}
 
 		internal TContext GetPluginContext<TContext>( string name ) where TContext : class, IPluginViewModel
@@ -218,6 +210,7 @@ namespace Blitzy.ViewModel
 		private void SetLanguage( CultureInfo culture )
 		{
 			MessengerInstance.Send( new LanguageMessage( culture ) );
+			RaisePropertyChanged( string.Empty );
 		}
 
 		#endregion Methods
