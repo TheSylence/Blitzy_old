@@ -363,14 +363,14 @@ namespace Blitzy.ViewModel
 		{
 			VersionCheckError = false;
 			LatestVersionInfo = await UpdateChecker.Instance.CheckVersion();
-			if( LatestVersionInfo.Status == HttpStatusCode.OK )
+			if( LatestVersionInfo.Status != HttpStatusCode.OK || ( LatestVersionInfo.LatestVersion.Major == 0 && LatestVersionInfo.LatestVersion.Minor == 0 ) )
 			{
-				DispatcherHelper.CheckBeginInvokeOnUI( CommandManager.InvalidateRequerySuggested );
-			}
-			else
-			{
+				LatestVersionInfo = null;
 				VersionCheckError = true;
 			}
+
+			VersionCheckInProgress = false;
+			DispatcherHelper.CheckBeginInvokeOnUI( CommandManager.InvalidateRequerySuggested );
 		}
 
 		private bool CanExecuteAddExcludeCommand()
@@ -435,7 +435,7 @@ namespace Blitzy.ViewModel
 
 		private bool CanExecuteUpdateCheckCommand()
 		{
-			return true;
+			return !VersionCheckInProgress;
 		}
 
 		private bool CanExecuteViewChangelogCommand()
@@ -597,6 +597,7 @@ namespace Blitzy.ViewModel
 		[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 		private void ExecuteUpdateCheckCommand()
 		{
+			VersionCheckInProgress = true;
 			Task.Run( async () =>
 			{
 				await UpdateCheckAsync();
@@ -902,12 +903,10 @@ namespace Blitzy.ViewModel
 		private Folder _SelectedFolder;
 		private CultureInfo _SelectedLanguage;
 		private PluginPage _SelectedPluginPage;
-
 		private string _SelectedRule;
-
 		private Settings _Settings;
-
 		private bool _VersionCheckError;
+		private bool _VersionCheckInProgress;
 
 		public API API { get; private set; }
 
@@ -1079,7 +1078,14 @@ namespace Blitzy.ViewModel
 				_LatestVersionInfo = value;
 				RaisePropertyChanged( () => LatestVersionInfo );
 
-				IsNewerVersionAvailable = CurrentVersion < LatestVersionInfo.LatestVersion;
+				if( value != null )
+				{
+					IsNewerVersionAvailable = CurrentVersion < LatestVersionInfo.LatestVersion;
+				}
+				else
+				{
+					IsNewerVersionAvailable = false;
+				}
 			}
 		}
 
@@ -1225,6 +1231,26 @@ namespace Blitzy.ViewModel
 				RaisePropertyChanging( () => VersionCheckError );
 				_VersionCheckError = value;
 				RaisePropertyChanged( () => VersionCheckError );
+			}
+		}
+
+		public bool VersionCheckInProgress
+		{
+			get
+			{
+				return _VersionCheckInProgress;
+			}
+
+			set
+			{
+				if( _VersionCheckInProgress == value )
+				{
+					return;
+				}
+
+				RaisePropertyChanging( () => VersionCheckInProgress );
+				_VersionCheckInProgress = value;
+				RaisePropertyChanged( () => VersionCheckInProgress );
 			}
 		}
 

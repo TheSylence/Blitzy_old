@@ -490,4 +490,7 @@ Um den Fehler beheben zu können kann ein Fehlerbericht an die Entwickler gesend
   <data name="DLLFiles" xml:space="preserve">
     <value>DLL Dateien</value>
   </data>
+  <data name="PleaseWait" xml:space="preserve">
+    <value>Bitte warten...</value>
+  </data>
 </root>
