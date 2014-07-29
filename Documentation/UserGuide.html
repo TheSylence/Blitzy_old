@@ -112,7 +112,7 @@
 					that you have the latest version of Blitzy installed.
 				</p>
 				<p>
-					The manual written for the Version you have installed is located in the "docs" folder
+					The manual written for the version you have installed is located in the "docs" folder
 					of your Blitzy installation. To make sure the information is correct please refer
 					to the document that came with the version you installed.
 				</p>
@@ -125,8 +125,8 @@
 				</p>
 				<ul>
 					<li>Windows Vista or newer (either 32bit or 64bit) with the latest Service Pack installed</li>
-					<li>.NET Framework 4.5</li>
-					<li>Some free space on your harddisk</li>
+					<li>.NET Framework 4.5.1</li>
+					<li>Some free space on one of your harddisks</li>
 					<li>Some free space on your system disk (*)</li>
 				</ul>
 				<p>
@@ -135,55 +135,58 @@
 					computer can run Windows it probably is also able to run Blitzy.
 				</p>
 				<p>
-					Oh and yes I do <strong>not</strong> support Windows XP! I don't know if Blitzy
-					even runs under XP and I won't test this. If you managed to get Blitzy to run under XP
+					Oh and yes I do <strong>not</strong> support Windows XP! If you managed to get Blitzy to run under XP
 					that's good for you. However don't expect any support if you encounter problems that are
 					specific to XP.
 				</p>
 				<p>
 					(*): Blitzy stores its settings and the catalog in the appdata folder. By default this folder is
-					stored on your primary hard disk (the one windows is installed on).
+					stored on your primary hard disk (the one Windows is installed on).
 					The exact amount of space needed depends on how big your catalog is and what plugins you have installed.
+					However I doubt you will need more than 20 or 30 MB of space for your catalog and settings.
 				</p>
 			</div>
 			<!-- ====================== INSTALLATION =================== -->
 			<div id="installation">
 				<h1>Installation</h1>
 				<p>
-					Installing Blitzy is pretty straight forward. After downloading the Setup file from
+					Installing Blitzy is pretty straight forward. After downloading the setup file from
 					the website all you have to do is double clicking the file. Then the setup wizard
 					will open and guide you through the installation process.
-					After the wizard finishes you may start using Blitzy.
+					After the wizard finished you may start using Blitzy.
 				</p>
 			</div>
 			<!-- ====================== USING BLITZY =================== -->
 			<div id="using">
 				<h1>Using Blitzy</h1>
 				<p>
-					Blitzy was designed to be as easy and fast to use as possible. And if you used other Keystroke Launchers in the past working
+					Blitzy was designed to be as easy and fast to use as possible. And if you used other keystroke launchers in the past working
 					with Blitzy should be as easy as eating a pancacke.
 				</p>
 				<p>
-					To bring up Blitzy's window you have to press the shortcut you defined in the settings. (The default value is Ctrl+Alt+Space)
+					To bring up Blitzy's window you have to press the shortcut you defined in the settings. (The default shortcut is Ctrl+Alt+Space)
 					You can do this from anywhere and not just from the desktop, browser, or your mail client.
 					However be sure to use a shortcut that will not interfer with shortcuts used by applications you try
-					to open Blitzy from. Also it is recommended using a shortcut that is not used globally by other applications.
+					to open Blitzy from. Also it is recommended to use a shortcut that is not used globally by other applications.
 				</p>
 				<div id="commands">
 					<h2>Entering commands</h2>
 					<p>
-						To enter a command you simply start typing. Blitzy will display a list of suggestions from which you can choose using the cursor keys.
+						To enter a command you simply start typing. Blitzy will display a list of suggestions from which you can choose using the cursor keys (Up and Down).
 						By pressing the return key Blitzy will execute the command that is currently selected.
 						Additionally you may exectue a command from the list by double clicking the desired item.
 					</p>
 					<p>
 						<em>Tipp:</em> You don't need to type in the whole command. When the item you want to execute is selected you can simply press
-						the return key and the command will be executed.
+						the return key and the command will be executed, independent of what is currently typed into the input box.
+						You may even have some spelling errors. The only thing that matters is that the command you want to execute is selected.
 					</p>
 					<p>
 						Some commands may require or offer additional parameters to be entered. To do so enter the command and press the tabulator key.
 						Then simply type as many parameters as the command needs (each separated with another tabulator) and press the return key when
 						you are done.
+						Each parameter will be separated by an arrow and most of the commands should indicate if they need more parameters and what kind
+						of parameters they require.
 					</p>
 					<p>
 						<strong>Note:</strong> Commands are executed in the background. This means that depending on how much time the execution of the
@@ -208,7 +211,7 @@
 						After that hold Control and Shift while pressing return. Whatever command you selected will be executed with elevated rights.
 					</p>
 					<p>
-						<strong>Note:</strong> Executing some commands with elevated is useless. For example there is no benefit in rebuilding
+						<strong>Note:</strong> Executing some commands with elevated is useless and therefor disabled. For example there is no benefit in rebuilding
 						the catalog with administrative rights. In fact the UAC prompt (if enabled) won't even pop up for certain commands.
 					</p>
 				</div>
@@ -234,7 +237,7 @@
 								<td>reset</td>
 								<td>
 									Resets the command execution count. After executing this command the order in which
-									commands are listed when you type is reset to default values.<br />
+									commands are listed when you type is reset to default values.
 									This can be useful if you messed up the counting, don't longer use a command you previously used or
 									you simply want to start from scratch with your ordering.
 								</td>
@@ -253,7 +256,7 @@
 							<tr>
 								<td>history</td>
 								<td>
-									Clears the command history. After executing this you won't see any commands in the history
+									Clears the command history. After executing this you won't see any commands in the history window
 									until you executed further commands.
 								</td>
 							</tr>
@@ -264,11 +267,11 @@
 					<h2>Command history</h2>
 					<p>
 						If you have enabled the history in the <a href="#settings_general">settings</a> you can bring up the
-						history view by holding control while pressing the up or down arrow in the Main Window.
+						history view by holding control while pressing the up or down arrow in the main window.
 						All commands that you previously entered are displayed in the list that now showed up.
 						By pressing the up or down arrow while holding control you can navigate through the list.
 						If you have found the command you want to enter again press return while still holding the control key.
-						The selected command will now be inserted into the input field and you can press return to execute the command.
+						The selected command will now be inserted into the input field and you can execute the command.
 					</p>
 				</div>
 			</div>
@@ -290,8 +293,12 @@
 					</p>
 					<h3>Show tray icon</h3>
 					<p>
-						The setting defines whether you will see the Blitzy icon in the system tray or not.
+						This option defines whether you will see the Blitzy icon in the system tray or not.
 						The default behaviour is to show the icon.
+					</p>
+					<p>
+						<strong>Note:</strong> The tray icon is not needed for Blitzy to operate. It is just a reminder for you
+						that Blitzy is running and waiting for your input.
 					</p>
 					<h3>Automatically check for updates</h3>
 					<p>
