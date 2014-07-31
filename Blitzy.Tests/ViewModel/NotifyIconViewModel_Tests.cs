@@ -1,9 +1,11 @@
 ﻿// $Id$
 
+using System;
 using Blitzy.Messages;
 using Blitzy.Tests.Mocks.Services;
 using Blitzy.ViewModel;
 using Blitzy.ViewServices;
+using btbapi;
 using GalaSoft.MvvmLight.Messaging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -86,6 +88,38 @@ namespace Blitzy.Tests.ViewModel
 
 				Assert.IsTrue( shown );
 			}
+		}
+
+		[TestMethod, TestCategory( "ViewModel" )]
+		public void VersionCheckTest()
+		{
+			NotifyIconViewModel vm = new NotifyIconViewModel();
+			vm.Reset();
+
+			Version currentVersion = new Version( 1, 0 );
+			Version latestVersion = new Version( 1, 0 );
+
+			VersionInfo versionInfo = new VersionInfo( System.Net.HttpStatusCode.OK, latestVersion, new Uri( "http://localhost" ), "", 0, new System.Collections.Generic.Dictionary<Version, string>() );
+			VersionCheckMessage msg = new VersionCheckMessage( currentVersion, versionInfo, false );
+
+			BalloonTipMessage msgReceived = null;
+			Messenger.Default.Register<BalloonTipMessage>( this, m => msgReceived = m );
+
+			Messenger.Default.Send( msg );
+			Assert.IsNull( msgReceived );
+
+			currentVersion = new Version( 0, 9 );
+			msg = new VersionCheckMessage( currentVersion, versionInfo, false );
+			Messenger.Default.Send( msg );
+			Assert.IsNotNull( msgReceived );
+			Assert.AreSame( msg, msgReceived.Token );
+
+			msgReceived = null;
+			currentVersion = new Version( 1, 0 );
+			msg = new VersionCheckMessage( currentVersion, versionInfo, true );
+			Messenger.Default.Send( msg );
+			Assert.IsNotNull( msgReceived );
+			Assert.IsNull( msgReceived.Token );
 		}
 
 		[TestMethod, TestCategory( "ViewModel" )]

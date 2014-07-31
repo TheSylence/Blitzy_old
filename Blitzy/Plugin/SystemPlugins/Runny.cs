@@ -28,7 +28,7 @@ namespace Blitzy.Plugin.SystemPlugins
 			Workspace workspace = command.UserData as Workspace;
 			if( workspace != null )
 			{
-				workspace.Load( ( (Settings)Host.Settings ).Connection );
+				//workspace.Load( ( (Settings)Host.Settings ).Connection );
 
 				foreach( WorkspaceItem item in workspace.Items.OrderBy( it => it.ItemOrder ) )
 				{

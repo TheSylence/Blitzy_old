@@ -22,6 +22,11 @@ namespace Blitzy
 #endif
 		}
 
+		public static void LogDebug( object obj, string format, params object[] args )
+		{
+			LogDebug( obj.GetType(), format, args );
+		}
+
 		public static void LogError( Type type, string format, params object[] args )
 		{
 			ILog log = LogManager.GetLogger( type );
@@ -30,6 +35,11 @@ namespace Blitzy
 			{
 				log.ErrorFormat( CultureInfo.InvariantCulture, format, args );
 			}
+		}
+
+		public static void LogError( object obj, string format, params object[] args )
+		{
+			LogError( obj.GetType(), format, args );
 		}
 
 		public static void LogFatal( Type type, string format, params object[] args )
@@ -42,6 +52,11 @@ namespace Blitzy
 			}
 		}
 
+		public static void LogFatal( object obj, string format, params object[] args )
+		{
+			LogFatal( obj.GetType(), format, args );
+		}
+
 		public static void LogInfo( Type type, string format, params object[] args )
 		{
 			ILog log = LogManager.GetLogger( type );
@@ -52,6 +67,11 @@ namespace Blitzy
 			}
 		}
 
+		public static void LogInfo( object obj, string format, params object[] args )
+		{
+			LogInfo( obj.GetType(), format, args );
+		}
+
 		public static void LogWarning( Type type, string format, params object[] args )
 		{
 			ILog log = LogManager.GetLogger( type );
@@ -60,6 +80,11 @@ namespace Blitzy
 			{
 				log.WarnFormat( CultureInfo.InvariantCulture, format, args );
 			}
+		}
+
+		public static void LogWarning( object obj, string format, params object[] args )
+		{
+			LogWarning( obj.GetType(), format, args );
 		}
 
 		#endregion Methods

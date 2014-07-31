@@ -497,7 +497,10 @@ namespace Blitzy.ViewModel
 				Settings.SetDefaults();
 				foreach( PluginPage page in PluginPages )
 				{
-					page.DataContext.RestoreDefaults();
+					if( page.DataContext != null )
+					{
+						page.DataContext.RestoreDefaults();
+					}
 				}
 			}
 		}

@@ -26,7 +26,7 @@ namespace Blitzy.Tests.Mocks
 
 		public bool HasSettings
 		{
-			get { throw new NotImplementedException(); }
+			get { return true; }
 		}
 
 		public string Name
@@ -79,7 +79,7 @@ namespace Blitzy.Tests.Mocks
 
 		public System.Windows.Controls.Control GetSettingsUI()
 		{
-			throw new NotImplementedException();
+			return null;
 		}
 
 		public IEnumerable<Blitzy.Model.CommandItem> GetSubCommands( Blitzy.Model.CommandItem parent, IList<string> input )

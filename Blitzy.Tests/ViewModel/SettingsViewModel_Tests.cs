@@ -193,6 +193,29 @@ namespace Blitzy.Tests.ViewModel
 		}
 
 		[TestMethod, TestCategory( "ViewModel" )]
+		public void PluginDialogTest()
+		{
+			CallCheckServiceMock mock = new CallCheckServiceMock();
+			DialogServiceManager.RegisterService( typeof( PluginSettingsService ), mock );
+
+			VM.PluginsDialogCommand.Execute( null );
+			Assert.IsTrue( mock.WasCalled );
+		}
+
+		[TestMethod, TestCategory( "ViewModel" )]
+		public void PluginMessageTest()
+		{
+			VM.Reset();
+			MockPlugin plugin = new MockPlugin();
+
+			Messenger.Default.Send<PluginMessage>( new PluginMessage( plugin, PluginAction.Enabled ) );
+			Assert.IsNotNull( VM.PluginPages.FirstOrDefault( x => x.Plugin == plugin ) );
+
+			Messenger.Default.Send<PluginMessage>( new PluginMessage( plugin, PluginAction.Disabled ) );
+			Assert.IsNull( VM.PluginPages.FirstOrDefault( x => x.Plugin == plugin ) );
+		}
+
+		[TestMethod, TestCategory( "ViewModel" )]
 		public void PropertyChangedTest()
 		{
 			PropertyChangedListener listener = new PropertyChangedListener( VM );
@@ -289,6 +312,7 @@ namespace Blitzy.Tests.ViewModel
 			Assert.IsTrue( VM.DefaultsCommand.CanExecute( null ) );
 			Assert.IsTrue( VM.UpdateCheckCommand.CanExecute( null ) );
 			Assert.IsTrue( VM.ViewChangelogCommand.CanExecute( null ) );
+			Assert.IsTrue( VM.PluginsDialogCommand.CanExecute( null ) );
 
 			Assert.IsFalse( VM.UpdateCatalogCommand.CanExecute( null ) );
 			VM.Settings.Folders.Add( new Folder() );
