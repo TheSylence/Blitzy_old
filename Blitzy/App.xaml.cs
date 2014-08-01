@@ -137,6 +137,8 @@ namespace Blitzy
 
 		private void Application_DispatcherUnhandledException( object sender, DispatcherUnhandledExceptionEventArgs e )
 		{
+			LogHelper.LogFatal( this, "Unhandled Exception: {0}", e.Exception );
+
 			try
 			{
 				ExceptionDialog dlg = new ExceptionDialog( e.Exception, new StackTrace( true ) );

@@ -34,6 +34,7 @@ namespace Blitzy.ViewModel
 			if( !Database.CheckExistance() )
 			{
 				Settings.SetDefaults();
+				Settings.Load();
 			}
 			else
 			{

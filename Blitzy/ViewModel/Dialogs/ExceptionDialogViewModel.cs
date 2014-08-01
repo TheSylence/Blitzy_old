@@ -23,9 +23,7 @@ namespace Blitzy.ViewModel.Dialogs
 
 		#endregion Constructor
 
-		#region Methods
 
-		#endregion Methods
 
 		#region Commands
 
