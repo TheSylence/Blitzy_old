@@ -594,6 +594,15 @@ namespace Blitzy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Hot key.
+        /// </summary>
+        public static string HotKey {
+            get {
+                return ResourceManager.GetString("HotKey", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Import saved sessions.
         /// </summary>
         public static string ImportSavedSessions {
