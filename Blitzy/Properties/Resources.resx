@@ -501,4 +501,7 @@ Your address won't be used for any other purposes than investigating this error.
   <data name="PleaseWait" xml:space="preserve">
     <value>Please wait...</value>
   </data>
+  <data name="HotKey" xml:space="preserve">
+    <value>Hot key</value>
+  </data>
 </root>

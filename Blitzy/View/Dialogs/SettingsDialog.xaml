@@ -33,6 +33,11 @@
 								<CheckBox Content="{lex:Loc CloseAfterCommandExecution}" IsChecked="{Binding CloseOnCommand, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 								<CheckBox Content="{lex:Loc KeppInputContent}" IsChecked="{Binding KeepInput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 								<CheckBox Content="{lex:Loc AlawysStayOnTop}" IsChecked="{Binding StayOnTop, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+								<TextBlock Text="{lex:Loc HotKey}" Margin="0,5,0,0" />
+								<StackPanel Orientation="Horizontal">
+									<ComboBox ItemsSource="{Binding Modifiers}" SelectedItem="{Binding SelectedModifierKey, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+									<ComboBox ItemsSource="{Binding Keys}" SelectedItem="{Binding SelectedKey, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="10,0" />
+								</StackPanel>
 							</StackPanel>
 						</GroupBox>
 						<GroupBox Header="{lex:Loc Catalog}">

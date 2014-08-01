@@ -493,4 +493,7 @@ Um den Fehler beheben zu können kann ein Fehlerbericht an die Entwickler gesend
   <data name="PleaseWait" xml:space="preserve">
     <value>Bitte warten...</value>
   </data>
+  <data name="HotKey" xml:space="preserve">
+    <value>Hot Key</value>
+  </data>
 </root>

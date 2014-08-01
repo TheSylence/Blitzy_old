@@ -171,6 +171,7 @@
     <Compile Include="Messages\BalloonActivatedMessage.cs" />
     <Compile Include="Messages\BalloonTipMessage.cs" />
     <Compile Include="Messages\DownloadStatusMessage.cs" />
+    <Compile Include="Messages\HotKeyMessage.cs" />
     <Compile Include="Messages\LanguageMessage.cs" />
     <Compile Include="Messages\MessageTokens.cs" />
     <Compile Include="Messages\PluginMessage.cs" />
