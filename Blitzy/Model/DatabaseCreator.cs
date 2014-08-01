@@ -116,6 +116,19 @@ namespace Blitzy.Model
 				sb.AppendFormat( "INSERT INTO settings ([Key], [Value]) VALUES( '{0}', '{1}' );", setting.ToString(), defaultValue );
 			}
 
+			int folderID = 1;
+			foreach( string folder in new[] {
+				Environment.GetFolderPath( Environment.SpecialFolder.CommonStartMenu ),
+				Environment.GetFolderPath( Environment.SpecialFolder.StartMenu ) } )
+			{
+				sb.AppendFormat( "INSERT INTO folders (FolderID, Path, Recursive) VALUES ({1}, '{0}', 1);", folder, folderID );
+
+				sb.AppendFormat( "INSERT INTO folder_rules (FolderID, Rule) VALUES ({0}, '*.exe');", folderID );
+				sb.AppendFormat( "INSERT INTO folder_rules (FolderID, Rule) VALUES ({0}, '*.lnk');", folderID );
+
+				++folderID;
+			}
+
 			sb.AppendFormat( "PRAGMA user_version = {0};", DatabaseUpgrader.DatabaseVersion );
 			sb.Append( "COMMIT;" );
 
