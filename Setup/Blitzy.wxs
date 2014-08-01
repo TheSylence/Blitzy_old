@@ -5,7 +5,7 @@
 			 UpgradeCode="2b18ed51-32b9-463b-8459-8b32ee807a79">
 		<!-- Package information -->
 		<Package InstallerVersion="405" Compressed="yes" Manufacturer="btbsoft.org" Platform="x64"
-				 Description=".NET Keystroke launcher" Comments="Blitzy installer" />
+				 ReadOnly="yes" Description=".NET Keystroke launcher" Comments="Blitzy installer" />
 		<!-- Properties -->
 		<WixVariable Id="WixUILicenseRtf" Value="License.rtf" />
 		<WixVariable Id="WixUISupportPerUser" Value="0" />
@@ -25,6 +25,16 @@
 		<MajorUpgrade Schedule="afterInstallFinalize" DowngradeErrorMessage="A later version of Blitzy is already installed. Setup will now exit." MigrateFeatures="yes" />
 		<!-- Media -->
 		<Media Id="1" Cabinet="Blitzy.cab" EmbedCab="yes" />
+
+		<CustomAction Id="Overwrite_WixSetDefaultPerMachineFolder" Property="WixPerMachineFolder" Value="[ProgramFiles64Folder][ApplicationFolderName]" Execute="immediate" />
+		<InstallUISequence>
+			<Custom Action="Overwrite_WixSetDefaultPerMachineFolder" After="WixSetDefaultPerMachineFolder" />
+		</InstallUISequence>
+		<InstallExecuteSequence>
+			<Custom Action="Overwrite_WixSetDefaultPerMachineFolder" After="WixSetDefaultPerMachineFolder" />
+		</InstallExecuteSequence>
+
+		<SetProperty Id="ARPINSTALLLOCATION" Value="[APPLICATIONFOLDER]" After="CostFinalize" />
 
 		<!-- Data -->
 		<Directory Id="TARGETDIR" Name="SourceDir">

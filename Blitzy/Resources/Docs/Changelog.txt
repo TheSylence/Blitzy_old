@@ -1,6 +1,7 @@
 ﻿Version 0.9.0
 ----------------------
 === Complete rewrite of the software ===
+* Blitzy is now a 64bit application
 * Systemplugins are now built into the software
 * Reorganized settings menu
 * Fixed some issues in calcy
