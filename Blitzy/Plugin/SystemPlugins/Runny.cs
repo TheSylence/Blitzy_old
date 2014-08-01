@@ -9,9 +9,9 @@ using System.Linq;
 using System.Reflection;
 using Blitzy.Model;
 
-namespace Blitzy.Plugin.System
+namespace Blitzy.Plugin.SystemPlugins
 {
-	internal class Runny : IPlugin
+	internal class Runny : ISystemPlugin
 	{
 		#region Methods
 
@@ -28,7 +28,8 @@ namespace Blitzy.Plugin.System
 			Workspace workspace = command.UserData as Workspace;
 			if( workspace != null )
 			{
-				// TODO: Ensure that workspace items are full paths
+				//workspace.Load( ( (Settings)Host.Settings ).Connection );
+
 				foreach( WorkspaceItem item in workspace.Items.OrderBy( it => it.ItemOrder ) )
 				{
 					args = command.UserData as string;
@@ -52,7 +53,6 @@ namespace Blitzy.Plugin.System
 		{
 			if( ItemCache.Count == 0 )
 			{
-				// TODO: Would be great if this was possible without bypassing the plugin API
 				SQLiteConnection connection = ( (Settings)Host.Settings ).Connection;
 
 				ItemCache = new List<CommandItem>( ReadAllCommands( connection ) );
@@ -62,6 +62,16 @@ namespace Blitzy.Plugin.System
 		}
 
 		public string GetInfo( IList<string> data, CommandItem item )
+		{
+			return null;
+		}
+
+		public IPluginViewModel GetSettingsDataContext()
+		{
+			return null;
+		}
+
+		public System.Windows.Controls.Control GetSettingsUI()
 		{
 			return null;
 		}
@@ -167,6 +177,8 @@ namespace Blitzy.Plugin.System
 		{
 			get { return "Execution of files"; }
 		}
+
+		public bool HasSettings { get { return false; } }
 
 		public string Name
 		{

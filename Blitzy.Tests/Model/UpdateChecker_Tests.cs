@@ -50,7 +50,7 @@ namespace Blitzy.Tests.Model
 		{
 			using( ShimsContext.Create() )
 			{
-				btbapi.Fakes.ShimAPI.AllInstances.CheckVersionStringVersion = ( api, str, ver ) =>
+				btbapi.Fakes.ShimAPI.AllInstances.CheckVersionStringVersionBoolean = ( api, str, ver, force ) =>
 					{
 						return Task.Run<VersionInfo>( () => new VersionInfo( System.Net.HttpStatusCode.BadRequest, null, null, null, 0, null ) );
 					};
@@ -60,7 +60,7 @@ namespace Blitzy.Tests.Model
 
 				Assert.AreNotEqual( System.Net.HttpStatusCode.OK, t.Result.Status );
 
-				btbapi.Fakes.ShimAPI.AllInstances.CheckVersionStringVersion = ( api, str, ver ) =>
+				btbapi.Fakes.ShimAPI.AllInstances.CheckVersionStringVersionBoolean = ( api, str, ver, force ) =>
 				{
 					return Task.Run<VersionInfo>( () => new VersionInfo( System.Net.HttpStatusCode.OK, new Version( 1, 2 ), new Uri( "http://localhost/file.name" ), "123", 123, new Dictionary<Version, string>() ) );
 				};

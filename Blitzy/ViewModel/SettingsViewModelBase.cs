@@ -6,9 +6,9 @@ namespace Blitzy.ViewModel
 	{
 		#region Constructor
 
-		protected SettingsViewModelBase( SettingsViewModel baseVm )
+		protected SettingsViewModelBase( Settings settings )
 		{
-			BaseVm = baseVm;
+			Settings = settings;
 		}
 
 		#endregion Constructor
@@ -21,20 +21,8 @@ namespace Blitzy.ViewModel
 
 		#region Properties
 
-		protected Settings Settings
-		{
-			get
-			{
-				return BaseVm.Settings;
-			}
-		}
+		protected Settings Settings { get; private set; }
 
 		#endregion Properties
-
-		#region Attributes
-
-		protected readonly SettingsViewModel BaseVm;
-
-		#endregion Attributes
 	}
 }

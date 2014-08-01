@@ -6,7 +6,7 @@
 		xmlns:commands="clr-namespace:GalaSoft.MvvmLight.Command;assembly=GalaSoft.MvvmLight.Extras"
 		DataContext="{Binding Source={StaticResource Locator}, Path=Main}" FocusManager.FocusedElement="{Binding ElementName=txtInput}"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Blitzy" Height="160" Width="580">
+        Title="Blitzy" Height="160" Width="580" Icon="/Blitzy;component/Resources/AppIcon.ico">
 	<i:Interaction.Triggers>
 		<i:EventTrigger EventName="PreviewKeyDown">
 			<commands:EventToCommand Command="{Binding KeyPreviewCommand}" PassEventArgsToCommand="True" />

@@ -28,6 +28,8 @@ namespace Blitzy.Model
 	{
 		#region Constructor
 
+		private StackTrace Trace;
+
 		public CatalogBuilder( Settings settings )
 		{
 			CanProcess = ToDispose( new AutoResetEvent( false ) );
@@ -41,6 +43,8 @@ namespace Blitzy.Model
 			ThreadObject.Name = "CatalogThread";
 			ThreadObject.IsBackground = true;
 			ThreadObject.Start();
+
+			Trace = new StackTrace( true );
 		}
 
 		#endregion Constructor
@@ -51,9 +55,14 @@ namespace Blitzy.Model
 		{
 			if( managed )
 			{
+				ShouldStop = true;
 				IsRunning = false;
 				CanProcess.Set();
 				ThreadObject.Join();
+			}
+			else
+			{
+				Debugger.Break();
 			}
 
 			base.Dispose( managed );

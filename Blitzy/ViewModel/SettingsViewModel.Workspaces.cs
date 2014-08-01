@@ -16,8 +16,8 @@ namespace Blitzy.ViewModel
 	{
 		#region Constructor
 
-		public WorkspaceSettingsViewModel( SettingsViewModel baseVm )
-			: base( baseVm )
+		public WorkspaceSettingsViewModel( Settings settings )
+			: base( settings )
 		{
 			Workspaces = new ObservableCollection<Workspace>();
 
@@ -64,12 +64,9 @@ namespace Blitzy.ViewModel
 
 		private RelayCommand _AddItemCommand;
 		private RelayCommand _AddWorkspaceCommand;
-
 		private RelayCommand _DeleteWorkspaceCommand;
-
 		private RelayCommand _MoveItemDownCommand;
 		private RelayCommand _MoveItemUpCommand;
-
 		private RelayCommand _RemoveItemCommand;
 
 		public RelayCommand AddItemCommand
@@ -158,8 +155,10 @@ namespace Blitzy.ViewModel
 
 		private void ExecuteAddItemCommand()
 		{
-			TextInputParameter args = new TextInputParameter( "EnterWorkspaceCommand".Localize(), "AddWorkspaceItem".Localize() );
-			string command = DialogServiceManager.Show<TextInputService, string>( args );
+			//TextInputParameter args = new TextInputParameter( "EnterWorkspaceCommand".Localize(), "AddWorkspaceItem".Localize() );
+			//string command = DialogServiceManager.Show<TextInputService, string>( args );
+
+			string command = DialogServiceManager.Show<OpenFileService, string>();
 
 			if( !string.IsNullOrWhiteSpace( command ) )
 			{
@@ -303,9 +302,5 @@ namespace Blitzy.ViewModel
 		public ObservableCollection<Workspace> Workspaces { get; private set; }
 
 		#endregion Properties
-
-		#region Attributes
-
-		#endregion Attributes
 	}
 }

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows.Documents;
 using Blitzy.Messages;
 using Blitzy.Model;
+using Blitzy.Tests.Mocks;
 using Blitzy.Tests.Mocks.Services;
 using Blitzy.ViewModel;
 using Blitzy.ViewServices;
@@ -91,6 +92,16 @@ namespace Blitzy.Tests.ViewModel
 
 			VM = new SettingsViewModel();
 			VM.Settings = new Blitzy.Model.Settings( Connection );
+			MockPluginHost host = new MockPluginHost( VM.Settings );
+			VM.PluginManager = new Plugin.PluginManager( host, Connection );
+			VM.PluginManager.LoadPlugins();
+
+			/*SettingsViewModel baseVM = new SettingsViewModel();
+			baseVM.Settings = new Blitzy.Model.Settings( Connection );
+			MockPluginHost host = new MockPluginHost( baseVM.Settings );
+			baseVM.PluginManager = new Plugin.PluginManager( host, Connection );
+			baseVM.PluginManager.LoadPlugins();
+			baseVM.Reset();*/
 		}
 
 		[TestMethod, TestCategory( "ViewModel" )]
@@ -108,37 +119,40 @@ namespace Blitzy.Tests.ViewModel
 		public void CatalogBuildTest()
 		{
 			VM.Settings.Folders.Add( new Folder() );
-			VM.CatalogBuilder = new CatalogBuilder( new Settings( Connection ) );
+			using( VM.CatalogBuilder = new CatalogBuilder( new Settings( Connection ) ) )
+			{
+				bool received = false;
+				Messenger.Default.Register<InternalCommandMessage>( this, ( msg ) => received = true );
 
-			bool received = false;
-			Messenger.Default.Register<InternalCommandMessage>( this, ( msg ) => received = true );
-
-			VM.UpdateCatalogCommand.Execute( null );
-			Assert.IsTrue( received );
+				VM.UpdateCatalogCommand.Execute( null );
+				Assert.IsTrue( received );
+			}
 		}
 
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void CatalogTest()
 		{
 			VM.Reset();
-			VM.CatalogBuilder = new CatalogBuilder( VM.Settings );
-			VM.CatalogBuilder.ItemsProcessed = 123;
-			VM.CatalogBuilder.ItemsSaved = 456;
-			VM.CatalogBuilder.ProgressStep = CatalogProgressStep.Parsing;
-			DateTime oldDate = VM.LastCatalogBuild;
-			Messenger.Default.Send( new CatalogStatusMessage( CatalogStatus.BuildStarted ) );
-			Assert.IsTrue( VM.IsCatalogBuilding );
+			using( VM.CatalogBuilder = new CatalogBuilder( VM.Settings ) )
+			{
+				VM.CatalogBuilder.ItemsProcessed = 123;
+				VM.CatalogBuilder.ItemsSaved = 456;
+				VM.CatalogBuilder.ProgressStep = CatalogProgressStep.Parsing;
+				DateTime oldDate = VM.LastCatalogBuild;
+				Messenger.Default.Send( new CatalogStatusMessage( CatalogStatus.BuildStarted ) );
+				Assert.IsTrue( VM.IsCatalogBuilding );
 
-			Messenger.Default.Send( new CatalogStatusMessage( CatalogStatus.ProgressUpdated ) );
-			Assert.AreEqual( VM.CatalogBuilder.ItemsProcessed, VM.CatalogItemsProcessed );
+				Messenger.Default.Send( new CatalogStatusMessage( CatalogStatus.ProgressUpdated ) );
+				Assert.AreEqual( VM.CatalogBuilder.ItemsProcessed, VM.CatalogItemsProcessed );
 
-			VM.CatalogBuilder.ProgressStep = CatalogProgressStep.Saving;
-			Messenger.Default.Send( new CatalogStatusMessage( CatalogStatus.ProgressUpdated ) );
-			Assert.AreEqual( VM.CatalogBuilder.ItemsSaved, VM.CatalogItemsProcessed );
+				VM.CatalogBuilder.ProgressStep = CatalogProgressStep.Saving;
+				Messenger.Default.Send( new CatalogStatusMessage( CatalogStatus.ProgressUpdated ) );
+				Assert.AreEqual( VM.CatalogBuilder.ItemsSaved, VM.CatalogItemsProcessed );
 
-			Messenger.Default.Send( new CatalogStatusMessage( CatalogStatus.BuildFinished ) );
-			Assert.IsFalse( VM.IsCatalogBuilding );
-			Assert.AreNotEqual( oldDate, VM.LastCatalogBuild );
+				Messenger.Default.Send( new CatalogStatusMessage( CatalogStatus.BuildFinished ) );
+				Assert.IsFalse( VM.IsCatalogBuilding );
+				Assert.AreNotEqual( oldDate, VM.LastCatalogBuild );
+			}
 		}
 
 		[TestMethod, TestCategory( "ViewModel" )]
@@ -179,6 +193,29 @@ namespace Blitzy.Tests.ViewModel
 		}
 
 		[TestMethod, TestCategory( "ViewModel" )]
+		public void PluginDialogTest()
+		{
+			CallCheckServiceMock mock = new CallCheckServiceMock();
+			DialogServiceManager.RegisterService( typeof( PluginSettingsService ), mock );
+
+			VM.PluginsDialogCommand.Execute( null );
+			Assert.IsTrue( mock.WasCalled );
+		}
+
+		[TestMethod, TestCategory( "ViewModel" )]
+		public void PluginMessageTest()
+		{
+			VM.Reset();
+			MockPlugin plugin = new MockPlugin();
+
+			Messenger.Default.Send<PluginMessage>( new PluginMessage( plugin, PluginAction.Enabled ) );
+			Assert.IsNotNull( VM.PluginPages.FirstOrDefault( x => x.Plugin == plugin ) );
+
+			Messenger.Default.Send<PluginMessage>( new PluginMessage( plugin, PluginAction.Disabled ) );
+			Assert.IsNull( VM.PluginPages.FirstOrDefault( x => x.Plugin == plugin ) );
+		}
+
+		[TestMethod, TestCategory( "ViewModel" )]
 		public void PropertyChangedTest()
 		{
 			PropertyChangedListener listener = new PropertyChangedListener( VM );
@@ -188,6 +225,7 @@ namespace Blitzy.Tests.ViewModel
 			listener.Exclude<SettingsViewModel>( vm => vm.CatalogBuilder );
 			listener.Exclude<SettingsViewModel>( vm => vm.CurrentVersion );
 			listener.Exclude<SettingsViewModel>( vm => vm.Settings );
+			listener.Exclude<SettingsViewModel>( vm => vm.PluginManager );
 			Assert.IsTrue( listener.TestProperties() );
 		}
 
@@ -274,11 +312,14 @@ namespace Blitzy.Tests.ViewModel
 			Assert.IsTrue( VM.DefaultsCommand.CanExecute( null ) );
 			Assert.IsTrue( VM.UpdateCheckCommand.CanExecute( null ) );
 			Assert.IsTrue( VM.ViewChangelogCommand.CanExecute( null ) );
+			Assert.IsTrue( VM.PluginsDialogCommand.CanExecute( null ) );
 
 			Assert.IsFalse( VM.UpdateCatalogCommand.CanExecute( null ) );
 			VM.Settings.Folders.Add( new Folder() );
-			VM.CatalogBuilder = new CatalogBuilder( new Settings( Connection ) );
-			Assert.IsTrue( VM.UpdateCatalogCommand.CanExecute( null ) );
+			using( VM.CatalogBuilder = new CatalogBuilder( new Settings( Connection ) ) )
+			{
+				Assert.IsTrue( VM.UpdateCatalogCommand.CanExecute( null ) );
+			}
 		}
 
 		[TestMethod, TestCategory( "ViewModel" )]

@@ -1,0 +1,609 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+	<meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
+	<title>Blitzy Manual</title>
+	<style type="text/css">
+		body {
+			margin: 0;
+			padding: 0;
+			border: 0;
+			overflow: hidden;
+			height: 100%;
+			max-height: 100%;
+			font-family: Tahoma;
+			font-size: 0.9em;
+		}
+
+		#framecontent {
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			left: 0;
+			width: 300px;
+			height: 100%;
+			overflow: hidden;
+			background: #ccc;
+			color: black;
+		}
+
+		a, a:visited, a:hover {
+			color: Black;
+		}
+
+		#maincontent {
+			position: fixed;
+			top: 0;
+			left: 300px;
+			bottom: 0;
+			overflow: auto;
+			background: #fff;
+		}
+
+		.innertube {
+			margin: 15px;
+		}
+
+		* html body {
+			padding: 0 0 0 300px;
+		}
+
+		#maincontent div.listing {
+			font-family: Courier New;
+			margin: 5px;
+		}
+
+		#maincontent div.invalid {
+			text-decoration: line-through;
+		}
+	</style>
+</head>
+<body>
+	<div id="framecontent">
+		<div class="innertube">
+			<h1>Content</h1>
+			<ul>
+				<li><a href="#manual">Manual</a></li>
+				<li><a href="#requirements">System requirements</a></li>
+				<li><a href="#installation">Installation</a></li>
+				<li>
+					<a href="#using">Using Blitzy</a>
+					<ul>
+						<li><a href="#commands">Entering commands</a></li>
+						<li><a href="#admin_commands">Executing commands with evalated rights</a></li>
+						<li><a href="#predefined_commands">Predefined commands</a></li>
+						<li><a href="#history">Command history</a></li>
+					</ul>
+				</li>
+				<li>
+					<a href="#configuration">Configure Blitzy</a>
+					<ul>
+						<li><a href="#settings_general">General</a></li>
+						<li><a href="#settings_folders">Folders</a></li>
+						<li><a href="#settings_workspaces">Workspaces</a></li>
+						<li><a href="#settings_plugins">Plugins</a></li>
+						<li><a href="#settings_about">About</a></li>
+					</ul>
+				</li>
+				<li>
+					<a href="#plugins">Plugins</a>
+					<ul>
+						<li><a href="#calcy">Calcy</a></li>
+						<li><a href="#weby">Weby</a></li>
+						<li><a href="#medy">Medy</a></li>
+						<li><a href="#putty">Putty</a></li>
+						<li><a href="#plugin_dev">Creating own plugins</a></li>
+					</ul>
+				</li>
+				<li><a href="#bugreport">Reporting bugs</a></li>
+			</ul>
+		</div>
+	</div>
+	<div id="maincontent">
+		<div class="innertube">
+			<!-- ====================== MANUAL =================== -->
+			<div id="manual">
+				<h1>Blitzy manual </h1>
+				<p>
+					Welcome to the Blitzy manual. In this document you will find every information that
+					you need to know about Blitzy in order to use it and even more. This manual was
+					written for Blitzy 1.0.0. If you are viewing this document online please make sure
+					that you have the latest version of Blitzy installed.
+				</p>
+				<p>
+					The manual written for the version you have installed is located in the "docs" folder
+					of your Blitzy installation. To make sure the information is correct please refer
+					to the document that came with the version you installed.
+				</p>
+			</div>
+			<!-- ====================== REQUIREMENTS =================== -->
+			<div id="requirements">
+				<h1>System requirements </h1>
+				<p>
+					To use Blitzy you will need:
+				</p>
+				<ul>
+					<li>Windows Vista or newer (64bit) with the latest Service Pack installed</li>
+					<li>.NET Framework 4.5.1</li>
+					<li>Some free space on one of your harddisks</li>
+					<li>Some free space on your system disk (*)</li>
+				</ul>
+				<p>
+					Please don't ask me for other specs like CPU speed or RAM because to be honest I
+					don't know them and I don't have enough computers to test this. However if your
+					computer can run Windows it probably is also able to run Blitzy.
+				</p>
+				<p>
+					Oh and yes I do <strong>not</strong> support Windows XP! If you managed to get Blitzy to run under XP
+					that's good for you. However don't expect any support if you encounter problems that are
+					specific to XP.
+				</p>
+				<p>
+					(*): Blitzy stores its settings and the catalog in the appdata folder. By default this folder is
+					stored on your primary hard disk (the one Windows is installed on).
+					The exact amount of space needed depends on how big your catalog is and what plugins you have installed.
+					However I doubt you will need more than 20 or 30 MB of space for your catalog and settings.
+				</p>
+			</div>
+			<!-- ====================== INSTALLATION =================== -->
+			<div id="installation">
+				<h1>Installation</h1>
+				<p>
+					Installing Blitzy is pretty straight forward. After downloading the setup file from
+					the website all you have to do is double clicking the file. Then the setup wizard
+					will open and guide you through the installation process.
+					After the wizard finished you may start using Blitzy.
+				</p>
+			</div>
+			<!-- ====================== USING BLITZY =================== -->
+			<div id="using">
+				<h1>Using Blitzy</h1>
+				<p>
+					Blitzy was designed to be as easy and fast to use as possible. And if you used other keystroke launchers in the past working
+					with Blitzy should be as easy as eating a pancacke.
+				</p>
+				<p>
+					To bring up Blitzy's window you have to press the shortcut you defined in the settings. (The default shortcut is Ctrl+Alt+Space)
+					You can do this from anywhere and not just from the desktop, browser, or your mail client.
+					However be sure to use a shortcut that will not interfer with shortcuts used by applications you try
+					to open Blitzy from. Also it is recommended to use a shortcut that is not used globally by other applications.
+				</p>
+				<div id="commands">
+					<h2>Entering commands</h2>
+					<p>
+						To enter a command you simply start typing. Blitzy will display a list of suggestions from which you can choose using the cursor keys (Up and Down).
+						By pressing the return key Blitzy will execute the command that is currently selected.
+						Additionally you may exectue a command from the list by double clicking the desired item.
+					</p>
+					<p>
+						<em>Tipp:</em> You don't need to type in the whole command. When the item you want to execute is selected you can simply press
+						the return key and the command will be executed, independent of what is currently typed into the input box.
+						You may even have some spelling errors. The only thing that matters is that the command you want to execute is selected.
+					</p>
+					<p>
+						Some commands may require or offer additional parameters to be entered. To do so enter the command and press the tabulator key.
+						Then simply type as many parameters as the command needs (each separated with another tabulator) and press the return key when
+						you are done.
+						Each parameter will be separated by an arrow and most of the commands should indicate if they need more parameters and what kind
+						of parameters they require.
+					</p>
+					<p>
+						<strong>Note:</strong> Commands are executed in the background. This means that depending on how much time the execution of the
+						command takes you may have to wait until you see the action.
+						However this has the advantage that you can execute a new command right after the previous command was started. You don't have to wait
+						until the previous command finishes.
+					</p>
+					<p>
+						Blitzy has the abilitiy to learn what commands you use often and places items you use more often at the top of the suggestion list.
+						So the longer you use Blitzy the less you have to type since the command you want to execute is already placed top!
+					</p>
+				</div>
+				<div id="admin_commands">
+					<h2>Executing commands with elevated rights</h2>
+					<p>
+						Blitzy has the ability to execute commands with elevated rights (a.k.a. as an administrator).
+						To do so you need to have access to the account of an administrator on your local machine.
+					</p>
+					<p>
+						If you want to execute a command with elevated rights you simply need to type in the command as you would normally do
+						and select the right command from the command list.
+						After that hold Control and Shift while pressing return. Whatever command you selected will be executed with elevated rights.
+					</p>
+					<p>
+						<strong>Note:</strong> Executing some commands with elevated is useless and therefor disabled. For example there is no benefit in rebuilding
+						the catalog with administrative rights. In fact the UAC prompt (if enabled) won't even pop up for certain commands.
+					</p>
+				</div>
+				<div id="predefined_commands">
+					<h2>Predefined commands</h2>
+					<p>
+						There are some commands built into Blitzy that can be used no matter what plugins are installed or not.
+						Below is a list of all these commands:
+					</p>
+					<table>
+						<thead>
+							<tr>
+								<th>Command</th>
+								<th>Description</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>quit</td>
+								<td>Exits the application</td>
+							</tr>
+							<tr>
+								<td>reset</td>
+								<td>
+									Resets the command execution count. After executing this command the order in which
+									commands are listed when you type is reset to default values.
+									This can be useful if you messed up the counting, don't longer use a command you previously used or
+									you simply want to start from scratch with your ordering.
+								</td>
+							</tr>
+							<tr>
+								<td>catalog</td>
+								<td>
+									Manually rebuilds the catalog. This can be useful if you added new files to the folders you watch
+									but your next automatic rebuild (if enabled) is too far in the future.
+								</td>
+							</tr>
+							<tr>
+								<td>version</td>
+								<td>Checks if a newer version of the application is available for download.</td>
+							</tr>
+							<tr>
+								<td>history</td>
+								<td>
+									Clears the command history. After executing this you won't see any commands in the history window
+									until you executed further commands.
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div id="history">
+					<h2>Command history</h2>
+					<p>
+						If you have enabled the history in the <a href="#settings_general">settings</a> you can bring up the
+						history view by holding control while pressing the up or down arrow in the main window.
+						All commands that you previously entered are displayed in the list that now showed up.
+						By pressing the up or down arrow while holding control you can navigate through the list.
+						If you have found the command you want to enter again press return while still holding the control key.
+						The selected command will now be inserted into the input field and you can execute the command.
+					</p>
+				</div>
+			</div>
+			<!-- ====================== CONFIGURE Blitzy =================== -->
+			<div id="configuration">
+				<h1>Configure Blitzy</h1>
+				<p>
+					To configure Blitzy and all installed <a href="#plugins">Plugins</a> you simply
+					click on the settings icon in the <a href="#mainwindow">main window</a>. After doing
+					so a dialog will open where you can configure Blitzy to fit your needs. The dialog
+					is divided into several tab items:
+				</p>
+				<div id="settings_general">
+					<h2>General</h2>
+					<p>
+						In this tab you can edit the general behaviour of Blitzy. The default settings that are installed
+						when running Blitzy for the first time should be good enough for most of the users. However if you
+						want to do some fine tuning this is place to go.
+					</p>
+					<h3>Show tray icon</h3>
+					<p>
+						This option defines whether you will see the Blitzy icon in the system tray or not.
+						The default behaviour is to show the icon.
+					</p>
+					<p>
+						<strong>Note:</strong> The tray icon is not needed for Blitzy to operate. It is just a reminder for you
+						that Blitzy is running and waiting for your input.
+					</p>
+					<h3>Automatically check for updates</h3>
+					<p>
+						When this option is enabled (which is the default) Blitzy will check for new versions online
+						everytime it is started. Of course this requires an internet connection.
+					</p>
+					<h3>Close when focus is lost</h3>
+					<p>
+						When this setting is enabled the Blitzy window will disapper if it loses focus, i.e. you click outside
+						of the window or activate a different window. The default setting is to hide the window when it loses
+						its focus.
+					</p>
+					<h3>Close on escape</h3>
+					<p>
+						This option defines whether the Blitzy window will be closed if you press the escape key. The default
+						behaviour is to close the window if the escape key is pressed.
+					</p>
+					<h3>Close after comand execution</h3>
+					<p>
+						When this setting is enabled (which is the default) the Blitzy window will close after you executed a command.
+					</p>
+					<h3>Keep input content</h3>
+					<p>
+						When this option is enabled the last executed command will stay in the input field even if the window is closed
+						after executing the command. The default behaviour is to clear the input field after a command was executed.
+					</p>
+					<h3>Always stay on top</h3>
+					<p>
+						When this setting is enabled (which is the default) the Blitzy window will stay on top of all other windows.
+					</p>
+					<h3>Hotkey</h3>
+					<p>
+						This setting defines which key combination will be used to show up the Blitzy window. This always has to be
+						a combination of a system key (like Ctrl, Alt or the Windows key) and an ordinary key.
+						The default value is Ctrl+Alt+Space
+					</p>
+					<h3>Max Items</h3>
+					<p>
+						This is the maximum amount of suggestions that show up in the suggestion window. A higher value is likely to
+						slow down the application. A lower value is likely to be less precise. So you should test which value fits your
+						needs best.
+					</p>
+				</div>
+				<div id="settings_folders">
+					<h2>Folders</h2>
+					<p>
+						This tab is where you can configure which folders Blitzy should scan for files that will be listed as commands.
+						By default your whole Start Menu will be scanned for Applications.
+					</p>
+					<p>
+						To add a new location simply click the &quot;Add&quot;-Button below the list of folders and then select the folder
+						you want to add.
+						Without further configuration all files within the selected folder will be used and the search will not include
+						subfolders.
+						To include subfolders (and subsubfolders and so on) select the folder you just added and check the &quot;Recursive&quot; checkbox.
+					</p>
+					<p>
+						To fine tune what files should be used from a folder you can use the &quot;Rules&quot; and &quot;Exculdes&quot;
+						TODO
+					</p>
+				</div>
+				<div id="settings_workspaces">
+					<h2>Workspaces</h2>
+					<p>
+						TODO
+					</p>
+				</div>
+				<div id="settings_plugins">
+					<h2>Plugins</h2>
+					<p>
+						The plugins tab is where you can disable and enable installed plugins and configure them.
+						To enable or disable a plugin you have to select the plugin from the list of available plugins and check or uncheck the
+						checkbox on top of the list.<br />
+						When you select a plugin from the list, the available settings for the plugin will be displayed and you can change them.
+					</p>
+				</div>
+				<div id="settings_about">
+					<h2>About</h2>
+					<p>
+						This is the place where you can view who is responsible for all the stuff you might
+						already love, view the details about the license, and -- and this is probably the
+						number one reason why you would click on this tab -- you can see what version of
+						Blitzy you are using and when it was built. If you didn't enabled the automatic
+						update check you can check if there is a new version available.
+					</p>
+				</div>
+			</div>
+			<!-- ====================== PLUGINS =================== -->
+			<div id="plugins">
+				<h1>Plugins</h1>
+				<p>
+					Blitzy's capabilities can be extended through plugins.
+				</p>
+				<p>
+					To install a new plugin you have to simply copy the plugin's DLL file into the 'plugin'
+					fulder of your Blitzy installation (Note: you will probably need administrator rights to do this if you have
+					installed Blitzy to the default location). However it could be possible that there are
+					more steps needed in order to fully install the plugin. For any further information
+					please refer the the author of the plugin you are trying to install.
+				</p>
+				<p>
+					Blitzy comes with a couple of plugins by default so you can decided whether you
+					want something to be enabled or not. The plugins that are included with the Blitzy
+					installation are listed on the fullowing pages.
+				</p>
+				<div id="calcy">
+					<h2>Calcy</h2>
+					<p>
+						Calcy is a plugin that allows you to perform calculation from within Blitzy. For
+						invoking a Calcy command you simply type:
+					</p>
+					<div class="listing">
+						calcy [tab] expression
+					</div>
+					<p>
+						And while you type the result of the expression you typed in so far will be displayed
+						in the info field Below is a list of functions and constants you can use in your
+						expression.
+					</p>
+					<table>
+						<thead>
+							<tr>
+								<th>Function</th>
+								<th>Description</th>
+								<th>Example</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>pi </td>
+								<td>The value of &pi; </td>
+								<td>pi = 3.141...</td>
+							</tr>
+							<tr>
+								<td>e </td>
+								<td>The value of e </td>
+								<td>e = 2.718...</td>
+							</tr>
+							<tr>
+								<td>sin </td>
+								<td>Calculates the sine </td>
+								<td>sin(pi) = 0</td>
+							</tr>
+							<tr>
+								<td>cos </td>
+								<td>Calculates the cosine </td>
+								<td>cos(pi) = -1</td>
+							</tr>
+							<tr>
+								<td>tan </td>
+								<td>Calculates the tangens </td>
+								<td>tan(pi) = 0</td>
+							</tr>
+							<tr>
+								<td>sqrt </td>
+								<td>Calculates the square root </td>
+								<td>sqrt(4) = 2</td>
+							</tr>
+							<tr>
+								<td>ln </td>
+								<td>Calculates the natural logarithm </td>
+								<td>ln(e) = 1</td>
+							</tr>
+							<tr>
+								<td>log </td>
+								<td>Calculates the logarithm </td>
+								<td>log(100,10) = 2</td>
+							</tr>
+							<tr>
+								<td>asin </td>
+								<td>Calculates the asine </td>
+								<td>asin(0.1) = 0.100...</td>
+							</tr>
+							<tr>
+								<td>acos </td>
+								<td>Calculates the acos </td>
+								<td>acos(0.1) = 1.470...</td>
+							</tr>
+							<tr>
+								<td>atan </td>
+								<td>Calculates the atan </td>
+								<td>atan(0.1) = 0.099...</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div id="weby">
+					<h2>Weby</h2>
+					<p>
+						Weby is a fast way to search the internet using your prefered search engines. Additionally
+						you can simply open any website from the command input. If you want to open - let's
+						say wikipedia - you would simply type:
+					</p>
+					<div class="listing">
+						weby [tab] wikipedia.org
+					</div>
+					<p>
+						After a default installation there are some default engines already installed:
+					</p>
+					<ul>
+						<li>google &ndash; Web search using Google</li>
+						<li>wiki &ndash; Look up the term on Wikipedia (English version)</li>
+						<li>youtube &ndash; Search a video on YouTube</li>
+						<li>bing &ndash; Web searching using Bing</li>
+						<li>facebook &ndash; Search for people on Facebook</li>
+						<li>wolfram &ndash; Compute something using Wolfram Alpha</li>
+					</ul>
+					<p>
+						So if you want to search something using google you would simply type
+					</p>
+					<div class="listing">
+						google [tab] your search term
+					</div>
+					<p>
+						After executing the command your default web browser will open and the results of
+						your searched will be displayed to you.
+					</p>
+					<p>
+						You can add your own search engines or remove existing ones in Weby's settings dialog.
+					</p>
+					<p>
+						To add a new engine you would click on the "Add" Button and enter the name, a description (optionally) and the URL of the engine.<br />
+						The name must not be empty and must not already exists.<br />
+						The description may be left blank but then you won't see any further information when entering the command into the input field.<br />
+						The URL is the place where Weby should take you after executing the command.<br />
+						If you want to pass the search term you entered to the
+						website simply put a {0} at the place in the URL where the search term needs to be.
+					</p>
+				</div>
+				<div id="medy">
+					<h2>Medy</h2>
+					<p>
+						Medy let's you contrul any media player on your system that supports media keys.
+						Media keys are the extra keys on keyboards that allow you to play media, pause them,
+						or walk through the playlist. Medy simply simulates a press of these keys so there
+						are no compatibility issues with other software.
+					</p>
+					<p>
+						Available commands are:
+					</p>
+					<ul>
+						<li>play &mdash; Tell the player to start playing</li>
+						<li>pause &mdash; Tell the player to pause playing</li>
+						<li>next &mdash; Tell the player to go to the next track</li>
+						<li>prev &mdash; Tell the player to go to the previous track</li>
+						<li>volup &mdash; Increase volume</li>
+						<li>voldn &mdash; Decrease volume</li>
+					</ul>
+					<p>
+						So if you want to pause the currently playing song you simply execute
+					</p>
+					<div class="listing">
+						medy [tab] pause
+					</div>
+				</div>
+				<div id="putty">
+					<h2>Putty</h2>
+					<p>
+						Using this plugin you can directly start a Putty session from Blitzy. If you saved
+						sessions in Putty they will be directly available inside Blitzy. If you simply want
+						to start Putty to start a new session from there you would simply type:
+					</p>
+					<div class="listing">
+						ssh
+					</div>
+					<p>
+						However if you want to directly connect to a host you saved using Putty you would
+						type:
+					</p>
+					<div class="listing">
+						ssh [tab] session-name
+					</div>
+					<p>
+						Note that instead of typing <em>"ssh"</em> you may also type <em>"putty"</em>.
+					</p>
+				</div>
+				<div id="plugin_dev">
+					<h2>Creating own plugins</h2>
+					<p>
+						If you want to create your own plugins there is a <a href="DeveloperGuide.html">guide available</a> for you.
+					</p>
+				</div>
+			</div>
+			<!-- ====================== BUG REPORTING =================== -->
+			<div id="bugreport">
+				<h1>Reporting bugs</h1>
+				<p>
+					If you managed to crash Blitzy a window should appear that tells you that something went wrong and offers to send an error report
+					to me. The text field will show you exactly what data will be send to me although I doubt you can do anything useful with this
+					except checking if there are sensible information sent (which are not).
+
+					Additionally you may enter an email address that can be used to contact you if further information is needed to fix your reported bug.
+					This address won't be used for anything else than getting in touch with you if needed.
+
+					If you don't want to send the report that's ok, but then you shouldn't complain that the error won't get fixed. I can't fix anything
+					if I don't know it has to be fixed.
+					If you sent the report I'll promise to do my best to fix the bug as soon as possible.
+				</p>
+				<p>
+					However if you find something that doesn't crash the program but should be fixed, changed or could be done better please please report
+					an issue on the bug tracker. You'll find it at <a href="http://btbsoft.org/issues">http://btbsoft.org/issues</a>.
+					Before creating a new issue please do a search to find out if the issue has already been reported by some one else.
+				</p>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

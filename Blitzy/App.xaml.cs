@@ -33,23 +33,27 @@ namespace Blitzy
 		{
 			INativeMethods.Instance = new NativeMethods();
 
+			string[] args = Environment.GetCommandLineArgs();
+			if( args.Length > 0 )
+			{
+				if( args[0].Equals( Constants.CommandLine.InstallPlugin, StringComparison.OrdinalIgnoreCase ) )
+				{
+					ViewModelLocator vmloc = (ViewModelLocator)Application.Current.FindResource( "Locator" );
+					Debug.Assert( vmloc != null );
+					MainViewModel vm = vmloc.Main;
+
+					vm.Plugins.InstallPlugin( args[1] );
+					Shutdown( 0 );
+					return;
+				}
+			}
+
 			if( !SingleInstance.Start() )
 			{
 				SingleInstance.ShowFirstInstance();
 				Shutdown( int.MinValue );
 				return;
 			}
-
-			//const string fileName = "../Blity.Tests/TestData/Blitzy.exe.lnk";
-			//using( Blitzy.Model.Shell.ShellShortcut sh = new Blitzy.Model.Shell.ShellShortcut( fileName ) )
-			//{
-			//	string path = sh.Path;
-			//	string icon = sh.IconPath;
-			//	string desc = sh.Description;
-			//	string args = sh.GetArguments();
-
-			//	Debugger.Break();
-			//}
 
 			Thread.CurrentThread.Name = "Main";
 
@@ -153,8 +157,12 @@ namespace Blitzy
 
 		private void ChangeLanguage( LanguageMessage msg )
 		{
+			LogHelper.LogInfo( MethodInfo.GetCurrentMethod().DeclaringType, "Changing language to {0}", msg.Language );
+
+			LogHelper.LogDebug( MethodInfo.GetCurrentMethod().DeclaringType, "Current UI: {0}, Current Culture: {0}", Thread.CurrentThread.CurrentUICulture, Thread.CurrentThread.CurrentCulture );
 			LocalizeDictionary.Instance.SetCurrentThreadCulture = true;
 			LocalizeDictionary.Instance.Culture = msg.Language;
+			LogHelper.LogDebug( MethodInfo.GetCurrentMethod().DeclaringType, "Current UI: {0}, Current Culture: {0}", Thread.CurrentThread.CurrentUICulture, Thread.CurrentThread.CurrentCulture );
 		}
 
 		private void DefaultProvider_ProviderError( object sender, ProviderErrorEventArgs args )
@@ -163,10 +171,6 @@ namespace Blitzy
 		}
 
 		#endregion Methods
-
-		#region Properties
-
-		#endregion Properties
 
 		#region Attributes
 

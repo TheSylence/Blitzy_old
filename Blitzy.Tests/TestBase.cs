@@ -45,7 +45,7 @@ namespace Blitzy.Tests
 
 			DatabaseCreator.CreateDatabase( Connection );
 
-			CreatePluginTables();
+			//CreatePluginTables();
 		}
 
 		protected virtual void CreatePluginTables()

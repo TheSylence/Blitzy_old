@@ -47,9 +47,7 @@ namespace Blitzy.Controls
 
 		#endregion Methods
 
-		#region Properties
 
-		#endregion Properties
 
 		#region Attributes
 

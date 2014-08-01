@@ -29,10 +29,13 @@ namespace Blitzy.Model
 
 		internal async Task<VersionInfo> CheckVersion( bool showIfNewest = false )
 		{
+			// TODO: Set this to false for public release
+			bool includePreReleases = true;
+
 			Version currentVersion = Assembly.GetExecutingAssembly().GetName().Version;
 
 			LogHelper.LogInfo( MethodBase.GetCurrentMethod().DeclaringType, "Checking for updates..." );
-			VersionInfo versionInfo = await API.CheckVersion( Constants.SoftwareName, currentVersion );
+			VersionInfo versionInfo = await API.CheckVersion( Constants.SoftwareName, currentVersion, includePreReleases );
 			if( versionInfo.Status == HttpStatusCode.OK )
 			{
 				LogHelper.LogInfo( MethodBase.GetCurrentMethod().DeclaringType, "Latest available version is {0}", versionInfo.LatestVersion );
@@ -94,11 +97,7 @@ namespace Blitzy.Model
 			{
 				if( !RuntimeConfig.Tests )
 				{
-#if DEBUG
-					return new API( APIEndPoint.Localhost );
-#else
-				return new btbapi.API( APIEndPoint.Default );
-#endif
+					return new btbapi.API( APIEndPoint.Default );
 				}
 
 				return new API( APIEndPoint.Localhost );

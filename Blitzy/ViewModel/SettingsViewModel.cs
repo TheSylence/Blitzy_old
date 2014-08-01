@@ -13,15 +13,28 @@ using System.Threading.Tasks;
 using System.Windows;
 using Blitzy.Messages;
 using Blitzy.Model;
+using Blitzy.Plugin;
 using Blitzy.Utility;
 using Blitzy.ViewServices;
 using btbapi;
 using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Threading;
 using CommandManager = System.Windows.Input.CommandManager;
 
 namespace Blitzy.ViewModel
 {
+	internal class PluginPage
+	{
+		public System.Windows.Controls.Control Content { get; set; }
+
+		public IPluginViewModel DataContext { get; set; }
+
+		public IPlugin Plugin { get; set; }
+
+		public string Title { get; set; }
+	}
+
 	internal class SettingsViewModel : ViewModelBaseEx
 	{
 		#region Constructor
@@ -44,7 +57,8 @@ namespace Blitzy.ViewModel
 			_BuildDate = Assembly.GetExecutingAssembly().LinkerTimestamp();
 			_CatalogItemsProcessed = -1;
 
-			AvailableLanguages = new ObservableCollection<CultureInfo>( WPFLocalizeExtension.Providers.ResxLocalizationProvider.Instance.AvailableCultures.Where( c => !string.IsNullOrWhiteSpace( c.IetfLanguageTag ) ) );
+			PluginPages = new ObservableCollection<PluginPage>();
+			AvailableLanguages = new ObservableCollection<CultureInfo>( LanguageHelper.GetAvailableLanguages() );
 		}
 
 		protected override void RegisterMessages()
@@ -52,6 +66,7 @@ namespace Blitzy.ViewModel
 			base.RegisterMessages();
 
 			MessengerInstance.Register<CatalogStatusMessage>( this, OnCatalogStatusUpdate );
+			MessengerInstance.Register<PluginMessage>( this, HandlePluginActions );
 		}
 
 		#endregion Constructor
@@ -62,16 +77,15 @@ namespace Blitzy.ViewModel
 		{
 			base.Reset();
 
-			WebySettings = new WebySettingsViewModel( this );
-			RaisePropertyChanged( () => WebySettings );
+			PluginPages.Clear();
+			foreach( IPlugin plugin in PluginManager.Plugins.Where( p => p.HasSettings ) )
+			{
+				PluginPage page = CreatePluginPage( plugin );
+				PluginPages.Add( page );
+			}
+			RaisePropertyChanged( () => PluginPages );
 
-			WinySettings = new WinySettingsViewModel( this );
-			RaisePropertyChanged( () => WinySettings );
-
-			PuttySettings = new PuttySettingsViewModel( this );
-			RaisePropertyChanged( () => PuttySettings );
-
-			WorkspaceSettings = new WorkspaceSettingsViewModel( this );
+			WorkspaceSettings = new WorkspaceSettingsViewModel( Settings );
 			RaisePropertyChanged( () => WorkspaceSettings );
 
 			UpdateCheck = Settings.GetValue<bool>( SystemSetting.AutoUpdate );
@@ -88,18 +102,46 @@ namespace Blitzy.ViewModel
 			HistoryCount = Settings.GetValue<int>( SystemSetting.HistoryCount );
 			LastCatalogBuild = Settings.GetValue<DateTime>( SystemSetting.LastCatalogBuild );
 			ItemsInCatalog = GetItemCount();
-			SelectedLanguage = CultureInfo.CreateSpecificCulture( Settings.GetValue<string>( SystemSetting.Language ) );
 
-			while( !AvailableLanguages.Contains( SelectedLanguage ) && SelectedLanguage != null )
+			// Don't raise a system wide language change
+			_SelectedLanguage = LanguageHelper.GetLanguage( Settings.GetValue<string>( SystemSetting.Language ) );
+			RaisePropertyChanged( () => SelectedLanguage );
+		}
+
+		internal TContext GetPluginContext<TContext>( string name ) where TContext : class, IPluginViewModel
+		{
+			PluginPage page = PluginPages.FirstOrDefault( p => p.Title == name );
+			if( page == null )
 			{
-				if( string.IsNullOrWhiteSpace( SelectedLanguage.Parent.Name ) )
-				{
-					SelectedLanguage = null;
-					break;
-				}
-
-				SelectedLanguage = SelectedLanguage.Parent;
+				return null;
 			}
+
+			return page.DataContext as TContext;
+		}
+
+		private PluginPage CreatePluginPage( IPlugin plugin )
+		{
+			PluginPage page = new PluginPage();
+			page.Title = plugin.Name;
+			page.Plugin = plugin;
+			page.DataContext = plugin.GetSettingsDataContext();
+			page.Content = plugin.GetSettingsUI();
+
+			if( page.Content == null )
+			{
+				LogWarning( "Plugin {0} does not provide Content although HasSettings is true", plugin.Name );
+			}
+			else
+			{
+				page.Content.DataContext = page.DataContext;
+
+				if( page.DataContext == null )
+				{
+					LogWarning( "Plugin {0} does not provide a DataContext", plugin.Name );
+				}
+			}
+
+			return page;
 		}
 
 		private int GetItemCount()
@@ -109,6 +151,28 @@ namespace Blitzy.ViewModel
 				cmd.CommandText = "SELECT COUNT(*) FROM files";
 
 				return Convert.ToInt32( cmd.ExecuteScalar() );
+			}
+		}
+
+		private void HandlePluginActions( PluginMessage msg )
+		{
+			if( msg.Action == PluginAction.Disabled )
+			{
+				foreach( PluginPage page in PluginPages )
+				{
+					if( page.Plugin == msg.Plugin )
+					{
+						PluginPages.Remove( page );
+						break;
+					}
+				}
+			}
+			else if( msg.Action == PluginAction.Enabled )
+			{
+				if( msg.Plugin.HasSettings )
+				{
+					PluginPages.Add( CreatePluginPage( msg.Plugin ) );
+				}
 			}
 		}
 
@@ -147,6 +211,7 @@ namespace Blitzy.ViewModel
 		private void SetLanguage( CultureInfo culture )
 		{
 			MessengerInstance.Send( new LanguageMessage( culture ) );
+			RaisePropertyChanged( string.Empty );
 		}
 
 		#endregion Methods
@@ -159,6 +224,7 @@ namespace Blitzy.ViewModel
 		private RelayCommand _CancelCommand;
 		private RelayCommand _DefaultsCommand;
 		private RelayCommand _DownloadUpdateCommand;
+		private RelayCommand _PluginsDialogCommand;
 		private RelayCommand _RemoveExcludeCommand;
 		private RelayCommand _RemoveFolderCommand;
 		private RelayCommand _RemoveRuleCommand;
@@ -218,6 +284,15 @@ namespace Blitzy.ViewModel
 			{
 				return _DownloadUpdateCommand ??
 					( _DownloadUpdateCommand = new RelayCommand( ExecuteDownloadUpdateCommand, CanExecuteDownloadUpdateCommand ) );
+			}
+		}
+
+		public RelayCommand PluginsDialogCommand
+		{
+			get
+			{
+				return _PluginsDialogCommand ??
+					( _PluginsDialogCommand = new RelayCommand( ExecutePluginsDialogCommand, CanExecutePluginsDialogCommand ) );
 			}
 		}
 
@@ -288,14 +363,14 @@ namespace Blitzy.ViewModel
 		{
 			VersionCheckError = false;
 			LatestVersionInfo = await UpdateChecker.Instance.CheckVersion();
-			if( LatestVersionInfo.Status == HttpStatusCode.OK )
+			if( LatestVersionInfo.Status != HttpStatusCode.OK || ( LatestVersionInfo.LatestVersion.Major == 0 && LatestVersionInfo.LatestVersion.Minor == 0 ) )
 			{
-				DispatcherHelper.CheckBeginInvokeOnUI( CommandManager.InvalidateRequerySuggested );
-			}
-			else
-			{
+				LatestVersionInfo = null;
 				VersionCheckError = true;
 			}
+
+			VersionCheckInProgress = false;
+			DispatcherHelper.CheckBeginInvokeOnUI( CommandManager.InvalidateRequerySuggested );
 		}
 
 		private bool CanExecuteAddExcludeCommand()
@@ -328,6 +403,11 @@ namespace Blitzy.ViewModel
 			return LatestVersionInfo != null && LatestVersionInfo.DownloadLink != null;
 		}
 
+		private bool CanExecutePluginsDialogCommand()
+		{
+			return true;
+		}
+
 		private bool CanExecuteRemoveExcludeCommand()
 		{
 			return SelectedFolder != null && SelectedExclude != null;
@@ -355,7 +435,7 @@ namespace Blitzy.ViewModel
 
 		private bool CanExecuteUpdateCheckCommand()
 		{
-			return true;
+			return !VersionCheckInProgress;
 		}
 
 		private bool CanExecuteViewChangelogCommand()
@@ -415,6 +495,13 @@ namespace Blitzy.ViewModel
 			if( result == MessageBoxResult.Yes )
 			{
 				Settings.SetDefaults();
+				foreach( PluginPage page in PluginPages )
+				{
+					if( page.DataContext != null )
+					{
+						page.DataContext.RestoreDefaults();
+					}
+				}
 			}
 		}
 
@@ -422,6 +509,11 @@ namespace Blitzy.ViewModel
 		{
 			DownloadServiceParameters args = new DownloadServiceParameters( LatestVersionInfo.DownloadLink, "test.exe", 0, "234" );
 			DialogServiceManager.Show<DownloadService>( args );
+		}
+
+		private void ExecutePluginsDialogCommand()
+		{
+			DialogServiceManager.Show<PluginSettingsService>( PluginManager );
 		}
 
 		private void ExecuteRemoveExcludeCommand()
@@ -482,10 +574,21 @@ namespace Blitzy.ViewModel
 			Settings.SetValue( SystemSetting.Language, SelectedLanguage.IetfLanguageTag );
 
 			Settings.Save();
-			WinySettings.Save();
-			WebySettings.Save();
+			foreach( PluginPage page in PluginPages )
+			{
+				try
+				{
+					page.DataContext.Save();
+				}
+				catch( Exception ex )
+				{
+					LogWarning( "Failed to save settings for {0}: {1}", page.Title, ex );
+				}
+			}
+
 			WorkspaceSettings.Save();
 
+			MessengerInstance.Send( new SettingsChangedMessage() );
 			Close();
 		}
 
@@ -497,6 +600,7 @@ namespace Blitzy.ViewModel
 		[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 		private void ExecuteUpdateCheckCommand()
 		{
+			VersionCheckInProgress = true;
 			Task.Run( async () =>
 			{
 				await UpdateCheckAsync();
@@ -801,9 +905,11 @@ namespace Blitzy.ViewModel
 		private string _SelectedExclude;
 		private Folder _SelectedFolder;
 		private CultureInfo _SelectedLanguage;
+		private PluginPage _SelectedPluginPage;
 		private string _SelectedRule;
 		private Settings _Settings;
 		private bool _VersionCheckError;
+		private bool _VersionCheckInProgress;
 
 		public API API { get; private set; }
 
@@ -975,11 +1081,20 @@ namespace Blitzy.ViewModel
 				_LatestVersionInfo = value;
 				RaisePropertyChanged( () => LatestVersionInfo );
 
-				IsNewerVersionAvailable = CurrentVersion < LatestVersionInfo.LatestVersion;
+				if( value != null )
+				{
+					IsNewerVersionAvailable = CurrentVersion < LatestVersionInfo.LatestVersion;
+				}
+				else
+				{
+					IsNewerVersionAvailable = false;
+				}
 			}
 		}
 
-		public PuttySettingsViewModel PuttySettings { get; private set; }
+		public PluginManager PluginManager { get; set; }
+
+		public ObservableCollection<PluginPage> PluginPages { get; private set; }
 
 		public string SelectedExclude
 		{
@@ -1039,6 +1154,26 @@ namespace Blitzy.ViewModel
 				_SelectedLanguage = value;
 				SetLanguage( value );
 				RaisePropertyChanged( () => SelectedLanguage );
+			}
+		}
+
+		public PluginPage SelectedPluginPage
+		{
+			get
+			{
+				return _SelectedPluginPage;
+			}
+
+			set
+			{
+				if( _SelectedPluginPage == value )
+				{
+					return;
+				}
+
+				RaisePropertyChanging( () => SelectedPluginPage );
+				_SelectedPluginPage = value;
+				RaisePropertyChanged( () => SelectedPluginPage );
 			}
 		}
 
@@ -1102,9 +1237,25 @@ namespace Blitzy.ViewModel
 			}
 		}
 
-		public WebySettingsViewModel WebySettings { get; private set; }
+		public bool VersionCheckInProgress
+		{
+			get
+			{
+				return _VersionCheckInProgress;
+			}
 
-		public WinySettingsViewModel WinySettings { get; private set; }
+			set
+			{
+				if( _VersionCheckInProgress == value )
+				{
+					return;
+				}
+
+				RaisePropertyChanging( () => VersionCheckInProgress );
+				_VersionCheckInProgress = value;
+				RaisePropertyChanged( () => VersionCheckInProgress );
+			}
+		}
 
 		public WorkspaceSettingsViewModel WorkspaceSettings { get; private set; }
 

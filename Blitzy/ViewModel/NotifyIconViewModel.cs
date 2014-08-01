@@ -18,7 +18,7 @@ namespace Blitzy.ViewModel
 		[SuppressMessage( "Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors" )]
 		public NotifyIconViewModel()
 		{
-			if( !RuntimeConfig.Tests )
+			if( !RuntimeConfig.Tests && !IsInDesignMode )
 			{
 				ViewModelLocator vmloc = (ViewModelLocator)Application.Current.FindResource( "Locator" );
 				Debug.Assert( vmloc != null );

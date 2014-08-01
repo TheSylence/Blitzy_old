@@ -70,6 +70,11 @@ namespace Blitzy.Tests.Mocks
 			throw new NotImplementedException();
 		}
 
+		public override int SHGetStockIconInfo_Wrapper( View.StockIconIdentifier identifier, View.StockIconOptions flags, ref View.StockIconInfo info )
+		{
+			throw new NotImplementedException();
+		}
+
 		public override void ShowToFront_Wrapper( IntPtr window )
 		{
 			throw new NotImplementedException();

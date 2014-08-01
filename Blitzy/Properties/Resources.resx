@@ -474,4 +474,31 @@ Your address won't be used for any other purposes than investigating this error.
   <data name="HistorySize" xml:space="preserve">
     <value>History size</value>
   </data>
+  <data name="Disable" xml:space="preserve">
+    <value>Disable</value>
+  </data>
+  <data name="InstallPlugin" xml:space="preserve">
+    <value>Install plugin</value>
+  </data>
+  <data name="Plugin" xml:space="preserve">
+    <value>Plugin</value>
+  </data>
+  <data name="Enabled" xml:space="preserve">
+    <value>Enabled</value>
+  </data>
+  <data name="ManagePlugins" xml:space="preserve">
+    <value>Manage plugins</value>
+  </data>
+  <data name="Enable" xml:space="preserve">
+    <value>Enable</value>
+  </data>
+  <data name="ZipArchive" xml:space="preserve">
+    <value>Zip Archives</value>
+  </data>
+  <data name="DLLFiles" xml:space="preserve">
+    <value>DLL files</value>
+  </data>
+  <data name="PleaseWait" xml:space="preserve">
+    <value>Please wait...</value>
+  </data>
 </root>

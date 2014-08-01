@@ -38,6 +38,8 @@ namespace Blitzy
 
 		public abstract bool SetForegroundWindow_Wrapper( IntPtr hWnd );
 
+		public abstract int SHGetStockIconInfo_Wrapper( View.StockIconIdentifier identifier, View.StockIconOptions flags, ref View.StockIconInfo info );
+
 		public abstract void ShowToFront_Wrapper( IntPtr window );
 
 		public abstract bool ShowWindow_Wrapper( IntPtr hWnd, int nCmdShow );

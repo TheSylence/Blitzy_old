@@ -24,6 +24,11 @@ namespace Blitzy.Tests.Mocks
 			get { throw new NotImplementedException(); }
 		}
 
+		public bool HasSettings
+		{
+			get { return true; }
+		}
+
 		public string Name
 		{
 			get { return "MockPlugin"; }
@@ -65,6 +70,16 @@ namespace Blitzy.Tests.Mocks
 		public string GetInfo( IList<string> data, Blitzy.Model.CommandItem item )
 		{
 			throw new NotImplementedException();
+		}
+
+		public IPluginViewModel GetSettingsDataContext()
+		{
+			return null;
+		}
+
+		public System.Windows.Controls.Control GetSettingsUI()
+		{
+			return null;
 		}
 
 		public IEnumerable<Blitzy.Model.CommandItem> GetSubCommands( Blitzy.Model.CommandItem parent, IList<string> input )

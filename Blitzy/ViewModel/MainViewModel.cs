@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -10,6 +11,7 @@ using System.Windows.Threading;
 using Blitzy.Messages;
 using Blitzy.Model;
 using Blitzy.Plugin;
+using Blitzy.Utility;
 using Blitzy.ViewServices;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Threading;
@@ -38,6 +40,9 @@ namespace Blitzy.ViewModel
 				Settings.Load();
 			}
 
+			CultureInfo currentLanguage = LanguageHelper.GetLanguage( Settings.GetValue<string>( SystemSetting.Language ) );
+			MessengerInstance.Send( new LanguageMessage( currentLanguage ) );
+
 			ApiDatabase = ToDispose( new PluginDatabase( Database.Connection ) );
 			Plugins = ToDispose( new PluginManager( this, Database.Connection ) );
 			Plugins.LoadPlugins();
@@ -64,6 +69,7 @@ namespace Blitzy.ViewModel
 
 			MessengerInstance.Register<InternalCommandMessage>( this, msg => OnInternalCommand( msg.Command ) );
 			MessengerInstance.Register<CommandMessage>( this, OnCommand );
+			MessengerInstance.Register<SettingsChangedMessage>( this, OnSettingsChanged );
 		}
 
 		#endregion Constructor
@@ -148,6 +154,12 @@ namespace Blitzy.ViewModel
 					LogInfo( "Unhandled internal command: {0}", command );
 					break;
 			}
+		}
+
+		private void OnSettingsChanged( SettingsChangedMessage msg )
+		{
+			Plugins.ClearCache();
+			CmdManager.LoadPluginCommands();
 		}
 
 		private void RebuildTimer_Tick( object sender, EventArgs e )
@@ -437,6 +449,7 @@ namespace Blitzy.ViewModel
 				{
 					result = false;
 					LogError( "Failed to execute command ({1}): {0}", ex, CommandInput );
+					msg = ex.Message;
 				}
 				finally
 				{
@@ -540,7 +553,7 @@ namespace Blitzy.ViewModel
 
 		private void ExecuteSettingsCommand()
 		{
-			SettingsServiceParameters args = new SettingsServiceParameters( Settings, Builder );
+			SettingsServiceParameters args = new SettingsServiceParameters( Settings, Builder, Plugins );
 			DialogServiceManager.Show<SettingsService>( args );
 		}
 

@@ -10,8 +10,24 @@
 		<SVNPath_Trunk>http://localhost/svn/Blitzy/trunk</SVNPath_Trunk>
 		<SVNPath_Tags>http://localhost/svn/Blitzy/tags/AUTO_</SVNPath_Tags>
 	</PropertyGroup>
-	
+
 	<Import Project="$(MSBuildCommunityTasksPath)\MSBuild.Community.Tasks.Targets" />
+	<UsingTask TaskName="TokenReplace" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v12.0.dll">
+		<ParameterGroup>
+			<Path ParameterType="System.String" Required="true" />
+			<Token ParameterType="System.String" Required="true" />
+			<Replacement ParameterType="System.String" Required="true" />
+		</ParameterGroup>
+		<Task>
+			<Code Type="Fragment" Language="cs">
+				<![CDATA[
+string content = File.ReadAllText(Path);
+content = content.Replace(Token, Replacement);
+File.WriteAllText(Path, content);
+]]>
+			</Code>
+		</Task>
+	</UsingTask>
 
 	<Target Name="Cleanup">
 		<RemoveDir Directories="$(OutputPath)" />
@@ -21,12 +37,12 @@
 		<CallTarget Targets="Cleanup" />
 
 		<MSBuild Projects="$(SolutionDir)\Blitzy.sln" Properties="Configuration=Release;Platform=$(Platform);OutputPath=$(OutputPath)" />
+
+		<TokenReplace Path="$(OutputPath)\Blitzy.exe.config" Token="&lt;appender-ref ref=&quot;DebugAppender&quot; /&gt;" Replacement="&lt;appender-ref ref=&quot;LogFileAppender&quot; /&gt;" />
 	</Target>
 
 	<Target Name="Test">
-		<Copy SourceFiles="$(OutputPath)\x86\SQLite.Interop.dll" DestinationFolder="$(OutputPath)" />
-		<Exec Command="$(VSTests) Blitzy.Tests.dll" WorkingDirectory="$(OutputPath)" />
-		<Delete Files="$(OutputPath)\SQLite.Interop.dll" />
+		<Exec Command="$(VSTests) Blitzy.Tests.dll /InIsolation" WorkingDirectory="$(OutputPath)" />
 	</Target>
 
 	<Target Name="DeleteTempFiles">
@@ -34,6 +50,7 @@
 			<ToDelete Include="$(OutputPath)\*.xml" />
 			<ToDelete Include="$(OutputPath)\*.pdb" />
 			<ToDelete Include="$(OutputPath)\*.Tests.*" />
+			<ToDelete Include="$(OutputPath)\*.Fakes.*" />
 
 			<DirsToDelete Include="$(OutputPath)\es" />
 			<DirsToDelete Include="$(OutputPath)\fr" />
@@ -53,28 +70,10 @@
 	</Target>
 
 	<Target Name="MakeInstaller">
-
-	</Target>
-
-	<Target Name="SVN">
-		<ItemGroup>
-			<Assemblies Include="$(OutputPath)\Blitzy.exe" />
-		</ItemGroup>
-
-		<GetAssemblyIdentity AssemblyFiles="@(Assemblies)">
-			<Output TaskParameter="Assemblies" ItemName="AssemblyIdentity" />
-		</GetAssemblyIdentity>
-
-		<SvnCopy SourcePath="$(SVNPath_Trunk)" DestinationPath="$(SVNPath_Tags)%(AssemblyIdentity.Version)" Message="$(SVNMessage)" />
-	</Target>
-
-	<Target Name="Merge">
-		<Message Text="TODO: Merge Assemblies" Importance="high" />
 	</Target>
 
 	<Target Name="RunTests">
 		<CallTarget Targets="Compile" />
-		<CallTarget Targets="Merge" />
 		<CallTarget Targets="Test" />
 	</Target>
 
@@ -88,6 +87,5 @@
 	<Target Name="Installer">
 		<CallTarget Targets="Package" />
 		<CallTarget Targets="MakeInstaller" />
-		<CallTarget Targets="SVN" />
 	</Target>
 </Project>
