@@ -11,6 +11,7 @@ using System.Net;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 using Blitzy.Messages;
 using Blitzy.Model;
 using Blitzy.Plugin;
@@ -59,6 +60,30 @@ namespace Blitzy.ViewModel
 
 			PluginPages = new ObservableCollection<PluginPage>();
 			AvailableLanguages = new ObservableCollection<CultureInfo>( LanguageHelper.GetAvailableLanguages() );
+
+			Modifiers = new[]
+			{
+				"Ctrl",
+				"Alt",
+				"Shift",
+				"Windows",
+				"Alt+Windows",
+				"Shift+Windows",
+				"Ctrl+Windows",
+				"Ctrl+Alt",
+				"Ctrl+Shift"
+			};
+
+			Key[] ignoreKeys = { Key.None, Key.LWin, Key.RWin, Key.LeftAlt, Key.LeftCtrl, Key.LeftShift, Key.RightAlt, Key.RightCtrl, Key.RightShift };
+
+			Keys = new List<Key>();
+			foreach( Key key in Enum.GetValues( typeof( Key ) ) )
+			{
+				if( ignoreKeys.Contains( key ) )
+					continue;
+
+				Keys.Add( key );
+			}
 		}
 
 		protected override void RegisterMessages()
@@ -101,6 +126,8 @@ namespace Blitzy.ViewModel
 			BackupShortcuts = Settings.GetValue<bool>( SystemSetting.BackupShortcuts );
 			HistoryCount = Settings.GetValue<int>( SystemSetting.HistoryCount );
 			LastCatalogBuild = Settings.GetValue<DateTime>( SystemSetting.LastCatalogBuild );
+			SelectedModifierKey = GetModifier( Settings.GetValue<string>( SystemSetting.Shortcut ) );
+			SelectedKey = GetKey( Settings.GetValue<string>( SystemSetting.Shortcut ) );
 			ItemsInCatalog = GetItemCount();
 
 			// Don't raise a system wide language change
@@ -152,6 +179,25 @@ namespace Blitzy.ViewModel
 
 				return Convert.ToInt32( cmd.ExecuteScalar() );
 			}
+		}
+
+		private Key GetKey( string shortcut )
+		{
+			string[] parts = shortcut.Split( ',' );
+
+			return (Key)Enum.Parse( typeof( Key ), parts[1] );
+		}
+
+		private string GetModifier( string shortcut )
+		{
+			string[] parts = shortcut.Split( ',' );
+
+			return parts[0];
+		}
+
+		private string GetShortcutValue()
+		{
+			return string.Format( "{0}, {1}", SelectedModifierKey, SelectedKey );
 		}
 
 		private void HandlePluginActions( PluginMessage msg )
@@ -572,6 +618,7 @@ namespace Blitzy.ViewModel
 			Settings.SetValue( SystemSetting.BackupShortcuts, BackupShortcuts );
 			Settings.SetValue( SystemSetting.HistoryCount, HistoryCount );
 			Settings.SetValue( SystemSetting.Language, SelectedLanguage.IetfLanguageTag );
+			Settings.SetValue( SystemSetting.Shortcut, GetShortcutValue() );
 
 			Settings.Save();
 			foreach( PluginPage page in PluginPages )
@@ -904,7 +951,9 @@ namespace Blitzy.ViewModel
 		private VersionInfo _LatestVersionInfo;
 		private string _SelectedExclude;
 		private Folder _SelectedFolder;
+		private Key _SelectedKey;
 		private CultureInfo _SelectedLanguage;
+		private string _SelectedModifierKey;
 		private PluginPage _SelectedPluginPage;
 		private string _SelectedRule;
 		private Settings _Settings;
@@ -1043,6 +1092,8 @@ namespace Blitzy.ViewModel
 			}
 		}
 
+		public List<Key> Keys { get; private set; }
+
 		public DateTime LastCatalogBuild
 		{
 			get
@@ -1092,6 +1143,8 @@ namespace Blitzy.ViewModel
 			}
 		}
 
+		public string[] Modifiers { get; private set; }
+
 		public PluginManager PluginManager { get; set; }
 
 		public ObservableCollection<PluginPage> PluginPages { get; private set; }
@@ -1136,6 +1189,26 @@ namespace Blitzy.ViewModel
 			}
 		}
 
+		public Key SelectedKey
+		{
+			get
+			{
+				return _SelectedKey;
+			}
+
+			set
+			{
+				if( _SelectedKey == value )
+				{
+					return;
+				}
+
+				RaisePropertyChanging( () => SelectedKey );
+				_SelectedKey = value;
+				RaisePropertyChanged( () => SelectedKey );
+			}
+		}
+
 		public CultureInfo SelectedLanguage
 		{
 			get
@@ -1154,6 +1227,26 @@ namespace Blitzy.ViewModel
 				_SelectedLanguage = value;
 				SetLanguage( value );
 				RaisePropertyChanged( () => SelectedLanguage );
+			}
+		}
+
+		public string SelectedModifierKey
+		{
+			get
+			{
+				return _SelectedModifierKey;
+			}
+
+			set
+			{
+				if( _SelectedModifierKey == value )
+				{
+					return;
+				}
+
+				RaisePropertyChanging( () => SelectedModifierKey );
+				_SelectedModifierKey = value;
+				RaisePropertyChanged( () => SelectedModifierKey );
 			}
 		}
 

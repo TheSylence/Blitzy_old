@@ -25,7 +25,7 @@ namespace Blitzy.Model
 		[DefaultValue( 1 )]
 		CloseOnFocusLost,
 
-		[DefaultValue( "Ctrl+Alt, Space" )]
+		[DefaultValue( "Control+Alt, Space" )]
 		Shortcut,
 
 		[DefaultValue( 1 )]

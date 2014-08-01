@@ -7,6 +7,7 @@ using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Threading;
 using Blitzy.Messages;
 using Blitzy.Model;
@@ -87,6 +88,41 @@ namespace Blitzy.ViewModel
 		internal void RaiseShow()
 		{
 			Show();
+		}
+
+		internal void RegisterHotKey()
+		{
+			// Augen (17.04.2012)
+			//  _     _
+			// ].[   ].[
+			// 	   x
+			//   /===\
+
+			string[] str = Settings.GetValue<string>( SystemSetting.Shortcut ).Split( ',' );
+			Key key = (Key)Enum.Parse( typeof( Key ), str[1] );
+			ModifierKeys modifiers = ModifierKeys.None;
+			if( str[0].Contains( "Win" ) )
+				modifiers |= ModifierKeys.Windows;
+			if( str[0].Contains( "Alt" ) )
+				modifiers |= ModifierKeys.Alt;
+			if( str[0].Contains( "Shift" ) )
+				modifiers |= ModifierKeys.Shift;
+			if( str[0].Contains( "Ctrl" ) )
+				modifiers |= ModifierKeys.Control;
+
+			//KeyHost = new HotKeyHost( (HwndSource)HwndSource.FromVisual( this ) );
+
+			try
+			{
+				MessengerInstance.Send( new HotKeyMessage( modifiers, key ) );
+			}
+			catch( HotKeyAlreadyRegisteredException )
+			{
+				string text = "HotkeyAlreadyRegistered".Localize();
+				string caption = "Error".Localize();
+				MessageBoxParameter args = new MessageBoxParameter( text, caption, System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error );
+				DialogServiceManager.Show<MessageBoxService>( args );
+			}
 		}
 
 		private void BuildCatalog()
