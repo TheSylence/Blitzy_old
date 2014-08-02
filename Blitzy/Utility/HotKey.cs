@@ -266,7 +266,6 @@ namespace Blitzy.Utility
 			_HotKeys[id] = hotKey;
 		}
 
-		//Annotation: Can be replaced with "Random"-class
 		/// <summary>
 		/// Removes an hotKey
 		/// </summary>
