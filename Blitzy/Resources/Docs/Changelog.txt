@@ -1,5 +1,6 @@
 ﻿Version 0.9.4
 ----------------------
+* Left clicking the TrayIcon now shows the main window
 * HotKey can now be changed without a restart
 * Window is now hidden if shortcut is pressed and window was visible
 
