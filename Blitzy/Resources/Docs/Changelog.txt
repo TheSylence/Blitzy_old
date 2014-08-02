@@ -1,4 +1,17 @@
-﻿Version 0.9.1
+﻿Version 0.9.4
+----------------------
+* Window is now hidden if shortcut is pressed and window was visible
+
+Version 0.9.3
+----------------------
+* Fixed issue with shortcut
+
+Version 0.9.2
+----------------------
+* Settings are now correctly applied when launching the app for the first time
+* Fixed issue in error reporting
+
+Version 0.9.1
 ----------------------
 * Start menu is now added to the catalog by default
 

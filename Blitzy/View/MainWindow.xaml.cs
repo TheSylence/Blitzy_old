@@ -50,7 +50,14 @@ namespace Blitzy.View
 		{
 			if( msg == SingleInstance.WM_SHOWFIRSTINSTANCE )
 			{
-				Show();
+				if( Visibility == System.Windows.Visibility.Visible )
+				{
+					Hide();
+				}
+				else
+				{
+					Show();
+				}
 				handled = true;
 			}
 
