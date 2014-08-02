@@ -271,7 +271,7 @@ namespace Blitzy.Model
 						cmd.ExecuteNonQuery();
 					}
 
-					list = list.Skip( batchSize );
+					list = list.Skip( batchSize ).ToList();
 					++count;
 					ItemsSaved += batchSize;
 					DispatcherHelper.CheckBeginInvokeOnUI( () => Messenger.Default.Send( new CatalogStatusMessage( CatalogStatus.ProgressUpdated ) ) );
