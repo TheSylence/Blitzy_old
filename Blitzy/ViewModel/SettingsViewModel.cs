@@ -409,10 +409,14 @@ namespace Blitzy.ViewModel
 		{
 			VersionCheckError = false;
 			LatestVersionInfo = await UpdateChecker.Instance.CheckVersion();
-			if( LatestVersionInfo.Status != HttpStatusCode.OK || ( LatestVersionInfo.LatestVersion.Major == 0 && LatestVersionInfo.LatestVersion.Minor == 0 ) )
+			if( LatestVersionInfo.Status != HttpStatusCode.OK )
 			{
 				LatestVersionInfo = null;
 				VersionCheckError = true;
+			}
+			else if( LatestVersionInfo.LatestVersion.Major == 0 && LatestVersionInfo.LatestVersion.Minor == 0 )
+			{
+				LatestVersionInfo = new VersionInfo( HttpStatusCode.OK, Assembly.GetExecutingAssembly().GetName().Version, null, null, 0, null );
 			}
 
 			VersionCheckInProgress = false;
