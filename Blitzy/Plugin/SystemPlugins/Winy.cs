@@ -8,6 +8,7 @@ using System.Windows;
 using Blitzy.Model;
 using Blitzy.Utility;
 using Blitzy.ViewServices;
+using GalaSoft.MvvmLight.Threading;
 
 namespace Blitzy.Plugin.SystemPlugins
 {
@@ -31,7 +32,9 @@ namespace Blitzy.Plugin.SystemPlugins
 			if( Confirmations[command.Name] )
 			{
 				MessageBoxParameter mbArgs = new MessageBoxParameter( "ConfirmOperation".Localize(), "ConfirmationRequired".Localize() );
-				MessageBoxResult result = DialogServiceManager.Show<MessageBoxService, MessageBoxResult>( mbArgs );
+				MessageBoxResult result = MessageBoxResult.No;
+
+				DispatcherHelper.RunAsync( () => result = DialogServiceManager.Show<MessageBoxService, MessageBoxResult>( mbArgs ) ).Wait();
 				if( result == MessageBoxResult.No )
 				{
 					return true;

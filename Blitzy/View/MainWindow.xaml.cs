@@ -14,6 +14,7 @@ namespace Blitzy.View
 	[ExcludeFromCodeCoverage]
 	public partial class MainWindow
 	{
+		private HotKey CurrentHotKey;
 		private HotKeyHost KeyHost;
 
 		public MainWindow()
@@ -37,7 +38,13 @@ namespace Blitzy.View
 
 			Messenger.Default.Register<HotKeyMessage>( this, msg =>
 			{
-				KeyHost.AddHotKey( new HotKey( msg.Key, msg.Modifiers, true ) );
+				if( CurrentHotKey != null )
+				{
+					KeyHost.RemoveHotKey( CurrentHotKey );
+				}
+
+				CurrentHotKey = new HotKey( msg.Key, msg.Modifiers, true );
+				KeyHost.AddHotKey( CurrentHotKey );
 			} );
 
 			KeyHost.HotKeyPressed += ( s, e ) => Show();
@@ -50,7 +57,15 @@ namespace Blitzy.View
 		{
 			if( msg == SingleInstance.WM_SHOWFIRSTINSTANCE )
 			{
-				Show();
+				if( Visibility == System.Windows.Visibility.Visible )
+				{
+					Hide();
+				}
+				else
+				{
+					// TODO: Sometimes the window loses focus when shown?
+					Show();
+				}
 				handled = true;
 			}
 

@@ -84,12 +84,19 @@ namespace Blitzy.ViewModel.Dialogs
 				{
 					StringBuilder sb = new StringBuilder();
 
-					foreach( Version v in LatestVersionInfo.ChangeLogs.Keys.OrderByDescending( k => k ) )
+					if( LatestVersionInfo.ChangeLogs != null )
 					{
-						sb.AppendFormat( "<u>Changes in Version {0}:</u><br />", v );
-						sb.AppendLine( LatestVersionInfo.ChangeLogs[v] );
-						sb.AppendLine();
-						sb.AppendLine();
+						foreach( Version v in LatestVersionInfo.ChangeLogs.Keys.OrderByDescending( k => k ) )
+						{
+							sb.AppendFormat( "<u>Changes in Version {0}:</u><br />", v );
+							sb.AppendLine( LatestVersionInfo.ChangeLogs[v] );
+							sb.AppendLine();
+							sb.AppendLine();
+						}
+					}
+					else
+					{
+						sb.AppendLine( "No changelog available" );
 					}
 
 					Changelog = sb.ToString();

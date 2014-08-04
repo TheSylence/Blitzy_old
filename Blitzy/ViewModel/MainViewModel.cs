@@ -195,6 +195,7 @@ namespace Blitzy.ViewModel
 
 		private void OnSettingsChanged( SettingsChangedMessage msg )
 		{
+			RegisterHotKey();
 			Plugins.ClearCache();
 			CmdManager.LoadPluginCommands();
 		}

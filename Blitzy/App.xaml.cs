@@ -58,7 +58,7 @@ namespace Blitzy
 			Thread.CurrentThread.Name = "Main";
 
 #if !DEBUG
-			DispatcherUnhandledException += new DispatcherUnhandledExceptionEventHandler( Application_DispatcherUnhandledException );
+			//DispatcherUnhandledException += new DispatcherUnhandledExceptionEventHandler( Application_DispatcherUnhandledException );
 #endif
 
 			LocalizeDictionary.Instance.DefaultProvider.ProviderError += DefaultProvider_ProviderError;
@@ -138,6 +138,11 @@ namespace Blitzy
 		private void Application_DispatcherUnhandledException( object sender, DispatcherUnhandledExceptionEventArgs e )
 		{
 			LogHelper.LogFatal( this, "Unhandled Exception: {0}", e.Exception );
+
+			if( Debugger.IsAttached )
+			{
+				Debugger.Break();
+			}
 
 			try
 			{

@@ -990,6 +990,15 @@ namespace Blitzy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Scanned {0} of {1} folders.
+        /// </summary>
+        public static string ScanningCatalogProgress {
+            get {
+                return ResourceManager.GetString("ScanningCatalogProgress", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Settings.
         /// </summary>
         public static string Settings {

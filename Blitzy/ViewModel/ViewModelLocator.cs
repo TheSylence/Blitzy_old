@@ -155,10 +155,17 @@ namespace Blitzy.ViewModel
 
 			foreach( Type type in ViewModelTypes )
 			{
-				foreach( ViewModelBaseEx vm in ServiceLocator.Current.GetAllInstances( type ) )
+				try
 				{
-					vm.Cleanup();
-					vm.Dispose();
+					foreach( ViewModelBaseEx vm in ServiceLocator.Current.GetAllInstances( type ) )
+					{
+						vm.Cleanup();
+						vm.Dispose();
+					}
+				}
+				catch( Exception ex )
+				{
+					LogHelper.LogError( MethodInfo.GetCurrentMethod().DeclaringType, "While cleaning up {0}: {1}", type, ex );
 				}
 			}
 
