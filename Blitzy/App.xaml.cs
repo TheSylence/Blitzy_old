@@ -139,6 +139,11 @@ namespace Blitzy
 		{
 			LogHelper.LogFatal( this, "Unhandled Exception: {0}", e.Exception );
 
+			if( Debugger.IsAttached )
+			{
+				Debugger.Break();
+			}
+
 			try
 			{
 				ExceptionDialog dlg = new ExceptionDialog( e.Exception, new StackTrace( true ) );
