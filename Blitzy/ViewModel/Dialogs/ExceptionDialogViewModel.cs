@@ -18,12 +18,10 @@ namespace Blitzy.ViewModel.Dialogs
 
 		public ExceptionDialogViewModel( Exception ex, StackTrace trace )
 		{
-			_ErrorReport = new ErrorReport( ex, trace );
+			ErrorReport = new ErrorReport( ex, trace );
 		}
 
 		#endregion Constructor
-
-
 
 		#region Commands
 
@@ -101,6 +99,7 @@ namespace Blitzy.ViewModel.Dialogs
 		#region Properties
 
 		private ErrorReport _ErrorReport;
+		private string _ErrorReportText;
 
 		public ErrorReport ErrorReport
 		{
@@ -119,6 +118,31 @@ namespace Blitzy.ViewModel.Dialogs
 				RaisePropertyChanging( () => ErrorReport );
 				_ErrorReport = value;
 				RaisePropertyChanged( () => ErrorReport );
+
+				if( _ErrorReport != null )
+				{
+					ErrorReportText = _ErrorReport.ToString();
+				}
+			}
+		}
+
+		public string ErrorReportText
+		{
+			get
+			{
+				return _ErrorReportText;
+			}
+
+			set
+			{
+				if( _ErrorReportText == value )
+				{
+					return;
+				}
+
+				RaisePropertyChanging( () => ErrorReportText );
+				_ErrorReportText = value;
+				RaisePropertyChanged( () => ErrorReportText );
 			}
 		}
 

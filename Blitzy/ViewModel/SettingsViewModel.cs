@@ -239,7 +239,12 @@ namespace Blitzy.ViewModel
 			}
 			else if( msg.Status == CatalogStatus.ProgressUpdated )
 			{
-				if( CatalogBuilder.ProgressStep == CatalogProgressStep.Parsing )
+				if( CatalogBuilder.ProgressStep == CatalogProgressStep.Scanning )
+				{
+					FilesProcessed = "ScanningCatalogProgress".FormatLocalized( CatalogBuilder.ItemsScanned, CatalogBuilder.ItemsToProcess );
+					CatalogItemsProcessed = CatalogBuilder.ItemsScanned;
+				}
+				else if( CatalogBuilder.ProgressStep == CatalogProgressStep.Parsing )
 				{
 					FilesProcessed = "ParsingCatalogProgress".FormatLocalized( CatalogBuilder.ItemsProcessed, CatalogBuilder.ItemsToProcess );
 					CatalogItemsProcessed = CatalogBuilder.ItemsProcessed;
@@ -409,10 +414,14 @@ namespace Blitzy.ViewModel
 		{
 			VersionCheckError = false;
 			LatestVersionInfo = await UpdateChecker.Instance.CheckVersion();
-			if( LatestVersionInfo.Status != HttpStatusCode.OK || ( LatestVersionInfo.LatestVersion.Major == 0 && LatestVersionInfo.LatestVersion.Minor == 0 ) )
+			if( LatestVersionInfo.Status != HttpStatusCode.OK )
 			{
 				LatestVersionInfo = null;
 				VersionCheckError = true;
+			}
+			else if( LatestVersionInfo.LatestVersion.Major == 0 && LatestVersionInfo.LatestVersion.Minor == 0 )
+			{
+				LatestVersionInfo = new VersionInfo( HttpStatusCode.OK, Assembly.GetExecutingAssembly().GetName().Version, null, null, 0, null );
 			}
 
 			VersionCheckInProgress = false;

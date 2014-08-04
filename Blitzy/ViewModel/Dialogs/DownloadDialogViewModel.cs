@@ -38,7 +38,7 @@ namespace Blitzy.ViewModel.Dialogs
 			{
 				using( HttpClient client = new HttpClient() )
 				{
-					LogInfo( "Start download of {0}", DownloadLink );
+					LogInfo( "Start download of {0} (Size: {1})", DownloadLink, DownloadSize );
 					ProgressStatistic stats = new ProgressStatistic
 					{
 						UsedEstimatingMethod = ProgressStatistic.EstimatingMethod.CurrentBytesPerSecond

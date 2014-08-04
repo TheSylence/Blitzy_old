@@ -20,6 +20,7 @@ namespace Blitzy.Model
 	internal enum CatalogProgressStep
 	{
 		None,
+		Scanning,
 		Parsing,
 		Saving
 	}
@@ -74,12 +75,6 @@ namespace Blitzy.Model
 
 		public void Build()
 		{
-			lock( LockObject )
-			{
-				FilesToProcess.Clear();
-				FilesToProcess.AddRange( Settings.Folders.SelectMany( f => f.GetFiles() ) );
-			}
-
 			if( RuntimeConfig.Tests )
 			{
 				ProcessFiles();
@@ -92,23 +87,31 @@ namespace Blitzy.Model
 
 		public void Stop()
 		{
+			ShouldStop = true;
 		}
 
 		internal void ProcessFiles()
 		{
+			IsBuilding = true;
 			DispatcherHelper.CheckBeginInvokeOnUI( () => Messenger.Default.Send( new CatalogStatusMessage( CatalogStatus.BuildStarted ) ) );
-			ShouldStop = false;
-			string[] files;
-			lock( LockObject )
+
+			ProgressStep = CatalogProgressStep.Scanning;
+			FilesToProcess.Clear();
+			ItemsToProcess = Settings.Folders.Count;
+			foreach( Folder folder in Settings.Folders )
 			{
-				files = FilesToProcess.Distinct().ToArray();
+				FilesToProcess.AddRange( folder.GetFiles() );
+
+				++ItemsScanned;
+				DispatcherHelper.CheckBeginInvokeOnUI( () => Messenger.Default.Send( new CatalogStatusMessage( CatalogStatus.ProgressUpdated ) ) );
 			}
+
+			ShouldStop = false;
+			string[] files = FilesToProcess.Distinct().ToArray();
 
 			if( files.Length > 0 )
 			{
 				List<FileEntry> entries = new List<FileEntry>( files.Length );
-
-				IsBuilding = true;
 
 				ItemsProcessed = 0;
 				ItemsSaved = 0;
@@ -127,6 +130,11 @@ namespace Blitzy.Model
 					string icon = filePath;
 					string arguments = string.Empty;
 					string fileName = Path.GetFileNameWithoutExtension( filePath );
+
+					//if( fileName.Contains( "Steam" ) )
+					//{
+					//	Debugger.Break();
+					//}
 
 					if( ext != null && ext.Equals( ".lnk" ) )
 					{
@@ -163,7 +171,7 @@ namespace Blitzy.Model
 						}
 						catch( Exception ex )
 						{
-							LogError( "Exception while resolving shortcut: {0}", ex );
+							LogError( "Exception while resolving shortcut {1}: {0}", ex, filePath );
 							continue;
 						}
 						finally
@@ -205,8 +213,9 @@ namespace Blitzy.Model
 				SaveEntries( entries.Distinct() );
 
 				ProgressStep = CatalogProgressStep.None;
-				IsBuilding = false;
 			}
+
+			IsBuilding = false;
 			DispatcherHelper.CheckBeginInvokeOnUI( () => Messenger.Default.Send( new CatalogStatusMessage( CatalogStatus.BuildFinished ) ) );
 		}
 
@@ -271,7 +280,7 @@ namespace Blitzy.Model
 						cmd.ExecuteNonQuery();
 					}
 
-					list = list.Skip( batchSize ).ToList();
+					list = list.Skip( batchSize );
 					++count;
 					ItemsSaved += batchSize;
 					DispatcherHelper.CheckBeginInvokeOnUI( () => Messenger.Default.Send( new CatalogStatusMessage( CatalogStatus.ProgressUpdated ) ) );
@@ -296,6 +305,7 @@ namespace Blitzy.Model
 		private bool _IsBuilding;
 		private int _ItemsProcessed;
 		private int _ItemsSaved;
+		private int _ItemsScanned;
 		private int _ItemsToProcess;
 		private CatalogProgressStep _ProgressStep;
 
@@ -359,6 +369,26 @@ namespace Blitzy.Model
 			}
 		}
 
+		public int ItemsScanned
+		{
+			get
+			{
+				return _ItemsScanned;
+			}
+
+			set
+			{
+				if( _ItemsScanned == value )
+				{
+					return;
+				}
+
+				RaisePropertyChanging( () => ItemsScanned );
+				_ItemsScanned = value;
+				RaisePropertyChanged( () => ItemsScanned );
+			}
+		}
+
 		public int ItemsToProcess
 		{
 			get
@@ -405,7 +435,6 @@ namespace Blitzy.Model
 
 		private readonly AutoResetEvent CanProcess;
 		private readonly List<string> FilesToProcess = new List<string>( 16384 );
-		private readonly object LockObject = new object();
 		private readonly Settings Settings;
 		private readonly Thread ThreadObject;
 		private bool IsRunning;

@@ -1,5 +1,6 @@
 ﻿Version 0.9.4
 ----------------------
+* Fixed issue where no files of a folder where found if one of the folder's subfolders was not accessable
 * Fixed issue in Runny when confirmation was enabled
 * Left clicking the TrayIcon now shows the main window
 * HotKey can now be changed without a restart

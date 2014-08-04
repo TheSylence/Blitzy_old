@@ -496,4 +496,7 @@ Um den Fehler beheben zu können kann ein Fehlerbericht an die Entwickler gesend
   <data name="HotKey" xml:space="preserve">
     <value>Hot Key</value>
   </data>
+  <data name="ScanningCatalogProgress" xml:space="preserve">
+    <value>{0} von {1} Ordner gescannt</value>
+  </data>
 </root>
