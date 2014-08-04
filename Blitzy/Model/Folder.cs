@@ -69,29 +69,7 @@ namespace Blitzy.Model
 
 		public IEnumerable<string> GetFiles()
 		{
-			SearchOption options = IsRecursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
-
-			foreach( string rule in Rules )
-			{
-				string[] fileList = new string[0];
-
-				try
-				{
-					fileList = Directory.GetFiles( Path, rule, options );
-				}
-				catch( Exception ex )
-				{
-					LogError( "While loading files: {0}", ex );
-				}
-
-				foreach( string file in fileList )
-				{
-					if( !Excludes.Any( e => IsExcluded( file, e ) ) )
-					{
-						yield return file;
-					}
-				}
-			}
+			return GetFilesInFolder( Path );
 		}
 
 		public override void Load( SQLiteConnection connection )
@@ -262,9 +240,89 @@ namespace Blitzy.Model
 
 		private static bool IsExcluded( string path, string exclude )
 		{
-			Regex ex = new Regex( exclude.WildcardToRegex() );
+			string pattern = exclude.WildcardToRegex();
+			Regex ex;
+			if( !RegexCache.TryGetValue( pattern, out ex ) )
+			{
+				ex = new Regex( pattern );
+				RegexCache.Add( pattern, ex );
+			}
+
 			path = System.IO.Path.GetFileName( path );
 			return ex.IsMatch( path );
+		}
+
+		private IEnumerable<string> GetFilesInFolder( string folder )
+		{
+			IEnumerable<string> fileList = Enumerable.Empty<string>();
+			DirectoryInfo topDirectory = new DirectoryInfo( folder );
+
+			foreach( string rule in Rules )
+			{
+				string[] files = new string[0];
+
+				try
+				{
+					files = Directory.GetFiles( folder, rule, SearchOption.TopDirectoryOnly );
+				}
+				catch
+				{
+				}
+
+				fileList = fileList.Concat( files.Where( file => !Excludes.Any( e => IsExcluded( file, e ) ) ) );
+
+				//IEnumerable<FileInfo> files = topDirectory.EnumerateFiles( rule, SearchOption.TopDirectoryOnly );
+				//int filesLength = files.Count();
+				//fileList = Enumerable.Range( 0, filesLength ).Select( i =>
+				//{
+				//	string filename = null;
+				//	try
+				//	{
+				//		FileInfo inf = files.ElementAt( i );
+				//		filename = inf.FullName;
+				//	}
+				//	catch
+				//	{
+				//	}
+
+				//	return filename;
+				//} ).Where( i => i != null && !Excludes.Any( e => IsExcluded( i, e ) ) );
+			}
+
+			if( IsRecursive )
+			{
+				string[] dirs = new string[0];
+
+				try
+				{
+					dirs = Directory.GetDirectories( folder );
+				}
+				catch
+				{
+				}
+
+				fileList = fileList.Concat( dirs.SelectMany( d => GetFilesInFolder( d ) ) );
+				//IEnumerable<DirectoryInfo> dirs = topDirectory.EnumerateDirectories();
+				//int dirsLength = dirs.Count();
+
+				//IEnumerable<string> dirsList = Enumerable.Range( 0, dirsLength ).SelectMany( i =>
+				//{
+				//	try
+				//	{
+				//		DirectoryInfo inf = dirs.ElementAt( i );
+				//		return GetFilesInFolder( inf.FullName );
+				//	}
+				//	catch
+				//	{
+				//	}
+
+				//	return Enumerable.Empty<string>();
+				//} );
+
+				//fileList = Enumerable.Concat( fileList, dirsList );
+			}
+
+			return fileList;
 		}
 
 		#endregion Methods
@@ -324,6 +382,8 @@ namespace Blitzy.Model
 		#endregion Properties
 
 		#region Attributes
+
+		private static Dictionary<string, Regex> RegexCache = new Dictionary<string, Regex>();
 
 		#endregion Attributes
 	}

@@ -239,7 +239,12 @@ namespace Blitzy.ViewModel
 			}
 			else if( msg.Status == CatalogStatus.ProgressUpdated )
 			{
-				if( CatalogBuilder.ProgressStep == CatalogProgressStep.Parsing )
+				if( CatalogBuilder.ProgressStep == CatalogProgressStep.Scanning )
+				{
+					FilesProcessed = "ScanningCatalogProgress".FormatLocalized( CatalogBuilder.ItemsScanned, CatalogBuilder.ItemsToProcess );
+					CatalogItemsProcessed = CatalogBuilder.ItemsScanned;
+				}
+				else if( CatalogBuilder.ProgressStep == CatalogProgressStep.Parsing )
 				{
 					FilesProcessed = "ParsingCatalogProgress".FormatLocalized( CatalogBuilder.ItemsProcessed, CatalogBuilder.ItemsToProcess );
 					CatalogItemsProcessed = CatalogBuilder.ItemsProcessed;
