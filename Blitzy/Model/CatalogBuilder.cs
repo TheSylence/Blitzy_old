@@ -95,6 +95,7 @@ namespace Blitzy.Model
 			IsBuilding = true;
 			DispatcherHelper.CheckBeginInvokeOnUI( () => Messenger.Default.Send( new CatalogStatusMessage( CatalogStatus.BuildStarted ) ) );
 
+			ItemsScanned = 0;
 			ProgressStep = CatalogProgressStep.Scanning;
 			FilesToProcess.Clear();
 			ItemsToProcess = Settings.Folders.Count;
