@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Windows.Input;
 using System.Windows.Interop;
 using Blitzy.Messages;
 using Blitzy.Utility;
@@ -21,7 +22,8 @@ namespace Blitzy.View
 		{
 			InitializeComponent();
 
-			Activated += ( s, e ) => txtInput.Focus();
+			Activated += ( s, e ) => FocusInput();
+			Shown += ( s, e ) => FocusInput();
 
 			Messenger.Default.Register<HistoryMessage>( this, msg =>
 			{
@@ -51,6 +53,12 @@ namespace Blitzy.View
 
 			MainViewModel vm = DataContext as MainViewModel;
 			vm.RegisterHotKey();
+		}
+
+		private void FocusInput()
+		{
+			txtInput.Focus();
+			FocusManager.SetFocusedElement( this, txtInput );
 		}
 
 		private IntPtr WndProc( IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled )
