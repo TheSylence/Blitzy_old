@@ -1,6 +1,7 @@
 ﻿Version 0.9.5
 ----------------------
 * Settings dialog no longer closes itself after pressing the save button
+* Added a missing translation for german
 
 Version 0.9.4
 ----------------------

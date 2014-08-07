@@ -493,16 +493,6 @@ namespace Blitzy.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to If you want to you can enter an E-Mail address that we can use to contact you if we need further details.
-        ///Your address won&apos;t be used for any other purposes than investigating this error..
-        /// </summary>
-        public static string ExceptionContactDetails {
-            get {
-                return ResourceManager.GetString("ExceptionContactDetails", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to We are sorry but there has been a critical error in the application. All unsaved data are probably lost.
         ///To help us fixing the error we encourage you to send an error report to the developers. Below you can see the data that will be send..
         /// </summary>
