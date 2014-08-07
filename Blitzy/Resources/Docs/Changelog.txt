@@ -1,4 +1,8 @@
-﻿Version 0.9.4
+﻿Version 0.9.5
+----------------------
+* Settings dialog no longer closes itself after pressing the save button
+
+Version 0.9.4
 ----------------------
 * Fixed issue where no files of a folder where found if one of the folder's subfolders was not accessable
 * Fixed issue in Runny when confirmation was enabled
