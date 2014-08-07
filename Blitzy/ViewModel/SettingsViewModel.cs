@@ -645,7 +645,6 @@ namespace Blitzy.ViewModel
 			WorkspaceSettings.Save();
 
 			MessengerInstance.Send( new SettingsChangedMessage() );
-			Close();
 		}
 
 		private void ExecuteUpdateCatalogCommand()
