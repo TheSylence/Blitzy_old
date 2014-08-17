@@ -49,7 +49,18 @@ namespace Blitzy.View
 				KeyHost.AddHotKey( CurrentHotKey );
 			} );
 
-			KeyHost.HotKeyPressed += ( s, e ) => Show();
+			KeyHost.HotKeyPressed += ( s, e ) =>
+			{
+				if( Visibility == System.Windows.Visibility.Visible )
+				{
+					Hide();
+				}
+				else
+				{
+					// TODO: Sometimes the window loses focus when shown?
+					Show();
+				}
+			};
 
 			MainViewModel vm = DataContext as MainViewModel;
 			vm.RegisterHotKey();
@@ -67,15 +78,7 @@ namespace Blitzy.View
 		{
 			if( msg == SingleInstance.WM_SHOWFIRSTINSTANCE )
 			{
-				if( Visibility == System.Windows.Visibility.Visible )
-				{
-					Hide();
-				}
-				else
-				{
-					// TODO: Sometimes the window loses focus when shown?
-					Show();
-				}
+				Show();
 				handled = true;
 			}
 
