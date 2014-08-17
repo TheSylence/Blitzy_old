@@ -24,12 +24,14 @@ namespace Blitzy.View
 
 			Activated += ( s, e ) => FocusInput();
 			Shown += ( s, e ) => FocusInput();
+			GotFocus += ( s, e ) => FocusInput();
+			GotKeyboardFocus += ( s, e ) => FocusInput();
 
 			Messenger.Default.Register<HistoryMessage>( this, msg =>
 			{
 				if( msg.Type == HistoryMessageType.Hide )
 				{
-					txtInput.Focus();
+					FocusInput();
 				}
 			} );
 
@@ -57,8 +59,8 @@ namespace Blitzy.View
 				}
 				else
 				{
-					// TODO: Sometimes the window loses focus when shown?
 					Show();
+					Activate();
 				}
 			};
 
