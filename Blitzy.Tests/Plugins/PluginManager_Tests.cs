@@ -14,16 +14,18 @@ namespace Blitzy.Tests.Plugins
 		public void GetPluginTest()
 		{
 			MockPluginHost host = new MockPluginHost();
-			PluginManager pmgr = new PluginManager( host, Connection );
-			pmgr.LoadPlugins();
-			Assert.AreNotEqual( 0, pmgr.Plugins.Count );
-
-			foreach( IPlugin plug in pmgr.Plugins )
+			using( PluginManager pmgr = new PluginManager( host, Connection ) )
 			{
-				Assert.IsTrue( pmgr.IsLoaded( plug.PluginID ) );
+				pmgr.LoadPlugins();
+				Assert.AreNotEqual( 0, pmgr.Plugins.Count );
 
-				Assert.AreSame( plug, pmgr.GetPlugin( plug.PluginID ) );
-				Assert.AreSame( plug, pmgr.GetPlugin( plug.Name ) );
+				foreach( IPlugin plug in pmgr.Plugins )
+				{
+					Assert.IsTrue( pmgr.IsLoaded( plug.PluginID ) );
+
+					Assert.AreSame( plug, pmgr.GetPlugin( plug.PluginID ) );
+					Assert.AreSame( plug, pmgr.GetPlugin( plug.Name ) );
+				}
 			}
 		}
 
@@ -31,22 +33,26 @@ namespace Blitzy.Tests.Plugins
 		public void IsLoadedTest()
 		{
 			MockPluginHost host = new MockPluginHost();
-			PluginManager pmgr = new PluginManager( host, Connection );
-			pmgr.LoadPlugins();
+			using( PluginManager pmgr = new PluginManager( host, Connection ) )
+			{
+				pmgr.LoadPlugins();
 
-			Blitzy.Plugin.SystemPlugins.Blitzy plug = new Plugin.SystemPlugins.Blitzy();
+				Blitzy.Plugin.SystemPlugins.Blitzy plug = new Plugin.SystemPlugins.Blitzy();
 
-			Assert.IsTrue( pmgr.IsLoaded( plug.PluginID ) );
+				Assert.IsTrue( pmgr.IsLoaded( plug.PluginID ) );
+			}
 		}
 
 		[TestMethod, TestCategory( "Plugins" )]
 		public void LoadTest()
 		{
 			MockPluginHost host = new MockPluginHost();
-			PluginManager pmgr = new PluginManager( host, Connection );
-			pmgr.LoadPlugins();
+			using( PluginManager pmgr = new PluginManager( host, Connection ) )
+			{
+				pmgr.LoadPlugins();
 
-			Assert.AreNotEqual( 0, pmgr.Plugins.Count );
+				Assert.AreNotEqual( 0, pmgr.Plugins.Count );
+			}
 		}
 	}
 }

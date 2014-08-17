@@ -37,6 +37,8 @@ namespace Blitzy.Tests
 
 		public bool TestProperties()
 		{
+			ChangedProperties.Clear();
+
 			foreach( PropertyInfo info in Obj.GetType().GetProperties( BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly ) )
 			{
 				BrowsableAttribute attr = info.GetCustomAttribute<BrowsableAttribute>();
@@ -66,9 +68,12 @@ namespace Blitzy.Tests
 				}
 				else
 				{
-					info.SetValue( Obj, info.GetValue( Obj ) );
-					Assert.IsFalse( WasChanged( info.Name ) );
-					info.SetValue( Obj, info.PropertyType.GetNonDefaultValue() );
+					object value = info.GetValue( Obj );
+					info.SetValue( Obj, value );
+					Assert.IsFalse( WasChanged( info.Name ), info.Name );
+
+					value = info.PropertyType.GetNonDefaultValue();
+					info.SetValue( Obj, value );
 				}
 				Assert.IsTrue( WasChanged( info.Name ), info.Name );
 			}

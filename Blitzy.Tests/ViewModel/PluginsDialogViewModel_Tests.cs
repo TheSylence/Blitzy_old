@@ -22,21 +22,22 @@ namespace Blitzy.Tests.ViewModel
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void CommandsTest()
 		{
-			PluginsDialogViewModel vm = new PluginsDialogViewModel();
+			using( PluginsDialogViewModel vm = new PluginsDialogViewModel() )
+			{
+				Assert.IsFalse( vm.DisableCommand.CanExecute( null ) );
+				Assert.IsFalse( vm.EnableCommand.CanExecute( null ) );
+				Assert.IsTrue( vm.InstallCommand.CanExecute( null ) );
 
-			Assert.IsFalse( vm.DisableCommand.CanExecute( null ) );
-			Assert.IsFalse( vm.EnableCommand.CanExecute( null ) );
-			Assert.IsTrue( vm.InstallCommand.CanExecute( null ) );
+				vm.SelectedPlugin = new PluginInformation() { Enabled = true };
 
-			vm.SelectedPlugin = new PluginInformation() { Enabled = true };
+				Assert.IsTrue( vm.DisableCommand.CanExecute( null ) );
+				Assert.IsFalse( vm.EnableCommand.CanExecute( null ) );
 
-			Assert.IsTrue( vm.DisableCommand.CanExecute( null ) );
-			Assert.IsFalse( vm.EnableCommand.CanExecute( null ) );
+				vm.SelectedPlugin = new PluginInformation() { Enabled = false };
 
-			vm.SelectedPlugin = new PluginInformation() { Enabled = false };
-
-			Assert.IsFalse( vm.DisableCommand.CanExecute( null ) );
-			Assert.IsTrue( vm.EnableCommand.CanExecute( null ) );
+				Assert.IsFalse( vm.DisableCommand.CanExecute( null ) );
+				Assert.IsTrue( vm.EnableCommand.CanExecute( null ) );
+			}
 		}
 
 		[TestMethod, TestCategory( "ViewModel" )]
@@ -44,25 +45,27 @@ namespace Blitzy.Tests.ViewModel
 		{
 			MockPluginHost host = new MockPluginHost();
 
-			PluginsDialogViewModel vm = new PluginsDialogViewModel();
-			vm.PluginManager = new Plugin.PluginManager( host, Connection );
-			vm.PluginManager.LoadPlugins();
-			vm.Reset();
+			using( PluginsDialogViewModel vm = new PluginsDialogViewModel() )
+			{
+				vm.PluginManager = new Plugin.PluginManager( host, Connection );
+				vm.PluginManager.LoadPlugins();
+				vm.Reset();
 
-			vm.SelectedPlugin = vm.Plugins.First();
+				vm.SelectedPlugin = vm.Plugins.First();
 
-			Assert.IsTrue( vm.DisableCommand.CanExecute( null ) );
-			vm.DisableCommand.Execute( null );
+				Assert.IsTrue( vm.DisableCommand.CanExecute( null ) );
+				vm.DisableCommand.Execute( null );
 
-			Assert.IsFalse( vm.SelectedPlugin.Enabled );
-			Assert.IsTrue( vm.PluginManager.DisabledPlugins.Contains( vm.SelectedPlugin.Instance ) );
-			Assert.IsFalse( vm.PluginManager.Plugins.Contains( vm.SelectedPlugin.Instance ) );
+				Assert.IsFalse( vm.SelectedPlugin.Enabled );
+				Assert.IsTrue( vm.PluginManager.DisabledPlugins.Contains( vm.SelectedPlugin.Instance ) );
+				Assert.IsFalse( vm.PluginManager.Plugins.Contains( vm.SelectedPlugin.Instance ) );
 
-			Assert.IsTrue( vm.EnableCommand.CanExecute( null ) );
-			vm.EnableCommand.Execute( null );
-			Assert.IsTrue( vm.SelectedPlugin.Enabled );
-			Assert.IsFalse( vm.PluginManager.DisabledPlugins.Contains( vm.SelectedPlugin.Instance ) );
-			Assert.IsTrue( vm.PluginManager.Plugins.Contains( vm.SelectedPlugin.Instance ) );
+				Assert.IsTrue( vm.EnableCommand.CanExecute( null ) );
+				vm.EnableCommand.Execute( null );
+				Assert.IsTrue( vm.SelectedPlugin.Enabled );
+				Assert.IsFalse( vm.PluginManager.DisabledPlugins.Contains( vm.SelectedPlugin.Instance ) );
+				Assert.IsTrue( vm.PluginManager.Plugins.Contains( vm.SelectedPlugin.Instance ) );
+			}
 		}
 
 		[TestMethod, TestCategory( "ViewModel" )]
@@ -72,45 +75,49 @@ namespace Blitzy.Tests.ViewModel
 			mock.Action = ( param ) => null;
 			DialogServiceManager.RegisterService( typeof( OpenFileService ), mock );
 
-			PluginsDialogViewModel vm = new PluginsDialogViewModel();
-
-			using( ShimsContext.Create() )
+			using( PluginsDialogViewModel vm = new PluginsDialogViewModel() )
 			{
-				ProcessStartInfo startInfo = null;
-				bool waitCalled = false;
+				using( ShimsContext.Create() )
+				{
+					ProcessStartInfo startInfo = null;
+					bool waitCalled = false;
 
-				System.Diagnostics.Fakes.ShimProcess.AllInstances.Start = ( proc ) =>
-					{
-						startInfo = proc.StartInfo;
-						return true;
-					};
+					System.Diagnostics.Fakes.ShimProcess.AllInstances.Start = ( proc ) =>
+						{
+							startInfo = proc.StartInfo;
+							return true;
+						};
 
-				System.Diagnostics.Fakes.ShimProcess.AllInstances.WaitForExit = ( proc ) =>
-					{
-						waitCalled = true;
-					};
+					System.Diagnostics.Fakes.ShimProcess.AllInstances.WaitForExit = ( proc ) =>
+						{
+							waitCalled = true;
+						};
 
-				vm.InstallCommand.Execute( null );
-				Assert.IsNull( startInfo );
-				Assert.IsFalse( waitCalled );
+					vm.InstallCommand.Execute( null );
+					Assert.IsNull( startInfo );
+					Assert.IsFalse( waitCalled );
 
-				File.WriteAllText( "test.zip", "test" );
-				mock.Action = ( param ) => "test.zip";
-				vm.InstallCommand.Execute( null );
-				File.Delete( "test.zip" );
+					File.WriteAllText( "test.zip", "test" );
+					mock.Action = ( param ) => "test.zip";
+					vm.InstallCommand.Execute( null );
+					File.Delete( "test.zip" );
 
-				Assert.IsNotNull( startInfo );
-				Assert.AreEqual( "runas", startInfo.Verb );
-				Assert.AreEqual( string.Format( "{0} \"{1}\"", Constants.CommandLine.InstallPlugin, "test.zip" ), startInfo.Arguments );
-				Assert.IsTrue( waitCalled );
+					Assert.IsNotNull( startInfo );
+					Assert.AreEqual( "runas", startInfo.Verb );
+					Assert.AreEqual( string.Format( "{0} \"{1}\"", Constants.CommandLine.InstallPlugin, "test.zip" ), startInfo.Arguments );
+					Assert.IsTrue( waitCalled );
+				}
 			}
 		}
 
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void PropertyChangedTest()
 		{
-			PropertyChangedListener listener = new PropertyChangedListener( new PluginsDialogViewModel() );
-			Assert.IsTrue( listener.TestProperties() );
+			using( PluginsDialogViewModel vm = new PluginsDialogViewModel() )
+			{
+				PropertyChangedListener listener = new PropertyChangedListener( vm );
+				Assert.IsTrue( listener.TestProperties() );
+			}
 		}
 	}
 }

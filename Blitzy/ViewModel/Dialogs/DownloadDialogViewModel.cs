@@ -123,6 +123,7 @@ namespace Blitzy.ViewModel.Dialogs
 				if( success )
 				{
 					MessengerInstance.Send( new DownloadStatusMessage( TargetPath, DownloadLink, DownloadSize, MD5 ), MessageTokens.DownloadSucessful );
+					DownloadSuccessfull = true;
 				}
 			}
 
@@ -200,6 +201,27 @@ namespace Blitzy.ViewModel.Dialogs
 		private string _MD5;
 		private string _TargetPath;
 		private TimeSpan _TimeLeft;
+		private bool _DownloadSuccessfull;
+
+		public bool DownloadSuccessfull
+		{
+			get
+			{
+				return _DownloadSuccessfull;
+			}
+
+			set
+			{
+				if( _DownloadSuccessfull == value )
+				{
+					return;
+				}
+
+				RaisePropertyChanging( () => DownloadSuccessfull );
+				_DownloadSuccessfull = value;
+				RaisePropertyChanged( () => DownloadSuccessfull );
+			}
+		}
 
 		public long BytesDownloaded
 		{

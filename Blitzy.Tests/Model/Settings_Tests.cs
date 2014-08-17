@@ -131,24 +131,30 @@ namespace Blitzy.Tests.Model
 		public void SaveLoadTest()
 		{
 			Settings cfg = new Settings( Connection );
-			cfg.Folders.Add( new Folder() { ID = 123, IsRecursive = true, Path = "C:\\temp" } );
-			cfg.Folders.Add( new Folder() { ID = 456, IsRecursive = false, Path = "C:\\temp2" } );
+			using( Folder f1 = new Folder() { ID = 123, IsRecursive = true, Path = "C:\\temp" } )
+			{
+				cfg.Folders.Add( f1 );
+				using( Folder f2 = new Folder() { ID = 456, IsRecursive = false, Path = "C:\\temp2" } )
+				{
+					cfg.Folders.Add( f2 );
 
-			cfg.Save();
+					cfg.Save();
 
-			cfg = new Settings( Connection );
-			cfg.Load();
+					cfg = new Settings( Connection );
+					cfg.Load();
 
-			Assert.AreEqual( 2, cfg.Folders.Count );
-			Folder folder = cfg.Folders.Where( f => f.ID == 123 ).FirstOrDefault();
-			Assert.IsNotNull( folder );
-			Assert.AreEqual( true, folder.IsRecursive );
-			Assert.AreEqual( "C:\\temp", folder.Path );
+					Assert.AreEqual( 4, cfg.Folders.Count ); // 2 Start menu entries + 2 tested ones
+					Folder folder = cfg.Folders.Where( f => f.ID == 123 ).FirstOrDefault();
+					Assert.IsNotNull( folder );
+					Assert.AreEqual( true, folder.IsRecursive );
+					Assert.AreEqual( "C:\\temp", folder.Path );
 
-			folder = cfg.Folders.Where( f => f.ID == 456 ).FirstOrDefault();
-			Assert.IsNotNull( folder );
-			Assert.AreEqual( false, folder.IsRecursive );
-			Assert.AreEqual( "C:\\temp2", folder.Path );
+					folder = cfg.Folders.Where( f => f.ID == 456 ).FirstOrDefault();
+					Assert.IsNotNull( folder );
+					Assert.AreEqual( false, folder.IsRecursive );
+					Assert.AreEqual( "C:\\temp2", folder.Path );
+				}
+			}
 		}
 
 		[TestMethod, TestCategory( "Model" )]

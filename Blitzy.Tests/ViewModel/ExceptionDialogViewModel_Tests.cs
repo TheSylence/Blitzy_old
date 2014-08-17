@@ -20,88 +20,93 @@ namespace Blitzy.Tests.ViewModel
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void ExitTest()
 		{
-			ExceptionDialogViewModel vm = new ExceptionDialogViewModel( new Exception(), new StackTrace( true ) );
+			using( ExceptionDialogViewModel vm = new ExceptionDialogViewModel( new Exception(), new StackTrace( true ) ) )
+			{
+				bool closed = false;
+				vm.RequestClose += ( s, e ) => closed = true;
 
-			bool closed = false;
-			vm.RequestClose += ( s, e ) => closed = true;
-
-			Assert.IsTrue( vm.ExitCommand.CanExecute( null ) );
-			vm.ExitCommand.Execute( null );
-			Assert.IsTrue( closed );
+				Assert.IsTrue( vm.ExitCommand.CanExecute( null ) );
+				vm.ExitCommand.Execute( null );
+				Assert.IsTrue( closed );
+			}
 		}
 
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void PropertyChangedTest()
 		{
-			ExceptionDialogViewModel vm = new ExceptionDialogViewModel( new Exception(), new StackTrace( true ) );
-			PropertyChangedListener listener = new PropertyChangedListener( vm );
-			Assert.IsTrue( listener.TestProperties() );
+			using( ExceptionDialogViewModel vm = new ExceptionDialogViewModel( new Exception(), new StackTrace( true ) ) )
+			{
+				PropertyChangedListener listener = new PropertyChangedListener( vm );
+				listener.Exclude<ExceptionDialogViewModel>( v => v.ErrorReportText );
+				Assert.IsTrue( listener.TestProperties() );
+			}
 		}
 
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void SendTest()
 		{
 			Exception ex = new Exception( "This is a test" );
-			ExceptionDialogViewModel vm = new ExceptionDialogViewModel( ex, new StackTrace( true ) );
-
-			bool closed = false;
-			vm.RequestClose += ( s, e ) => closed = true;
-
-			bool success = false;
-			bool called = false;
-			DelegateServiceMock mock = new DelegateServiceMock();
-			mock.Action = ( args ) =>
-				{
-					called = true;
-					success = ( (MessageBoxParameter)args ).Icon == MessageBoxImage.Information;
-					return null;
-				};
-
-			DialogServiceManager.RegisterService( typeof( MessageBoxService ), mock );
-
-			Assert.IsTrue( vm.SendCommand.CanExecute( null ) );
-			using( ShimsContext.Create() )
+			using( ExceptionDialogViewModel vm = new ExceptionDialogViewModel( ex, new StackTrace( true ) ) )
 			{
-				btbapi.Fakes.ShimAPI.AllInstances.SendReportErrorReportStringVersion = ( api, report, software, version ) =>
-				{
-					return Task.Run<ErrorReportResult>( () =>
+				bool closed = false;
+				vm.RequestClose += ( s, e ) => closed = true;
+
+				bool success = false;
+				bool called = false;
+				DelegateServiceMock mock = new DelegateServiceMock();
+				mock.Action = ( args ) =>
 					{
-						return new ErrorReportResult( System.Net.HttpStatusCode.OK, new Uri( "http://localhost/issue" ), false );
-					} );
-				};
-
-				vm.SendCommand.Execute( null );
-			}
-
-			Assert.IsTrue( called );
-			Assert.IsTrue( success );
-			Assert.IsTrue( closed );
-
-			called = false;
-			closed = false;
-			success = false;
-
-			mock.Action = ( args ) =>
-			{
-				called = true;
-				success = ( (MessageBoxParameter)args ).Icon == MessageBoxImage.Error;
-				return null;
-			};
-
-			using( ShimsContext.Create() )
-			{
-				btbapi.Fakes.ShimAPI.AllInstances.SendReportErrorReportStringVersion = ( report, text, version, task ) =>
-					{
-						return Task.Run<btbapi.ErrorReportResult>( () =>
-							{
-								return new btbapi.ErrorReportResult( System.Net.HttpStatusCode.BadRequest, null, false );
-							} );
+						called = true;
+						success = ( (MessageBoxParameter)args ).Icon == MessageBoxImage.Information;
+						return null;
 					};
 
-				vm.SendCommand.Execute( null );
+				DialogServiceManager.RegisterService( typeof( MessageBoxService ), mock );
+
+				Assert.IsTrue( vm.SendCommand.CanExecute( null ) );
+				using( ShimsContext.Create() )
+				{
+					btbapi.Fakes.ShimAPI.AllInstances.SendReportErrorReportStringVersion = ( api, report, software, version ) =>
+					{
+						return Task.Run<ErrorReportResult>( () =>
+						{
+							return new ErrorReportResult( System.Net.HttpStatusCode.OK, new Uri( "http://localhost/issue" ), false );
+						} );
+					};
+
+					vm.SendCommand.Execute( null );
+				}
+
 				Assert.IsTrue( called );
 				Assert.IsTrue( success );
 				Assert.IsTrue( closed );
+
+				called = false;
+				closed = false;
+				success = false;
+
+				mock.Action = ( args ) =>
+				{
+					called = true;
+					success = ( (MessageBoxParameter)args ).Icon == MessageBoxImage.Error;
+					return null;
+				};
+
+				using( ShimsContext.Create() )
+				{
+					btbapi.Fakes.ShimAPI.AllInstances.SendReportErrorReportStringVersion = ( report, text, version, task ) =>
+						{
+							return Task.Run<btbapi.ErrorReportResult>( () =>
+								{
+									return new btbapi.ErrorReportResult( System.Net.HttpStatusCode.BadRequest, null, false );
+								} );
+						};
+
+					vm.SendCommand.Execute( null );
+					Assert.IsTrue( called );
+					Assert.IsTrue( success );
+					Assert.IsTrue( closed );
+				}
 			}
 		}
 	}

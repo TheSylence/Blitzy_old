@@ -13,87 +13,101 @@ namespace Blitzy.Tests.Model
 		[TestMethod, TestCategory( "Model" ), ExpectedException( typeof( TypeLoadException ) )]
 		public void DeleteTest()
 		{
-			WorkspaceItem w = new WorkspaceItem();
-			w.ItemID = 1;
-			w.ItemCommand = "test";
-			w.Save( Connection );
-
-			w = new WorkspaceItem();
-			w.ItemID = 1;
-			try
+			using( WorkspaceItem w = new WorkspaceItem() )
 			{
+				w.ItemID = 1;
+				w.ItemCommand = "test";
+				w.Save( Connection );
+			}
+			using( WorkspaceItem w = new WorkspaceItem() )
+			{
+				w.ItemID = 1;
+				try
+				{
+					w.Load( Connection );
+				}
+				catch( TypeLoadException )
+				{
+					Assert.Fail();
+				}
+
+				w.Delete( Connection );
+			}
+			using( WorkspaceItem w = new WorkspaceItem() )
+			{
+				w.ItemID = 1;
 				w.Load( Connection );
 			}
-			catch( TypeLoadException )
-			{
-				Assert.Fail();
-			}
-
-			w.Delete( Connection );
-			w = new WorkspaceItem();
-			w.ItemID = 1;
-			w.Load( Connection );
 		}
 
 		[TestMethod, TestCategory( "Model" ), ExpectedException( typeof( TypeLoadException ) )]
 		public void LoadNonExistingTest()
 		{
-			WorkspaceItem w = new WorkspaceItem();
-			w.ItemID = int.MaxValue;
+			using( WorkspaceItem w = new WorkspaceItem() )
+			{
+				w.ItemID = int.MaxValue;
 
-			w.Load( Connection );
+				w.Load( Connection );
+			}
 		}
 
 		[TestMethod, TestCategory( "Model" )]
 		public void PropertyChangedTest()
 		{
-			WorkspaceItem obj = new WorkspaceItem();
-			PropertyChangedListener listener = new PropertyChangedListener( obj );
+			using( WorkspaceItem w = new WorkspaceItem() )
+			{
+				PropertyChangedListener listener = new PropertyChangedListener( w );
 
-			Assert.IsTrue( listener.TestProperties() );
+				Assert.IsTrue( listener.TestProperties() );
+			}
 		}
 
 		[TestMethod, TestCategory( "Model" )]
 		public void SaveLoadTest()
 		{
-			WorkspaceItem w = new WorkspaceItem();
-			Assert.IsFalse( w.ExistsInDatabase );
+			using( WorkspaceItem w = new WorkspaceItem() )
+			{
+				Assert.IsFalse( w.ExistsInDatabase );
 
-			w.ItemCommand = "google";
-			w.ItemID = 1;
+				w.ItemCommand = "google";
+				w.ItemID = 1;
 
-			w.Save( Connection );
+				w.Save( Connection );
 
-			Assert.IsTrue( w.ExistsInDatabase );
+				Assert.IsTrue( w.ExistsInDatabase );
 
-			WorkspaceItem w2 = new WorkspaceItem();
-			w2.ItemID = 1;
-			w2.Load( Connection );
+				WorkspaceItem w2 = new WorkspaceItem();
+				w2.ItemID = 1;
+				w2.Load( Connection );
 
-			Assert.IsTrue( w2.ExistsInDatabase );
-			Assert.AreEqual( w.ItemCommand, w2.ItemCommand );
+				Assert.IsTrue( w2.ExistsInDatabase );
+				Assert.AreEqual( w.ItemCommand, w2.ItemCommand );
+			}
 		}
 
 		[TestMethod, TestCategory( "Model" )]
 		public void UpdateTest()
 		{
-			WorkspaceItem w = new WorkspaceItem();
-			Assert.IsFalse( w.ExistsInDatabase );
+			using( WorkspaceItem w = new WorkspaceItem() )
+			{
+				Assert.IsFalse( w.ExistsInDatabase );
 
-			w.ItemCommand = "ws1";
-			w.ItemID = 1;
+				w.ItemCommand = "ws1";
+				w.ItemID = 1;
 
-			w.Save( Connection );
-			Assert.IsTrue( w.ExistsInDatabase );
+				w.Save( Connection );
+				Assert.IsTrue( w.ExistsInDatabase );
 
-			w.ItemCommand = "helloworld";
-			w.Save( Connection );
+				w.ItemCommand = "helloworld";
+				w.Save( Connection );
+			}
+			using( WorkspaceItem w = new WorkspaceItem() )
+			{
+				w.ItemID = 1;
+				w.Load( Connection );
 
-			w = new WorkspaceItem();
-			w.ItemID = 1;
-			w.Load( Connection );
-
-			Assert.AreEqual( "helloworld", w.ItemCommand );
+				Assert.AreEqual( "helloworld", w.ItemCommand );
+			}
 		}
 	}
 }

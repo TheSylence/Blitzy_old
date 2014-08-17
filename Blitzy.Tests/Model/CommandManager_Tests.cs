@@ -19,89 +19,99 @@ namespace Blitzy.Tests.Model
 		public void ExecutionCountTest()
 		{
 			Settings settings = new Settings( Connection );
-			PluginManager plugins = new PluginManager( this, Connection );
-			Mocks.MockPlugin plug = new Mocks.MockPlugin();
-			CommandManager mgr = new CommandManager( Connection, settings, plugins );
+			using( PluginManager plugins = new PluginManager( this, Connection ) )
+			{
+				Mocks.MockPlugin plug = new Mocks.MockPlugin();
+				using( CommandManager mgr = new CommandManager( Connection, settings, plugins ) )
+				{
+					CommandItem item = CommandItem.Create( "lorem", "", plug );
 
-			CommandItem item = CommandItem.Create( "lorem", "", plug );
+					mgr.UpdateExecutionCount( item );
+					Assert.AreEqual( 1, mgr.GetCommandExecutionCount( item ) );
+					mgr.UpdateExecutionCount( item );
+					Assert.AreEqual( 2, mgr.GetCommandExecutionCount( item ) );
 
-			mgr.UpdateExecutionCount( item );
-			Assert.AreEqual( 1, mgr.GetCommandExecutionCount( item ) );
-			mgr.UpdateExecutionCount( item );
-			Assert.AreEqual( 2, mgr.GetCommandExecutionCount( item ) );
-
-			mgr.ResetExecutionCount();
-			Assert.AreEqual( 0, mgr.GetCommandExecutionCount( item ) );
+					mgr.ResetExecutionCount();
+					Assert.AreEqual( 0, mgr.GetCommandExecutionCount( item ) );
+				}
+			}
 		}
 
 		[TestMethod, TestCategory( "Model" )]
 		public void PerformanceTest()
 		{
 			Settings settings = new Settings( Connection );
-			PluginManager plugins = new PluginManager( this, Connection );
-			Mocks.MockPlugin plug = new Mocks.MockPlugin();
-
-			CommandManager mgr = new CommandManager( Connection, settings, plugins );
-
-			string[] names = TestData.Split( ',' );
-			int totalCount = names.Length;
-			int testCount = totalCount / 20;
-			List<string> tests = new List<string>( testCount );
-			Random rand = new Random();
-
-			foreach( string name in names )
+			using( PluginManager plugins = new PluginManager( this, Connection ) )
 			{
-				if( rand.Next( totalCount ) < testCount )
+				Mocks.MockPlugin plug = new Mocks.MockPlugin();
+
+				using( CommandManager mgr = new CommandManager( Connection, settings, plugins ) )
 				{
-					tests.Add( name );
+					string[] names = TestData.Split( ',' );
+					int totalCount = names.Length;
+					int testCount = totalCount / 20;
+					List<string> tests = new List<string>( testCount );
+					Random rand = new Random();
+
+					foreach( string name in names )
+					{
+						if( rand.Next( totalCount ) < testCount )
+						{
+							tests.Add( name );
+						}
+						mgr.AvailableCommands.Add( CommandItem.Create( name, name, plug ) );
+					}
+
+					Stopwatch timer = new Stopwatch();
+					foreach( string test in tests )
+					{
+						timer.Start();
+						mgr.Clear( true );
+						mgr.SearchItems( test );
+						timer.Stop();
+					}
+
+					TimeSpan elapsed = timer.Elapsed;
+					TimeSpan maxSpan = TimeSpan.FromMilliseconds( 350 );
+
+					Assert.IsTrue( elapsed <= maxSpan, string.Format( "{0} of {1}: {2}", testCount, totalCount, elapsed.ToString() ) );
 				}
-				mgr.AvailableCommands.Add( CommandItem.Create( name, name, plug ) );
 			}
-
-			Stopwatch timer = new Stopwatch();
-			foreach( string test in tests )
-			{
-				timer.Start();
-				mgr.Clear( true );
-				mgr.SearchItems( test );
-				timer.Stop();
-			}
-
-			TimeSpan elapsed = timer.Elapsed;
-			TimeSpan maxSpan = TimeSpan.FromMilliseconds( 300 );
-
-			Assert.IsTrue( elapsed <= maxSpan, string.Format( "{0} of {1}: {2}", testCount, totalCount, elapsed.ToString() ) );
 		}
 
 		[TestMethod, TestCategory( "Model" )]
 		public void SearchTest()
 		{
 			Settings settings = new Settings( Connection );
-			PluginManager plugins = new PluginManager( this, Connection );
-			Mocks.MockPlugin plug = new Mocks.MockPlugin();
+			using( PluginManager plugins = new PluginManager( this, Connection ) )
+			{
+				Mocks.MockPlugin plug = new Mocks.MockPlugin();
 
-			CommandManager mgr = new CommandManager( Connection, settings, plugins );
-			mgr.AvailableCommands.Add( CommandItem.Create( "lorem", "", plug ) );
-			mgr.AvailableCommands.Add( CommandItem.Create( "ipsum", "", plug ) );
-			mgr.AvailableCommands.Add( CommandItem.Create( "dolor", "", plug ) );
-			mgr.AvailableCommands.Add( CommandItem.Create( "sit", "", plug ) );
-			mgr.AvailableCommands.Add( CommandItem.Create( "amet", "", plug ) );
-			mgr.AvailableCommands.Add( CommandItem.Create( "consetetur", "", plug ) );
+				using( CommandManager mgr = new CommandManager( Connection, settings, plugins ) )
+				{
+					mgr.AvailableCommands.Add( CommandItem.Create( "lorem", "", plug ) );
+					mgr.AvailableCommands.Add( CommandItem.Create( "ipsum", "", plug ) );
+					mgr.AvailableCommands.Add( CommandItem.Create( "dolor", "", plug ) );
+					mgr.AvailableCommands.Add( CommandItem.Create( "sit", "", plug ) );
+					mgr.AvailableCommands.Add( CommandItem.Create( "amet", "", plug ) );
+					mgr.AvailableCommands.Add( CommandItem.Create( "consetetur", "", plug ) );
 
-			mgr.Clear( true );
-			mgr.SearchItems( "dol" );
-			Assert.AreEqual( 1, mgr.Items.Count );
-			Assert.AreEqual( "dolor", mgr.Items.First().Name );
+					mgr.Clear( true );
+					mgr.SearchItems( "dol" );
+					Assert.AreEqual( 1, mgr.Items.Count );
+					Assert.AreEqual( "dolor", mgr.Items.First().Name );
 
-			mgr.Clear( true );
-			mgr.SearchItems( "lorem" );
-			Assert.AreEqual( 1, mgr.Items.Count );
-			Assert.AreEqual( "lorem", mgr.Items.First().Name );
+					mgr.Clear( true );
+					mgr.SearchItems( "lorem" );
+					Assert.AreEqual( 1, mgr.Items.Count );
+					Assert.AreEqual( "lorem", mgr.Items.First().Name );
 
-			//mgr.Clear( true );
-			mgr.SearchItems( "lorem" + mgr.Separator + "lo" );
-			Assert.AreEqual( 1, mgr.Items.Count );
-			Assert.AreEqual( "lorem", mgr.Items.First().Name );
+					//mgr.Clear( true );
+					mgr.SearchItems( "lorem" + mgr.Separator + "lo" );
+					Assert.AreEqual( 1, mgr.Items.Count );
+					Assert.AreEqual( "lorem", mgr.Items.First().Name );
+				}
+			}
 		}
 
 		#region Test Data

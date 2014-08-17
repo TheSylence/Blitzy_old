@@ -21,175 +21,191 @@ namespace Blitzy.Tests.ViewModel
 	[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	public class SettingsViewModel_Tests : TestBase
 	{
-		private SettingsViewModel VM;
-
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void AddExcludeTest()
 		{
-			TextInputServiceMock mock = new TextInputServiceMock();
-			DialogServiceManager.RegisterService( typeof( TextInputService ), mock );
+			using( SettingsViewModel vm = GenerateViewModel() )
+			{
+				TextInputServiceMock mock = new TextInputServiceMock();
+				DialogServiceManager.RegisterService( typeof( TextInputService ), mock );
 
-			Assert.IsFalse( VM.AddExcludeCommand.CanExecute( null ) );
-			VM.SelectedFolder = new Folder();
-			Assert.IsTrue( VM.AddExcludeCommand.CanExecute( null ) );
+				Assert.IsFalse( vm.AddExcludeCommand.CanExecute( null ) );
+				vm.SelectedFolder = new Folder();
+				Assert.IsTrue( vm.AddExcludeCommand.CanExecute( null ) );
 
-			mock.Value = null;
-			VM.AddExcludeCommand.Execute( null );
-			Assert.AreEqual( 0, VM.SelectedFolder.Excludes.Count );
+				mock.Value = null;
+				vm.AddExcludeCommand.Execute( null );
+				Assert.AreEqual( 0, vm.SelectedFolder.Excludes.Count );
 
-			mock.Value = "test";
-			VM.AddExcludeCommand.Execute( null );
-			CollectionAssert.Contains( VM.SelectedFolder.Excludes, "test" );
+				mock.Value = "test";
+				vm.AddExcludeCommand.Execute( null );
+				CollectionAssert.Contains( vm.SelectedFolder.Excludes, "test" );
+			}
 		}
 
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void AddFolderTest()
 		{
-			TextInputServiceMock mock = new TextInputServiceMock();
-			mock.Value = "C:\\temp";
-			DialogServiceManager.RegisterService( typeof( SelectFolderService ), mock );
+			using( SettingsViewModel vm = GenerateViewModel() )
+			{
+				TextInputServiceMock mock = new TextInputServiceMock();
+				mock.Value = "C:\\temp";
+				DialogServiceManager.RegisterService( typeof( SelectFolderService ), mock );
 
-			Assert.AreEqual( 0, VM.Settings.Folders.Count() );
-			VM.AddFolderCommand.Execute( null );
-			Assert.AreEqual( 1, VM.Settings.Folders.Where( f => f.Path == "C:\\temp" ).Count() );
+				Assert.AreEqual( 0, vm.Settings.Folders.Count() );
+				vm.AddFolderCommand.Execute( null );
+				Assert.AreEqual( 1, vm.Settings.Folders.Where( f => f.Path == "C:\\temp" ).Count() );
 
-			Assert.AreEqual( 1, VM.Settings.Folders.Count() );
-			mock.Value = null;
-			VM.AddFolderCommand.Execute( null );
-			Assert.AreEqual( 1, VM.Settings.Folders.Count() );
+				Assert.AreEqual( 1, vm.Settings.Folders.Count() );
+				mock.Value = null;
+				vm.AddFolderCommand.Execute( null );
+				Assert.AreEqual( 1, vm.Settings.Folders.Count() );
 
-			mock.Value = "C:\\temp2";
-			VM.AddFolderCommand.Execute( null );
-			Assert.AreEqual( 1, VM.Settings.Folders.Where( f => f.Path == "C:\\temp2" ).Count() );
+				mock.Value = "C:\\temp2";
+				vm.AddFolderCommand.Execute( null );
+				Assert.AreEqual( 1, vm.Settings.Folders.Where( f => f.Path == "C:\\temp2" ).Count() );
 
-			Assert.AreEqual( 1, VM.Settings.Folders.Where( f => f.ID == 1 ).Count() );
-			Assert.AreEqual( 1, VM.Settings.Folders.Where( f => f.ID == 2 ).Count() );
+				Assert.AreEqual( 1, vm.Settings.Folders.Where( f => f.ID == 1 ).Count() );
+				Assert.AreEqual( 1, vm.Settings.Folders.Where( f => f.ID == 2 ).Count() );
+			}
 		}
 
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void AddRuleTest()
 		{
-			TextInputServiceMock mock = new TextInputServiceMock();
-			DialogServiceManager.RegisterService( typeof( TextInputService ), mock );
+			using( SettingsViewModel vm = GenerateViewModel() )
+			{
+				TextInputServiceMock mock = new TextInputServiceMock();
+				DialogServiceManager.RegisterService( typeof( TextInputService ), mock );
 
-			Assert.IsFalse( VM.AddRuleCommand.CanExecute( null ) );
-			VM.SelectedFolder = new Folder();
-			Assert.IsTrue( VM.AddRuleCommand.CanExecute( null ) );
+				Assert.IsFalse( vm.AddRuleCommand.CanExecute( null ) );
+				vm.SelectedFolder = new Folder();
+				Assert.IsTrue( vm.AddRuleCommand.CanExecute( null ) );
 
-			mock.Value = null;
-			VM.AddRuleCommand.Execute( null );
-			Assert.AreEqual( 0, VM.SelectedFolder.Rules.Count );
+				mock.Value = null;
+				vm.AddRuleCommand.Execute( null );
+				Assert.AreEqual( 0, vm.SelectedFolder.Rules.Count );
 
-			mock.Value = "test";
-			VM.AddRuleCommand.Execute( null );
-			CollectionAssert.Contains( VM.SelectedFolder.Rules, "test" );
+				mock.Value = "test";
+				vm.AddRuleCommand.Execute( null );
+				CollectionAssert.Contains( vm.SelectedFolder.Rules, "test" );
+			}
 		}
 
-		[TestInitialize]
-		public override void BeforeTestRun()
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Reliability", "CA2000:Dispose objects before losing scope" )]
+		private SettingsViewModel GenerateViewModel()
 		{
-			base.BeforeTestRun();
+			SettingsViewModel vm = new SettingsViewModel();
 
-			VM = new SettingsViewModel();
-			VM.Settings = new Blitzy.Model.Settings( Connection );
-			MockPluginHost host = new MockPluginHost( VM.Settings );
-			VM.PluginManager = new Plugin.PluginManager( host, Connection );
-			VM.PluginManager.LoadPlugins();
+			vm.Settings = new Blitzy.Model.Settings( Connection );
+			MockPluginHost host = new MockPluginHost( vm.Settings );
+			vm.PluginManager = new Plugin.PluginManager( host, Connection );
+			vm.PluginManager.LoadPlugins();
 
-			/*SettingsViewModel baseVM = new SettingsViewModel();
-			baseVM.Settings = new Blitzy.Model.Settings( Connection );
-			MockPluginHost host = new MockPluginHost( baseVM.Settings );
-			baseVM.PluginManager = new Plugin.PluginManager( host, Connection );
-			baseVM.PluginManager.LoadPlugins();
-			baseVM.Reset();*/
+			return vm;
 		}
 
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void CancelTest()
 		{
-			bool closed = false;
-			VM.RequestClose += ( s, e ) => closed = true;
+			using( SettingsViewModel vm = GenerateViewModel() )
+			{
+				bool closed = false;
+				vm.RequestClose += ( s, e ) => closed = true;
 
-			VM.CancelCommand.Execute( null );
+				vm.CancelCommand.Execute( null );
 
-			Assert.IsTrue( closed );
+				Assert.IsTrue( closed );
+			}
 		}
 
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void CatalogBuildTest()
 		{
-			VM.Settings.Folders.Add( new Folder() );
-			using( VM.CatalogBuilder = new CatalogBuilder( new Settings( Connection ) ) )
+			using( SettingsViewModel vm = GenerateViewModel() )
 			{
-				bool received = false;
-				Messenger.Default.Register<InternalCommandMessage>( this, ( msg ) => received = true );
+				vm.Settings.Folders.Add( new Folder() );
+				using( vm.CatalogBuilder = new CatalogBuilder( new Settings( Connection ) ) )
+				{
+					bool received = false;
+					Messenger.Default.Register<InternalCommandMessage>( this, ( msg ) => received = true );
 
-				VM.UpdateCatalogCommand.Execute( null );
-				Assert.IsTrue( received );
+					vm.UpdateCatalogCommand.Execute( null );
+					Assert.IsTrue( received );
+				}
 			}
 		}
 
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void CatalogTest()
 		{
-			VM.Reset();
-			using( VM.CatalogBuilder = new CatalogBuilder( VM.Settings ) )
+			using( SettingsViewModel vm = GenerateViewModel() )
 			{
-				VM.CatalogBuilder.ItemsProcessed = 123;
-				VM.CatalogBuilder.ItemsSaved = 456;
-				VM.CatalogBuilder.ProgressStep = CatalogProgressStep.Parsing;
-				DateTime oldDate = VM.LastCatalogBuild;
-				Messenger.Default.Send( new CatalogStatusMessage( CatalogStatus.BuildStarted ) );
-				Assert.IsTrue( VM.IsCatalogBuilding );
+				vm.Reset();
+				using( vm.CatalogBuilder = new CatalogBuilder( vm.Settings ) )
+				{
+					vm.CatalogBuilder.ItemsProcessed = 123;
+					vm.CatalogBuilder.ItemsSaved = 456;
+					vm.CatalogBuilder.ProgressStep = CatalogProgressStep.Parsing;
+					DateTime oldDate = vm.LastCatalogBuild;
+					Messenger.Default.Send( new CatalogStatusMessage( CatalogStatus.BuildStarted ) );
+					Assert.IsTrue( vm.IsCatalogBuilding );
 
-				Messenger.Default.Send( new CatalogStatusMessage( CatalogStatus.ProgressUpdated ) );
-				Assert.AreEqual( VM.CatalogBuilder.ItemsProcessed, VM.CatalogItemsProcessed );
+					Messenger.Default.Send( new CatalogStatusMessage( CatalogStatus.ProgressUpdated ) );
+					Assert.AreEqual( vm.CatalogBuilder.ItemsProcessed, vm.CatalogItemsProcessed );
 
-				VM.CatalogBuilder.ProgressStep = CatalogProgressStep.Saving;
-				Messenger.Default.Send( new CatalogStatusMessage( CatalogStatus.ProgressUpdated ) );
-				Assert.AreEqual( VM.CatalogBuilder.ItemsSaved, VM.CatalogItemsProcessed );
+					vm.CatalogBuilder.ProgressStep = CatalogProgressStep.Saving;
+					Messenger.Default.Send( new CatalogStatusMessage( CatalogStatus.ProgressUpdated ) );
+					Assert.AreEqual( vm.CatalogBuilder.ItemsSaved, vm.CatalogItemsProcessed );
 
-				Messenger.Default.Send( new CatalogStatusMessage( CatalogStatus.BuildFinished ) );
-				Assert.IsFalse( VM.IsCatalogBuilding );
-				Assert.AreNotEqual( oldDate, VM.LastCatalogBuild );
+					Messenger.Default.Send( new CatalogStatusMessage( CatalogStatus.BuildFinished ) );
+					Assert.IsFalse( vm.IsCatalogBuilding );
+					Assert.AreNotEqual( oldDate, vm.LastCatalogBuild );
+				}
 			}
 		}
 
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void DefaultsTest()
 		{
-			VM.Settings.SetValue( SystemSetting.MaxMatchingItems, 123 );
+			using( SettingsViewModel vm = GenerateViewModel() )
+			{
+				vm.Settings.SetValue( SystemSetting.MaxMatchingItems, 123 );
 
-			MessageBoxServiceMock mock = new MessageBoxServiceMock( System.Windows.MessageBoxResult.No );
-			DialogServiceManager.RegisterService( typeof( MessageBoxService ), mock );
+				MessageBoxServiceMock mock = new MessageBoxServiceMock( System.Windows.MessageBoxResult.No );
+				DialogServiceManager.RegisterService( typeof( MessageBoxService ), mock );
 
-			VM.DefaultsCommand.Execute( null );
-			Assert.AreEqual( 123, VM.Settings.GetValue<int>( SystemSetting.MaxMatchingItems ) );
+				vm.DefaultsCommand.Execute( null );
+				Assert.AreEqual( 123, vm.Settings.GetValue<int>( SystemSetting.MaxMatchingItems ) );
 
-			mock.Result = System.Windows.MessageBoxResult.Yes;
-			VM.DefaultsCommand.Execute( null );
-			Assert.AreEqual( 20, VM.Settings.GetValue<int>( SystemSetting.MaxMatchingItems ) );
+				mock.Result = System.Windows.MessageBoxResult.Yes;
+				vm.DefaultsCommand.Execute( null );
+				Assert.AreEqual( 20, vm.Settings.GetValue<int>( SystemSetting.MaxMatchingItems ) );
+			}
 		}
 
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void DownloadUpdateTest()
 		{
-			Assert.IsFalse( VM.DownloadUpdateCommand.CanExecute( null ) );
+			using( SettingsViewModel vm = GenerateViewModel() )
+			{
+				Assert.IsFalse( vm.DownloadUpdateCommand.CanExecute( null ) );
 
-			Uri downloadLink = null;
-			VM.LatestVersionInfo = new btbapi.VersionInfo( System.Net.HttpStatusCode.OK, new Version( 1, 2 ), downloadLink, "123", 123, new System.Collections.Generic.Dictionary<Version, string>() );
-			Assert.IsFalse( VM.DownloadUpdateCommand.CanExecute( null ) );
+				Uri downloadLink = null;
+				vm.LatestVersionInfo = new btbapi.VersionInfo( System.Net.HttpStatusCode.OK, new Version( 1, 2 ), downloadLink, "123", 123, new System.Collections.Generic.Dictionary<Version, string>() );
+				Assert.IsFalse( vm.DownloadUpdateCommand.CanExecute( null ) );
 
-			downloadLink = new Uri( "http://localhost/file.exe" );
-			VM.LatestVersionInfo = new btbapi.VersionInfo( System.Net.HttpStatusCode.OK, new Version( 1, 2 ), downloadLink, "123", 123, new System.Collections.Generic.Dictionary<Version, string>() );
-			Assert.IsTrue( VM.DownloadUpdateCommand.CanExecute( null ) );
+				downloadLink = new Uri( "http://localhost/file.exe" );
+				vm.LatestVersionInfo = new btbapi.VersionInfo( System.Net.HttpStatusCode.OK, new Version( 1, 2 ), downloadLink, "123", 123, new System.Collections.Generic.Dictionary<Version, string>() );
+				Assert.IsTrue( vm.DownloadUpdateCommand.CanExecute( null ) );
 
-			CallCheckServiceMock mock = new CallCheckServiceMock();
-			DialogServiceManager.RegisterService( typeof( DownloadService ), mock );
-			VM.DownloadUpdateCommand.Execute( null );
+				CallCheckServiceMock mock = new CallCheckServiceMock();
+				DialogServiceManager.RegisterService( typeof( DownloadService ), mock );
+				vm.DownloadUpdateCommand.Execute( null );
 
-			Assert.IsTrue( mock.WasCalled );
-			Assert.IsInstanceOfType( mock.Parameter, typeof( DownloadServiceParameters ) );
+				Assert.IsTrue( mock.WasCalled );
+				Assert.IsInstanceOfType( mock.Parameter, typeof( DownloadServiceParameters ) );
+			}
 		}
 
 		[TestMethod, TestCategory( "ViewModel" )]
@@ -197,36 +213,44 @@ namespace Blitzy.Tests.ViewModel
 		{
 			CallCheckServiceMock mock = new CallCheckServiceMock();
 			DialogServiceManager.RegisterService( typeof( PluginSettingsService ), mock );
-
-			VM.PluginsDialogCommand.Execute( null );
-			Assert.IsTrue( mock.WasCalled );
+			using( SettingsViewModel vm = GenerateViewModel() )
+			{
+				vm.PluginsDialogCommand.Execute( null );
+				Assert.IsTrue( mock.WasCalled );
+			}
 		}
 
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void PluginMessageTest()
 		{
-			VM.Reset();
-			MockPlugin plugin = new MockPlugin();
+			using( SettingsViewModel vm = GenerateViewModel() )
+			{
+				vm.Reset();
+				MockPlugin plugin = new MockPlugin();
 
-			Messenger.Default.Send<PluginMessage>( new PluginMessage( plugin, PluginAction.Enabled ) );
-			Assert.IsNotNull( VM.PluginPages.FirstOrDefault( x => x.Plugin == plugin ) );
+				Messenger.Default.Send<PluginMessage>( new PluginMessage( plugin, PluginAction.Enabled ) );
+				Assert.IsNotNull( vm.PluginPages.FirstOrDefault( x => x.Plugin == plugin ) );
 
-			Messenger.Default.Send<PluginMessage>( new PluginMessage( plugin, PluginAction.Disabled ) );
-			Assert.IsNull( VM.PluginPages.FirstOrDefault( x => x.Plugin == plugin ) );
+				Messenger.Default.Send<PluginMessage>( new PluginMessage( plugin, PluginAction.Disabled ) );
+				Assert.IsNull( vm.PluginPages.FirstOrDefault( x => x.Plugin == plugin ) );
+			}
 		}
 
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void PropertyChangedTest()
 		{
-			PropertyChangedListener listener = new PropertyChangedListener( VM );
-			listener.Exclude<SettingsViewModel>( vm => vm.ApiDatabase );
-			listener.Exclude<SettingsViewModel>( vm => vm.BlitzyLicense );
-			listener.Exclude<SettingsViewModel>( vm => vm.Changelog );
-			listener.Exclude<SettingsViewModel>( vm => vm.CatalogBuilder );
-			listener.Exclude<SettingsViewModel>( vm => vm.CurrentVersion );
-			listener.Exclude<SettingsViewModel>( vm => vm.Settings );
-			listener.Exclude<SettingsViewModel>( vm => vm.PluginManager );
-			Assert.IsTrue( listener.TestProperties() );
+			using( SettingsViewModel vm = GenerateViewModel() )
+			{
+				PropertyChangedListener listener = new PropertyChangedListener( vm );
+				listener.Exclude<SettingsViewModel>( v => v.ApiDatabase );
+				listener.Exclude<SettingsViewModel>( v => v.BlitzyLicense );
+				listener.Exclude<SettingsViewModel>( v => v.Changelog );
+				listener.Exclude<SettingsViewModel>( v => v.CatalogBuilder );
+				listener.Exclude<SettingsViewModel>( v => v.CurrentVersion );
+				listener.Exclude<SettingsViewModel>( v => v.Settings );
+				listener.Exclude<SettingsViewModel>( v => v.PluginManager );
+				Assert.IsTrue( listener.TestProperties() );
+			}
 		}
 
 		[TestMethod, TestCategory( "ViewModel" )]
@@ -234,54 +258,69 @@ namespace Blitzy.Tests.ViewModel
 		{
 			MessageBoxServiceMock mock = new MessageBoxServiceMock( System.Windows.MessageBoxResult.No );
 			DialogServiceManager.RegisterService( typeof( MessageBoxService ), mock );
+			using( SettingsViewModel vm = GenerateViewModel() )
+			{
+				Assert.IsFalse( vm.RemoveExcludeCommand.CanExecute( null ) );
+				vm.SelectedFolder = new Folder();
+				Assert.IsFalse( vm.RemoveExcludeCommand.CanExecute( null ) );
+				vm.SelectedFolder.Excludes.Add( "test" );
+				vm.SelectedExclude = "test";
+				Assert.IsTrue( vm.RemoveExcludeCommand.CanExecute( null ) );
 
-			Assert.IsFalse( VM.RemoveExcludeCommand.CanExecute( null ) );
-			VM.SelectedFolder = new Folder();
-			Assert.IsFalse( VM.RemoveExcludeCommand.CanExecute( null ) );
-			VM.SelectedFolder.Excludes.Add( "test" );
-			VM.SelectedExclude = "test";
-			Assert.IsTrue( VM.RemoveExcludeCommand.CanExecute( null ) );
+				vm.RemoveExcludeCommand.Execute( null );
+				CollectionAssert.Contains( vm.SelectedFolder.Excludes, "test" );
 
-			VM.RemoveExcludeCommand.Execute( null );
-			CollectionAssert.Contains( VM.SelectedFolder.Excludes, "test" );
-
-			mock.Result = System.Windows.MessageBoxResult.Yes;
-			VM.RemoveExcludeCommand.Execute( null );
-			CollectionAssert.DoesNotContain( VM.SelectedFolder.Excludes, "test" );
+				mock.Result = System.Windows.MessageBoxResult.Yes;
+				vm.RemoveExcludeCommand.Execute( null );
+				CollectionAssert.DoesNotContain( vm.SelectedFolder.Excludes, "test" );
+			}
 		}
 
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void RemoveFolderTest()
 		{
-			Folder folder = new Folder();
-			folder.ID = 123;
-			folder.Path = "C:\\temp";
-			VM.Settings.Folders.Add( folder );
+			using( Folder folder = new Folder() )
+			{
+				folder.ID = 123;
+				folder.Path = "C:\\temp";
 
-			Assert.IsFalse( VM.RemoveFolderCommand.CanExecute( null ) );
-			VM.SelectedFolder = folder;
-			Assert.IsTrue( VM.RemoveFolderCommand.CanExecute( null ) );
+				using( SettingsViewModel vm = GenerateViewModel() )
+				{
+					vm.Settings.Folders.Add( folder );
 
-			MessageBoxServiceMock mock = new MessageBoxServiceMock( System.Windows.MessageBoxResult.No );
-			DialogServiceManager.RegisterService( typeof( MessageBoxService ), mock );
+					Assert.IsFalse( vm.RemoveFolderCommand.CanExecute( null ) );
+					vm.SelectedFolder = folder;
+					Assert.IsTrue( vm.RemoveFolderCommand.CanExecute( null ) );
 
-			VM.RemoveFolderCommand.Execute( null );
+					MessageBoxServiceMock mock = new MessageBoxServiceMock( System.Windows.MessageBoxResult.No );
+					DialogServiceManager.RegisterService( typeof( MessageBoxService ), mock );
 
-			Assert.AreSame( folder, VM.SelectedFolder );
-			CollectionAssert.Contains( VM.Settings.Folders, folder );
+					vm.RemoveFolderCommand.Execute( null );
 
-			mock.Result = System.Windows.MessageBoxResult.Yes;
-			VM.RemoveFolderCommand.Execute( null );
-			Assert.IsNull( VM.SelectedFolder );
-			CollectionAssert.DoesNotContain( VM.Settings.Folders, folder );
+					Assert.AreSame( folder, vm.SelectedFolder );
+					CollectionAssert.Contains( vm.Settings.Folders, folder );
 
-			VM.Reset();
-			VM.SaveCommand.Execute( null );
+					mock.Result = System.Windows.MessageBoxResult.Yes;
+					vm.RemoveFolderCommand.Execute( null );
+					Assert.IsNull( vm.SelectedFolder );
+					CollectionAssert.DoesNotContain( vm.Settings.Folders, folder );
 
-			VM = new SettingsViewModel();
-			VM.Settings = new Settings( Connection );
+					vm.Reset();
+					using( ShimsContext.Create() )
+					{
+						//GalaSoft.MvvmLight.Messaging.Fakes.
 
-			CollectionAssert.DoesNotContain( VM.Settings.Folders, folder );
+						vm.SaveCommand.Execute( null );
+					}
+				}
+
+				using( SettingsViewModel vm = new SettingsViewModel() )
+				{
+					vm.Settings = new Settings( Connection );
+
+					CollectionAssert.DoesNotContain( vm.Settings.Folders, folder );
+				}
+			}
 		}
 
 		[TestMethod, TestCategory( "ViewModel" )]
@@ -289,64 +328,72 @@ namespace Blitzy.Tests.ViewModel
 		{
 			MessageBoxServiceMock mock = new MessageBoxServiceMock( System.Windows.MessageBoxResult.No );
 			DialogServiceManager.RegisterService( typeof( MessageBoxService ), mock );
+			using( SettingsViewModel vm = GenerateViewModel() )
+			{
+				Assert.IsFalse( vm.RemoveRuleCommand.CanExecute( null ) );
+				vm.SelectedFolder = new Folder();
+				Assert.IsFalse( vm.RemoveRuleCommand.CanExecute( null ) );
+				vm.SelectedFolder.Rules.Add( "test" );
+				vm.SelectedRule = "test";
+				Assert.IsTrue( vm.RemoveRuleCommand.CanExecute( null ) );
 
-			Assert.IsFalse( VM.RemoveRuleCommand.CanExecute( null ) );
-			VM.SelectedFolder = new Folder();
-			Assert.IsFalse( VM.RemoveRuleCommand.CanExecute( null ) );
-			VM.SelectedFolder.Rules.Add( "test" );
-			VM.SelectedRule = "test";
-			Assert.IsTrue( VM.RemoveRuleCommand.CanExecute( null ) );
+				vm.RemoveRuleCommand.Execute( null );
+				CollectionAssert.Contains( vm.SelectedFolder.Rules, "test" );
 
-			VM.RemoveRuleCommand.Execute( null );
-			CollectionAssert.Contains( VM.SelectedFolder.Rules, "test" );
-
-			mock.Result = System.Windows.MessageBoxResult.Yes;
-			VM.RemoveRuleCommand.Execute( null );
-			CollectionAssert.DoesNotContain( VM.SelectedFolder.Rules, "test" );
+				mock.Result = System.Windows.MessageBoxResult.Yes;
+				vm.RemoveRuleCommand.Execute( null );
+				CollectionAssert.DoesNotContain( vm.SelectedFolder.Rules, "test" );
+			}
 		}
 
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void StandardCommandsTest()
 		{
-			Assert.IsTrue( VM.CancelCommand.CanExecute( null ) );
-			Assert.IsTrue( VM.DefaultsCommand.CanExecute( null ) );
-			Assert.IsTrue( VM.UpdateCheckCommand.CanExecute( null ) );
-			Assert.IsTrue( VM.ViewChangelogCommand.CanExecute( null ) );
-			Assert.IsTrue( VM.PluginsDialogCommand.CanExecute( null ) );
-
-			Assert.IsFalse( VM.UpdateCatalogCommand.CanExecute( null ) );
-			VM.Settings.Folders.Add( new Folder() );
-			using( VM.CatalogBuilder = new CatalogBuilder( new Settings( Connection ) ) )
+			using( SettingsViewModel vm = GenerateViewModel() )
 			{
-				Assert.IsTrue( VM.UpdateCatalogCommand.CanExecute( null ) );
+				Assert.IsTrue( vm.CancelCommand.CanExecute( null ) );
+				Assert.IsTrue( vm.DefaultsCommand.CanExecute( null ) );
+				Assert.IsTrue( vm.UpdateCheckCommand.CanExecute( null ) );
+				Assert.IsTrue( vm.ViewChangelogCommand.CanExecute( null ) );
+				Assert.IsTrue( vm.PluginsDialogCommand.CanExecute( null ) );
+
+				Assert.IsFalse( vm.UpdateCatalogCommand.CanExecute( null ) );
+				vm.Settings.Folders.Add( new Folder() );
+				using( vm.CatalogBuilder = new CatalogBuilder( new Settings( Connection ) ) )
+				{
+					Assert.IsTrue( vm.UpdateCatalogCommand.CanExecute( null ) );
+				}
 			}
 		}
 
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void UpdateCheckTest()
 		{
-			using( ShimsContext.Create() )
+			using( SettingsViewModel vm = GenerateViewModel() )
 			{
-				Blitzy.Model.Fakes.ShimUpdateChecker.AllInstances.CheckVersionBoolean = ( checker, b ) =>
+				using( ShimsContext.Create() )
+				{
+					Blitzy.Model.Fakes.ShimUpdateChecker.AllInstances.CheckVersionBoolean = ( checker, b ) =>
+						{
+							return Task.Run<VersionInfo>( () =>
+								{
+									return new VersionInfo( System.Net.HttpStatusCode.BadRequest, null, null, null, 0, null );
+								} );
+						};
+					vm.UpdateCheckAsync().Wait();
+					Assert.IsTrue( vm.VersionCheckError );
+
+					Blitzy.Model.Fakes.ShimUpdateChecker.AllInstances.CheckVersionBoolean = ( checker, b ) =>
 					{
 						return Task.Run<VersionInfo>( () =>
-							{
-								return new VersionInfo( System.Net.HttpStatusCode.BadRequest, null, null, null, 0, null );
-							} );
+						{
+							return new VersionInfo( System.Net.HttpStatusCode.OK, new Version( 1, 2 ), new Uri( "http://localhost/file.name" ), "123", 123, new System.Collections.Generic.Dictionary<Version, string>() );
+						} );
 					};
-				VM.UpdateCheckAsync().Wait();
-				Assert.IsTrue( VM.VersionCheckError );
 
-				Blitzy.Model.Fakes.ShimUpdateChecker.AllInstances.CheckVersionBoolean = ( checker, b ) =>
-				{
-					return Task.Run<VersionInfo>( () =>
-					{
-						return new VersionInfo( System.Net.HttpStatusCode.OK, new Version( 1, 2 ), new Uri( "http://localhost/file.name" ), "123", 123, new System.Collections.Generic.Dictionary<Version, string>() );
-					} );
-				};
-
-				VM.UpdateCheckAsync().Wait();
-				Assert.IsFalse( VM.VersionCheckError );
+					vm.UpdateCheckAsync().Wait();
+					Assert.IsFalse( vm.VersionCheckError );
+				}
 			}
 		}
 
@@ -355,12 +402,14 @@ namespace Blitzy.Tests.ViewModel
 		{
 			CallCheckServiceMock mock = new CallCheckServiceMock();
 			DialogServiceManager.RegisterService( typeof( ViewChangelogService ), mock );
+			using( SettingsViewModel vm = GenerateViewModel() )
+			{
+				vm.LatestVersionInfo = new btbapi.VersionInfo( System.Net.HttpStatusCode.OK, null, null, null, 0, null );
+				vm.ViewChangelogCommand.Execute( null );
 
-			VM.LatestVersionInfo = new btbapi.VersionInfo( System.Net.HttpStatusCode.OK, null, null, null, 0, null );
-			VM.ViewChangelogCommand.Execute( null );
-
-			Assert.IsTrue( mock.WasCalled );
-			Assert.IsInstanceOfType( mock.Parameter, typeof( btbapi.VersionInfo ) );
+				Assert.IsTrue( mock.WasCalled );
+				Assert.IsInstanceOfType( mock.Parameter, typeof( btbapi.VersionInfo ) );
+			}
 		}
 	}
 }

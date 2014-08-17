@@ -13,7 +13,7 @@ namespace Blitzy.View
 	/// Interaction logic for MainWindow.xaml
 	/// </summary>
 	[ExcludeFromCodeCoverage]
-	public partial class MainWindow
+	public partial class MainWindow : IDisposable
 	{
 		private HotKey CurrentHotKey;
 		private HotKeyHost KeyHost;
@@ -85,6 +85,25 @@ namespace Blitzy.View
 			}
 
 			return IntPtr.Zero;
+		}
+
+		public void Dispose()
+		{
+			Dispose( true );
+			GC.SuppressFinalize( this );
+		}
+
+		private void Dispose( bool disposing )
+		{
+			if( disposing )
+			{
+				KeyHost.Dispose();
+			}
+		}
+
+		~MainWindow()
+		{
+			Dispose( false );
 		}
 	}
 }

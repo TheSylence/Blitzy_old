@@ -13,26 +13,30 @@ namespace Blitzy.Tests.ViewModel
 		public void OkTest()
 		{
 			bool? closed = null;
-			TextInputDialogViewModel vm = new TextInputDialogViewModel();
-			vm.RequestClose += ( s, e ) => closed = e.Result;
+			using( TextInputDialogViewModel vm = new TextInputDialogViewModel() )
+			{
+				vm.RequestClose += ( s, e ) => closed = e.Result;
 
-			Assert.IsTrue( vm.OkCommand.CanExecute( null ) );
-			Assert.IsTrue( vm.CancelCommand.CanExecute( null ) );
+				Assert.IsTrue( vm.OkCommand.CanExecute( null ) );
+				Assert.IsTrue( vm.CancelCommand.CanExecute( null ) );
 
-			vm.OkCommand.Execute( null );
-			Assert.AreEqual( true, closed );
+				vm.OkCommand.Execute( null );
+				Assert.AreEqual( true, closed );
 
-			vm.CancelCommand.Execute( null );
-			Assert.AreEqual( false, closed );
+				vm.CancelCommand.Execute( null );
+				Assert.AreEqual( false, closed );
+			}
 		}
 
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void PropertyChangedTest()
 		{
-			TextInputDialogViewModel obj = new TextInputDialogViewModel();
-			PropertyChangedListener listener = new PropertyChangedListener( obj );
+			using( TextInputDialogViewModel obj = new TextInputDialogViewModel() )
+			{
+				PropertyChangedListener listener = new PropertyChangedListener( obj );
 
-			Assert.IsTrue( listener.TestProperties() );
+				Assert.IsTrue( listener.TestProperties() );
+			}
 		}
 	}
 }

@@ -115,14 +115,6 @@ namespace Blitzy.ViewModel
 			}
 		}
 
-		public ExceptionDialogViewModel ExceptionDialog
-		{
-			get
-			{
-				return ServiceLocator.Current.GetInstance<ExceptionDialogViewModel>();
-			}
-		}
-
 		public PluginsDialogViewModel PluginsDialog
 		{
 			get
