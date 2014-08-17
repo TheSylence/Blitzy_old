@@ -53,12 +53,14 @@ namespace Blitzy.View
 
 			MainViewModel vm = DataContext as MainViewModel;
 			vm.RegisterHotKey();
+
+			Hide();
 		}
 
 		private void FocusInput()
 		{
-			txtInput.Focus();
 			FocusManager.SetFocusedElement( this, txtInput );
+			txtInput.Focus();
 		}
 
 		private IntPtr WndProc( IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled )
