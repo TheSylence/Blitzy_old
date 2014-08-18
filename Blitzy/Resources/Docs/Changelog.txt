@@ -1,5 +1,7 @@
 ﻿Version 0.9.5
 ----------------------
+* Fixed crash on startup when Hotkey was already registered
+* Fixed issue with hiding the window using the keyboard shortcut
 * Settings dialog no longer closes itself after pressing the save button
 * Added a missing translation for German
 * Another attempt at fixing the input focus issue
