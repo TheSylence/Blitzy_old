@@ -5,6 +5,7 @@ using System.Data.SQLite;
 using Blitzy.Model;
 using Blitzy.Tests.Mocks;
 using Blitzy.ViewServices;
+using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Threading;
 using log4net.Config;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -29,13 +30,17 @@ namespace Blitzy.Tests
 		public virtual void AfterTestRun()
 		{
 			Connection.Close();
+			Connection.Dispose();
 
 			DialogServiceManager.Clear();
+			Messenger.Reset();
 		}
 
 		[TestInitialize]
 		public virtual void BeforeTestRun()
 		{
+			Messenger.OverrideDefault( new MockMessenger() );
+
 			NativeMethods = new NativeMethodsMock();
 			SetNativeMethods( NativeMethodsType.Real );
 			RuntimeConfig.Tests = true;
@@ -79,6 +84,7 @@ namespace Blitzy.Tests
 			}
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Reliability", "CA2000:Dispose objects before losing scope" )]
 		private SQLiteConnection CreateConnection()
 		{
 			SQLiteConnectionStringBuilder sb = new SQLiteConnectionStringBuilder();

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Fakes;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
@@ -27,235 +28,238 @@ namespace Blitzy.Tests.ViewModel
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void CancelTest()
 		{
-			DownloadDialogViewModel vm = new DownloadDialogViewModel();
-			Assert.IsFalse( vm.CancelCommand.CanExecute( null ) );
-
-			vm.DownloadSize = 124;
-			vm.DownloadLink = "file:///" + Directory.GetCurrentDirectory().Replace( '\\', '/' ) + '/' + "test.txt";
-			vm.TargetPath = Path.GetTempFileName();
-
-			using( ShimsContext.Create() )
+			using( DownloadDialogViewModel vm = new DownloadDialogViewModel() )
 			{
-				System.Net.Http.Fakes.ShimHttpClient.AllInstances.GetAsyncStringHttpCompletionOption = ( client, link, options ) =>
-					{
-						return Task.Run<HttpResponseMessage>( () =>
+				Assert.IsFalse( vm.CancelCommand.CanExecute( null ) );
+
+				vm.DownloadSize = 124;
+				vm.DownloadLink = "file:///" + Directory.GetCurrentDirectory().Replace( '\\', '/' ) + '/' + "test.txt";
+				vm.TargetPath = Path.GetTempFileName();
+
+				using( ShimsContext.Create() )
+				{
+					System.Net.Http.Fakes.ShimHttpClient.AllInstances.GetAsyncStringHttpCompletionOption = ( client, link, options ) =>
 						{
-							Thread.Sleep( 500 );
-							return new System.Net.Http.Fakes.StubHttpResponseMessage( System.Net.HttpStatusCode.OK )
+							return Task.Run<HttpResponseMessage>( () =>
 							{
-								Content = new ByteArrayContent( Encoding.ASCII.GetBytes( "Hello World" ) )
-							};
-						} );
-					};
+								Thread.Sleep( 500 );
+								return new System.Net.Http.Fakes.StubHttpResponseMessage( System.Net.HttpStatusCode.OK )
+								{
+									Content = new ByteArrayContent( Encoding.ASCII.GetBytes( "Hello World" ) )
+								};
+							} );
+						};
 
-				bool deleted = false;
-				System.IO.Fakes.ShimFile.DeleteString = ( s ) => deleted = true;
+					bool deleted = false;
+					System.IO.Fakes.ShimFile.DeleteString = ( s ) => deleted = true;
 
-				Task t = vm.StartDownload();
-				Thread.Sleep( 250 );
-				Assert.IsTrue( vm.CancelCommand.CanExecute( null ) );
-				vm.CancelCommand.Execute( null );
-				t.Wait();
+					Task t = vm.StartDownload();
+					Thread.Sleep( 250 );
+					Assert.IsTrue( vm.CancelCommand.CanExecute( null ) );
+					vm.CancelCommand.Execute( null );
+					t.Wait();
 
-				Assert.IsTrue( deleted );
+					Assert.IsTrue( deleted );
+				}
 			}
 		}
 
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void DownloadCorruptedTest()
 		{
-			DownloadDialogViewModel vm = new DownloadDialogViewModel();
-
-			StringBuilder sb = new StringBuilder();
-			sb.Append( "Hello World" );
-			for( int i = 0; i < 10000; ++i )
+			using( DownloadDialogViewModel vm = new DownloadDialogViewModel() )
 			{
-				sb.Append( i.ToString() );
-			}
+				StringBuilder sb = new StringBuilder();
+				sb.Append( "Hello World" );
+				for( int i = 0; i < 10000; ++i )
+				{
+					sb.Append( i.ToString() );
+				}
 
-			string content = sb.ToString();
+				string content = sb.ToString();
 
-			vm.DownloadSize = content.Length;
-			vm.DownloadLink = "file:///" + Directory.GetCurrentDirectory().Replace( '\\', '/' ) + '/' + "test.txt";
-			vm.TargetPath = Path.GetTempFileName();
+				vm.DownloadSize = content.Length;
+				vm.DownloadLink = "file:///" + Directory.GetCurrentDirectory().Replace( '\\', '/' ) + '/' + "test.txt";
+				vm.TargetPath = Path.GetTempFileName();
 
-			using( ShimsContext.Create() )
-			{
-				System.Net.Http.Fakes.ShimHttpClient.AllInstances.GetAsyncStringHttpCompletionOption = ( client, link, options ) =>
-					{
-						return Task.Run<HttpResponseMessage>( () =>
+				using( ShimsContext.Create() )
+				{
+					System.Net.Http.Fakes.ShimHttpClient.AllInstances.GetAsyncStringHttpCompletionOption = ( client, link, options ) =>
 						{
-							return new System.Net.Http.Fakes.StubHttpResponseMessage( System.Net.HttpStatusCode.OK )
+							return Task.Run<HttpResponseMessage>( () =>
 							{
-								Content = new ByteArrayContent( Encoding.ASCII.GetBytes( content ) )
-							};
+								return new System.Net.Http.Fakes.StubHttpResponseMessage( System.Net.HttpStatusCode.OK )
+								{
+									Content = new ByteArrayContent( Encoding.ASCII.GetBytes( content ) )
+								};
+							} );
+						};
+
+					bool received = false;
+					Messenger.Default.Register<DownloadStatusMessage>( this, MessageTokens.DownloadCorrupted, msg =>
+						{
+							received = true;
 						} );
-					};
 
-				bool received = false;
-				Messenger.Default.Register<DownloadStatusMessage>( this, MessageTokens.DownloadCorrupted, msg =>
-					{
-						received = true;
-					} );
+					vm.StartDownload().Wait();
 
-				vm.StartDownload().Wait();
-
-				Assert.IsTrue( received );
+					Assert.IsTrue( received );
+				}
 			}
 		}
 
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void DownloadFailedTest()
 		{
-			DownloadDialogViewModel vm = new DownloadDialogViewModel();
-			vm.DownloadSize = 123;
-			vm.DownloadLink = "file:///" + Directory.GetCurrentDirectory().Replace( '\\', '/' ) + '/' + "test.txt";
-
-			using( ShimsContext.Create() )
+			using( DownloadDialogViewModel vm = new DownloadDialogViewModel() )
 			{
-				System.Net.Http.Fakes.ShimHttpClient.AllInstances.GetAsyncStringHttpCompletionOption = ( client, link, options ) =>
+				vm.DownloadSize = 123;
+				vm.DownloadLink = "file:///" + Directory.GetCurrentDirectory().Replace( '\\', '/' ) + '/' + "test.txt";
+
+				using( ShimsContext.Create() )
 				{
-					return Task.Run<HttpResponseMessage>( () =>
+					System.Net.Http.Fakes.ShimHttpClient.AllInstances.GetAsyncStringHttpCompletionOption = ( client, link, options ) =>
 					{
-						return new System.Net.Http.Fakes.StubHttpResponseMessage( System.Net.HttpStatusCode.BadRequest );
+						return Task.Run<HttpResponseMessage>( () =>
+						{
+							return new System.Net.Http.Fakes.StubHttpResponseMessage( System.Net.HttpStatusCode.BadRequest );
+						} );
+					};
+
+					bool received = false;
+					Messenger.Default.Register<DownloadStatusMessage>( this, MessageTokens.DownloadFailed, msg =>
+					{
+						received = true;
 					} );
-				};
 
-				bool received = false;
-				Messenger.Default.Register<DownloadStatusMessage>( this, MessageTokens.DownloadFailed, msg =>
-				{
-					received = true;
-				} );
+					vm.StartDownload().Wait();
 
-				vm.StartDownload().Wait();
-
-				Assert.IsTrue( received );
+					Assert.IsTrue( received );
+				}
 			}
 		}
 
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void DownloadTest()
 		{
-			DownloadDialogViewModel vm = new DownloadDialogViewModel();
-
-			StringBuilder sb = new StringBuilder();
-			sb.Append( "Hello World" );
-			for( int i = 0; i < 10000; ++i )
+			using( DownloadDialogViewModel vm = new DownloadDialogViewModel() )
 			{
-				sb.Append( i.ToString() );
-			}
-
-			string content = sb.ToString();
-
-			vm.DownloadSize = content.Length;
-			vm.DownloadLink = "file:///" + Directory.GetCurrentDirectory().Replace( '\\', '/' ) + '/' + "test.txt";
-			vm.TargetPath = Path.GetTempFileName();
-			using( MD5 md5 = System.Security.Cryptography.MD5.Create() )
-			{
-				vm.MD5 = BitConverter.ToString( md5.ComputeHash( Encoding.ASCII.GetBytes( content ) ) ).Replace( "-", "" ).ToLower();
-			}
-
-			using( ShimsContext.Create() )
-			{
-				System.Net.Http.Fakes.ShimHttpClient.AllInstances.GetAsyncStringHttpCompletionOption = ( client, link, options ) =>
+				StringBuilder sb = new StringBuilder();
+				sb.Append( "Hello World" );
+				for( int i = 0; i < 10000; ++i )
 				{
-					return Task.Run<HttpResponseMessage>( () =>
+					sb.Append( i.ToString() );
+				}
+
+				string content = sb.ToString();
+
+				vm.DownloadSize = content.Length;
+				vm.DownloadLink = "file:///" + Directory.GetCurrentDirectory().Replace( '\\', '/' ) + '/' + "test.txt";
+				vm.TargetPath = Path.GetTempFileName();
+				using( MD5 md5 = System.Security.Cryptography.MD5.Create() )
+				{
+					vm.MD5 = BitConverter.ToString( md5.ComputeHash( Encoding.ASCII.GetBytes( content ) ) ).Replace( "-", "" ).ToLower();
+				}
+
+				using( ShimsContext.Create() )
+				{
+					System.Net.Http.Fakes.ShimHttpClient.AllInstances.GetAsyncStringHttpCompletionOption = ( client, link, options ) =>
 					{
-						return new System.Net.Http.Fakes.StubHttpResponseMessage( System.Net.HttpStatusCode.OK )
+						return Task.Run<HttpResponseMessage>( () =>
 						{
-							Content = new ByteArrayContent( Encoding.ASCII.GetBytes( content ) )
-						};
-					} );
-				};
+							return new System.Net.Http.Fakes.StubHttpResponseMessage( System.Net.HttpStatusCode.BadRequest );
+						} );
+					};
 
-				bool received = false;
-				Messenger.Default.Register<DownloadStatusMessage>( this, MessageTokens.DownloadSucessful, msg =>
-				{
-					received = true;
-				} );
+					vm.StartDownload().Wait();
 
-				vm.StartDownload().Wait();
-
-				Assert.IsTrue( received );
+					Assert.IsTrue( vm.DownloadSuccessfull );
+				}
 			}
 		}
 
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void PropertyChangedTest()
 		{
-			DownloadDialogViewModel vm = new DownloadDialogViewModel();
-			PropertyChangedListener listener = new PropertyChangedListener( vm );
-			Assert.IsTrue( listener.TestProperties() );
+			using( DownloadDialogViewModel vm = new DownloadDialogViewModel() )
+			{
+				PropertyChangedListener listener = new PropertyChangedListener( vm );
+				Assert.IsTrue( listener.TestProperties() );
+			}
 		}
 
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void RetryCorruptedTest()
 		{
-			DownloadDialogViewModel vm = new DownloadDialogViewModel();
-			vm.Reset();
+			using( DownloadDialogViewModel vm = new DownloadDialogViewModel() )
+			{
+				vm.Reset();
 
-			bool closed = false;
-			vm.RequestClose += ( s, e ) => closed = true;
-			DownloadStatusMessage msg = new DownloadStatusMessage( "path", "http://localhost/link", 123, "md5" );
+				bool closed = false;
+				vm.RequestClose += ( s, e ) => closed = true;
+				DownloadStatusMessage msg = new DownloadStatusMessage( "path", "http://localhost/link", 123, "md5" );
 
-			MessageBoxServiceMock msgMock = new MessageBoxServiceMock( System.Windows.MessageBoxResult.No );
-			CallCheckServiceMock callMock = new CallCheckServiceMock();
+				MessageBoxServiceMock msgMock = new MessageBoxServiceMock( System.Windows.MessageBoxResult.No );
+				CallCheckServiceMock callMock = new CallCheckServiceMock();
 
-			DialogServiceManager.RegisterService( typeof( MessageBoxService ), msgMock );
-			DialogServiceManager.RegisterService( typeof( DownloadService ), callMock );
+				DialogServiceManager.RegisterService( typeof( MessageBoxService ), msgMock );
+				DialogServiceManager.RegisterService( typeof( DownloadService ), callMock );
 
-			Messenger.Default.Send<DownloadStatusMessage>( msg, MessageTokens.DownloadCorrupted );
-			Assert.IsTrue( closed );
-			Assert.IsFalse( callMock.WasCalled );
+				Messenger.Default.Send<DownloadStatusMessage>( msg, MessageTokens.DownloadCorrupted );
+				Assert.IsTrue( closed );
+				Assert.IsFalse( callMock.WasCalled );
 
-			closed = false;
-			msgMock.Result = System.Windows.MessageBoxResult.Yes;
+				closed = false;
+				msgMock.Result = System.Windows.MessageBoxResult.Yes;
 
-			Messenger.Default.Send<DownloadStatusMessage>( msg, MessageTokens.DownloadCorrupted );
-			Assert.IsTrue( closed );
-			Assert.IsTrue( callMock.WasCalled );
-			Assert.IsInstanceOfType( callMock.Parameter, typeof( DownloadServiceParameters ) );
+				Messenger.Default.Send<DownloadStatusMessage>( msg, MessageTokens.DownloadCorrupted );
+				Assert.IsTrue( closed );
+				Assert.IsTrue( callMock.WasCalled );
+				Assert.IsInstanceOfType( callMock.Parameter, typeof( DownloadServiceParameters ) );
 
-			DownloadServiceParameters args = callMock.Parameter as DownloadServiceParameters;
-			Assert.AreEqual( msg.TargetPath, args.TargetPath );
-			Assert.AreEqual( msg.DownloadLink, args.DownloadLink.AbsoluteUri );
-			Assert.AreEqual( msg.MD5, args.MD5 );
-			Assert.AreEqual( msg.DownloadSize, args.FileSize );
+				DownloadServiceParameters args = callMock.Parameter as DownloadServiceParameters;
+				Assert.AreEqual( msg.TargetPath, args.TargetPath );
+				Assert.AreEqual( msg.DownloadLink, args.DownloadLink.AbsoluteUri );
+				Assert.AreEqual( msg.MD5, args.MD5 );
+				Assert.AreEqual( msg.DownloadSize, args.FileSize );
+			}
 		}
 
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void RetryFailedTest()
 		{
-			DownloadDialogViewModel vm = new DownloadDialogViewModel();
-			vm.Reset();
+			using( DownloadDialogViewModel vm = new DownloadDialogViewModel() )
+			{
+				vm.Reset();
 
-			bool closed = false;
-			vm.RequestClose += ( s, e ) => closed = true;
-			DownloadStatusMessage msg = new DownloadStatusMessage( "path", "http://localhost/link", 123, "md5" );
+				bool closed = false;
+				vm.RequestClose += ( s, e ) => closed = true;
+				DownloadStatusMessage msg = new DownloadStatusMessage( "path", "http://localhost/link", 123, "md5" );
 
-			MessageBoxServiceMock msgMock = new MessageBoxServiceMock( System.Windows.MessageBoxResult.No );
-			CallCheckServiceMock callMock = new CallCheckServiceMock();
+				MessageBoxServiceMock msgMock = new MessageBoxServiceMock( System.Windows.MessageBoxResult.No );
+				CallCheckServiceMock callMock = new CallCheckServiceMock();
 
-			DialogServiceManager.RegisterService( typeof( MessageBoxService ), msgMock );
-			DialogServiceManager.RegisterService( typeof( DownloadService ), callMock );
+				DialogServiceManager.RegisterService( typeof( MessageBoxService ), msgMock );
+				DialogServiceManager.RegisterService( typeof( DownloadService ), callMock );
 
-			Messenger.Default.Send<DownloadStatusMessage>( msg, MessageTokens.DownloadFailed );
-			Assert.IsTrue( closed );
-			Assert.IsFalse( callMock.WasCalled );
+				Messenger.Default.Send<DownloadStatusMessage>( msg, MessageTokens.DownloadFailed );
+				Assert.IsTrue( closed );
+				Assert.IsFalse( callMock.WasCalled );
 
-			closed = false;
-			msgMock.Result = System.Windows.MessageBoxResult.Yes;
+				closed = false;
+				msgMock.Result = System.Windows.MessageBoxResult.Yes;
 
-			Messenger.Default.Send<DownloadStatusMessage>( msg, MessageTokens.DownloadFailed );
-			Assert.IsTrue( closed );
-			Assert.IsTrue( callMock.WasCalled );
-			Assert.IsInstanceOfType( callMock.Parameter, typeof( DownloadServiceParameters ) );
+				Messenger.Default.Send<DownloadStatusMessage>( msg, MessageTokens.DownloadFailed );
+				Assert.IsTrue( closed );
+				Assert.IsTrue( callMock.WasCalled );
+				Assert.IsInstanceOfType( callMock.Parameter, typeof( DownloadServiceParameters ) );
 
-			DownloadServiceParameters args = callMock.Parameter as DownloadServiceParameters;
-			Assert.AreEqual( msg.TargetPath, args.TargetPath );
-			Assert.AreEqual( msg.DownloadLink, args.DownloadLink.AbsoluteUri );
-			Assert.AreEqual( msg.MD5, args.MD5 );
-			Assert.AreEqual( msg.DownloadSize, args.FileSize );
+				DownloadServiceParameters args = callMock.Parameter as DownloadServiceParameters;
+				Assert.AreEqual( msg.TargetPath, args.TargetPath );
+				Assert.AreEqual( msg.DownloadLink, args.DownloadLink.AbsoluteUri );
+				Assert.AreEqual( msg.MD5, args.MD5 );
+				Assert.AreEqual( msg.DownloadSize, args.FileSize );
+			}
 		}
 	}
 }

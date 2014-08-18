@@ -50,15 +50,21 @@ namespace Blitzy.Tests.Plugins
 
 				////////////
 
-				Workspace ws = new Workspace();
-				ws.Items.Add( new WorkspaceItem() { ItemCommand = "command.exe" } );
+				using( Workspace ws = new Workspace() )
+				{
+					using( WorkspaceItem item = new WorkspaceItem() )
+					{
+						item.ItemCommand = "command.exe";
+						ws.Items.Add( item );
 
-				receivedInfo = null;
-				Assert.IsTrue( plug.ExecuteCommand( CommandItem.Create( "test", "test.exe", plug, "", ws ), Plugin.CommandExecutionMode.Default, null, out msg ) );
-				Assert.IsTrue( string.IsNullOrEmpty( msg ) );
+						receivedInfo = null;
+						Assert.IsTrue( plug.ExecuteCommand( CommandItem.Create( "test", "test.exe", plug, "", ws ), Plugin.CommandExecutionMode.Default, null, out msg ) );
+						Assert.IsTrue( string.IsNullOrEmpty( msg ) );
 
-				Assert.IsNotNull( receivedInfo );
-				Assert.AreEqual( "command.exe", receivedInfo.FileName );
+						Assert.IsNotNull( receivedInfo );
+						Assert.AreEqual( "command.exe", receivedInfo.FileName );
+					}
+				}
 			}
 		}
 

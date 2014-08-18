@@ -87,7 +87,9 @@ namespace Blitzy.Tests.Global
 		[TestMethod, TestCategory( "Utility" ), ExpectedException( typeof( ArgumentNullException ) )]
 		public void NullConstructorTest()
 		{
-			HotKeyHost host = new HotKeyHost( null );
+			using( HotKeyHost host = new HotKeyHost( null ) )
+			{
+			}
 		}
 
 		[TestMethod, TestCategory( "Utility" )]

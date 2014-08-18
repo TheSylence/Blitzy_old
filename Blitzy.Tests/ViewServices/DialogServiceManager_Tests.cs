@@ -19,7 +19,10 @@ namespace Blitzy.Tests.ViewServices
 			mock.CreateFunc = () => { return new Folder(); };
 
 			DialogServiceManager.RegisterManipService( typeof( Folder ), mock );
-			Assert.IsNotNull( DialogServiceManager.Create<Folder>() );
+			using( Folder folder = DialogServiceManager.Create<Folder>() )
+			{
+				Assert.IsNotNull( folder );
+			}
 		}
 
 		[TestMethod, TestCategory( "ViewServices" )]
@@ -30,22 +33,28 @@ namespace Blitzy.Tests.ViewServices
 
 			DialogServiceManager.RegisterManipService( typeof( Folder ), mock );
 
-			Folder f = new Folder();
-			Assert.IsTrue( DialogServiceManager.Edit( f ) );
-			Assert.AreEqual( 123, f.ID );
+			using( Folder f = new Folder() )
+			{
+				Assert.IsTrue( DialogServiceManager.Edit( f ) );
+				Assert.AreEqual( 123, f.ID );
+			}
 		}
 
 		[TestMethod, TestCategory( "ViewServices" ), ExpectedException( typeof( ArgumentException ) )]
 		public void InvalidCreateTest()
 		{
-			DialogServiceManager.Create<ModelBase>();
+			using( DialogServiceManager.Create<ModelBase>() )
+			{
+			}
 		}
 
 		[TestMethod, TestCategory( "ViewServices" ), ExpectedException( typeof( ArgumentException ) )]
 		public void InvalidEditTest()
 		{
-			Folder f = new Folder();
-			DialogServiceManager.Edit( f );
+			using( Folder f = new Folder() )
+			{
+				DialogServiceManager.Edit( f );
+			}
 		}
 
 		[TestMethod, TestCategory( "ViewServices" ), ExpectedException( typeof( ArgumentException ) )]

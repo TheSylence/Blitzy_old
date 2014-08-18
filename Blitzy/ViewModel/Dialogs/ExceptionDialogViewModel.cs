@@ -16,6 +16,7 @@ namespace Blitzy.ViewModel.Dialogs
 	{
 		#region Constructor
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors" )]
 		public ExceptionDialogViewModel( Exception ex, StackTrace trace )
 		{
 			ErrorReport = new ErrorReport( ex, trace );

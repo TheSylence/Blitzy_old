@@ -17,17 +17,19 @@ namespace Blitzy.Tests.Model
 		{
 			Settings settings = new Settings( Connection );
 
-			Folder folder = new Folder();
-			folder.Path = "builder_test";
-			folder.Rules.Add( "*.*" );
+			using( Folder folder = new Folder() )
+			{
+				folder.Path = "builder_test";
+				folder.Rules.Add( "*.*" );
 
-			TestHelper.CreateTestFolder( "builder_test" );
-			File.AppendAllText( "builder_test/test.txt", "" );
-			File.AppendAllText( "builder_test/test1.txt", "" );
-			File.AppendAllText( "builder_test/test2.txt", "" );
-			File.Copy( "TestData/Blitzy.exe.lnk", "builder_test/Blitzy.exe.lnk" );
+				TestHelper.CreateTestFolder( "builder_test" );
+				File.AppendAllText( "builder_test/test.txt", "" );
+				File.AppendAllText( "builder_test/test1.txt", "" );
+				File.AppendAllText( "builder_test/test2.txt", "" );
+				File.Copy( "TestData/Blitzy.exe.lnk", "builder_test/Blitzy.exe.lnk" );
 
-			settings.Folders.Add( folder );
+				settings.Folders.Add( folder );
+			}
 			using( CatalogBuilder builder = new CatalogBuilder( settings ) )
 			{
 				bool started = false;

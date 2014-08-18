@@ -181,7 +181,7 @@
     <value>Backup von Verknüpfungen vor dem Parsen erstellen</value>
   </data>
   <data name="PeriodicallyRebuildCatalog" xml:space="preserve">
-    <value>TODO</value>
+    <value>Katalog regelmäßig neu erstellen</value>
   </data>
   <data name="Misc" xml:space="preserve">
     <value>Verschiedenes</value>

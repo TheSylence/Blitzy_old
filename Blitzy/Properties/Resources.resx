@@ -455,10 +455,6 @@
     <value>We are sorry but there has been a critical error in the application. All unsaved data are probably lost.
 To help us fixing the error we encourage you to send an error report to the developers. Below you can see the data that will be send.</value>
   </data>
-  <data name="ExceptionContactDetails" xml:space="preserve">
-    <value>If you want to you can enter an E-Mail address that we can use to contact you if we need further details.
-Your address won't be used for any other purposes than investigating this error.</value>
-  </data>
   <data name="ExceptionDialogTitle" xml:space="preserve">
     <value>An error has occured</value>
   </data>

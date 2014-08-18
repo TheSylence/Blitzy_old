@@ -49,7 +49,6 @@ namespace Blitzy.ViewModel
 			Register<DownloadDialogViewModel>();
 			Register<PluginsDialogViewModel>();
 
-			Register<ExceptionDialogViewModel>();
 			Register<NotifyIconViewModel>();
 		}
 
@@ -112,14 +111,6 @@ namespace Blitzy.ViewModel
 			get
 			{
 				return ServiceLocator.Current.GetInstance<DownloadDialogViewModel>();
-			}
-		}
-
-		public ExceptionDialogViewModel ExceptionDialog
-		{
-			get
-			{
-				return ServiceLocator.Current.GetInstance<ExceptionDialogViewModel>();
 			}
 		}
 
