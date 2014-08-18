@@ -49,7 +49,6 @@ namespace Blitzy.ViewModel
 			Register<DownloadDialogViewModel>();
 			Register<PluginsDialogViewModel>();
 
-			Register<ExceptionDialogViewModel>();
 			Register<NotifyIconViewModel>();
 		}
 

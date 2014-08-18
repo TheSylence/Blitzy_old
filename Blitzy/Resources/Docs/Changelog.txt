@@ -1,5 +1,6 @@
 ﻿Version 0.9.5
 ----------------------
+* Fixed crash at application exit
 * Fixed window not gaining focus when opened by pressing the tray icon
 * Fixed crash on startup when Hotkey was already registered
 * Fixed issue with hiding the window using the keyboard shortcut
