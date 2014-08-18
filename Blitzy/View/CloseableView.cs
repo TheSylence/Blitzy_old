@@ -62,6 +62,7 @@ namespace Blitzy.View
 		private void model_RequestShow( object sender, EventArgs e )
 		{
 			Show();
+			Activate();
 			if( Shown != null )
 			{
 				Shown( this, EventArgs.Empty );

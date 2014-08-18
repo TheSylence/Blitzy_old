@@ -48,7 +48,15 @@ namespace Blitzy.View
 				}
 
 				CurrentHotKey = new HotKey( msg.Key, msg.Modifiers, true );
-				KeyHost.AddHotKey( CurrentHotKey );
+
+				try
+				{
+					KeyHost.AddHotKey( CurrentHotKey );
+				}
+				catch( HotKeyAlreadyRegisteredException )
+				{
+					// TODO: Inform the user about this?
+				}
 			} );
 
 			KeyHost.HotKeyPressed += ( s, e ) =>

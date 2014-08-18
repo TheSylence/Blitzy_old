@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-	<Product Id="6ea20cb1-3911-4a28-84c4-c41cfd819723" Name="Blitzy" Language="1033"
+	<Product Id="C72E0B09-3365-4E5A-977B-8244C47FAA7C" Name="Blitzy" Language="1033"
 			 Version="!(bind.FileVersion.Blitzy.exe)" Manufacturer="btbsoft.org"
 			 UpgradeCode="2b18ed51-32b9-463b-8459-8b32ee807a79">
 		<!-- Package information -->
