@@ -4,7 +4,7 @@ namespace Blitzy.Plugin
 {
 	public enum ColumnType
 	{
-		Numeric,
+		Integer,
 		Text
 	}
 
@@ -35,7 +35,7 @@ namespace Blitzy.Plugin
 			}
 			else
 			{
-				sqlType = "NUMERIC";
+				sqlType = "INTEGER";
 			}
 
 			if( !AllowNull )

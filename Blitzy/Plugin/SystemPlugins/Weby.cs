@@ -105,11 +105,11 @@ namespace Blitzy.Plugin.SystemPlugins
 			{
 				TableColumn[] columns =
 				{
-					new TableColumn( "WebyID", ColumnType.Numeric ),
+					new TableColumn( "WebyID", ColumnType.Integer ),
 					new TableColumn( "Name", ColumnType.Text, 50 ),
 					new TableColumn( "Description", ColumnType.Text, 255 ),
 					new	TableColumn( "Url", ColumnType.Text ),
-					new TableColumn( "Icon", ColumnType.Text )
+					new TableColumn( "Icon", ColumnType.Text, 0, true )
 				};
 				if( !Host.Database.CreateTable( this, "websites", columns ) )
 				{

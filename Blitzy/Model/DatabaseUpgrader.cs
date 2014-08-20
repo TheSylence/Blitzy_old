@@ -14,6 +14,20 @@ namespace Blitzy.Model
 		internal DatabaseUpgrader()
 		{
 			Queries.Add( new[] { string.Empty } );
+			Queries.Add( new[]
+			{
+				QueryBuilder.RenameTable( "weby_websites", "weby_websites_copy" ),
+				QueryBuilder.CreateTable( "weby_websites", new Dictionary<string, string>
+				{
+					{ "WebyID", "INTEGER PRIMARY KEY" },
+					{ "Name", "VARCHAR(50) NOT NULL " },
+					{ "Description", "VARCHAR(255) NOT NULL " },
+					{ "Url", "TEXT NOT NULL " },
+					{ "Icon", "TEXT" }
+				} ),
+				QueryBuilder.CopyTable( "weby_websites_copy", "weby_websites", new[]{"WebyID","Name", "Description","Url","Icon"}),
+				QueryBuilder.DropTable("weby_websites_copy")
+			} );
 		}
 
 		[SuppressMessage( "Microsoft.Security", "CA2100" )]

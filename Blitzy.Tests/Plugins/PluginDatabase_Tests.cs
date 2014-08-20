@@ -33,7 +33,7 @@ namespace Blitzy.Tests.Plugins
 			{
 				TableColumn[] columns = new TableColumn[]
 			{
-				new TableColumn( "col1", ColumnType.Numeric ),
+				new TableColumn( "col1", ColumnType.Integer ),
 				new TableColumn( "col2", ColumnType.Text )
 			};
 
@@ -246,7 +246,7 @@ namespace Blitzy.Tests.Plugins
 			{
 				TableColumn[] columns = new TableColumn[]
 			{
-				new TableColumn( "col1", ColumnType.Numeric ),
+				new TableColumn( "col1", ColumnType.Integer ),
 				new TableColumn( "col2", ColumnType.Text )
 			};
 
@@ -298,7 +298,7 @@ namespace Blitzy.Tests.Plugins
 			{
 				TableColumn[] columns = new TableColumn[]
 			{
-				new TableColumn( "col1", ColumnType.Numeric ),
+				new TableColumn( "col1", ColumnType.Integer ),
 				new TableColumn( "col2", ColumnType.Text )
 			};
 
@@ -335,7 +335,7 @@ namespace Blitzy.Tests.Plugins
 
 				TableColumn[] columns = new TableColumn[]
 			{
-				new TableColumn( "col1", ColumnType.Numeric ),
+				new TableColumn( "col1", ColumnType.Integer ),
 				new TableColumn( "col2", ColumnType.Text )
 			};
 
@@ -368,7 +368,7 @@ namespace Blitzy.Tests.Plugins
 
 				TableColumn[] columns = new TableColumn[]
 			{
-				new TableColumn( "col1", ColumnType.Numeric ),
+				new TableColumn( "col1", ColumnType.Integer ),
 				new TableColumn( "col2", ColumnType.Text )
 			};
 
