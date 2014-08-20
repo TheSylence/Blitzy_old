@@ -39,7 +39,7 @@ namespace Blitzy.Tests.Model
 				return null;
 			};
 
-			VersionInfo info = new VersionInfo( System.Net.HttpStatusCode.OK, null, new Uri( "http://example.com" ), "1234", 1234, new Dictionary<Version, string>() );
+			VersionInfo info = new VersionInfo( System.Net.HttpStatusCode.OK, null, new Uri( "http://example.com" ), "1234", 1234, new Dictionary<Version, string>(), null );
 			UpdateChecker.Instance.DownloadLatestVersion( info );
 
 			Assert.IsTrue( called );
@@ -52,7 +52,7 @@ namespace Blitzy.Tests.Model
 			{
 				btbapi.Fakes.ShimAPI.AllInstances.CheckVersionStringVersionBoolean = ( api, str, ver, force ) =>
 					{
-						return Task.Run<VersionInfo>( () => new VersionInfo( System.Net.HttpStatusCode.BadRequest, null, null, null, 0, null ) );
+						return Task.Run<VersionInfo>( () => new VersionInfo( System.Net.HttpStatusCode.BadRequest, null, null, null, 0, null, null ) );
 					};
 
 				Task<VersionInfo> t = UpdateChecker.Instance.CheckVersion();
@@ -62,7 +62,7 @@ namespace Blitzy.Tests.Model
 
 				btbapi.Fakes.ShimAPI.AllInstances.CheckVersionStringVersionBoolean = ( api, str, ver, force ) =>
 				{
-					return Task.Run<VersionInfo>( () => new VersionInfo( System.Net.HttpStatusCode.OK, new Version( 1, 2 ), new Uri( "http://localhost/file.name" ), "123", 123, new Dictionary<Version, string>() ) );
+					return Task.Run<VersionInfo>( () => new VersionInfo( System.Net.HttpStatusCode.OK, new Version( 1, 2 ), new Uri( "http://localhost/file.name" ), "123", 123, new Dictionary<Version, string>(), null ) );
 				};
 
 				bool finished = false;

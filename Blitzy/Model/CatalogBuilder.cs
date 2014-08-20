@@ -61,10 +61,6 @@ namespace Blitzy.Model
 				CanProcess.Set();
 				ThreadObject.Join();
 			}
-			else
-			{
-				Debugger.Break();
-			}
 
 			base.Dispose( managed );
 		}
