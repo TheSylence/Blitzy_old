@@ -227,8 +227,6 @@ namespace Blitzy.ViewModel
 				Collection<string> data = new Collection<string>( CmdManager.GetCommandParts( CommandInput ) );
 				CommandInfo = CmdManager.CurrentItem.Plugin.GetInfo( data, CmdManager.CurrentItem );
 			}
-
-			throw new ArgumentNullException( "test", "This is a test exception" );
 		}
 
 		#endregion Methods
