@@ -110,7 +110,7 @@ namespace Blitzy.Tests.ViewModel
 				Version currentVersion = new Version( 1, 0 );
 				Version latestVersion = new Version( 1, 0 );
 
-				VersionInfo versionInfo = new VersionInfo( System.Net.HttpStatusCode.OK, latestVersion, new Uri( "http://localhost" ), "", 0, new System.Collections.Generic.Dictionary<Version, string>() );
+				VersionInfo versionInfo = new VersionInfo( System.Net.HttpStatusCode.OK, latestVersion, new Uri( "http://localhost" ), "", 0, new System.Collections.Generic.Dictionary<Version, string>(), null );
 				VersionCheckMessage msg = new VersionCheckMessage( currentVersion, versionInfo, false );
 
 				BalloonTipMessage msgReceived = null;

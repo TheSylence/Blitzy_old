@@ -27,13 +27,12 @@ namespace Blitzy.Tests.Model
 		public void LoadTest()
 		{
 			const string fileName = "TestData/Blitzy.exe.lnk";
-			Assert.IsTrue( File.Exists( fileName ) );
+			Assert.IsTrue( File.Exists( fileName ), Path.GetFullPath( fileName ) );
 
 			ShellShortcut sh = new ShellShortcut( fileName );
 			Assert.IsTrue( sh.Valid );
 			Assert.IsNotNull( sh.Path );
 			Assert.IsTrue( System.IO.Path.IsPathRooted( sh.Path ) );
-			Assert.IsTrue( File.Exists( sh.Path ) );
 			Assert.AreEqual( "args", sh.Arguments );
 			Assert.AreEqual( "Test", sh.Description );
 			Assert.IsNotNull( sh.IconPath );

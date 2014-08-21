@@ -72,7 +72,7 @@ namespace Blitzy.Tests.Model
 					}
 
 					TimeSpan elapsed = timer.Elapsed;
-					TimeSpan maxSpan = TimeSpan.FromMilliseconds( 350 );
+					TimeSpan maxSpan = TimeSpan.FromMilliseconds( 400 );
 
 					Assert.IsTrue( elapsed <= maxSpan, string.Format( "{0} of {1}: {2}", testCount, totalCount, elapsed.ToString() ) );
 				}

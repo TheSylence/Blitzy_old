@@ -71,7 +71,7 @@ namespace Blitzy.Tests
 			}
 			else if( type == typeof( VersionInfo ) )
 			{
-				return new VersionInfo( HttpStatusCode.OK, new Version( 1, 2 ), new Uri( "http://test.com" ), "123", 12344, new Dictionary<Version, string>() );
+				return new VersionInfo( HttpStatusCode.OK, new Version( 1, 2 ), new Uri( "http://test.com" ), "123", 12344, new Dictionary<Version, string>(), null );
 			}
 			else if( type == typeof( ErrorReport ) )
 			{
