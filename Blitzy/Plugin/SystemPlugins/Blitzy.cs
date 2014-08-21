@@ -37,7 +37,7 @@ namespace Blitzy.Plugin.SystemPlugins
 			yield return CommandItem.Create( "history", "ResetHistory".Localize(), this, "History.png" );
 
 #if DEBUG
-			yield return CommandItem.Create( "test", "Test Command", this );
+			yield return CommandItem.Create( "exception", "Throw an exception", this );
 #endif
 		}
 

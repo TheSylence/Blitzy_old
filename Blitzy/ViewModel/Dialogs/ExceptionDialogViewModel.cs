@@ -155,11 +155,7 @@ namespace Blitzy.ViewModel.Dialogs
 			{
 				if( !RuntimeConfig.Tests )
 				{
-#if DEBUG
-					return new API( APIEndPoint.Localhost );
-#else
-					return new btbapi.API( APIEndPoint.Default );
-#endif
+					return new API( APIEndPoint.Default );
 				}
 
 				return new API( APIEndPoint.Localhost );
