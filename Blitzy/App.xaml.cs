@@ -57,9 +57,9 @@ namespace Blitzy
 
 			Thread.CurrentThread.Name = "Main";
 
-			//#if !DEBUG
+#if !DEBUG
 			DispatcherUnhandledException += new DispatcherUnhandledExceptionEventHandler( Application_DispatcherUnhandledException );
-			//#endif
+#endif
 
 			LocalizeDictionary.Instance.DefaultProvider.ProviderError += DefaultProvider_ProviderError;
 			LocalizeDictionary.Instance.MissingKeyEvent += Instance_MissingKeyEvent;
