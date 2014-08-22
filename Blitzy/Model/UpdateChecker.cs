@@ -57,7 +57,8 @@ namespace Blitzy.Model
 
 		internal void DownloadLatestVersion( VersionInfo info )
 		{
-			TargetPath = IOUtils.GetTempFileName( "exe" );
+			string ext = System.IO.Path.GetExtension( info.DownloadLink.AbsolutePath ).Substring( 1 );
+			TargetPath = IOUtils.GetTempFileName( ext );
 
 			DownloadServiceParameters args = new DownloadServiceParameters( info.DownloadLink, TargetPath, info.Size, info.MD5 );
 			DialogServiceManager.Show<DownloadService>( args );

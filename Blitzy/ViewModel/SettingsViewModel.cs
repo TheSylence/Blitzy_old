@@ -562,7 +562,10 @@ namespace Blitzy.ViewModel
 
 		private void ExecuteDownloadUpdateCommand()
 		{
-			DownloadServiceParameters args = new DownloadServiceParameters( LatestVersionInfo.DownloadLink, "test.exe", 0, "234" );
+			string ext = System.IO.Path.GetExtension( LatestVersionInfo.DownloadLink.AbsolutePath ).Substring( 1 );
+			string targetPath = IOUtils.GetTempFileName( ext );
+
+			DownloadServiceParameters args = new DownloadServiceParameters( LatestVersionInfo.DownloadLink, targetPath, LatestVersionInfo.Size, LatestVersionInfo.MD5 );
 			DialogServiceManager.Show<DownloadService>( args );
 		}
 
