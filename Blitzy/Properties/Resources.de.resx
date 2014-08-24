@@ -499,4 +499,10 @@ Um den Fehler beheben zu können kann ein Fehlerbericht an die Entwickler gesend
   <data name="ScanningCatalogProgress" xml:space="preserve">
     <value>{0} von {1} Ordner gescannt</value>
   </data>
+  <data name="HotKeyAlreadyRegistered" xml:space="preserve">
+    <value>Der in den Einstellungen definierte HotKey konnte nicht registriert werden, weil er schon von einer anderen Anwendung verwendet wird. Das Anzeigen des Fensters über den HotKey wird nicht möglich sein.</value>
+  </data>
+  <data name="HotKeyError" xml:space="preserve">
+    <value>Fehler beim Regstrieren des HotKeys</value>
+  </data>
 </root>
