@@ -394,6 +394,11 @@ namespace Blitzy.ViewModel
 			}
 			itemChain.Reverse();
 
+			if( commandParts.Count > itemChain.Count )
+			{
+				return true;
+			}
+
 			for( int i = 0; i < commandParts.Count; ++i )
 			{
 				commandParts[i] = itemChain[i].Name;

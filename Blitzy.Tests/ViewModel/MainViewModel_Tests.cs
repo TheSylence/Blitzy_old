@@ -85,6 +85,17 @@ namespace Blitzy.Tests.ViewModel
 		}
 
 		[TestMethod, TestCategory( "ViewModel" )]
+		public void DoubleTabTest()
+		{
+			using( MainViewModel vm = new MainViewModel() )
+			{
+				vm.CommandInput = "weby";
+				Assert.IsTrue( vm.OnKeyTab() );
+				Assert.IsTrue( vm.OnKeyTab() );
+			}
+		}
+
+		[TestMethod, TestCategory( "ViewModel" )]
 		public void DownTestHistory()
 		{
 			using( MainViewModel vm = new MainViewModel() )
