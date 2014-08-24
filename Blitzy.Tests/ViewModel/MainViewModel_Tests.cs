@@ -197,6 +197,18 @@ namespace Blitzy.Tests.ViewModel
 		}
 
 		[TestMethod, TestCategory( "ViewModel" )]
+		public void MultipleTabTest()
+		{
+			using( MainViewModel vm = new MainViewModel() )
+			{
+				vm.CommandInput = "google";
+				Assert.IsTrue( vm.OnKeyTab() );
+				Assert.IsTrue( vm.OnKeyTab() );
+				Assert.AreEqual( "google" + vm.CmdManager.Separator, vm.CommandInput );
+			}
+		}
+
+		[TestMethod, TestCategory( "ViewModel" )]
 		public void PropertyChangedTest()
 		{
 			using( MainViewModel vm = new MainViewModel() )
