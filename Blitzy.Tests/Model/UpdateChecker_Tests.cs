@@ -34,12 +34,12 @@ namespace Blitzy.Tests.Model
 
 				Assert.AreEqual( "1234", args.MD5 );
 				Assert.AreEqual( 1234, args.FileSize );
-				Assert.AreEqual( new Uri( "http://example.com" ).AbsoluteUri, args.DownloadLink.AbsoluteUri );
+				Assert.AreEqual( new Uri( "http://example.com/file.name" ).AbsoluteUri, args.DownloadLink.AbsoluteUri );
 				called = true;
 				return null;
 			};
 
-			VersionInfo info = new VersionInfo( System.Net.HttpStatusCode.OK, null, new Uri( "http://example.com" ), "1234", 1234, new Dictionary<Version, string>(), null );
+			VersionInfo info = new VersionInfo( System.Net.HttpStatusCode.OK, null, new Uri( "http://example.com/file.name" ), "1234", 1234, new Dictionary<Version, string>(), null );
 			UpdateChecker.Instance.DownloadLatestVersion( info );
 
 			Assert.IsTrue( called );

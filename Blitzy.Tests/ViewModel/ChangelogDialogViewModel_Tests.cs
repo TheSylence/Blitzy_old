@@ -14,7 +14,7 @@ namespace Blitzy.Tests.ViewModel
 {
 	[TestClass]
 	[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-	public class ChangelogDialogViewModel_Tests
+	public class ChangelogDialogViewModel_Tests : TestBase
 	{
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void ChangelogTest()
@@ -47,7 +47,7 @@ namespace Blitzy.Tests.ViewModel
 			{
 				Assert.IsFalse( vm.DownloadCommand.CanExecute( null ) );
 
-				vm.LatestVersionInfo = new VersionInfo( HttpStatusCode.OK, new Version(), new Uri( "http://localhost" ), string.Empty, 123, new Dictionary<Version, string>(), null );
+				vm.LatestVersionInfo = new VersionInfo( HttpStatusCode.OK, new Version(), new Uri( "http://localhost/file.name" ), string.Empty, 123, new Dictionary<Version, string>(), null );
 				Assert.IsTrue( vm.DownloadCommand.CanExecute( null ) );
 
 				CallCheckServiceMock mock = new CallCheckServiceMock();
