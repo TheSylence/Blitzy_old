@@ -6,7 +6,7 @@ using log4net;
 
 namespace Blitzy
 {
-	internal static class LogHelper
+	public static class LogHelper
 	{
 		#region Methods
 
