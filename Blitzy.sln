@@ -10,6 +10,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".build", ".build", "{FDEC4A
 		Build.proj = Build.proj
 		.build\MSBuild.Community.Tasks.dll = .build\MSBuild.Community.Tasks.dll
 		.build\MSBuild.Community.Tasks.targets = .build\MSBuild.Community.Tasks.targets
+		Version.txt = Version.txt
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blitzy.Tests", "Blitzy.Tests\Blitzy.Tests.csproj", "{CD0469A9-A35A-4DDD-BB67-9A3B58D8DCB3}"
@@ -38,6 +39,8 @@ EndProject
 Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "Setup", "Setup\Setup.wixproj", "{E896280C-F786-4C67-89F4-1A3412C609D6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blitzy.PluginInterface", "Blitzy.PluginInterface\Blitzy.PluginInterface.csproj", "{F0E5F8B6-463D-440A-9AD1-C84CBAF8FE2E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{715C9E85-3120-418E-99BE-7950E9237EA3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <bumpversion currentVersion="0.9.6">
   <task type="WriteToFile">
-    <key name="files" value="Blitzy\Properties\Version.txt" />
+    <key name="files" value="Version.txt" />
   </task>
   <task type="WixProductID">
     <key name="wixFile" value="Setup\Blitzy.wxs" />
