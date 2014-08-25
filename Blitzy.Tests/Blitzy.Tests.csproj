@@ -221,6 +221,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Blitzy.PluginInterface\Blitzy.PluginInterface.csproj">
+      <Project>{f0e5f8b6-463d-440a-9ad1-c84cbaf8fe2e}</Project>
+      <Name>Blitzy.PluginInterface</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Blitzy\Blitzy.csproj">
       <Project>{82e328eb-8b53-4d67-b7df-639a8ec1b92e}</Project>
       <Name>Blitzy</Name>

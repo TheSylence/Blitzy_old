@@ -1,0 +1,99 @@
+﻿// $Id$
+
+using System;
+using System.Collections.Generic;
+using System.Data.Common;
+using System.Linq;
+
+namespace Blitzy.Plugin
+{
+	public enum WhereOperation
+	{
+		Equals,
+		NotEquals,
+		Greater,
+		GreaterOrEqual,
+		Less,
+		LessOrEqual
+	}
+
+	public class WhereClause
+	{
+		#region Methods
+
+		public void AddCondition( string column, object value, WhereOperation op = WhereOperation.Equals )
+		{
+			Entries.Add( new WhereEntry( column, value, op ) );
+		}
+
+		internal string ToSql( DbCommand cmd )
+		{
+			return string.Join( " AND ", Entries.Select( e => e.ToSql( cmd ) ) );
+		}
+
+		#endregion Methods
+
+
+
+		#region Attributes
+
+		private readonly List<WhereEntry> Entries = new List<WhereEntry>();
+
+		#endregion Attributes
+
+		#region WhereEntry
+
+		private class WhereEntry
+		{
+			private readonly string Column;
+			private readonly WhereOperation Op;
+			private readonly object Value;
+
+			public WhereEntry( string column, object value, WhereOperation op )
+			{
+				Column = column;
+				Value = value;
+				Op = op;
+			}
+
+			public string ToSql( DbCommand cmd )
+			{
+				DbParameter param = cmd.CreateParameter();
+				param.Value = Value;
+				param.ParameterName = string.Format( "where_{0}", Column );
+				cmd.Parameters.Add( param );
+
+				return string.Format( "{0} {1} @{2}", Column, ToSql( Op ), param.ParameterName );
+			}
+
+			private static string ToSql( WhereOperation op )
+			{
+				switch( op )
+				{
+					case WhereOperation.Equals:
+						return "=";
+
+					case WhereOperation.NotEquals:
+						return "!=";
+
+					case WhereOperation.Less:
+						return "<";
+
+					case WhereOperation.LessOrEqual:
+						return "<=";
+
+					case WhereOperation.Greater:
+						return ">";
+
+					case WhereOperation.GreaterOrEqual:
+						return ">=";
+
+					default:
+						throw new ArgumentException( "Unknown Where Operation" );
+				}
+			}
+		}
+
+		#endregion WhereEntry
+	}
+}
