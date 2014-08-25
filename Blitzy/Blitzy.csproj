@@ -194,6 +194,7 @@
     <Compile Include="Messages\PluginMessage.cs" />
     <Compile Include="Messages\SettingsChangedMessage.cs" />
     <Compile Include="Model\UpdateChecker.cs" />
+    <Compile Include="Plugin\IPluginViewModel.cs" />
     <Compile Include="Plugin\SystemPlugins\ISystemPlugin.cs" />
     <Compile Include="Plugin\SystemPlugins\PuttyUI.xaml.cs">
       <DependentUpon>PuttyUI.xaml</DependentUpon>
@@ -218,7 +219,9 @@
     <Compile Include="Messages\InternalCommandMessage.cs" />
     <Compile Include="Messages\VersionCheckMessage.cs" />
     <Compile Include="Model\CatalogBuilder.cs" />
+    <Compile Include="Model\CommandItem.cs" />
     <Compile Include="Model\CommandManager.cs" />
+    <Compile Include="Model\CommandName.cs" />
     <Compile Include="Model\Database.cs" />
     <Compile Include="Model\DatabaseCreator.cs" />
     <Compile Include="Model\DatabaseUpgrader.cs" />
@@ -237,6 +240,10 @@
     <Compile Include="Model\Workspace.cs" />
     <Compile Include="Model\WorkspaceItem.cs" />
     <Compile Include="NativeMethods.cs" />
+    <Compile Include="Plugin\IDatabase.cs" />
+    <Compile Include="Plugin\IPlugin.cs" />
+    <Compile Include="Plugin\IPluginHost.cs" />
+    <Compile Include="Plugin\ISettings.cs" />
     <Compile Include="Plugin\PluginManager.cs" />
     <Compile Include="Plugin\SystemPlugins\Blitzy.cs" />
     <Compile Include="Plugin\SystemPlugins\Calcy.cs" />
@@ -244,6 +251,8 @@
     <Compile Include="Plugin\SystemPlugins\Putty.cs" />
     <Compile Include="Plugin\SystemPlugins\Weby.cs" />
     <Compile Include="Plugin\SystemPlugins\Winy.cs" />
+    <Compile Include="Plugin\TableColumn.cs" />
+    <Compile Include="Plugin\WhereClause.cs" />
     <Compile Include="RuntimeConfig.cs" />
     <Compile Include="Utility\IOUtils.cs" />
     <Compile Include="Utility\LanguageHelper.cs" />
@@ -449,10 +458,6 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Blitzy.PluginInterface\Blitzy.PluginInterface.csproj">
-      <Project>{f0e5f8b6-463d-440a-9ad1-c84cbaf8fe2e}</Project>
-      <Name>Blitzy.PluginInterface</Name>
-    </ProjectReference>
     <ProjectReference Include="..\btbapi\btbapi\btbapi.csproj">
       <Project>{f656ea31-9755-4188-b662-02beacc5652f}</Project>
       <Name>btbapi</Name>

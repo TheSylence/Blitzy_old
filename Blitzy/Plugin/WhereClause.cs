@@ -2,7 +2,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Data.Common;
+using System.Data.SQLite;
 using System.Linq;
 
 namespace Blitzy.Plugin
@@ -19,6 +19,10 @@ namespace Blitzy.Plugin
 
 	public class WhereClause
 	{
+		#region Constructor
+
+		#endregion Constructor
+
 		#region Methods
 
 		public void AddCondition( string column, object value, WhereOperation op = WhereOperation.Equals )
@@ -26,14 +30,16 @@ namespace Blitzy.Plugin
 			Entries.Add( new WhereEntry( column, value, op ) );
 		}
 
-		internal string ToSql( DbCommand cmd )
+		internal string ToSql( SQLiteCommand cmd )
 		{
 			return string.Join( " AND ", Entries.Select( e => e.ToSql( cmd ) ) );
 		}
 
 		#endregion Methods
 
+		#region Properties
 
+		#endregion Properties
 
 		#region Attributes
 
@@ -56,9 +62,9 @@ namespace Blitzy.Plugin
 				Op = op;
 			}
 
-			public string ToSql( DbCommand cmd )
+			public string ToSql( SQLiteCommand cmd )
 			{
-				DbParameter param = cmd.CreateParameter();
+				SQLiteParameter param = cmd.CreateParameter();
 				param.Value = Value;
 				param.ParameterName = string.Format( "where_{0}", Column );
 				cmd.Parameters.Add( param );
