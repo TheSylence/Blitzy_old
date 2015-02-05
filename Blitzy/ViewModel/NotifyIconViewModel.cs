@@ -1,4 +1,4 @@
-﻿// $Id$
+﻿
 
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;

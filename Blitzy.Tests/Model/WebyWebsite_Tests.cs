@@ -1,6 +1,4 @@
-﻿// $Id$
-
-using System;
+﻿using System;
 using Blitzy.Model;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -10,13 +8,6 @@ namespace Blitzy.Tests.Model
 	[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	public class WebyWebsite_Tests : TestBase
 	{
-		[TestInitialize]
-		public override void BeforeTestRun()
-		{
-			base.BeforeTestRun();
-			CreatePluginTables();
-		}
-
 		[TestMethod, TestCategory( "Model" ), ExpectedException( typeof( TypeLoadException ) )]
 		public void LoadNonExistingTest()
 		{
@@ -40,9 +31,10 @@ namespace Blitzy.Tests.Model
 		{
 			WebyWebsite w = new WebyWebsite();
 			Assert.IsFalse( w.ExistsInDatabase );
+			int id = TestHelper.NextID();
 
 			w.Name = "google";
-			w.ID = 1;
+			w.ID = id;
 			w.Description = "This is a test";
 			w.URL = "http://google.com/q={0}";
 
@@ -51,7 +43,7 @@ namespace Blitzy.Tests.Model
 			Assert.IsTrue( w.ExistsInDatabase );
 
 			WebyWebsite w2 = new WebyWebsite();
-			w2.ID = 1;
+			w2.ID = id;
 			w2.Load( Connection );
 
 			Assert.IsTrue( w2.ExistsInDatabase );
@@ -65,9 +57,10 @@ namespace Blitzy.Tests.Model
 		{
 			WebyWebsite w = new WebyWebsite();
 			Assert.IsFalse( w.ExistsInDatabase );
+			int id = TestHelper.NextID();
 
 			w.Name = "google";
-			w.ID = 1;
+			w.ID = id;
 			w.Description = "This is a test";
 			w.URL = "http://google.com/q={0}";
 
@@ -78,7 +71,7 @@ namespace Blitzy.Tests.Model
 			w.Save( Connection );
 
 			w = new WebyWebsite();
-			w.ID = 1;
+			w.ID = id;
 			w.Load( Connection );
 
 			Assert.AreEqual( "helloworld", w.Name );

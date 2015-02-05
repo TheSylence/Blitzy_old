@@ -1,6 +1,4 @@
-﻿// $Id$
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -51,9 +49,6 @@ namespace Blitzy.Tests.ViewModel
 				mock.Value = "test2";
 				vm.AddItemCommand.Execute( null );
 				Assert.AreEqual( 2, vm.SelectedWorkspace.Items.Count );
-
-				Assert.AreEqual( 1, vm.SelectedWorkspace.Items[0].ItemID );
-				Assert.AreEqual( 2, vm.SelectedWorkspace.Items[1].ItemID );
 			}
 		}
 
@@ -73,21 +68,19 @@ namespace Blitzy.Tests.ViewModel
 				WorkspaceSettingsViewModel vm = new WorkspaceSettingsViewModel( baseVM.Settings, serviceManager );
 
 				Assert.IsTrue( vm.AddWorkspaceCommand.CanExecute( null ) );
+				int oldCount = vm.Workspaces.Count;
 
 				mock.Value = null;
 				vm.AddWorkspaceCommand.Execute( null );
-				Assert.AreEqual( 0, vm.Workspaces.Count );
+				Assert.AreEqual( oldCount, vm.Workspaces.Count );
 
 				mock.Value = "test";
 				vm.AddWorkspaceCommand.Execute( null );
-				Assert.AreEqual( 1, vm.Workspaces.Count );
+				Assert.AreEqual( oldCount + 1, vm.Workspaces.Count );
 
 				mock.Value = "test2";
 				vm.AddWorkspaceCommand.Execute( null );
-				Assert.AreEqual( 2, vm.Workspaces.Count );
-
-				Assert.AreEqual( 1, vm.Workspaces[0].ID );
-				Assert.AreEqual( 2, vm.Workspaces[1].ID );
+				Assert.AreEqual( oldCount + 2, vm.Workspaces.Count );
 			}
 		}
 
@@ -152,14 +145,15 @@ namespace Blitzy.Tests.ViewModel
 
 				mock.Result = System.Windows.MessageBoxResult.No;
 
+				int oldCount = vm.Workspaces.Count;
 				vm.DeleteWorkspaceCommand.Execute( null );
 				Assert.IsNotNull( vm.SelectedWorkspace );
-				Assert.AreEqual( 1, vm.Workspaces.Count );
+				Assert.AreEqual( oldCount, vm.Workspaces.Count );
 
 				mock.Result = System.Windows.MessageBoxResult.Yes;
 				vm.DeleteWorkspaceCommand.Execute( null );
 				Assert.IsNull( vm.SelectedWorkspace );
-				Assert.AreEqual( 0, vm.Workspaces.Count );
+				Assert.AreEqual( oldCount - 1, vm.Workspaces.Count );
 			}
 		}
 
@@ -250,20 +244,23 @@ namespace Blitzy.Tests.ViewModel
 				baseVM.Reset();
 				WorkspaceSettingsViewModel vm = new WorkspaceSettingsViewModel( baseVM.Settings, serviceManager );
 
+				int id = TestHelper.NextID();
 				vm.Workspaces.Add( new Blitzy.Model.Workspace
 					{
-						ID = 1,
+						ID = id,
 						Name = "Test"
 					} );
+
+				int expectedCount = vm.Workspaces.Count;
 
 				vm.Save();
 
 				vm = new WorkspaceSettingsViewModel( baseVM.Settings, serviceManager );
 				vm.Reset();
 
-				Assert.AreEqual( 1, vm.Workspaces.Count );
-				Assert.AreEqual( "Test", vm.Workspaces.First().Name );
-				Assert.AreEqual( 1, vm.Workspaces.First().ID );
+				Assert.AreEqual( expectedCount, vm.Workspaces.Count );
+				Assert.AreEqual( "Test", vm.Workspaces.Last().Name );
+				Assert.AreEqual( id, vm.Workspaces.Last().ID );
 			}
 		}
 

@@ -1,7 +1,6 @@
-﻿// $Id$
-
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data.Common;
 using System.Data.SQLite;
 using System.Windows;
 using Blitzy.Model;
@@ -19,11 +18,11 @@ namespace Blitzy.ViewModel
 		{
 			Websites = new ObservableCollection<WebyWebsite>();
 
-			using( SQLiteCommand cmd = Settings.Connection.CreateCommand() )
+			using( DbCommand cmd = Settings.Connection.CreateCommand() )
 			{
 				cmd.CommandText = "SELECT WebyID FROM weby_websites";
 
-				using( SQLiteDataReader reader = cmd.ExecuteReader() )
+				using( DbDataReader reader = cmd.ExecuteReader() )
 				{
 					while( reader.Read() )
 					{

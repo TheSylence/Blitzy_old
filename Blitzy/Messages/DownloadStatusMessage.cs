@@ -1,4 +1,4 @@
-﻿// $Id$
+﻿
 
 using GalaSoft.MvvmLight.Messaging;
 

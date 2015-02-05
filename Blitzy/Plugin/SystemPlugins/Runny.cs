@@ -1,7 +1,6 @@
-﻿// $Id$
-
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Data.SQLite;
 using System.Diagnostics;
 using System.IO;
@@ -51,7 +50,7 @@ namespace Blitzy.Plugin.SystemPlugins
 		{
 			if( ItemCache.Count == 0 )
 			{
-				SQLiteConnection connection = ( (Settings)Host.Settings ).Connection;
+				DbConnection connection = ( (Settings)Host.Settings ).Connection;
 
 				ItemCache = new List<CommandItem>( ReadAllCommands( connection ) );
 			}
@@ -90,13 +89,13 @@ namespace Blitzy.Plugin.SystemPlugins
 			ItemCache.Clear();
 		}
 
-		internal IEnumerable<CommandItem> ReadAllCommands( SQLiteConnection connection )
+		internal IEnumerable<CommandItem> ReadAllCommands( DbConnection connection )
 		{
-			using( SQLiteCommand cmd = connection.CreateCommand() )
+			using( DbCommand cmd = connection.CreateCommand() )
 			{
 				cmd.CommandText = "SELECT Command, Name, Icon, Arguments FROM files";
 
-				using( SQLiteDataReader reader = cmd.ExecuteReader() )
+				using( DbDataReader reader = cmd.ExecuteReader() )
 				{
 					while( reader.Read() )
 					{
@@ -110,11 +109,11 @@ namespace Blitzy.Plugin.SystemPlugins
 				}
 			}
 
-			using( SQLiteCommand cmd = connection.CreateCommand() )
+			using( DbCommand cmd = connection.CreateCommand() )
 			{
 				cmd.CommandText = "SELECT WorkspaceID FROM workspaces";
 
-				using( SQLiteDataReader reader = cmd.ExecuteReader() )
+				using( DbDataReader reader = cmd.ExecuteReader() )
 				{
 					while( reader.Read() )
 					{

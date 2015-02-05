@@ -1,8 +1,7 @@
-﻿// $Id$
-
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Data.Common;
 using System.Data.SQLite;
 using System.Linq;
 using System.Reflection;
@@ -64,7 +63,7 @@ namespace Blitzy.Model
 
 	internal class Settings : ObservableObject, ISettings
 	{
-		public Settings( SQLiteConnection connection )
+		public Settings( DbConnection connection )
 		{
 			Connection = connection;
 			Folders = new ObservableCollection<Folder>();
@@ -72,12 +71,9 @@ namespace Blitzy.Model
 
 		public T GetValue<T>( SystemSetting setting )
 		{
-			using( SQLiteCommand cmd = Connection.CreateCommand() )
+			using( DbCommand cmd = Connection.CreateCommand() )
 			{
-				SQLiteParameter param = cmd.CreateParameter();
-				param.Value = setting.ToString();
-				param.ParameterName = "key";
-				cmd.Parameters.Add( param );
+				cmd.AddParameter( "key", setting.ToString() );
 
 				cmd.CommandText = "SELECT [Value] FROM settings WHERE [Key] = @key;";
 				cmd.Prepare();
@@ -170,17 +166,10 @@ namespace Blitzy.Model
 				throw new ArgumentNullException( "key" );
 			}
 
-			using( SQLiteCommand cmd = Connection.CreateCommand() )
+			using( DbCommand cmd = Connection.CreateCommand() )
 			{
-				SQLiteParameter param = cmd.CreateParameter();
-				param.Value = pluginID;
-				param.ParameterName = "pluginID";
-				cmd.Parameters.Add( param );
-
-				param = cmd.CreateParameter();
-				param.Value = key;
-				param.ParameterName = "key";
-				cmd.Parameters.Add( param );
+				cmd.AddParameter( "pluginID", pluginID );
+				cmd.AddParameter( "key", key );
 
 				cmd.CommandText = "SELECT [Value] FROM plugin_settings WHERE PluginID = @pluginID AND [Key] = @key;";
 				cmd.Prepare();
@@ -192,11 +181,11 @@ namespace Blitzy.Model
 
 		internal void Load()
 		{
-			using( SQLiteCommand cmd = Connection.CreateCommand() )
+			using( DbCommand cmd = Connection.CreateCommand() )
 			{
 				cmd.CommandText = "SELECT FolderID FROM folders";
 
-				using( SQLiteDataReader reader = cmd.ExecuteReader() )
+				using( DbDataReader reader = cmd.ExecuteReader() )
 				{
 					while( reader.Read() )
 					{
@@ -211,17 +200,10 @@ namespace Blitzy.Model
 
 		internal void RemovePluginSetting( Guid pluginId, string key )
 		{
-			using( SQLiteCommand cmd = Connection.CreateCommand() )
+			using( DbCommand cmd = Connection.CreateCommand() )
 			{
-				SQLiteParameter param = cmd.CreateParameter();
-				param.Value = pluginId;
-				param.ParameterName = "pluginID";
-				cmd.Parameters.Add( param );
-
-				param = cmd.CreateParameter();
-				param.Value = key;
-				param.ParameterName = "key";
-				cmd.Parameters.Add( param );
+				cmd.AddParameter( "pluginID", pluginId );
+				cmd.AddParameter( "key", key );
 
 				cmd.CommandText = "DELETE FROM plugin_settings WHERE PluginID = @pluginID AND [Key] = @key;";
 				cmd.Prepare();
@@ -242,7 +224,7 @@ namespace Blitzy.Model
 		{
 			Type type = typeof( SystemSetting );
 
-			SQLiteTransaction transaction = Connection.BeginTransaction();
+			DbTransaction transaction = Connection.BeginTransaction();
 			try
 			{
 				foreach( SystemSetting setting in Enum.GetValues( type ) )
@@ -275,22 +257,11 @@ namespace Blitzy.Model
 				value = ( (bool)value ) ? 1 : 0;
 			}
 
-			using( SQLiteCommand cmd = Connection.CreateCommand() )
+			using( DbCommand cmd = Connection.CreateCommand() )
 			{
-				SQLiteParameter param = cmd.CreateParameter();
-				param.Value = pluginID;
-				param.ParameterName = "pluginID";
-				cmd.Parameters.Add( param );
-
-				param = cmd.CreateParameter();
-				param.Value = key;
-				param.ParameterName = "key";
-				cmd.Parameters.Add( param );
-
-				param = cmd.CreateParameter();
-				param.Value = value;
-				param.ParameterName = "value";
-				cmd.Parameters.Add( param );
+				cmd.AddParameter( "pluginID", pluginID );
+				cmd.AddParameter( "key", key );
+				cmd.AddParameter( "value", value );
 
 				cmd.CommandText = "INSERT INTO plugin_settings (PluginID, [Key], [Value]) VALUES( @pluginID ,@key, @value );";
 				cmd.Prepare();
@@ -301,17 +272,10 @@ namespace Blitzy.Model
 
 		internal void SetValue( SystemSetting setting, object value )
 		{
-			using( SQLiteCommand cmd = Connection.CreateCommand() )
+			using( DbCommand cmd = Connection.CreateCommand() )
 			{
-				SQLiteParameter param = cmd.CreateParameter();
-				param.Value = setting.ToString();
-				param.ParameterName = "key";
-				cmd.Parameters.Add( param );
-
-				param = cmd.CreateParameter();
-				param.Value = value;
-				param.ParameterName = "value";
-				cmd.Parameters.Add( param );
+				cmd.AddParameter( "key", setting.ToString() );
+				cmd.AddParameter( "value", value );
 
 				cmd.CommandText = "UPDATE settings SET [Value] = @value WHERE [Key] = @key;";
 				cmd.Prepare();
@@ -322,6 +286,6 @@ namespace Blitzy.Model
 
 		public ObservableCollection<Folder> Folders { get; private set; }
 
-		internal SQLiteConnection Connection { get; private set; }
+		internal DbConnection Connection { get; private set; }
 	}
 }

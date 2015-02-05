@@ -1,6 +1,5 @@
-﻿// $Id$
-
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Data.Common;
 using System.Data.SQLite;
 using System.Diagnostics.CodeAnalysis;
 
@@ -8,9 +7,6 @@ namespace Blitzy.Model
 {
 	internal class DatabaseUpgrader : BaseObject
 	{
-		internal const int DatabaseVersion = 0;
-		private readonly List<string[]> Queries = new List<string[]>();
-
 		internal DatabaseUpgrader()
 		{
 			Queries.Add( new[] { string.Empty } );
@@ -46,7 +42,7 @@ namespace Blitzy.Model
 
 					foreach( string query in Queries[i] )
 					{
-						using( SQLiteCommand cmd = db.CreateCommand() )
+						using( DbCommand cmd = db.CreateCommand() )
 						{
 							cmd.CommandText = query;
 							cmd.ExecuteNonQuery();
@@ -55,5 +51,8 @@ namespace Blitzy.Model
 				}
 			}
 		}
+
+		internal const int DatabaseVersion = 0;
+		private readonly List<string[]> Queries = new List<string[]>();
 	}
 }

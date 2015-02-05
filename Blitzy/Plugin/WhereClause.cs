@@ -1,7 +1,6 @@
-﻿// $Id$
-
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Data.SQLite;
 using System.Linq;
 
@@ -19,42 +18,20 @@ namespace Blitzy.Plugin
 
 	public class WhereClause
 	{
-		#region Constructor
-
-		#endregion Constructor
-
-		#region Methods
-
 		public void AddCondition( string column, object value, WhereOperation op = WhereOperation.Equals )
 		{
 			Entries.Add( new WhereEntry( column, value, op ) );
 		}
 
-		internal string ToSql( SQLiteCommand cmd )
+		internal string ToSql( DbCommand cmd )
 		{
 			return string.Join( " AND ", Entries.Select( e => e.ToSql( cmd ) ) );
 		}
 
-		#endregion Methods
-
-		#region Properties
-
-		#endregion Properties
-
-		#region Attributes
-
 		private readonly List<WhereEntry> Entries = new List<WhereEntry>();
-
-		#endregion Attributes
-
-		#region WhereEntry
 
 		private class WhereEntry
 		{
-			private readonly string Column;
-			private readonly WhereOperation Op;
-			private readonly object Value;
-
 			public WhereEntry( string column, object value, WhereOperation op )
 			{
 				Column = column;
@@ -62,14 +39,11 @@ namespace Blitzy.Plugin
 				Op = op;
 			}
 
-			public string ToSql( SQLiteCommand cmd )
+			public string ToSql( DbCommand cmd )
 			{
-				SQLiteParameter param = cmd.CreateParameter();
-				param.Value = Value;
-				param.ParameterName = string.Format( "where_{0}", Column );
-				cmd.Parameters.Add( param );
-
-				return string.Format( "{0} {1} @{2}", Column, ToSql( Op ), param.ParameterName );
+				string name = string.Format( "where_{0}", Column );
+				cmd.AddParameter( name, Value );
+				return string.Format( "{0} {1} @{2}", Column, ToSql( Op ), name );
 			}
 
 			private static string ToSql( WhereOperation op )
@@ -98,8 +72,10 @@ namespace Blitzy.Plugin
 						throw new ArgumentException( "Unknown Where Operation" );
 				}
 			}
-		}
 
-		#endregion WhereEntry
+			private readonly string Column;
+			private readonly WhereOperation Op;
+			private readonly object Value;
+		}
 	}
 }

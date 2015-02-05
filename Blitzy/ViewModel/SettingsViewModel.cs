@@ -1,8 +1,7 @@
-﻿// $Id$
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data.Common;
 using System.Data.SQLite;
 using System.Globalization;
 using System.IO;
@@ -428,7 +427,7 @@ namespace Blitzy.ViewModel
 
 		private int GetItemCount()
 		{
-			using( SQLiteCommand cmd = Settings.Connection.CreateCommand() )
+			using( DbCommand cmd = Settings.Connection.CreateCommand() )
 			{
 				cmd.CommandText = "SELECT COUNT(*) FROM files";
 

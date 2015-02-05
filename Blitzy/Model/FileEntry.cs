@@ -1,7 +1,6 @@
-﻿// $Id$
-
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Data.SQLite;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
@@ -12,8 +11,6 @@ namespace Blitzy.Model
 {
 	internal class FileEntry : IEquatable<FileEntry>
 	{
-		#region Constructor
-
 		public FileEntry( string command, string name, string icon, string type, string args )
 		{
 			Command = command;
@@ -22,10 +19,6 @@ namespace Blitzy.Model
 			Type = type;
 			Arguments = args;
 		}
-
-		#endregion Constructor
-
-		#region Methods
 
 		public bool Equals( FileEntry other )
 		{
@@ -53,50 +46,27 @@ namespace Blitzy.Model
 
 		[SuppressMessage( "Microsoft.Security",
 			"CA2100:Review SQL queries for security vulnerabilities", Justification = "Query is prepared" )]
-		internal static void CreateBatchStatement( SQLiteCommand cmd, IEnumerable<FileEntry> entries )
+		internal static void CreateBatchStatement( DbCommand cmd, IEnumerable<FileEntry> entries )
 		{
 			StringBuilder sb = new StringBuilder();
 
 			int cnt = 0;
 			sb.Append( "INSERT INTO files ([Command], [Name], [Icon], [Type], [Arguments]) VALUES " );
 			sb.Append( string.Join( ",", entries.Select( entry =>
-				{
-					SQLiteParameter param = cmd.CreateParameter();
-					param.ParameterName = "cmd" + cnt.ToString( CultureInfo.InvariantCulture );
-					param.Value = entry.Command;
-					cmd.Parameters.Add( param );
+			{
+				cmd.AddParameter( "cmd" + cnt.ToString( CultureInfo.InvariantCulture ), entry.Command );
+				cmd.AddParameter( "name" + cnt.ToString( CultureInfo.InvariantCulture ), entry.Name );
+				cmd.AddParameter( "icon" + cnt.ToString( CultureInfo.InvariantCulture ), entry.Icon );
+				cmd.AddParameter( "type" + cnt.ToString( CultureInfo.InvariantCulture ), entry.Type );
+				cmd.AddParameter( "args" + cnt.ToString( CultureInfo.InvariantCulture ), entry.Arguments );
 
-					param = cmd.CreateParameter();
-					param.ParameterName = "name" + cnt.ToString( CultureInfo.InvariantCulture );
-					param.Value = entry.Name;
-					cmd.Parameters.Add( param );
-
-					param = cmd.CreateParameter();
-					param.ParameterName = "icon" + cnt.ToString( CultureInfo.InvariantCulture );
-					param.Value = entry.Icon;
-					cmd.Parameters.Add( param );
-
-					param = cmd.CreateParameter();
-					param.ParameterName = "type" + cnt.ToString( CultureInfo.InvariantCulture );
-					param.Value = entry.Type;
-					cmd.Parameters.Add( param );
-
-					param = cmd.CreateParameter();
-					param.ParameterName = "args" + cnt.ToString( CultureInfo.InvariantCulture );
-					param.Value = entry.Arguments;
-					cmd.Parameters.Add( param );
-
-					string ret = string.Format( "(@cmd{0}, @name{0}, @icon{0}, @type{0}, @args{0})", cnt );
-					cnt++;
-					return ret;
-				} ) ) );
+				string ret = string.Format( "(@cmd{0}, @name{0}, @icon{0}, @type{0}, @args{0})", cnt );
+				cnt++;
+				return ret;
+			} ) ) );
 
 			cmd.CommandText = sb.ToString();
 		}
-
-		#endregion Methods
-
-		#region Properties
 
 		internal string Arguments { get; private set; }
 
@@ -108,12 +78,6 @@ namespace Blitzy.Model
 
 		internal string Type { get; private set; }
 
-		#endregion Properties
-
-		#region Attributes
-
 		internal const int ParameterCount = 5;
-
-		#endregion Attributes
 	}
 }

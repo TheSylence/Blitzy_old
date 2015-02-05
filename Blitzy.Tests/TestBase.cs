@@ -1,6 +1,5 @@
-﻿// $Id$
-
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Data.Common;
 using System.Data.SQLite;
 using Blitzy.Model;
 using Blitzy.Tests.Mocks;
@@ -25,8 +24,6 @@ namespace Blitzy.Tests
 		[TestCleanup]
 		public virtual void AfterTestRun()
 		{
-			Connection.Close();
-			Connection.Dispose();
 		}
 
 		[TestInitialize]
@@ -35,30 +32,8 @@ namespace Blitzy.Tests
 			NativeMethods = new NativeMethodsMock();
 			SetNativeMethods( NativeMethodsType.Real );
 			RuntimeConfig.Tests = true;
-			DispatcherHelper.Initialize();
-			BasicConfigurator.Configure();
-			Connection = CreateConnection();
-
-			DatabaseCreator.CreateDatabase( Connection );
 
 			//CreatePluginTables();
-		}
-
-		protected virtual void CreatePluginTables()
-		{
-			using( SQLiteCommand cmd = Connection.CreateCommand() )
-			{
-				cmd.CommandText = QueryBuilder.CreateTable( "weby_websites", new Dictionary<string, string>
-				{
-					{ "WebyID", "INTEGER PRIMARY KEY" },
-					{ "Name", "VARCHAR(50) NOT NULL" },
-					{ "Description", "VARCHAR(255) NOT NULL" },
-					{ "Url", "TEXT NOT NULL" },
-					{ "Icon", "TEXT" }
-				} );
-
-				cmd.ExecuteNonQuery();
-			}
 		}
 
 		protected void SetNativeMethods( NativeMethodsType type )
@@ -75,18 +50,13 @@ namespace Blitzy.Tests
 			}
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Reliability", "CA2000:Dispose objects before losing scope" )]
-		private SQLiteConnection CreateConnection()
+		protected DbConnection Connection
 		{
-			SQLiteConnectionStringBuilder sb = new SQLiteConnectionStringBuilder();
-			sb.FullUri = ":memory:";
-
-			SQLiteConnection connection = new SQLiteConnection( sb.ToString() );
-			connection.Open();
-			return connection;
+			get
+			{
+				return new ConnectionWrapper( TestHelper.Connection );
+			}
 		}
-
-		protected SQLiteConnection Connection { get; private set; }
 
 		protected NativeMethodsMock NativeMethods { get; private set; }
 	}

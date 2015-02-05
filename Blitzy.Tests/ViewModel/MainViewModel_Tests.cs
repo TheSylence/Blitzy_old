@@ -1,6 +1,4 @@
-﻿// $Id$
-
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 using Blitzy.Messages;

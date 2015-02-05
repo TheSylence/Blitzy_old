@@ -1,6 +1,4 @@
-﻿// $Id$
-
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Blitzy.Model;
 using Blitzy.Plugin.SystemPlugins;
@@ -17,7 +15,7 @@ namespace Blitzy.Tests.Plugins
 		public void ExecuteCommandTest()
 		{
 			Weby plug = new Weby();
-			Assert.IsTrue( plug.Load( this ) );
+			Assert.IsTrue( plug.Load( this, "" ) );
 
 			Dictionary<string, string> expectedUrls = new Dictionary<string, string>();
 			expectedUrls.Add( "google", "google.com" );
@@ -81,7 +79,7 @@ namespace Blitzy.Tests.Plugins
 		public void LoadTest()
 		{
 			Weby plug = new Weby();
-			Assert.IsTrue( plug.Load( this ) );
+			Assert.IsTrue( plug.Load( this, "" ) );
 
 			IEnumerable<CommandItem> commands = plug.GetCommands( new List<string>() );
 			Assert.AreEqual( 7, commands.Count() );

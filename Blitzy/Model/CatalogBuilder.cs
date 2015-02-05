@@ -1,8 +1,7 @@
-﻿// $Id$
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Data.SQLite;
 using System.Diagnostics;
 using System.Globalization;
@@ -222,10 +221,10 @@ namespace Blitzy.Model
 
 		private void SaveEntries( IEnumerable<FileEntry> list )
 		{
-			SQLiteTransaction transaction = Settings.Connection.BeginTransaction( IsolationLevel.ReadCommitted );
+			DbTransaction transaction = Settings.Connection.BeginTransaction( IsolationLevel.ReadCommitted );
 			try
 			{
-				using( SQLiteCommand cmd = Settings.Connection.CreateCommand() )
+				using( DbCommand cmd = Settings.Connection.CreateCommand() )
 				{
 					cmd.Transaction = transaction;
 					cmd.CommandText = "DELETE FROM files";
@@ -257,7 +256,7 @@ namespace Blitzy.Model
 
 				while( count < runs && !ShouldStop )
 				{
-					using( SQLiteCommand cmd = Settings.Connection.CreateCommand() )
+					using( DbCommand cmd = Settings.Connection.CreateCommand() )
 					{
 						cmd.Transaction = transaction;
 						FileEntry.CreateBatchStatement( cmd, list.Take( batchSize ) );

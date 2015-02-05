@@ -1,4 +1,4 @@
-﻿// $Id$
+﻿
 
 using System.Diagnostics.CodeAnalysis;
 using Blitzy.Model;

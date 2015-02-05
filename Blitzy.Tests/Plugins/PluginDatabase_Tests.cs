@@ -1,6 +1,4 @@
-﻿// $Id$
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Data.SQLite;
@@ -16,8 +14,6 @@ namespace Blitzy.Tests.Plugins
 	[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	public class PluginDatabase_Tests : TestBase
 	{
-		private IPlugin Plugin { get; set; }
-
 		[TestInitialize()]
 		public override void BeforeTestRun()
 		{
@@ -41,7 +37,7 @@ namespace Blitzy.Tests.Plugins
 
 				Assert.IsTrue( db.CreateTable( Plugin, "test", columns ) );
 
-				using( SQLiteCommand cmd = Connection.CreateCommand() )
+				using( DbCommand cmd = Connection.CreateCommand() )
 				{
 					cmd.CommandText = "SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'MockPlugin_test'";
 
@@ -49,11 +45,11 @@ namespace Blitzy.Tests.Plugins
 					Assert.AreEqual( "MockPlugin_test", result );
 				}
 
-				using( SQLiteCommand cmd = Connection.CreateCommand() )
+				using( DbCommand cmd = Connection.CreateCommand() )
 				{
 					cmd.CommandText = "SELECT PluginID FROM plugin_tables WHERE TableName = 'MockPlugin_test'";
 
-					using( SQLiteDataReader reader = cmd.ExecuteReader() )
+					using( DbDataReader reader = cmd.ExecuteReader() )
 					{
 						Assert.IsTrue( reader.Read() );
 
@@ -63,14 +59,14 @@ namespace Blitzy.Tests.Plugins
 
 				db.DropTable( Plugin, "test" );
 
-				using( SQLiteCommand cmd = Connection.CreateCommand() )
+				using( DbCommand cmd = Connection.CreateCommand() )
 				{
 					cmd.CommandText = "SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'MockPlugin_test'";
 
 					Assert.IsNull( cmd.ExecuteScalar() );
 				}
 
-				using( SQLiteCommand cmd = Connection.CreateCommand() )
+				using( DbCommand cmd = Connection.CreateCommand() )
 				{
 					cmd.CommandText = "SELECT PluginID FROM plugin_tables WHERE TableName = 'MockPlugin_test'";
 
@@ -85,7 +81,7 @@ namespace Blitzy.Tests.Plugins
 			using( PluginDatabase db = new PluginDatabase( Connection ) )
 			{
 				db.CreateTable( Plugin, "] (Temp INTEGER PRIMARY KEY); DROP TABLE settings ;-- ", new[] { new TableColumn() } );
-				using( SQLiteCommand cmd = Connection.CreateCommand() )
+				using( DbCommand cmd = Connection.CreateCommand() )
 				{
 					cmd.CommandText = "SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'settings'";
 
@@ -94,7 +90,7 @@ namespace Blitzy.Tests.Plugins
 				}
 
 				db.CreateTable( Plugin, "testtable", new[] { new TableColumn( "temp INTEGER PRIMARY KEY); DROP TABLE settings ;-- ", ColumnType.Text ) } );
-				using( SQLiteCommand cmd = Connection.CreateCommand() )
+				using( DbCommand cmd = Connection.CreateCommand() )
 				{
 					cmd.CommandText = "SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'settings'";
 
@@ -111,7 +107,7 @@ namespace Blitzy.Tests.Plugins
 			{
 				db.Delete( Plugin, "]; DROP TABLE settings; -- " );
 
-				using( SQLiteCommand cmd = Connection.CreateCommand() )
+				using( DbCommand cmd = Connection.CreateCommand() )
 				{
 					cmd.CommandText = "SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'settings'";
 
@@ -128,7 +124,7 @@ namespace Blitzy.Tests.Plugins
 			{
 				db.DropTable( Plugin, "]; DROP TABLE settings; -- " );
 
-				using( SQLiteCommand cmd = Connection.CreateCommand() )
+				using( DbCommand cmd = Connection.CreateCommand() )
 				{
 					cmd.CommandText = "SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'settings'";
 
@@ -151,7 +147,7 @@ namespace Blitzy.Tests.Plugins
 			};
 				db.Insert( Plugin, "]; DROP TABLE settings; -- ", values );
 
-				using( SQLiteCommand cmd = Connection.CreateCommand() )
+				using( DbCommand cmd = Connection.CreateCommand() )
 				{
 					cmd.CommandText = "SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'settings'";
 
@@ -164,7 +160,7 @@ namespace Blitzy.Tests.Plugins
 				new Dictionary<string,object>{ {"col1) VALUES(1); DROP TABLE settings; -- ", 1}, {"col2", "1"} }
 			};
 				db.Insert( Plugin, "temptable", values );
-				using( SQLiteCommand cmd = Connection.CreateCommand() )
+				using( DbCommand cmd = Connection.CreateCommand() )
 				{
 					cmd.CommandText = "SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'settings'";
 
@@ -177,7 +173,7 @@ namespace Blitzy.Tests.Plugins
 				new Dictionary<string,object>{ {"col1", 1}, {"col2", "1); DROP TABLE settings; -- "} }
 			};
 				db.Insert( Plugin, "temptable", values );
-				using( SQLiteCommand cmd = Connection.CreateCommand() )
+				using( DbCommand cmd = Connection.CreateCommand() )
 				{
 					cmd.CommandText = "SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'settings'";
 
@@ -194,7 +190,7 @@ namespace Blitzy.Tests.Plugins
 			{
 				db.Select( Plugin, "]; DROP TABLE settings; -- ", new[] { "col1" } );
 
-				using( SQLiteCommand cmd = Connection.CreateCommand() )
+				using( DbCommand cmd = Connection.CreateCommand() )
 				{
 					cmd.CommandText = "SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'settings'";
 
@@ -211,7 +207,7 @@ namespace Blitzy.Tests.Plugins
 			{
 				db.Update( Plugin, "]; DROP TABLE settings; -- ", new Dictionary<string, object> { { "col1", 1 }, { "col2", "1" } } );
 
-				using( SQLiteCommand cmd = Connection.CreateCommand() )
+				using( DbCommand cmd = Connection.CreateCommand() )
 				{
 					cmd.CommandText = "SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'settings'";
 
@@ -220,7 +216,7 @@ namespace Blitzy.Tests.Plugins
 				}
 
 				db.Update( Plugin, "temptable", new Dictionary<string, object> { { "col1 = 1; DROP TABLE settings; -- ", 1 }, { "col2", "1" } } );
-				using( SQLiteCommand cmd = Connection.CreateCommand() )
+				using( DbCommand cmd = Connection.CreateCommand() )
 				{
 					cmd.CommandText = "SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'settings'";
 
@@ -229,7 +225,7 @@ namespace Blitzy.Tests.Plugins
 				}
 
 				db.Update( Plugin, "]; DROP TABLE settings; -- ", new Dictionary<string, object> { { "col1", 1 }, { "col2", "1; DROP TABLE settings; -- " } } );
-				using( SQLiteCommand cmd = Connection.CreateCommand() )
+				using( DbCommand cmd = Connection.CreateCommand() )
 				{
 					cmd.CommandText = "SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'settings'";
 
@@ -343,14 +339,14 @@ namespace Blitzy.Tests.Plugins
 
 				trans.Rollback();
 
-				using( SQLiteCommand cmd = Connection.CreateCommand() )
+				using( DbCommand cmd = Connection.CreateCommand() )
 				{
 					cmd.CommandText = "SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'MockPlugin_test'";
 
 					Assert.IsNull( cmd.ExecuteScalar() );
 				}
 
-				using( SQLiteCommand cmd = Connection.CreateCommand() )
+				using( DbCommand cmd = Connection.CreateCommand() )
 				{
 					cmd.CommandText = "SELECT PluginID FROM plugin_tables WHERE TableName = 'MockPlugin_test'";
 
@@ -398,5 +394,7 @@ namespace Blitzy.Tests.Plugins
 				Assert.AreEqual( 0, result.Count() );
 			}
 		}
+
+		private IPlugin Plugin { get; set; }
 	}
 }

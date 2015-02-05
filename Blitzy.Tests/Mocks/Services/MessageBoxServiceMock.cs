@@ -1,4 +1,4 @@
-﻿// $Id$
+﻿
 
 using System.Windows;
 using Blitzy.ViewServices;

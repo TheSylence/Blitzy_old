@@ -1,6 +1,4 @@
-﻿// $Id$
-
-using System;
+﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Reflection;
@@ -9,8 +7,6 @@ namespace Blitzy
 {
 	internal static class Constants
 	{
-		#region Constants
-
 		internal const int ApiVersion = 1;
 		internal const string PluginsFolderName = "plugins";
 		internal const string SoftwareName = "Blitzy";
@@ -47,10 +43,6 @@ namespace Blitzy
 			internal static string InstallPlugin = "installplugin";
 		}
 
-		#endregion Constants
-
-		#region Properites
-
 		[SuppressMessage( "Microsoft.Performance", "CA1811", Justification = "This is just plain bullshit" )]
 		internal static string DataPath
 		{
@@ -67,7 +59,5 @@ namespace Blitzy
 				return path;
 			}
 		}
-
-		#endregion Properites
 	}
 }

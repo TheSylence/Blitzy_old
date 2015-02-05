@@ -1,4 +1,4 @@
-﻿// $Id$
+﻿
 
 using Blitzy.Utility;
 using Microsoft.VisualStudio.TestTools.UnitTesting;

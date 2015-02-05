@@ -1,6 +1,4 @@
-﻿// $Id$
-
-using System;
+﻿using System;
 using Blitzy.Model;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -65,19 +63,20 @@ namespace Blitzy.Tests.Model
 		[TestMethod, TestCategory( "Model" )]
 		public void SaveLoadTest()
 		{
+			int id = TestHelper.NextID();
 			using( WorkspaceItem w = new WorkspaceItem() )
 			{
 				Assert.IsFalse( w.ExistsInDatabase );
 
 				w.ItemCommand = "google";
-				w.ItemID = 1;
+				w.ItemID = id;
 
 				w.Save( Connection );
 
 				Assert.IsTrue( w.ExistsInDatabase );
 
 				WorkspaceItem w2 = new WorkspaceItem();
-				w2.ItemID = 1;
+				w2.ItemID = id;
 				w2.Load( Connection );
 
 				Assert.IsTrue( w2.ExistsInDatabase );
@@ -88,12 +87,13 @@ namespace Blitzy.Tests.Model
 		[TestMethod, TestCategory( "Model" )]
 		public void UpdateTest()
 		{
+			int id = TestHelper.NextID();
 			using( WorkspaceItem w = new WorkspaceItem() )
 			{
 				Assert.IsFalse( w.ExistsInDatabase );
 
 				w.ItemCommand = "ws1";
-				w.ItemID = 1;
+				w.ItemID = id;
 
 				w.Save( Connection );
 				Assert.IsTrue( w.ExistsInDatabase );
@@ -103,7 +103,7 @@ namespace Blitzy.Tests.Model
 			}
 			using( WorkspaceItem w = new WorkspaceItem() )
 			{
-				w.ItemID = 1;
+				w.ItemID = id;
 				w.Load( Connection );
 
 				Assert.AreEqual( "helloworld", w.ItemCommand );

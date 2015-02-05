@@ -1,4 +1,4 @@
-﻿// $Id$
+﻿
 
 using Blitzy.ViewModel.Dialogs;
 using Microsoft.VisualStudio.TestTools.UnitTesting;

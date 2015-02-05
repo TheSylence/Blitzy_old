@@ -1,6 +1,4 @@
-﻿// $Id$
-
-using System;
+﻿using System;
 using Blitzy.Tests.Mocks;
 using Blitzy.Utility;
 using Microsoft.VisualStudio.TestTools.UnitTesting;

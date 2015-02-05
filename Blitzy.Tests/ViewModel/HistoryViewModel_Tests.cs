@@ -1,4 +1,4 @@
-﻿// $Id$
+﻿
 
 using Blitzy.Messages;
 using Blitzy.ViewModel;

@@ -1,6 +1,4 @@
-﻿// $Id$
-
-using System;
+﻿using System;
 using System.Globalization;
 using log4net;
 
@@ -8,8 +6,6 @@ namespace Blitzy
 {
 	public static class LogHelper
 	{
-		#region Methods
-
 		public static void LogDebug( Type type, string format, params object[] args )
 		{
 #if DEBUG
@@ -86,7 +82,5 @@ namespace Blitzy
 		{
 			LogWarning( obj.GetType(), format, args );
 		}
-
-		#endregion Methods
 	}
 }

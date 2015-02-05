@@ -1,8 +1,7 @@
-﻿// $Id$
-
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.Data;
+using System.Data.Common;
 using System.Data.SQLite;
 using System.Linq;
 
@@ -17,17 +16,13 @@ namespace Blitzy.Model
 			Settings = settings;
 			Commands = new ObservableCollection<string>();
 
-			using( SQLiteCommand cmd = settings.Connection.CreateCommand() )
+			using( DbCommand cmd = settings.Connection.CreateCommand() )
 			{
 				cmd.CommandText = "SELECT Command FROM history ORDER BY HistoryID LIMIT 0, @historyCount";
-
-				SQLiteParameter param = cmd.CreateParameter();
-				param.ParameterName = "historyCount";
-				param.Value = settings.GetValue<int>( SystemSetting.HistoryCount );
-				cmd.Parameters.Add( param );
+				cmd.AddParameter( "historyCount", settings.GetValue<int>( SystemSetting.HistoryCount ) );
 				cmd.Prepare();
 
-				using( SQLiteDataReader reader = cmd.ExecuteReader() )
+				using( DbDataReader reader = cmd.ExecuteReader() )
 				{
 					while( reader.Read() )
 					{
@@ -63,10 +58,10 @@ namespace Blitzy.Model
 
 		public void Save()
 		{
-			SQLiteTransaction transaction = Settings.Connection.BeginTransaction( IsolationLevel.ReadCommitted );
+			DbTransaction transaction = Settings.Connection.BeginTransaction( IsolationLevel.ReadCommitted );
 			try
 			{
-				using( SQLiteCommand cmd = Settings.Connection.CreateCommand() )
+				using( DbCommand cmd = Settings.Connection.CreateCommand() )
 				{
 					cmd.Transaction = transaction;
 					cmd.CommandText = "DELETE FROM history";
@@ -75,20 +70,12 @@ namespace Blitzy.Model
 
 				for( int i = 0; i < Math.Min( Settings.GetValue<int>( SystemSetting.HistoryCount ), Commands.Count ); ++i )
 				{
-					using( SQLiteCommand cmd = Settings.Connection.CreateCommand() )
+					using( DbCommand cmd = Settings.Connection.CreateCommand() )
 					{
 						cmd.Transaction = transaction;
 						cmd.CommandText = "INSERT INTO history ( HistoryID, Command ) VALUES ( @id, @cmd );";
-
-						SQLiteParameter param = cmd.CreateParameter();
-						param.ParameterName = "id";
-						param.Value = i;
-						cmd.Parameters.Add( param );
-
-						param = cmd.CreateParameter();
-						param.ParameterName = "cmd";
-						param.Value = Commands[i];
-						cmd.Parameters.Add( param );
+						cmd.AddParameter( "id", i );
+						cmd.AddParameter( "cmd", Commands[i] );
 
 						cmd.ExecuteNonQuery();
 					}
@@ -106,8 +93,6 @@ namespace Blitzy.Model
 		#endregion Methods
 
 		#region Properties
-
-		private string _SelectedItem;
 
 		public ObservableCollection<string> Commands { get; internal set; }
 
@@ -130,6 +115,8 @@ namespace Blitzy.Model
 				RaisePropertyChanged( () => SelectedItem );
 			}
 		}
+
+		private string _SelectedItem;
 
 		#endregion Properties
 

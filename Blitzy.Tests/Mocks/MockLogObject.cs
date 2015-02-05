@@ -1,4 +1,4 @@
-﻿// $Id$
+﻿
 
 namespace Blitzy.Tests.Mocks
 {

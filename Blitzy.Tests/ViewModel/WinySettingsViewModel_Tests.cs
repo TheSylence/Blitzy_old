@@ -1,4 +1,4 @@
-﻿// $Id$
+﻿
 
 using Blitzy.Plugin.SystemPlugins;
 using Blitzy.Tests.Mocks;

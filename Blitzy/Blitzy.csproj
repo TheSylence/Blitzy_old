@@ -196,6 +196,7 @@
     <Compile Include="Converter\StringToImageConverter.cs" />
     <Compile Include="Converter\StringToVisibilityConverter.cs" />
     <Compile Include="Converter\TimeSpanConverter.cs" />
+    <Compile Include="Extensions.cs" />
     <Compile Include="Messages\BalloonActivatedMessage.cs" />
     <Compile Include="Messages\BalloonTipMessage.cs" />
     <Compile Include="Messages\DownloadStatusMessage.cs" />

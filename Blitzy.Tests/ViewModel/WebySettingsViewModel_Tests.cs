@@ -1,6 +1,4 @@
-﻿// $Id$
-
-using System.Linq;
+﻿using System.Linq;
 using Blitzy.Model;
 using Blitzy.Tests.Mocks;
 using Blitzy.Tests.Mocks.Services;
@@ -35,15 +33,15 @@ namespace Blitzy.Tests.ViewModel
 
 				Assert.IsTrue( vm.AddWebsiteCommand.CanExecute( null ) );
 
-				Assert.AreEqual( 6, vm.Websites.Count );
+				int oldCount = vm.Websites.Count;
 				vm.AddWebsiteCommand.Execute( null );
-				Assert.AreEqual( 6, vm.Websites.Count );
+				Assert.AreEqual( oldCount, vm.Websites.Count );
 
 				mock.CreateFunc = () =>
 				{
 					return new WebyWebsite()
 					{
-						ID = 123,
+						ID = TestHelper.NextID(),
 						Name = "test",
 						URL = "http://example.invalid",
 						Description = "This is a test",
@@ -52,7 +50,7 @@ namespace Blitzy.Tests.ViewModel
 				};
 
 				vm.AddWebsiteCommand.Execute( null );
-				Assert.AreEqual( 7, vm.Websites.Count );
+				Assert.AreEqual( oldCount + 1, vm.Websites.Count );
 			}
 		}
 
@@ -71,12 +69,14 @@ namespace Blitzy.Tests.ViewModel
 
 				vm.Websites.Add( new WebyWebsite()
 				{
-					ID = 123,
+					ID = TestHelper.NextID(),
 					Name = "test",
 					URL = "http://example.invalid",
 					Description = "This is a test",
 					Icon = ""
 				} );
+
+				int count = vm.Websites.Count;
 
 				vm.Save();
 				vm.Websites.First().Name = "example";
@@ -85,7 +85,7 @@ namespace Blitzy.Tests.ViewModel
 				baseVM.Reset();
 				vm = baseVM.GetPluginContext<WebySettingsViewModel>( "Weby" );
 
-				Assert.AreEqual( 7, vm.Websites.Count );
+				Assert.AreEqual( count, vm.Websites.Count );
 				Assert.AreEqual( "example", vm.Websites.First().Name );
 			}
 		}
@@ -109,7 +109,7 @@ namespace Blitzy.Tests.ViewModel
 
 				vm.Websites.Add( new WebyWebsite()
 					{
-						ID = 123,
+						ID = TestHelper.NextID(),
 						Name = "test",
 						URL = "http://example.invalid",
 						Description = "This is a test",
@@ -120,14 +120,14 @@ namespace Blitzy.Tests.ViewModel
 				vm.SelectedWebsite = vm.Websites.First();
 				Assert.IsTrue( vm.RemoveWebsiteCommand.CanExecute( null ) );
 
-				Assert.AreEqual( 7, vm.Websites.Count );
+				int oldCount = vm.Websites.Count;
 				vm.RemoveWebsiteCommand.Execute( null );
-				Assert.AreEqual( 7, vm.Websites.Count );
+				Assert.AreEqual( oldCount, vm.Websites.Count );
 
 				mock.Result = System.Windows.MessageBoxResult.Yes;
 
 				vm.RemoveWebsiteCommand.Execute( null );
-				Assert.AreEqual( 6, vm.Websites.Count );
+				Assert.AreEqual( oldCount - 1, vm.Websites.Count );
 				Assert.IsNull( vm.SelectedWebsite );
 
 				vm.Save();
@@ -135,7 +135,7 @@ namespace Blitzy.Tests.ViewModel
 				baseVM.Reset();
 				vm = baseVM.GetPluginContext<WebySettingsViewModel>( "Weby" );
 
-				Assert.AreEqual( 6, vm.Websites.Count );
+				Assert.AreEqual( oldCount - 1, vm.Websites.Count );
 			}
 		}
 	}

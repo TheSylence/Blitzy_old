@@ -1,7 +1,6 @@
-﻿// $Id$
-
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Data.SQLite;
 using System.IO;
 using System.IO.Compression;
@@ -14,19 +13,13 @@ namespace Blitzy.Plugin
 {
 	internal class PluginManager : BaseObject
 	{
-		#region Constructor
-
-		public PluginManager( IPluginHost host, SQLiteConnection connection )
+		public PluginManager( IPluginHost host, DbConnection connection )
 		{
 			Connection = connection;
 			Host = host;
 
 			Messenger.Default.Register<PluginMessage>( this, HandlePluginAction );
 		}
-
-		#endregion Constructor
-
-		#region Methods
 
 		public bool IsLoaded( Guid id )
 		{
@@ -126,17 +119,14 @@ namespace Blitzy.Plugin
 			string version = null;
 			bool disabled = false;
 
-			using( SQLiteCommand cmd = Connection.CreateCommand() )
+			using( DbCommand cmd = Connection.CreateCommand() )
 			{
-				SQLiteParameter param = cmd.CreateParameter();
-				param.ParameterName = "pluginID";
-				param.Value = plugin.PluginID;
-				cmd.Parameters.Add( param );
+				cmd.AddParameter( "pluginID", plugin.PluginID );
 
 				cmd.CommandText = "SELECT Version, Disabled FROM plugins WHERE PluginID = @pluginID;";
 				cmd.Prepare();
 
-				using( SQLiteDataReader reader = cmd.ExecuteReader() )
+				using( DbDataReader reader = cmd.ExecuteReader() )
 				{
 					if( reader.Read() )
 					{
@@ -156,17 +146,10 @@ namespace Blitzy.Plugin
 			if( version == null )
 			{
 				LogInfo( "Plugin {0} is started for the first time", plugin.Name );
-				using( SQLiteCommand cmd = Connection.CreateCommand() )
+				using( DbCommand cmd = Connection.CreateCommand() )
 				{
-					SQLiteParameter param = cmd.CreateParameter();
-					param.ParameterName = "pluginID";
-					param.Value = plugin.PluginID;
-					cmd.Parameters.Add( param );
-
-					param = cmd.CreateParameter();
-					param.ParameterName = "version";
-					param.Value = plugin.Version;
-					cmd.Parameters.Add( param );
+					cmd.AddParameter( "pluginID", plugin.PluginID );
+					cmd.AddParameter( "version", plugin.Version );
 
 					cmd.CommandText = "INSERT INTO plugins (PluginID, Version) VALUES (@pluginID, @version);";
 					cmd.Prepare();
@@ -178,17 +161,10 @@ namespace Blitzy.Plugin
 			{
 				LogInfo( "Plugin {0} is updated from version {1} to {2}", plugin.Name, version, plugin.Version );
 
-				using( SQLiteCommand cmd = Connection.CreateCommand() )
+				using( DbCommand cmd = Connection.CreateCommand() )
 				{
-					SQLiteParameter param = cmd.CreateParameter();
-					param.ParameterName = "pluginID";
-					param.Value = plugin.PluginID;
-					cmd.Parameters.Add( param );
-
-					param = cmd.CreateParameter();
-					param.ParameterName = "version";
-					param.Value = plugin.Version;
-					cmd.Parameters.Add( param );
+					cmd.AddParameter( "pluginID", plugin.PluginID );
+					cmd.AddParameter( "version", plugin.Version );
 
 					cmd.CommandText = "UPDATE plugins SET Version = @version WHERE PluginID = @pluginID;";
 					cmd.Prepare();
@@ -290,21 +266,11 @@ namespace Blitzy.Plugin
 			}
 		}
 
-		#endregion Methods
-
-		#region Properties
-
-		internal SQLiteConnection Connection { get; private set; }
-
-		#endregion Properties
-
-		#region Attributes
+		internal DbConnection Connection { get; private set; }
 
 		internal List<IPlugin> DisabledPlugins = new List<IPlugin>();
 		internal List<IPlugin> Plugins = new List<IPlugin>();
 
 		private readonly IPluginHost Host;
-
-		#endregion Attributes
 	}
 }

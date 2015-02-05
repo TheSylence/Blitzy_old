@@ -1,8 +1,7 @@
-﻿// $Id$
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data.Common;
 using System.Data.SQLite;
 using System.IO;
 using System.Linq;
@@ -13,26 +12,17 @@ namespace Blitzy.Model
 {
 	internal class Folder : ModelBase
 	{
-		#region Constructor
-
 		public Folder()
 		{
 			Rules = new ObservableCollection<string>();
 			Excludes = new ObservableCollection<string>();
 		}
 
-		#endregion Constructor
-
-		#region Methods
-
-		public override void Delete( SQLiteConnection connection )
+		public override void Delete( DbConnection connection )
 		{
-			using( SQLiteCommand cmd = connection.CreateCommand() )
+			using( DbCommand cmd = connection.CreateCommand() )
 			{
-				SQLiteParameter param = cmd.CreateParameter();
-				param.ParameterName = "folderID";
-				param.Value = ID;
-				cmd.Parameters.Add( param );
+				cmd.AddParameter( "folderID", ID );
 
 				cmd.CommandText = "DELETE FROM folders WHERE FolderID = @folderID;";
 				cmd.Prepare();
@@ -40,12 +30,9 @@ namespace Blitzy.Model
 				cmd.ExecuteNonQuery();
 			}
 
-			using( SQLiteCommand cmd = connection.CreateCommand() )
+			using( DbCommand cmd = connection.CreateCommand() )
 			{
-				SQLiteParameter param = cmd.CreateParameter();
-				param.ParameterName = "folderID";
-				param.Value = ID;
-				cmd.Parameters.Add( param );
+				cmd.AddParameter( "folderID", ID );
 
 				cmd.CommandText = "DELETE FROM folder_rules WHERE FolderID = @folderID";
 
@@ -53,12 +40,9 @@ namespace Blitzy.Model
 				cmd.ExecuteNonQuery();
 			}
 
-			using( SQLiteCommand cmd = connection.CreateCommand() )
+			using( DbCommand cmd = connection.CreateCommand() )
 			{
-				SQLiteParameter param = cmd.CreateParameter();
-				param.ParameterName = "folderID";
-				param.Value = ID;
-				cmd.Parameters.Add( param );
+				cmd.AddParameter( "folderID", ID );
 
 				cmd.CommandText = "DELETE FROM folder_excludes WHERE FolderID = @folderID";
 
@@ -72,19 +56,16 @@ namespace Blitzy.Model
 			return GetFilesInFolder( Path );
 		}
 
-		public override void Load( SQLiteConnection connection )
+		public override void Load( DbConnection connection )
 		{
-			using( SQLiteCommand cmd = connection.CreateCommand() )
+			using( DbCommand cmd = connection.CreateCommand() )
 			{
-				SQLiteParameter param = cmd.CreateParameter();
-				param.ParameterName = "folderID";
-				param.Value = ID;
-				cmd.Parameters.Add( param );
+				cmd.AddParameter( "folderID", ID );
 
 				cmd.CommandText = "SELECT Path, Recursive FROM folders WHERE FolderID = @folderID;";
 				cmd.Prepare();
 
-				using( SQLiteDataReader reader = cmd.ExecuteReader() )
+				using( DbDataReader reader = cmd.ExecuteReader() )
 				{
 					if( !reader.Read() )
 					{
@@ -96,17 +77,14 @@ namespace Blitzy.Model
 				}
 			}
 
-			using( SQLiteCommand cmd = connection.CreateCommand() )
+			using( DbCommand cmd = connection.CreateCommand() )
 			{
-				SQLiteParameter param = cmd.CreateParameter();
-				param.ParameterName = "folderID";
-				param.Value = ID;
-				cmd.Parameters.Add( param );
+				cmd.AddParameter( "folderID", ID );
 
 				cmd.CommandText = "SELECT Rule FROM folder_rules WHERE FolderID = @folderID";
 				cmd.Prepare();
 
-				using( SQLiteDataReader reader = cmd.ExecuteReader() )
+				using( DbDataReader reader = cmd.ExecuteReader() )
 				{
 					while( reader.Read() )
 					{
@@ -115,17 +93,14 @@ namespace Blitzy.Model
 				}
 			}
 
-			using( SQLiteCommand cmd = connection.CreateCommand() )
+			using( DbCommand cmd = connection.CreateCommand() )
 			{
-				SQLiteParameter param = cmd.CreateParameter();
-				param.ParameterName = "folderID";
-				param.Value = ID;
-				cmd.Parameters.Add( param );
+				cmd.AddParameter( "folderID", ID );
 
 				cmd.CommandText = "SELECT Exclude FROM folder_excludes WHERE FolderID = @folderID";
 				cmd.Prepare();
 
-				using( SQLiteDataReader reader = cmd.ExecuteReader() )
+				using( DbDataReader reader = cmd.ExecuteReader() )
 				{
 					while( reader.Read() )
 					{
@@ -137,24 +112,13 @@ namespace Blitzy.Model
 			ExistsInDatabase = true;
 		}
 
-		public override void Save( SQLiteConnection connection )
+		public override void Save( DbConnection connection )
 		{
-			using( SQLiteCommand cmd = connection.CreateCommand() )
+			using( DbCommand cmd = connection.CreateCommand() )
 			{
-				SQLiteParameter param = cmd.CreateParameter();
-				param.ParameterName = "folderID";
-				param.Value = ID;
-				cmd.Parameters.Add( param );
-
-				param = cmd.CreateParameter();
-				param.ParameterName = "Path";
-				param.Value = Path;
-				cmd.Parameters.Add( param );
-
-				param = cmd.CreateParameter();
-				param.ParameterName = "Recursive";
-				param.Value = IsRecursive ? 1 : 0;
-				cmd.Parameters.Add( param );
+				cmd.AddParameter( "folderID", ID );
+				cmd.AddParameter( "Path", Path );
+				cmd.AddParameter( "Recursive", IsRecursive ? 1 : 0 );
 
 				cmd.CommandText = ExistsInDatabase ?
 					"UPDATE folders SET Path = @Path, Recursive = @Recursive WHERE FolderID = @folderID" :
@@ -166,12 +130,9 @@ namespace Blitzy.Model
 
 			if( ExistsInDatabase )
 			{
-				using( SQLiteCommand cmd = connection.CreateCommand() )
+				using( DbCommand cmd = connection.CreateCommand() )
 				{
-					SQLiteParameter param = cmd.CreateParameter();
-					param.ParameterName = "folderID";
-					param.Value = ID;
-					cmd.Parameters.Add( param );
+					cmd.AddParameter( "folderID", ID );
 
 					cmd.CommandText = "DELETE FROM folder_rules WHERE FolderID = @folderID";
 
@@ -179,12 +140,9 @@ namespace Blitzy.Model
 					cmd.ExecuteNonQuery();
 				}
 
-				using( SQLiteCommand cmd = connection.CreateCommand() )
+				using( DbCommand cmd = connection.CreateCommand() )
 				{
-					SQLiteParameter param = cmd.CreateParameter();
-					param.ParameterName = "folderID";
-					param.Value = ID;
-					cmd.Parameters.Add( param );
+					cmd.AddParameter( "folderID", ID );
 
 					cmd.CommandText = "DELETE FROM folder_excludes WHERE FolderID = @folderID";
 
@@ -195,17 +153,10 @@ namespace Blitzy.Model
 
 			foreach( string rule in Rules )
 			{
-				using( SQLiteCommand cmd = connection.CreateCommand() )
+				using( DbCommand cmd = connection.CreateCommand() )
 				{
-					SQLiteParameter param = cmd.CreateParameter();
-					param.ParameterName = "folderID";
-					param.Value = ID;
-					cmd.Parameters.Add( param );
-
-					param = cmd.CreateParameter();
-					param.ParameterName = "rule";
-					param.Value = rule;
-					cmd.Parameters.Add( param );
+					cmd.AddParameter( "folderID", ID );
+					cmd.AddParameter( "rule", rule );
 
 					cmd.CommandText = "INSERT INTO folder_rules (FolderID, Rule) VALUES (@folderID, @rule);";
 
@@ -216,17 +167,10 @@ namespace Blitzy.Model
 
 			foreach( string exclude in Excludes )
 			{
-				using( SQLiteCommand cmd = connection.CreateCommand() )
+				using( DbCommand cmd = connection.CreateCommand() )
 				{
-					SQLiteParameter param = cmd.CreateParameter();
-					param.ParameterName = "folderID";
-					param.Value = ID;
-					cmd.Parameters.Add( param );
-
-					param = cmd.CreateParameter();
-					param.ParameterName = "exclude";
-					param.Value = exclude;
-					cmd.Parameters.Add( param );
+					cmd.AddParameter( "folderID", ID );
+					cmd.AddParameter( "exclude", exclude );
 
 					cmd.CommandText = "INSERT INTO folder_excludes (FolderID, Exclude) VALUES (@folderID, @exclude);";
 
@@ -325,14 +269,6 @@ namespace Blitzy.Model
 			return fileList;
 		}
 
-		#endregion Methods
-
-		#region Properties
-
-		private bool _IsRecursive;
-
-		private string _Path;
-
 		public ObservableCollection<string> Excludes { get; private set; }
 
 		public int ID { get; set; }
@@ -379,12 +315,9 @@ namespace Blitzy.Model
 
 		public ObservableCollection<string> Rules { get; private set; }
 
-		#endregion Properties
-
-		#region Attributes
-
 		private static Dictionary<string, Regex> RegexCache = new Dictionary<string, Regex>();
+		private bool _IsRecursive;
 
-		#endregion Attributes
+		private string _Path;
 	}
 }

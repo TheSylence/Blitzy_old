@@ -1,6 +1,4 @@
-﻿// $Id$
-
-using System;
+﻿using System;
 using Blitzy.Model;
 using Blitzy.Plugin;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -20,12 +18,10 @@ namespace Blitzy.Tests.Plugins
 			Settings = new Settings( Connection );
 		}
 
-		protected override void CreatePluginTables()
+		bool IPluginHost.IsPluginLoaded( Guid id )
 		{
-			// Do nothing
+			throw new NotImplementedException();
 		}
-
-		#region IPluginHost
 
 		IDatabase IPluginHost.Database
 		{
@@ -37,18 +33,7 @@ namespace Blitzy.Tests.Plugins
 			get { return Settings; }
 		}
 
-		bool IPluginHost.IsPluginLoaded( Guid id )
-		{
-			throw new NotImplementedException();
-		}
-
-		#endregion IPluginHost
-
-		#region Properties
-
 		private PluginDatabase APIDatabase;
 		private Settings Settings;
-
-		#endregion Properties
 	}
 }

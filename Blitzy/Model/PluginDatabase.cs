@@ -1,6 +1,4 @@
-﻿// $Id$
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
@@ -13,16 +11,10 @@ namespace Blitzy.Model
 {
 	internal class PluginDatabase : BaseObject, IDatabase
 	{
-		#region Constructor
-
-		public PluginDatabase( SQLiteConnection connection )
+		public PluginDatabase( DbConnection connection )
 		{
 			Connection = connection;
 		}
-
-		#endregion Constructor
-
-		#region Methods
 
 		public DbTransaction BeginTransaction( IsolationLevel isolationLevel = IsolationLevel.ReadCommitted )
 		{
@@ -43,26 +35,18 @@ namespace Blitzy.Model
 				tableName = GenerateTableName( plugin, tableName );
 				string columnDefinitions = string.Join( ",", columns.Select( c => c.ToSql() ) );
 
-				using( SQLiteCommand cmd = Connection.CreateCommand() )
+				using( DbCommand cmd = Connection.CreateCommand() )
 				{
 					cmd.CommandText = string.Format( "CREATE TABLE [{0}] ( {1} );", tableName, columnDefinitions );
 
 					cmd.ExecuteNonQuery();
 				}
 
-				using( SQLiteCommand cmd = Connection.CreateCommand() )
+				using( DbCommand cmd = Connection.CreateCommand() )
 				{
 					cmd.CommandText = "INSERT INTO plugin_tables ( TableName, PluginID ) VALUES (@tableName, @pluginId);";
-
-					SQLiteParameter param = cmd.CreateParameter();
-					param.ParameterName = "tableName";
-					param.Value = tableName;
-					cmd.Parameters.Add( param );
-
-					param = cmd.CreateParameter();
-					param.ParameterName = "pluginId";
-					param.Value = plugin.PluginID;
-					cmd.Parameters.Add( param );
+					cmd.AddParameter( "tableName", tableName );
+					cmd.AddParameter( "pluginId", plugin.PluginID );
 
 					cmd.Prepare();
 					cmd.ExecuteNonQuery();
@@ -89,7 +73,7 @@ namespace Blitzy.Model
 				return;
 			}
 
-			using( SQLiteCommand cmd = Connection.CreateCommand() )
+			using( DbCommand cmd = Connection.CreateCommand() )
 			{
 				cmd.CommandText = string.Format( "DELETE FROM [{0}]", tableName );
 				if( where != null )
@@ -115,25 +99,17 @@ namespace Blitzy.Model
 				return;
 			}
 
-			using( SQLiteCommand cmd = Connection.CreateCommand() )
+			using( DbCommand cmd = Connection.CreateCommand() )
 			{
 				cmd.CommandText = string.Format( "DROP TABLE [{0}];", tableName );
 				cmd.ExecuteNonQuery();
 			}
 
-			using( SQLiteCommand cmd = Connection.CreateCommand() )
+			using( DbCommand cmd = Connection.CreateCommand() )
 			{
 				cmd.CommandText = "DELETE FROM plugin_tables WHERE TableName = @tableName AND PluginID = @pluginId";
-
-				SQLiteParameter param = cmd.CreateParameter();
-				param.ParameterName = "tableName";
-				param.Value = tableName;
-				cmd.Parameters.Add( param );
-
-				param = cmd.CreateParameter();
-				param.ParameterName = "pluginId";
-				param.Value = plugin.PluginID;
-				cmd.Parameters.Add( param );
+				cmd.AddParameter( "tableName", tableName );
+				cmd.AddParameter( "pluginId", plugin.PluginID );
 
 				cmd.Prepare();
 
@@ -159,7 +135,7 @@ namespace Blitzy.Model
 
 			string columns = string.Join( "],[", values.First().Select( v => v.Key ).OrderBy( k => k ) );
 
-			using( SQLiteCommand cmd = Connection.CreateCommand() )
+			using( DbCommand cmd = Connection.CreateCommand() )
 			{
 				int i = 0;
 
@@ -168,12 +144,10 @@ namespace Blitzy.Model
 						++i;
 						return string.Join( ",", row.OrderBy( k => k.Key ).Select( kvp =>
 						{
-							SQLiteParameter param = cmd.CreateParameter();
-							param.ParameterName = string.Format( "value_{0}_{1}", kvp.Key, i );
-							param.Value = kvp.Value;
-							cmd.Parameters.Add( param );
+							string name = string.Format( "value_{0}_{1}", kvp.Key, i );
+							cmd.AddParameter( name, kvp.Value );
 
-							return string.Format( "@{0}", param.ParameterName );
+							return string.Format( "@{0}", name );
 						} ) );
 					} ) );
 
@@ -194,7 +168,7 @@ namespace Blitzy.Model
 				yield break;
 			}
 
-			using( SQLiteCommand cmd = Connection.CreateCommand() )
+			using( DbCommand cmd = Connection.CreateCommand() )
 			{
 				cmd.CommandText = string.Format( "SELECT [{1}] FROM [{0}]", tableName, string.Join( "],[", columns ) );
 				if( where != null )
@@ -206,7 +180,7 @@ namespace Blitzy.Model
 
 				cmd.Prepare();
 
-				using( SQLiteDataReader reader = cmd.ExecuteReader() )
+				using( DbDataReader reader = cmd.ExecuteReader() )
 				{
 					while( reader.Read() )
 					{
@@ -233,16 +207,14 @@ namespace Blitzy.Model
 				return 0;
 			}
 
-			using( SQLiteCommand cmd = Connection.CreateCommand() )
+			using( DbCommand cmd = Connection.CreateCommand() )
 			{
 				string values = string.Join( ",", newValues.Select( kvp =>
 				{
-					SQLiteParameter param = cmd.CreateParameter();
-					param.Value = kvp.Value;
-					param.ParameterName = string.Format( "value_{0}", kvp.Key );
-					cmd.Parameters.Add( param );
+					string name = string.Format( "value_{0}", kvp.Key );
+					cmd.AddParameter( name, kvp.Value );
 
-					return string.Format( "[{0}] = @{1}", kvp.Key, param.ParameterName );
+					return string.Format( "[{0}] = @{1}", kvp.Key, name );
 				} ) );
 
 				cmd.CommandText = string.Format( "UPDATE [{0}] SET {1}", tableName, values );
@@ -266,16 +238,12 @@ namespace Blitzy.Model
 				return false;
 			}
 
-			using( SQLiteCommand cmd = Connection.CreateCommand() )
+			using( DbCommand cmd = Connection.CreateCommand() )
 			{
 				cmd.CommandText = "SELECT PluginID FROM plugin_tables WHERE TableName = @tableName";
+				cmd.AddParameter( "tableName", tableName );
 
-				SQLiteParameter param = cmd.CreateParameter();
-				param.ParameterName = "tableName";
-				param.Value = tableName;
-				cmd.Parameters.Add( param );
-
-				using( SQLiteDataReader reader = cmd.ExecuteReader() )
+				using( DbDataReader reader = cmd.ExecuteReader() )
 				{
 					if( !reader.Read() )
 					{
@@ -296,16 +264,6 @@ namespace Blitzy.Model
 			return replacements.Aggregate( tableName, ( current, c ) => current.Replace( c, '_' ) );
 		}
 
-		#endregion Methods
-
-		#region Properties
-
-		#endregion Properties
-
-		#region Attributes
-
-		private readonly SQLiteConnection Connection;
-
-		#endregion Attributes
+		private readonly DbConnection Connection;
 	}
 }

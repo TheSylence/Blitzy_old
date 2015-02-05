@@ -1,6 +1,4 @@
-﻿// $Id$
-
-using System;
+﻿using System;
 using System.IO;
 using System.Linq;
 using Blitzy.Model;
@@ -15,7 +13,7 @@ namespace Blitzy.Tests.Model
 		[TestMethod, TestCategory( "Model" )]
 		public void ExcludeTest()
 		{
-			int id = new Random().Next( 3, int.MaxValue );
+			int id = TestHelper.NextID();
 
 			using( Folder f = new Folder() )
 			{
@@ -118,7 +116,7 @@ namespace Blitzy.Tests.Model
 		[TestMethod, TestCategory( "Model" )]
 		public void RulesTest()
 		{
-			int id = new Random().Next( 3, int.MaxValue );
+			int id = TestHelper.NextID();
 
 			using( Folder f = new Folder() )
 			{
@@ -157,7 +155,7 @@ namespace Blitzy.Tests.Model
 		[TestMethod, TestCategory( "Model" )]
 		public void SaveLoadTest()
 		{
-			int id = new Random().Next( 3, int.MaxValue );
+			int id = TestHelper.NextID();
 
 			using( Folder f = new Folder() )
 			{

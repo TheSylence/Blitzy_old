@@ -1,6 +1,4 @@
-﻿// $Id$
-
-using System;
+﻿using System;
 using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -10,8 +8,6 @@ namespace Blitzy
 	[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	internal class NativeMethods : INativeMethods
 	{
-		#region INativeMethods
-
 		public override bool DestroyIcon_Wrapper( IntPtr hIcon )
 		{
 			return DestroyIcon( hIcon );
@@ -94,12 +90,26 @@ namespace Blitzy
 			return UnregisterHotKey( hwnd, id );
 		}
 
-		#endregion INativeMethods
-
-		#region user32.dll
+		[DllImport( "Shell32.dll", CharSet = CharSet.Unicode, ExactSpelling = true, SetLastError = false )]
+		internal static extern int SHGetStockIconInfo( View.StockIconIdentifier identifier, View.StockIconOptions flags, ref View.StockIconInfo info );
 
 		[DllImport( "user32.dll" )]
 		private static extern bool DestroyIcon( IntPtr hIcon );
+
+		[DllImport( "dwmapi.dll", PreserveSig = false )]
+		private static extern int DwmIsCompositionEnabled();
+
+		[DllImport( "shell32.dll", CharSet = CharSet.Unicode )]
+		private static extern IntPtr ExtractIcon( IntPtr hInst, string lpszExeFileName, int nIconIndex );
+
+		[DllImport( "shell32.dll", CharSet = CharSet.Auto )]
+		private static extern int ExtractIconEx( [MarshalAs( UnmanagedType.LPWStr )]string stExeFileName, int nIconIndex, ref IntPtr phiconLarge, ref IntPtr phiconSmall, int nIcons );
+
+		[DllImport( "msi.dll", CharSet = CharSet.Unicode )]
+		private static extern UInt32 MsiGetComponentPath( string szProduct, string szComponent, [Out] StringBuilder lpPathBuf, ref UInt32 pcchBuf );
+
+		[DllImport( "msi.dll", CharSet = CharSet.Unicode )]
+		private static extern UInt32 MsiGetShortcutTargetW( string szShortcutTarget, [Out] StringBuilder szProductCode, [Out] StringBuilder szFeatureId, [Out] StringBuilder szComponentCode );
 
 		[return: MarshalAs( UnmanagedType.Bool )]
 		[DllImport( "user32.dll", SetLastError = true )]
@@ -124,37 +134,5 @@ namespace Blitzy
 
 		[DllImport( "user32.dll", CharSet = CharSet.Ansi, SetLastError = true, ExactSpelling = true )]
 		private static extern int UnregisterHotKey( IntPtr hwnd, int id );
-
-		#endregion user32.dll
-
-		#region shell32.dll
-
-		[DllImport( "Shell32.dll", CharSet = CharSet.Unicode, ExactSpelling = true, SetLastError = false )]
-		internal static extern int SHGetStockIconInfo( View.StockIconIdentifier identifier, View.StockIconOptions flags, ref View.StockIconInfo info );
-
-		[DllImport( "shell32.dll", CharSet = CharSet.Unicode )]
-		private static extern IntPtr ExtractIcon( IntPtr hInst, string lpszExeFileName, int nIconIndex );
-
-		[DllImport( "shell32.dll", CharSet = CharSet.Auto )]
-		private static extern int ExtractIconEx( [MarshalAs( UnmanagedType.LPWStr )]string stExeFileName, int nIconIndex, ref IntPtr phiconLarge, ref IntPtr phiconSmall, int nIcons );
-
-		#endregion shell32.dll
-
-		#region msi.dll
-
-		[DllImport( "msi.dll", CharSet = CharSet.Unicode )]
-		private static extern UInt32 MsiGetComponentPath( string szProduct, string szComponent, [Out] StringBuilder lpPathBuf, ref UInt32 pcchBuf );
-
-		[DllImport( "msi.dll", CharSet = CharSet.Unicode )]
-		private static extern UInt32 MsiGetShortcutTargetW( string szShortcutTarget, [Out] StringBuilder szProductCode, [Out] StringBuilder szFeatureId, [Out] StringBuilder szComponentCode );
-
-		#endregion msi.dll
-
-		#region dwmapi.dll
-
-		[DllImport( "dwmapi.dll", PreserveSig = false )]
-		private static extern int DwmIsCompositionEnabled();
-
-		#endregion dwmapi.dll
 	}
 }

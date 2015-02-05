@@ -1,6 +1,4 @@
-﻿// $Id$
-
-using System;
+﻿using System;
 using System.Linq;
 using Blitzy.Model;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -97,22 +95,23 @@ namespace Blitzy.Tests.Model
 		[TestMethod, TestCategory( "Model" )]
 		public void SaveLoadTest()
 		{
+			int id = TestHelper.NextID();
 			using( Workspace w = new Workspace() )
 			{
 				Assert.IsFalse( w.ExistsInDatabase );
 
 				w.Name = "google";
-				w.ID = 1;
+				w.ID = id;
 
-				w.Items.Add( new WorkspaceItem() { ItemID = 1, ItemCommand = "test", WorkspaceID = 1 } );
-				w.Items.Add( new WorkspaceItem() { ItemID = 2, ItemCommand = "test2", WorkspaceID = 1 } );
+				w.Items.Add( new WorkspaceItem() { ItemID = TestHelper.NextID(), ItemCommand = "test", WorkspaceID = id } );
+				w.Items.Add( new WorkspaceItem() { ItemID = TestHelper.NextID(), ItemCommand = "test2", WorkspaceID = id } );
 
 				w.Save( Connection );
 
 				Assert.IsTrue( w.ExistsInDatabase );
 
 				Workspace w2 = new Workspace();
-				w2.ID = 1;
+				w2.ID = id;
 				w2.Load( Connection );
 
 				Assert.IsTrue( w2.ExistsInDatabase );
@@ -124,12 +123,13 @@ namespace Blitzy.Tests.Model
 		[TestMethod, TestCategory( "Model" )]
 		public void UpdateTest()
 		{
+			int id = TestHelper.NextID();
 			using( Workspace w = new Workspace() )
 			{
 				Assert.IsFalse( w.ExistsInDatabase );
 
 				w.Name = "ws1";
-				w.ID = 1;
+				w.ID = id;
 
 				w.Save( Connection );
 				Assert.IsTrue( w.ExistsInDatabase );
@@ -139,7 +139,7 @@ namespace Blitzy.Tests.Model
 			}
 			using( Workspace w = new Workspace() )
 			{
-				w.ID = 1;
+				w.ID = id;
 				w.Load( Connection );
 
 				Assert.AreEqual( "helloworld", w.Name );

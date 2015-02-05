@@ -12,7 +12,6 @@ using Blitzy.Messages;
 using Blitzy.Plugin;
 using Blitzy.Plugin.SystemPlugins;
 
-// $Id$
 using Blitzy.Utility;
 using Blitzy.ViewServices;
 using GalaSoft.MvvmLight;

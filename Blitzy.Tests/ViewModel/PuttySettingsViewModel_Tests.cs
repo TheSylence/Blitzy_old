@@ -1,6 +1,4 @@
-﻿// $Id$
-
-using Blitzy.Plugin.SystemPlugins;
+﻿using Blitzy.Plugin.SystemPlugins;
 using Blitzy.Tests.Mocks;
 using Blitzy.Tests.Mocks.Services;
 using Blitzy.ViewModel;

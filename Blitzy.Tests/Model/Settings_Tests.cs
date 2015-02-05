@@ -1,6 +1,4 @@
-﻿// $Id$
-
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
@@ -130,11 +128,14 @@ namespace Blitzy.Tests.Model
 		[TestMethod, TestCategory( "Model" )]
 		public void SaveLoadTest()
 		{
+			int id1 = TestHelper.NextID();
+			int id2 = TestHelper.NextID();
+
 			Settings cfg = new Settings( Connection );
-			using( Folder f1 = new Folder() { ID = 123, IsRecursive = true, Path = "C:\\temp" } )
+			using( Folder f1 = new Folder() { ID = id1, IsRecursive = true, Path = "C:\\temp" } )
 			{
 				cfg.Folders.Add( f1 );
-				using( Folder f2 = new Folder() { ID = 456, IsRecursive = false, Path = "C:\\temp2" } )
+				using( Folder f2 = new Folder() { ID = id2, IsRecursive = false, Path = "C:\\temp2" } )
 				{
 					cfg.Folders.Add( f2 );
 
@@ -143,13 +144,13 @@ namespace Blitzy.Tests.Model
 					cfg = new Settings( Connection );
 					cfg.Load();
 
-					Assert.AreEqual( 4, cfg.Folders.Count ); // 2 Start menu entries + 2 tested ones
-					Folder folder = cfg.Folders.Where( f => f.ID == 123 ).FirstOrDefault();
+					Assert.IsTrue( cfg.Folders.Count >= 4 ); // 2 Start menu entries + 2 tested ones
+					Folder folder = cfg.Folders.Where( f => f.ID == id1 ).FirstOrDefault();
 					Assert.IsNotNull( folder );
 					Assert.AreEqual( true, folder.IsRecursive );
 					Assert.AreEqual( "C:\\temp", folder.Path );
 
-					folder = cfg.Folders.Where( f => f.ID == 456 ).FirstOrDefault();
+					folder = cfg.Folders.Where( f => f.ID == id2 ).FirstOrDefault();
 					Assert.IsNotNull( folder );
 					Assert.AreEqual( false, folder.IsRecursive );
 					Assert.AreEqual( "C:\\temp2", folder.Path );
@@ -162,18 +163,24 @@ namespace Blitzy.Tests.Model
 		{
 			Settings cfg = new Settings( Connection );
 			cfg.SetDefaults();
+			try
+			{
+				cfg.SetValue( SystemSetting.Language, "test" );
+				Assert.AreEqual( "test", cfg.GetValue<string>( SystemSetting.Language ) );
 
-			cfg.SetValue( SystemSetting.Language, "test" );
-			Assert.AreEqual( "test", cfg.GetValue<string>( SystemSetting.Language ) );
+				cfg.SetValue( SystemSetting.MaxMatchingItems, 123 );
+				Assert.AreEqual( 123, cfg.GetValue<int>( SystemSetting.MaxMatchingItems ) );
 
-			cfg.SetValue( SystemSetting.MaxMatchingItems, 123 );
-			Assert.AreEqual( 123, cfg.GetValue<int>( SystemSetting.MaxMatchingItems ) );
+				cfg.SetValue( SystemSetting.CloseOnEscape, false );
+				Assert.AreEqual( false, cfg.GetValue<bool>( SystemSetting.CloseOnEscape ) );
 
-			cfg.SetValue( SystemSetting.CloseOnEscape, false );
-			Assert.AreEqual( false, cfg.GetValue<bool>( SystemSetting.CloseOnEscape ) );
-
-			cfg.SetValue( SystemSetting.CloseOnEscape, true );
-			Assert.AreEqual( true, cfg.GetValue<bool>( SystemSetting.CloseOnEscape ) );
+				cfg.SetValue( SystemSetting.CloseOnEscape, true );
+				Assert.AreEqual( true, cfg.GetValue<bool>( SystemSetting.CloseOnEscape ) );
+			}
+			finally
+			{
+				cfg.SetDefaults();
+			}
 		}
 	}
 }

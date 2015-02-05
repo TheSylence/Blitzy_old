@@ -1,6 +1,4 @@
-﻿// $Id$
-
-using System;
+﻿using System;
 using Blitzy.btbapi;
 using Blitzy.Messages;
 using Blitzy.Tests.Mocks.Services;

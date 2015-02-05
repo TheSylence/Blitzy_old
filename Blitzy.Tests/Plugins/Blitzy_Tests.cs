@@ -1,4 +1,4 @@
-﻿// $Id$
+﻿
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 

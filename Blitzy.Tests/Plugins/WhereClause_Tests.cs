@@ -1,7 +1,6 @@
-﻿// $Id$
-
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Data.SQLite;
 using Blitzy.Plugin;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -17,7 +16,7 @@ namespace Blitzy.Tests.Plugins
 		{
 			WhereClause where = new WhereClause();
 
-			using( SQLiteCommand cmd = Connection.CreateCommand() )
+			using( DbCommand cmd = Connection.CreateCommand() )
 			{
 				Assert.AreEqual( string.Empty, where.ToSql( cmd ) );
 			}
@@ -29,7 +28,7 @@ namespace Blitzy.Tests.Plugins
 			WhereClause where = new WhereClause();
 			where.AddCondition( "test", 123, (WhereOperation)1234 );
 
-			using( SQLiteCommand cmd = Connection.CreateCommand() )
+			using( DbCommand cmd = Connection.CreateCommand() )
 			{
 				where.ToSql( cmd );
 			}
@@ -43,7 +42,7 @@ namespace Blitzy.Tests.Plugins
 			where.AddCondition( "second", "test", WhereOperation.NotEquals );
 			where.AddCondition( "greater", 9, WhereOperation.Greater );
 
-			using( SQLiteCommand cmd = Connection.CreateCommand() )
+			using( DbCommand cmd = Connection.CreateCommand() )
 			{
 				string expected = "column = @where_column AND second != @where_second AND greater > @where_greater";
 
@@ -78,7 +77,7 @@ namespace Blitzy.Tests.Plugins
 				WhereClause where = new WhereClause();
 				where.AddCondition( "col", 123, kvp.Key );
 
-				using( SQLiteCommand cmd = Connection.CreateCommand() )
+				using( DbCommand cmd = Connection.CreateCommand() )
 				{
 					Assert.AreEqual( string.Format( "col {0} @where_col", kvp.Value ), where.ToSql( cmd ) );
 				}
@@ -91,7 +90,7 @@ namespace Blitzy.Tests.Plugins
 			WhereClause where = new WhereClause();
 			where.AddCondition( "column", 123 );
 
-			using( SQLiteCommand cmd = Connection.CreateCommand() )
+			using( DbCommand cmd = Connection.CreateCommand() )
 			{
 				string expected = "column = @where_column";
 

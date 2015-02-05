@@ -119,6 +119,9 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="ConnectionWrapper.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Converter\CultureAwareConverter_Tests.cs" />
     <Compile Include="Converter\ElementNotNullConverter_Tests.cs" />
     <Compile Include="Converter\FileSizeConverter_Tests.cs" />
