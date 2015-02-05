@@ -13,8 +13,6 @@ namespace Blitzy.Plugin.SystemPlugins
 {
 	internal class Blitzy : ISystemPlugin
 	{
-		#region Methods
-
 		public void ClearCache()
 		{
 			// Nothing to do
@@ -46,7 +44,7 @@ namespace Blitzy.Plugin.SystemPlugins
 			return null;
 		}
 
-		public IPluginViewModel GetSettingsDataContext()
+		public IPluginViewModel GetSettingsDataContext( IViewServiceManager viewServices )
 		{
 			return null;
 		}
@@ -74,10 +72,6 @@ namespace Blitzy.Plugin.SystemPlugins
 		{
 			Debug.Assert( reason != PluginUnloadReason.Unload );
 		}
-
-		#endregion Methods
-
-		#region Properties
 
 		private Guid? Guid;
 
@@ -125,7 +119,5 @@ namespace Blitzy.Plugin.SystemPlugins
 		{
 			get { return new Uri( "http://btbsoft.org" ); }
 		}
-
-		#endregion Properties
 	}
 }

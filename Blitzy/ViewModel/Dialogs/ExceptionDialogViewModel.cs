@@ -14,37 +14,11 @@ namespace Blitzy.ViewModel.Dialogs
 {
 	internal class ExceptionDialogViewModel : ViewModelBaseEx
 	{
-		#region Constructor
-
 		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors" )]
-		public ExceptionDialogViewModel( Exception ex, StackTrace trace )
+		public ExceptionDialogViewModel( Exception ex, StackTrace trace, ViewServiceManager serviceManager = null )
+			: base( serviceManager )
 		{
 			ErrorReport = new ErrorReport( ex, trace );
-		}
-
-		#endregion Constructor
-
-		#region Commands
-
-		private RelayCommand _ExitCommand;
-		private RelayCommand _SendCommand;
-
-		public RelayCommand ExitCommand
-		{
-			get
-			{
-				return _ExitCommand ??
-					( _ExitCommand = new RelayCommand( ExecuteExitCommand, CanExecuteExitCommand ) );
-			}
-		}
-
-		public RelayCommand SendCommand
-		{
-			get
-			{
-				return _SendCommand ??
-					( _SendCommand = new RelayCommand( ExecuteSendCommand, CanExecuteSendCommand ) );
-			}
 		}
 
 		private bool CanExecuteExitCommand()
@@ -85,24 +59,17 @@ namespace Blitzy.ViewModel.Dialogs
 			{
 				LogWarning( "Failed to send error report: {0}", result.RawResponse );
 
-				DialogServiceManager.Show<MessageBoxService>( new MessageBoxParameter( "ErrorReportError".Localize(),
+				ServiceManagerInstance.Show<MessageBoxService>( new MessageBoxParameter( "ErrorReportError".Localize(),
 					"Error".Localize(), MessageBoxButton.OK, MessageBoxImage.Error ) );
 			}
 			else
 			{
-				DialogServiceManager.Show<MessageBoxService>( new MessageBoxParameter( "ErrorReportSend".Localize(),
+				ServiceManagerInstance.Show<MessageBoxService>( new MessageBoxParameter( "ErrorReportSend".Localize(),
 					"Success".Localize(), MessageBoxButton.OK, MessageBoxImage.Information ) );
 			}
 
 			CloseDialog();
 		}
-
-		#endregion Commands
-
-		#region Properties
-
-		private ErrorReport _ErrorReport;
-		private string _ErrorReportText;
 
 		public ErrorReport ErrorReport
 		{
@@ -149,6 +116,24 @@ namespace Blitzy.ViewModel.Dialogs
 			}
 		}
 
+		public RelayCommand ExitCommand
+		{
+			get
+			{
+				return _ExitCommand ??
+					( _ExitCommand = new RelayCommand( ExecuteExitCommand, CanExecuteExitCommand ) );
+			}
+		}
+
+		public RelayCommand SendCommand
+		{
+			get
+			{
+				return _SendCommand ??
+					( _SendCommand = new RelayCommand( ExecuteSendCommand, CanExecuteSendCommand ) );
+			}
+		}
+
 		private API API
 		{
 			get
@@ -162,6 +147,9 @@ namespace Blitzy.ViewModel.Dialogs
 			}
 		}
 
-		#endregion Properties
+		private ErrorReport _ErrorReport;
+		private string _ErrorReportText;
+		private RelayCommand _ExitCommand;
+		private RelayCommand _SendCommand;
 	}
 }

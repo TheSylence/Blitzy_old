@@ -44,8 +44,6 @@ namespace Blitzy.Plugin
 	/// </summary>
 	public interface IPlugin
 	{
-		#region Methods
-
 		/// <summary>
 		/// Called when the plugin's cache (if there is any) should be cleared. This happens when the catalog is being rebuild for example.
 		/// </summary>
@@ -84,7 +82,7 @@ namespace Blitzy.Plugin
 		/// Called along with <see cref="GetSettingsUI"/> to get access to the ViewModel for this plugin's settings
 		/// </summary>
 		/// <returns></returns>
-		IPluginViewModel GetSettingsDataContext();
+		IPluginViewModel GetSettingsDataContext( IViewServiceManager viewServices );
 
 		/// <summary>
 		/// Called when the SettingsDialog is about to show the settings for this Plugin.
@@ -123,10 +121,6 @@ namespace Blitzy.Plugin
 		/// <param name="reason">The reason why the plugin is being unloaded</param>
 		void Unload( PluginUnloadReason reason );
 
-		#endregion Methods
-
-		#region Properties
-
 		/// <summary>
 		/// Gets the API version this plugin is built against.
 		/// </summary>
@@ -163,7 +157,5 @@ namespace Blitzy.Plugin
 		/// Gets the website of the author of the plugin. This value is linked in the settings.
 		/// </summary>
 		Uri Website { get; }
-
-		#endregion Properties
 	}
 }

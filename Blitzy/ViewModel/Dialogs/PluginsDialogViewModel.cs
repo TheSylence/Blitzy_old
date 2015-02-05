@@ -22,10 +22,6 @@ namespace Blitzy.ViewModel.Dialogs
 {
 	public class PluginInformation : ObservableObject
 	{
-		#region Properties
-
-		private bool _Enabled;
-
 		public bool Enabled
 		{
 			get
@@ -52,12 +48,15 @@ namespace Blitzy.ViewModel.Dialogs
 
 		public string Name { get; set; }
 
-		#endregion Properties
+		private bool _Enabled;
 	}
 
 	public class PluginsDialogViewModel : ViewModelBaseEx
 	{
-		#region Methods
+		public PluginsDialogViewModel( ViewServiceManager serviceManager = null )
+			: base( serviceManager )
+		{
+		}
 
 		public override void Reset()
 		{
@@ -65,42 +64,6 @@ namespace Blitzy.ViewModel.Dialogs
 
 			Plugins = new ObservableCollection<PluginInformation>( PluginManager.Plugins.Concat( PluginManager.DisabledPlugins ).Where( plug => !( plug is ISystemPlugin ) )
 				.Select( p => new PluginInformation() { Id = p.PluginID, Name = p.Name, Instance = p, Enabled = !PluginManager.DisabledPlugins.Contains( p ) } ) );
-		}
-
-		#endregion Methods
-
-		#region Commands
-
-		private RelayCommand _DisableCommand;
-		private RelayCommand _EnableCommand;
-
-		private RelayCommand _InstallCommand;
-
-		public RelayCommand DisableCommand
-		{
-			get
-			{
-				return _DisableCommand ??
-					( _DisableCommand = new RelayCommand( ExecuteDisableCommand, CanExecuteDisableCommand ) );
-			}
-		}
-
-		public RelayCommand EnableCommand
-		{
-			get
-			{
-				return _EnableCommand ??
-					( _EnableCommand = new RelayCommand( ExecuteEnableCommand, CanExecuteEnableCommand ) );
-			}
-		}
-
-		public RelayCommand InstallCommand
-		{
-			get
-			{
-				return _InstallCommand ??
-					( _InstallCommand = new RelayCommand( ExecuteInstallCommand, CanExecuteInstallCommand ) );
-			}
 		}
 
 		private bool CanExecuteDisableCommand()
@@ -161,7 +124,7 @@ namespace Blitzy.ViewModel.Dialogs
 		private void ExecuteInstallCommand()
 		{
 			FileDialogParameters param = new FileDialogParameters( "ZipArchive".Localize( null, "|*.zip" ) + "|" + "DLLFiles".Localize( null, "|*.dll" ) );
-			string file = DialogServiceManager.Show<OpenFileService, string>( param );
+			string file = ServiceManagerInstance.Show<OpenFileService, string>( param );
 			if( File.Exists( file ) )
 			{
 				Process proc = new Process();
@@ -178,12 +141,32 @@ namespace Blitzy.ViewModel.Dialogs
 			}
 		}
 
-		#endregion Commands
+		public RelayCommand DisableCommand
+		{
+			get
+			{
+				return _DisableCommand ??
+					( _DisableCommand = new RelayCommand( ExecuteDisableCommand, CanExecuteDisableCommand ) );
+			}
+		}
 
-		#region Properties
+		public RelayCommand EnableCommand
+		{
+			get
+			{
+				return _EnableCommand ??
+					( _EnableCommand = new RelayCommand( ExecuteEnableCommand, CanExecuteEnableCommand ) );
+			}
+		}
 
-		private ObservableCollection<PluginInformation> _Plugins;
-		private PluginInformation _SelectedPlugin;
+		public RelayCommand InstallCommand
+		{
+			get
+			{
+				return _InstallCommand ??
+					( _InstallCommand = new RelayCommand( ExecuteInstallCommand, CanExecuteInstallCommand ) );
+			}
+		}
 
 		public ObservableCollection<PluginInformation> Plugins
 		{
@@ -227,6 +210,11 @@ namespace Blitzy.ViewModel.Dialogs
 
 		internal Plugin.PluginManager PluginManager { get; set; }
 
-		#endregion Properties
+		private RelayCommand _DisableCommand;
+		private RelayCommand _EnableCommand;
+
+		private RelayCommand _InstallCommand;
+		private ObservableCollection<PluginInformation> _Plugins;
+		private PluginInformation _SelectedPlugin;
 	}
 }

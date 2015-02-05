@@ -24,7 +24,8 @@ namespace Blitzy.Tests.Model
 		public void DownloadLatestVersionTest()
 		{
 			DelegateServiceMock mock = new DelegateServiceMock();
-			DialogServiceManager.RegisterService( typeof( DownloadService ), mock );
+			ViewServiceManager serviceManager = new ViewServiceManager();
+			serviceManager.RegisterService( typeof( DownloadService ), mock );
 
 			bool called = false;
 			mock.Action = ( parameter ) =>
@@ -40,7 +41,7 @@ namespace Blitzy.Tests.Model
 			};
 
 			VersionInfo info = new VersionInfo( System.Net.HttpStatusCode.OK, null, new Uri( "http://example.com/file.name" ), "1234", 1234, new Dictionary<Version, string>(), null );
-			UpdateChecker.Instance.DownloadLatestVersion( info );
+			UpdateChecker.Instance.DownloadLatestVersion( info, serviceManager );
 
 			Assert.IsTrue( called );
 		}

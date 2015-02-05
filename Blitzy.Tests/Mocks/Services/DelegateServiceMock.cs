@@ -6,7 +6,7 @@ using Blitzy.ViewServices;
 namespace Blitzy.Tests.Mocks.Services
 {
 	[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-	internal class DelegateServiceMock : IDialogService
+	internal class DelegateServiceMock : IViewService
 	{
 		public Func<object, object> Action;
 

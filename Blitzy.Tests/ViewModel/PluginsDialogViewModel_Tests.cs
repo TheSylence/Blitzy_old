@@ -73,9 +73,10 @@ namespace Blitzy.Tests.ViewModel
 		{
 			DelegateServiceMock mock = new DelegateServiceMock();
 			mock.Action = ( param ) => null;
-			DialogServiceManager.RegisterService( typeof( OpenFileService ), mock );
+			ViewServiceManager serviceManager = new ViewServiceManager();
+			serviceManager.RegisterService( typeof( OpenFileService ), mock );
 
-			using( PluginsDialogViewModel vm = new PluginsDialogViewModel() )
+			using( PluginsDialogViewModel vm = new PluginsDialogViewModel( serviceManager ) )
 			{
 				using( ShimsContext.Create() )
 				{

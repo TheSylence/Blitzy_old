@@ -15,17 +15,11 @@ namespace Blitzy.Model
 {
 	internal class UpdateChecker
 	{
-		#region Constructor
-
 		private UpdateChecker()
 		{
 			Messenger.Default.Register<BalloonActivatedMessage>( this, OnBalloonActivated );
 			Messenger.Default.Register<DownloadStatusMessage>( this, MessageTokens.DownloadSucessful, OnSuccessfulDownload );
 		}
-
-		#endregion Constructor
-
-		#region Methods
 
 		internal async Task<VersionInfo> CheckVersion( bool showIfNewest = false )
 		{
@@ -55,13 +49,13 @@ namespace Blitzy.Model
 			return versionInfo;
 		}
 
-		internal void DownloadLatestVersion( VersionInfo info )
+		internal void DownloadLatestVersion( VersionInfo info, ViewServiceManager serviceManager )
 		{
 			string ext = System.IO.Path.GetExtension( info.DownloadLink.AbsolutePath ).Substring( 1 );
 			TargetPath = IOUtils.GetTempFileName( ext );
 
 			DownloadServiceParameters args = new DownloadServiceParameters( info.DownloadLink, TargetPath, info.Size, info.MD5 );
-			DialogServiceManager.Show<DownloadService>( args );
+			serviceManager.Show<DownloadService>( args );
 		}
 
 		private void OnBalloonActivated( BalloonActivatedMessage msg )
@@ -69,7 +63,7 @@ namespace Blitzy.Model
 			VersionCheckMessage versionCheck = msg.Token as VersionCheckMessage;
 			if( versionCheck != null )
 			{
-				DialogServiceManager.Show<ViewChangelogService>( versionCheck.VersionInfo );
+				ViewServiceManager.Default.Show<ViewChangelogService>( versionCheck.VersionInfo );
 			}
 		}
 
@@ -80,10 +74,6 @@ namespace Blitzy.Model
 				Process.Start( TargetPath );
 			}
 		}
-
-		#endregion Methods
-
-		#region Properties
 
 		internal static UpdateChecker Instance
 		{
@@ -105,12 +95,6 @@ namespace Blitzy.Model
 
 		private static UpdateChecker _Instance;
 
-		#endregion Properties
-
-		#region Attributes
-
 		private static string TargetPath;
-
-		#endregion Attributes
 	}
 }

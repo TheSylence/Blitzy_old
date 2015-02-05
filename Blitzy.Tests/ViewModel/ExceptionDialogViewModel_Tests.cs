@@ -45,23 +45,24 @@ namespace Blitzy.Tests.ViewModel
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void SendTest()
 		{
+			DelegateServiceMock mock = new DelegateServiceMock();
+			ViewServiceManager serviceManager = new ViewServiceManager();
+			serviceManager.RegisterService( typeof( MessageBoxService ), mock );
+
 			Exception ex = new Exception( "This is a test" );
-			using( ExceptionDialogViewModel vm = new ExceptionDialogViewModel( ex, new StackTrace( true ) ) )
+			using( ExceptionDialogViewModel vm = new ExceptionDialogViewModel( ex, new StackTrace( true ), serviceManager ) )
 			{
 				bool closed = false;
 				vm.RequestClose += ( s, e ) => closed = true;
 
 				bool success = false;
 				bool called = false;
-				DelegateServiceMock mock = new DelegateServiceMock();
 				mock.Action = ( args ) =>
 					{
 						called = true;
 						success = ( (MessageBoxParameter)args ).Icon == MessageBoxImage.Information;
 						return null;
 					};
-
-				DialogServiceManager.RegisterService( typeof( MessageBoxService ), mock );
 
 				Assert.IsTrue( vm.SendCommand.CanExecute( null ) );
 				using( ShimsContext.Create() )

@@ -7,7 +7,7 @@ using System.Windows;
 namespace Blitzy.ViewServices
 {
 	[ExcludeFromCodeCoverage]
-	public class MessageBoxService : IDialogService
+	public class MessageBoxService : IViewService
 	{
 		public object Show( Window parent, object parameter = null )
 		{

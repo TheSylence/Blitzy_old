@@ -16,7 +16,11 @@ namespace Blitzy.Tests.ViewModel
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void BrowseTest()
 		{
-			using( SettingsViewModel baseVM = new SettingsViewModel() )
+			TextInputServiceMock mock = new TextInputServiceMock();
+			ViewServiceManager serviceManager = new ViewServiceManager();
+			serviceManager.RegisterService( typeof( OpenFileService ), mock );
+
+			using( SettingsViewModel baseVM = new SettingsViewModel( serviceManager ) )
 			{
 				baseVM.Settings = new Blitzy.Model.Settings( Connection );
 				MockPluginHost host = new MockPluginHost( baseVM.Settings );
@@ -28,8 +32,6 @@ namespace Blitzy.Tests.ViewModel
 
 				Assert.IsTrue( vm.BrowsePuttyCommand.CanExecute( null ) );
 
-				TextInputServiceMock mock = new TextInputServiceMock();
-				DialogServiceManager.RegisterService( typeof( OpenFileService ), mock );
 				mock.Value = null;
 
 				vm.BrowsePuttyCommand.Execute( null );

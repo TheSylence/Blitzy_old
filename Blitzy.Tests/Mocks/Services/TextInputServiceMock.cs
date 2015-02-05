@@ -5,7 +5,7 @@ using Blitzy.ViewServices;
 namespace Blitzy.Tests.Mocks.Services
 {
 	[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-	internal class TextInputServiceMock : IDialogService
+	internal class TextInputServiceMock : IViewService
 	{
 		public string Value;
 

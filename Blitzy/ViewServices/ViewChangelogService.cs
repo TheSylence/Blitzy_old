@@ -11,7 +11,7 @@ using Blitzy.ViewModel.Dialogs;
 namespace Blitzy.ViewServices
 {
 	[ExcludeFromCodeCoverage]
-	internal class ViewChangelogService : IDialogService
+	internal class ViewChangelogService : IViewService
 	{
 		public object Show( Window parent, object parameter = null )
 		{

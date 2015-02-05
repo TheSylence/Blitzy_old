@@ -20,13 +20,17 @@ namespace Blitzy.Tests.ViewModel
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void AddItemTest()
 		{
+			TextInputServiceMock mock = new TextInputServiceMock();
+			ViewServiceManager serviceManager = new ViewServiceManager();
+			serviceManager.RegisterService( typeof( OpenFileService ), mock );
+
 			MockPluginHost host = new MockPluginHost();
-			using( SettingsViewModel baseVM = new SettingsViewModel() )
+			using( SettingsViewModel baseVM = new SettingsViewModel( serviceManager ) )
 			{
 				baseVM.Settings = new Blitzy.Model.Settings( Connection );
 				baseVM.PluginManager = new Plugin.PluginManager( host, Connection );
 				baseVM.Reset();
-				WorkspaceSettingsViewModel vm = new WorkspaceSettingsViewModel( baseVM.Settings );
+				WorkspaceSettingsViewModel vm = new WorkspaceSettingsViewModel( baseVM.Settings, serviceManager );
 
 				Assert.IsFalse( vm.AddItemCommand.CanExecute( null ) );
 
@@ -35,8 +39,6 @@ namespace Blitzy.Tests.ViewModel
 
 				Assert.IsTrue( vm.AddItemCommand.CanExecute( null ) );
 
-				TextInputServiceMock mock = new TextInputServiceMock();
-				DialogServiceManager.RegisterService( typeof( OpenFileService ), mock );
 				mock.Value = null;
 
 				vm.AddItemCommand.Execute( null );
@@ -58,18 +60,19 @@ namespace Blitzy.Tests.ViewModel
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void AddWorkspaceTest()
 		{
+			TextInputServiceMock mock = new TextInputServiceMock();
+			ViewServiceManager serviceManager = new ViewServiceManager();
+			serviceManager.RegisterService( typeof( TextInputService ), mock );
+
 			MockPluginHost host = new MockPluginHost();
-			using( SettingsViewModel baseVM = new SettingsViewModel() )
+			using( SettingsViewModel baseVM = new SettingsViewModel( serviceManager ) )
 			{
 				baseVM.Settings = new Blitzy.Model.Settings( Connection );
 				baseVM.PluginManager = new Plugin.PluginManager( host, Connection );
 				baseVM.Reset();
-				WorkspaceSettingsViewModel vm = new WorkspaceSettingsViewModel( baseVM.Settings );
+				WorkspaceSettingsViewModel vm = new WorkspaceSettingsViewModel( baseVM.Settings, serviceManager );
 
 				Assert.IsTrue( vm.AddWorkspaceCommand.CanExecute( null ) );
-
-				TextInputServiceMock mock = new TextInputServiceMock();
-				DialogServiceManager.RegisterService( typeof( TextInputService ), mock );
 
 				mock.Value = null;
 				vm.AddWorkspaceCommand.Execute( null );
@@ -91,13 +94,17 @@ namespace Blitzy.Tests.ViewModel
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void DeleteItemTest()
 		{
+			MessageBoxServiceMock mock = new MessageBoxServiceMock( System.Windows.MessageBoxResult.No );
+			ViewServiceManager serviceManager = new ViewServiceManager();
+			serviceManager.RegisterService( typeof( MessageBoxService ), mock );
+
 			MockPluginHost host = new MockPluginHost();
-			using( SettingsViewModel baseVM = new SettingsViewModel() )
+			using( SettingsViewModel baseVM = new SettingsViewModel( serviceManager ) )
 			{
 				baseVM.Settings = new Blitzy.Model.Settings( Connection );
 				baseVM.PluginManager = new Plugin.PluginManager( host, Connection );
 				baseVM.Reset();
-				WorkspaceSettingsViewModel vm = new WorkspaceSettingsViewModel( baseVM.Settings );
+				WorkspaceSettingsViewModel vm = new WorkspaceSettingsViewModel( baseVM.Settings, serviceManager );
 
 				Assert.IsFalse( vm.RemoveItemCommand.CanExecute( null ) );
 
@@ -110,9 +117,6 @@ namespace Blitzy.Tests.ViewModel
 				vm.SelectedWorkspace.Items.Add( vm.SelectedItem );
 
 				Assert.IsTrue( vm.RemoveItemCommand.CanExecute( null ) );
-
-				MessageBoxServiceMock mock = new MessageBoxServiceMock( System.Windows.MessageBoxResult.No );
-				DialogServiceManager.RegisterService( typeof( MessageBoxService ), mock );
 
 				mock.Result = System.Windows.MessageBoxResult.No;
 
@@ -128,22 +132,23 @@ namespace Blitzy.Tests.ViewModel
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void DeleteWorkspaceTest()
 		{
+			MessageBoxServiceMock mock = new MessageBoxServiceMock( System.Windows.MessageBoxResult.No );
+			ViewServiceManager serviceManager = new ViewServiceManager();
+			serviceManager.RegisterService( typeof( MessageBoxService ), mock );
+
 			MockPluginHost host = new MockPluginHost();
-			using( SettingsViewModel baseVM = new SettingsViewModel() )
+			using( SettingsViewModel baseVM = new SettingsViewModel( serviceManager ) )
 			{
 				baseVM.Settings = new Blitzy.Model.Settings( Connection );
 				baseVM.PluginManager = new Plugin.PluginManager( host, Connection );
 				baseVM.Reset();
-				WorkspaceSettingsViewModel vm = new WorkspaceSettingsViewModel( baseVM.Settings );
+				WorkspaceSettingsViewModel vm = new WorkspaceSettingsViewModel( baseVM.Settings, serviceManager );
 
 				Assert.IsFalse( vm.DeleteWorkspaceCommand.CanExecute( null ) );
 
 				vm.SelectedWorkspace = new Blitzy.Model.Workspace();
 				vm.Workspaces.Add( vm.SelectedWorkspace );
 				Assert.IsTrue( vm.DeleteWorkspaceCommand.CanExecute( null ) );
-
-				MessageBoxServiceMock mock = new MessageBoxServiceMock( System.Windows.MessageBoxResult.No );
-				DialogServiceManager.RegisterService( typeof( MessageBoxService ), mock );
 
 				mock.Result = System.Windows.MessageBoxResult.No;
 
@@ -161,13 +166,14 @@ namespace Blitzy.Tests.ViewModel
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void MoveItemTest()
 		{
+			ViewServiceManager serviceManager = new ViewServiceManager();
 			MockPluginHost host = new MockPluginHost();
-			using( SettingsViewModel baseVM = new SettingsViewModel() )
+			using( SettingsViewModel baseVM = new SettingsViewModel( serviceManager ) )
 			{
 				baseVM.Settings = new Blitzy.Model.Settings( Connection );
 				baseVM.PluginManager = new Plugin.PluginManager( host, Connection );
 				baseVM.Reset();
-				WorkspaceSettingsViewModel vm = new WorkspaceSettingsViewModel( baseVM.Settings );
+				WorkspaceSettingsViewModel vm = new WorkspaceSettingsViewModel( baseVM.Settings, serviceManager );
 
 				Assert.IsFalse( vm.MoveItemDownCommand.CanExecute( null ) );
 				Assert.IsFalse( vm.MoveItemUpCommand.CanExecute( null ) );
@@ -218,13 +224,14 @@ namespace Blitzy.Tests.ViewModel
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void PropertyChangedTest()
 		{
+			ViewServiceManager serviceManager = new ViewServiceManager();
 			MockPluginHost host = new MockPluginHost();
-			using( SettingsViewModel baseVM = new SettingsViewModel() )
+			using( SettingsViewModel baseVM = new SettingsViewModel( serviceManager ) )
 			{
 				baseVM.Settings = new Blitzy.Model.Settings( Connection );
 				baseVM.PluginManager = new Plugin.PluginManager( host, Connection );
 				baseVM.Reset();
-				WorkspaceSettingsViewModel vm = new WorkspaceSettingsViewModel( baseVM.Settings );
+				WorkspaceSettingsViewModel vm = new WorkspaceSettingsViewModel( baseVM.Settings, serviceManager );
 
 				PropertyChangedListener listener = new PropertyChangedListener( vm );
 				Assert.IsTrue( listener.TestProperties() );
@@ -234,13 +241,14 @@ namespace Blitzy.Tests.ViewModel
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void SaveLoadTest()
 		{
+			ViewServiceManager serviceManager = new ViewServiceManager();
 			MockPluginHost host = new MockPluginHost();
-			using( SettingsViewModel baseVM = new SettingsViewModel() )
+			using( SettingsViewModel baseVM = new SettingsViewModel( serviceManager ) )
 			{
 				baseVM.Settings = new Blitzy.Model.Settings( Connection );
 				baseVM.PluginManager = new Plugin.PluginManager( host, Connection );
 				baseVM.Reset();
-				WorkspaceSettingsViewModel vm = new WorkspaceSettingsViewModel( baseVM.Settings );
+				WorkspaceSettingsViewModel vm = new WorkspaceSettingsViewModel( baseVM.Settings, serviceManager );
 
 				vm.Workspaces.Add( new Blitzy.Model.Workspace
 					{
@@ -250,7 +258,7 @@ namespace Blitzy.Tests.ViewModel
 
 				vm.Save();
 
-				vm = new WorkspaceSettingsViewModel( baseVM.Settings );
+				vm = new WorkspaceSettingsViewModel( baseVM.Settings, serviceManager );
 				vm.Reset();
 
 				Assert.AreEqual( 1, vm.Workspaces.Count );
@@ -262,17 +270,18 @@ namespace Blitzy.Tests.ViewModel
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void UniqueConstraintFail()
 		{
+			TextInputServiceMock mock = new TextInputServiceMock();
+			ViewServiceManager serviceManager = new ViewServiceManager();
+			serviceManager.RegisterService( typeof( TextInputService ), mock );
+			serviceManager.RegisterService( typeof( OpenFileService ), mock );
+
 			MockPluginHost host = new MockPluginHost();
-			using( SettingsViewModel baseVM = new SettingsViewModel() )
+			using( SettingsViewModel baseVM = new SettingsViewModel( serviceManager ) )
 			{
 				baseVM.Settings = new Blitzy.Model.Settings( Connection );
 				baseVM.PluginManager = new Plugin.PluginManager( host, Connection );
 				baseVM.Reset();
-				WorkspaceSettingsViewModel vm = new WorkspaceSettingsViewModel( baseVM.Settings );
-
-				TextInputServiceMock mock = new TextInputServiceMock();
-				DialogServiceManager.RegisterService( typeof( TextInputService ), mock );
-				DialogServiceManager.RegisterService( typeof( OpenFileService ), mock );
+				WorkspaceSettingsViewModel vm = new WorkspaceSettingsViewModel( baseVM.Settings, serviceManager );
 
 				mock.Value = "test 1";
 				vm.AddWorkspaceCommand.Execute( null );

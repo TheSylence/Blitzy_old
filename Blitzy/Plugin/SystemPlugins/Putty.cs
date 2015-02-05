@@ -14,8 +14,6 @@ namespace Blitzy.Plugin.SystemPlugins
 {
 	internal class Putty : IPlugin
 	{
-		#region Methods
-
 		public void ClearCache()
 		{
 			RootItem = CommandItem.Create( "ssh", "PuttyDescription".Localize(), this, PuttyPath, false, null, new[] { "putty" } );
@@ -57,9 +55,9 @@ namespace Blitzy.Plugin.SystemPlugins
 			return null;
 		}
 
-		public IPluginViewModel GetSettingsDataContext()
+		public IPluginViewModel GetSettingsDataContext( IViewServiceManager viewServices )
 		{
-			return new ViewModel.PuttySettingsViewModel( (Settings)Host.Settings );
+			return new ViewModel.PuttySettingsViewModel( (Settings)Host.Settings, viewServices );
 		}
 
 		public System.Windows.Controls.Control GetSettingsUI()
@@ -108,22 +106,6 @@ namespace Blitzy.Plugin.SystemPlugins
 			settings.SetValue( this, ImportKey, false );
 			settings.SetValue( this, PathKey, string.Empty );
 		}
-
-		#endregion Methods
-
-		#region Constants
-
-		internal const string GuidString = "9FF8854A-68AB-4586-BB1A-03061A270C84";
-		internal const string ImportKey = "ImportPuttySessions";
-		internal const string PathKey = "PuttyPath";
-
-		#endregion Constants
-
-		#region Properties
-
-		private Guid? Guid;
-		private IPluginHost Host;
-		private CommandItem RootItem;
 
 		public int ApiVersion
 		{
@@ -178,6 +160,12 @@ namespace Blitzy.Plugin.SystemPlugins
 			}
 		}
 
-		#endregion Properties
+		internal const string GuidString = "9FF8854A-68AB-4586-BB1A-03061A270C84";
+		internal const string ImportKey = "ImportPuttySessions";
+		internal const string PathKey = "PuttyPath";
+
+		private Guid? Guid;
+		private IPluginHost Host;
+		private CommandItem RootItem;
 	}
 }

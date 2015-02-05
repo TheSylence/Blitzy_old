@@ -14,10 +14,8 @@ namespace Blitzy.ViewModel
 {
 	internal class WorkspaceSettingsViewModel : SettingsViewModelBase
 	{
-		#region Constructor
-
-		public WorkspaceSettingsViewModel( Settings settings )
-			: base( settings )
+		public WorkspaceSettingsViewModel( Settings settings, ViewServiceManager serviceManager )
+			: base( settings, serviceManager )
 		{
 			Workspaces = new ObservableCollection<Workspace>();
 
@@ -38,10 +36,6 @@ namespace Blitzy.ViewModel
 			}
 		}
 
-		#endregion Constructor
-
-		#region Methods
-
 		public override void Save()
 		{
 			foreach( Workspace ws in Workspaces )
@@ -49,18 +43,6 @@ namespace Blitzy.ViewModel
 				ws.Save( Settings.Connection );
 			}
 		}
-
-		private void UpdateItemOrders()
-		{
-			for( int i = 0; i < SelectedWorkspace.Items.Count; ++i )
-			{
-				SelectedWorkspace.Items[i].ItemOrder = i + 1;
-			}
-		}
-
-		#endregion Methods
-
-		#region Commands
 
 		private bool CanExecuteAddItemCommand()
 		{
@@ -97,7 +79,7 @@ namespace Blitzy.ViewModel
 			//TextInputParameter args = new TextInputParameter( "EnterWorkspaceCommand".Localize(), "AddWorkspaceItem".Localize() );
 			//string command = DialogServiceManager.Show<TextInputService, string>( args );
 
-			string command = DialogServiceManager.Show<OpenFileService, string>();
+			string command = ServiceManagerInstance.Show<OpenFileService, string>();
 
 			if( !string.IsNullOrWhiteSpace( command ) )
 			{
@@ -126,7 +108,7 @@ namespace Blitzy.ViewModel
 		private void ExecuteAddWorkspaceCommand()
 		{
 			TextInputParameter args = new TextInputParameter( "EnterWorkspaceName".Localize(), "AddWorkspace".Localize() );
-			string name = DialogServiceManager.Show<TextInputService, string>( args );
+			string name = ServiceManagerInstance.Show<TextInputService, string>( args );
 
 			if( !string.IsNullOrWhiteSpace( name ) )
 			{
@@ -144,7 +126,7 @@ namespace Blitzy.ViewModel
 		private void ExecuteDeleteWorkspaceCommand()
 		{
 			MessageBoxParameter args = new MessageBoxParameter( "ConfirmDeleteWorkspace".Localize(), "DeleteWorkspace".Localize() );
-			MessageBoxResult result = DialogServiceManager.Show<MessageBoxService, MessageBoxResult>( args );
+			MessageBoxResult result = ServiceManagerInstance.Show<MessageBoxService, MessageBoxResult>( args );
 			if( result == MessageBoxResult.Yes )
 			{
 				SelectedWorkspace.Delete( Settings.Connection );
@@ -180,7 +162,7 @@ namespace Blitzy.ViewModel
 		private void ExecuteRemoveItemCommand()
 		{
 			MessageBoxParameter args = new MessageBoxParameter( "ConfirmDeleteItem".Localize(), "DeleteItem".Localize() );
-			MessageBoxResult result = DialogServiceManager.Show<MessageBoxService, MessageBoxResult>( args );
+			MessageBoxResult result = ServiceManagerInstance.Show<MessageBoxService, MessageBoxResult>( args );
 			if( result == MessageBoxResult.Yes )
 			{
 				SelectedItem.Delete( Settings.Connection );
@@ -188,6 +170,14 @@ namespace Blitzy.ViewModel
 				SelectedItem = null;
 
 				UpdateItemOrders();
+			}
+		}
+
+		private void UpdateItemOrders()
+		{
+			for( int i = 0; i < SelectedWorkspace.Items.Count; ++i )
+			{
+				SelectedWorkspace.Items[i].ItemOrder = i + 1;
 			}
 		}
 
@@ -245,17 +235,6 @@ namespace Blitzy.ViewModel
 			}
 		}
 
-		private RelayCommand _AddItemCommand;
-		private RelayCommand _AddWorkspaceCommand;
-		private RelayCommand _DeleteWorkspaceCommand;
-		private RelayCommand _MoveItemDownCommand;
-		private RelayCommand _MoveItemUpCommand;
-		private RelayCommand _RemoveItemCommand;
-
-		#endregion Commands
-
-		#region Properties
-
 		public WorkspaceItem SelectedItem
 		{
 			get
@@ -298,9 +277,13 @@ namespace Blitzy.ViewModel
 
 		public ObservableCollection<Workspace> Workspaces { get; private set; }
 
+		private RelayCommand _AddItemCommand;
+		private RelayCommand _AddWorkspaceCommand;
+		private RelayCommand _DeleteWorkspaceCommand;
+		private RelayCommand _MoveItemDownCommand;
+		private RelayCommand _MoveItemUpCommand;
+		private RelayCommand _RemoveItemCommand;
 		private WorkspaceItem _SelectedItem;
 		private Workspace _SelectedWorkspace;
-
-		#endregion Properties
 	}
 }

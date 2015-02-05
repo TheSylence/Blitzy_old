@@ -6,7 +6,7 @@ using Blitzy.ViewServices;
 namespace Blitzy.Tests.Mocks.Services
 {
 	[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-	internal class MessageBoxServiceMock : IDialogService
+	internal class MessageBoxServiceMock : IViewService
 	{
 		internal MessageBoxResult Result;
 

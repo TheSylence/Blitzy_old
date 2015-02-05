@@ -11,7 +11,7 @@ using Blitzy.ViewModel.Dialogs;
 namespace Blitzy.ViewServices
 {
 	[ExcludeFromCodeCoverage]
-	internal class DownloadService : IDialogService
+	internal class DownloadService : IViewService
 	{
 		public object Show( Window parent, object parameter = null )
 		{

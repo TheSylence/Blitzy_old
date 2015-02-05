@@ -16,7 +16,7 @@ namespace Blitzy.Tests.Utility
 		{
 			ProgressStatistic stats = new ProgressStatistic();
 
-			const int dataLength = 1000;
+			const int dataLength = 100;
 			byte[] data = new byte[dataLength];
 			for( int i = 0; i < dataLength; ++i )
 			{
@@ -38,7 +38,6 @@ namespace Blitzy.Tests.Utility
 					Assert.IsTrue( e.ProgressStatistic.EstimatedFinishingTime > startTime );
 					Assert.IsTrue( e.ProgressStatistic.AverageBytesPerSecond > 0 );
 					Assert.IsTrue( e.ProgressStatistic.BytesRead > 0 );
-					Assert.IsTrue( e.ProgressStatistic.Duration.Ticks > 0 );
 					Assert.IsTrue( e.ProgressStatistic.CurrentBytesPerSecond > 0 );
 					Assert.IsTrue( e.ProgressStatistic.CurrentBytesSampleCount > 0 );
 					Assert.IsTrue( e.ProgressStatistic.Progress > 0 );

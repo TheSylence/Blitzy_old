@@ -191,19 +191,20 @@ namespace Blitzy.Tests.ViewModel
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void RetryCorruptedTest()
 		{
-			using( DownloadDialogViewModel vm = new DownloadDialogViewModel() )
+			MessageBoxServiceMock msgMock = new MessageBoxServiceMock( System.Windows.MessageBoxResult.No );
+			CallCheckServiceMock callMock = new CallCheckServiceMock();
+
+			ViewServiceManager serviceManager = new ViewServiceManager();
+			serviceManager.RegisterService( typeof( MessageBoxService ), msgMock );
+			serviceManager.RegisterService( typeof( DownloadService ), callMock );
+
+			using( DownloadDialogViewModel vm = new DownloadDialogViewModel( serviceManager ) )
 			{
 				vm.Reset();
 
 				bool closed = false;
 				vm.RequestClose += ( s, e ) => closed = true;
 				DownloadStatusMessage msg = new DownloadStatusMessage( "path", "http://localhost/link", 123, "md5" );
-
-				MessageBoxServiceMock msgMock = new MessageBoxServiceMock( System.Windows.MessageBoxResult.No );
-				CallCheckServiceMock callMock = new CallCheckServiceMock();
-
-				DialogServiceManager.RegisterService( typeof( MessageBoxService ), msgMock );
-				DialogServiceManager.RegisterService( typeof( DownloadService ), callMock );
 
 				Messenger.Default.Send<DownloadStatusMessage>( msg, MessageTokens.DownloadCorrupted );
 				Assert.IsTrue( closed );
@@ -228,19 +229,20 @@ namespace Blitzy.Tests.ViewModel
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void RetryFailedTest()
 		{
-			using( DownloadDialogViewModel vm = new DownloadDialogViewModel() )
+			MessageBoxServiceMock msgMock = new MessageBoxServiceMock( System.Windows.MessageBoxResult.No );
+			CallCheckServiceMock callMock = new CallCheckServiceMock();
+
+			ViewServiceManager serviceManager = new ViewServiceManager();
+			serviceManager.RegisterService( typeof( MessageBoxService ), msgMock );
+			serviceManager.RegisterService( typeof( DownloadService ), callMock );
+
+			using( DownloadDialogViewModel vm = new DownloadDialogViewModel( serviceManager ) )
 			{
 				vm.Reset();
 
 				bool closed = false;
 				vm.RequestClose += ( s, e ) => closed = true;
 				DownloadStatusMessage msg = new DownloadStatusMessage( "path", "http://localhost/link", 123, "md5" );
-
-				MessageBoxServiceMock msgMock = new MessageBoxServiceMock( System.Windows.MessageBoxResult.No );
-				CallCheckServiceMock callMock = new CallCheckServiceMock();
-
-				DialogServiceManager.RegisterService( typeof( MessageBoxService ), msgMock );
-				DialogServiceManager.RegisterService( typeof( DownloadService ), callMock );
 
 				Messenger.Default.Send<DownloadStatusMessage>( msg, MessageTokens.DownloadFailed );
 				Assert.IsTrue( closed );

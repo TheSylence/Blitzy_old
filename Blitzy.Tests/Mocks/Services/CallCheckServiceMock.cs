@@ -5,7 +5,7 @@ using Blitzy.ViewServices;
 namespace Blitzy.Tests.Mocks.Services
 {
 	[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-	internal class CallCheckServiceMock : IDialogService
+	internal class CallCheckServiceMock : IViewService
 	{
 		public object Parameter;
 		public bool WasCalled;

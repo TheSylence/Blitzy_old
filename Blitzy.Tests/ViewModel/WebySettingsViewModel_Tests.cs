@@ -17,7 +17,11 @@ namespace Blitzy.Tests.ViewModel
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void AddTest()
 		{
-			using( SettingsViewModel baseVM = new SettingsViewModel() )
+			DataManipulationServiceMock<WebyWebsite> mock = new DataManipulationServiceMock<WebyWebsite>();
+			ViewServiceManager serviceManager = new ViewServiceManager();
+			serviceManager.RegisterManipService( typeof( WebyWebsite ), mock );
+
+			using( SettingsViewModel baseVM = new SettingsViewModel( serviceManager ) )
 			{
 				baseVM.Settings = new Blitzy.Model.Settings( Connection );
 				MockPluginHost host = new MockPluginHost( baseVM.Settings );
@@ -26,9 +30,6 @@ namespace Blitzy.Tests.ViewModel
 				baseVM.Reset();
 
 				WebySettingsViewModel vm = baseVM.GetPluginContext<WebySettingsViewModel>( "Weby" );
-
-				DataManipulationServiceMock<WebyWebsite> mock = new DataManipulationServiceMock<WebyWebsite>();
-				DialogServiceManager.RegisterManipService( typeof( WebyWebsite ), mock );
 
 				mock.CreateFunc = () => { return null; };
 
@@ -92,7 +93,11 @@ namespace Blitzy.Tests.ViewModel
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void RemoveTest()
 		{
-			using( SettingsViewModel baseVM = new SettingsViewModel() )
+			MessageBoxServiceMock mock = new MessageBoxServiceMock( System.Windows.MessageBoxResult.No );
+			ViewServiceManager serviceManager = new ViewServiceManager();
+			serviceManager.RegisterService( typeof( MessageBoxService ), mock );
+
+			using( SettingsViewModel baseVM = new SettingsViewModel( serviceManager ) )
 			{
 				baseVM.Settings = new Blitzy.Model.Settings( Connection );
 				MockPluginHost host = new MockPluginHost( baseVM.Settings );
@@ -114,9 +119,6 @@ namespace Blitzy.Tests.ViewModel
 				Assert.IsFalse( vm.RemoveWebsiteCommand.CanExecute( null ) );
 				vm.SelectedWebsite = vm.Websites.First();
 				Assert.IsTrue( vm.RemoveWebsiteCommand.CanExecute( null ) );
-
-				MessageBoxServiceMock mock = new MessageBoxServiceMock( System.Windows.MessageBoxResult.No );
-				DialogServiceManager.RegisterService( typeof( MessageBoxService ), mock );
 
 				Assert.AreEqual( 7, vm.Websites.Count );
 				vm.RemoveWebsiteCommand.Execute( null );

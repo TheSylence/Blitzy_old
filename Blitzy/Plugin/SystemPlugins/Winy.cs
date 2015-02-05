@@ -14,8 +14,6 @@ namespace Blitzy.Plugin.SystemPlugins
 {
 	internal class Winy : IPlugin
 	{
-		#region Methods
-
 		public void ClearCache()
 		{
 			Confirmations = new Dictionary<string, bool>
@@ -34,7 +32,7 @@ namespace Blitzy.Plugin.SystemPlugins
 				MessageBoxParameter mbArgs = new MessageBoxParameter( "ConfirmOperation".Localize(), "ConfirmationRequired".Localize() );
 				MessageBoxResult result = MessageBoxResult.No;
 
-				DispatcherHelper.RunAsync( () => result = DialogServiceManager.Show<MessageBoxService, MessageBoxResult>( mbArgs ) ).Wait();
+				DispatcherHelper.RunAsync( () => result = ViewServiceManager.Default.Show<MessageBoxService, MessageBoxResult>( mbArgs ) ).Wait();
 				if( result == MessageBoxResult.No )
 				{
 					return true;
@@ -77,9 +75,9 @@ namespace Blitzy.Plugin.SystemPlugins
 			return null;
 		}
 
-		public IPluginViewModel GetSettingsDataContext()
+		public IPluginViewModel GetSettingsDataContext( IViewServiceManager viewServices )
 		{
-			return new ViewModel.WinySettingsViewModel( (Settings)Settings );
+			return new ViewModel.WinySettingsViewModel( (Settings)Settings, viewServices );
 		}
 
 		public System.Windows.Controls.Control GetSettingsUI()
@@ -114,21 +112,6 @@ namespace Blitzy.Plugin.SystemPlugins
 			settings.SetValue( this, ShutdownKey, true );
 			settings.SetValue( this, RestartKey, true );
 		}
-
-		#endregion Methods
-
-		#region Constants
-
-		internal const string GuidString = "26F7306C-AF81-4979-9F5B-1857EB9387BF";
-		internal const string LogoffKey = "ConfirmLogoff";
-		internal const string RestartKey = "ConfirmRestart";
-		internal const string ShutdownKey = "ConfirmShutdown";
-
-		#endregion Constants
-
-		#region Properties
-
-		private Guid? Guid;
 
 		public int ApiVersion
 		{
@@ -175,13 +158,12 @@ namespace Blitzy.Plugin.SystemPlugins
 			get { return new Uri( "http://btbsoft.org" ); }
 		}
 
-		#endregion Properties
-
-		#region Attributes
-
+		internal const string GuidString = "26F7306C-AF81-4979-9F5B-1857EB9387BF";
+		internal const string LogoffKey = "ConfirmLogoff";
+		internal const string RestartKey = "ConfirmRestart";
+		internal const string ShutdownKey = "ConfirmShutdown";
 		private Dictionary<string, bool> Confirmations;
+		private Guid? Guid;
 		private ISettings Settings;
-
-		#endregion Attributes
 	}
 }

@@ -22,25 +22,16 @@ namespace Blitzy.Tests
 	[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	public class TestBase
 	{
-		protected SQLiteConnection Connection { get; private set; }
-
-		protected NativeMethodsMock NativeMethods { get; private set; }
-
 		[TestCleanup]
 		public virtual void AfterTestRun()
 		{
 			Connection.Close();
 			Connection.Dispose();
-
-			DialogServiceManager.Clear();
-			Messenger.Reset();
 		}
 
 		[TestInitialize]
 		public virtual void BeforeTestRun()
 		{
-			Messenger.OverrideDefault( new MockMessenger() );
-
 			NativeMethods = new NativeMethodsMock();
 			SetNativeMethods( NativeMethodsType.Real );
 			RuntimeConfig.Tests = true;
@@ -94,5 +85,9 @@ namespace Blitzy.Tests
 			connection.Open();
 			return connection;
 		}
+
+		protected SQLiteConnection Connection { get; private set; }
+
+		protected NativeMethodsMock NativeMethods { get; private set; }
 	}
 }

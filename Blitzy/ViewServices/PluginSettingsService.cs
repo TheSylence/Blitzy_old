@@ -13,7 +13,7 @@ using Blitzy.ViewModel.Dialogs;
 namespace Blitzy.ViewServices
 {
 	[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-	internal class PluginSettingsService : IDialogService
+	internal class PluginSettingsService : IViewService
 	{
 		public object Show( Window parent, object parameter = null )
 		{

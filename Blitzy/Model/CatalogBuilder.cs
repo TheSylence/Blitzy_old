@@ -27,10 +27,6 @@ namespace Blitzy.Model
 
 	internal class CatalogBuilder : BaseObject
 	{
-		#region Constructor
-
-		private StackTrace Trace;
-
 		public CatalogBuilder( Settings settings )
 		{
 			CanProcess = ToDispose( new AutoResetEvent( false ) );
@@ -47,27 +43,6 @@ namespace Blitzy.Model
 
 			Trace = new StackTrace( true );
 		}
-
-		#endregion Constructor
-
-		#region Disposable
-
-		protected override void Dispose( bool managed )
-		{
-			if( managed )
-			{
-				ShouldStop = true;
-				IsRunning = false;
-				CanProcess.Set();
-				ThreadObject.Join();
-			}
-
-			base.Dispose( managed );
-		}
-
-		#endregion Disposable
-
-		#region Methods
 
 		public void Build()
 		{
@@ -216,6 +191,19 @@ namespace Blitzy.Model
 			DispatcherHelper.CheckBeginInvokeOnUI( () => Messenger.Default.Send( new CatalogStatusMessage( CatalogStatus.BuildFinished ) ) );
 		}
 
+		protected override void Dispose( bool managed )
+		{
+			if( managed )
+			{
+				ShouldStop = true;
+				IsRunning = false;
+				CanProcess.Set();
+				ThreadObject.Join();
+			}
+
+			base.Dispose( managed );
+		}
+
 		[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 		private void RunThreaded()
 		{
@@ -294,17 +282,6 @@ namespace Blitzy.Model
 				transaction.Rollback();
 			}
 		}
-
-		#endregion Methods
-
-		#region Properties
-
-		private bool _IsBuilding;
-		private int _ItemsProcessed;
-		private int _ItemsSaved;
-		private int _ItemsScanned;
-		private int _ItemsToProcess;
-		private CatalogProgressStep _ProgressStep;
 
 		public bool IsBuilding
 		{
@@ -426,17 +403,18 @@ namespace Blitzy.Model
 			}
 		}
 
-		#endregion Properties
-
-		#region Attributes
-
 		private readonly AutoResetEvent CanProcess;
 		private readonly List<string> FilesToProcess = new List<string>( 16384 );
 		private readonly Settings Settings;
 		private readonly Thread ThreadObject;
+		private bool _IsBuilding;
+		private int _ItemsProcessed;
+		private int _ItemsSaved;
+		private int _ItemsScanned;
+		private int _ItemsToProcess;
+		private CatalogProgressStep _ProgressStep;
 		private bool IsRunning;
 		private volatile bool ShouldStop;
-
-		#endregion Attributes
+		private StackTrace Trace;
 	}
 }

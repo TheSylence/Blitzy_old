@@ -206,6 +206,7 @@
     <Compile Include="Messages\SettingsChangedMessage.cs" />
     <Compile Include="Model\UpdateChecker.cs" />
     <Compile Include="Plugin\IPluginViewModel.cs" />
+    <Compile Include="Plugin\IViewServiceManager.cs" />
     <Compile Include="Plugin\SystemPlugins\ISystemPlugin.cs" />
     <Compile Include="Plugin\SystemPlugins\PuttyUI.xaml.cs">
       <DependentUpon>PuttyUI.xaml</DependentUpon>
@@ -361,12 +362,12 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ViewServices\DialogServiceManager.cs" />
+    <Compile Include="ViewServices\ViewServiceManager.cs" />
     <Compile Include="ViewServices\DownloadService.cs" />
     <Compile Include="ViewServices\DownloadServiceParameters.cs" />
     <Compile Include="ViewServices\FileDialogParameters.cs" />
     <Compile Include="ViewServices\IDataManipulationService.cs" />
-    <Compile Include="ViewServices\IDialogService.cs" />
+    <Compile Include="ViewServices\IViewService.cs" />
     <Compile Include="ViewServices\MessageBoxParameter.cs" />
     <Compile Include="ViewServices\MessageBoxService.cs" />
     <Compile Include="ViewServices\ModelManipulationService.cs" />

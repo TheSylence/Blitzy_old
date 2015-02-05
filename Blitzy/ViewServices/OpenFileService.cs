@@ -7,7 +7,7 @@ using Microsoft.Win32;
 namespace Blitzy.ViewServices
 {
 	[ExcludeFromCodeCoverage]
-	internal class OpenFileService : IDialogService
+	internal class OpenFileService : IViewService
 	{
 		#region Methods
 

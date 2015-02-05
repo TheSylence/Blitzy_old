@@ -17,9 +17,6 @@ namespace Blitzy.View
 	[ExcludeFromCodeCoverage]
 	public partial class MainWindow : IDisposable
 	{
-		private HotKey CurrentHotKey;
-		private HotKeyHost KeyHost;
-
 		public MainWindow()
 		{
 			InitializeComponent();
@@ -60,7 +57,7 @@ namespace Blitzy.View
 					string text = "HotKeyAlreadyRegistered".Localize();
 					string caption = "HotKeyError".Localize();
 					MessageBoxParameter args = new MessageBoxParameter( text, caption, MessageBoxButton.OK, MessageBoxImage.Warning );
-					DialogServiceManager.Show<MessageBoxService>( args );
+					ViewServiceManager.Default.Show<MessageBoxService>( args );
 				}
 			} );
 
@@ -118,5 +115,8 @@ namespace Blitzy.View
 
 			return IntPtr.Zero;
 		}
+
+		private HotKey CurrentHotKey;
+		private HotKeyHost KeyHost;
 	}
 }

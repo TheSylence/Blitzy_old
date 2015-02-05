@@ -18,8 +18,9 @@ namespace Blitzy.Tests.ViewServices
 			DataManipulationServiceMock<Folder> mock = new DataManipulationServiceMock<Folder>();
 			mock.CreateFunc = () => { return new Folder(); };
 
-			DialogServiceManager.RegisterManipService( typeof( Folder ), mock );
-			using( Folder folder = DialogServiceManager.Create<Folder>() )
+			ViewServiceManager serviceManager = new ViewServiceManager();
+			serviceManager.RegisterManipService( typeof( Folder ), mock );
+			using( Folder folder = serviceManager.Create<Folder>() )
 			{
 				Assert.IsNotNull( folder );
 			}
@@ -31,36 +32,39 @@ namespace Blitzy.Tests.ViewServices
 			DataManipulationServiceMock<Folder> mock = new DataManipulationServiceMock<Folder>();
 			mock.EditFunc = ( o ) => { o.ID = 123; return true; };
 
-			DialogServiceManager.RegisterManipService( typeof( Folder ), mock );
+			ViewServiceManager serviceManager = new ViewServiceManager();
+			serviceManager.RegisterManipService( typeof( Folder ), mock );
 
 			using( Folder f = new Folder() )
 			{
-				Assert.IsTrue( DialogServiceManager.Edit( f ) );
+				Assert.IsTrue( serviceManager.Edit( f ) );
 				Assert.AreEqual( 123, f.ID );
 			}
 		}
 
-		[TestMethod, TestCategory( "ViewServices" ), ExpectedException( typeof( ArgumentException ) )]
+		[TestMethod, TestCategory( "ViewServices" )]
 		public void InvalidCreateTest()
 		{
-			using( DialogServiceManager.Create<ModelBase>() )
-			{
-			}
+			ViewServiceManager serviceManager = new ViewServiceManager();
+
+			ExceptionAssert.Throws<ArgumentException>( () => serviceManager.Create<ModelBase>() );
 		}
 
-		[TestMethod, TestCategory( "ViewServices" ), ExpectedException( typeof( ArgumentException ) )]
+		[TestMethod, TestCategory( "ViewServices" )]
 		public void InvalidEditTest()
 		{
+			ViewServiceManager serviceManager = new ViewServiceManager();
 			using( Folder f = new Folder() )
 			{
-				DialogServiceManager.Edit( f );
+				ExceptionAssert.Throws<ArgumentException>( () => serviceManager.Edit( f ) );
 			}
 		}
 
-		[TestMethod, TestCategory( "ViewServices" ), ExpectedException( typeof( ArgumentException ) )]
+		[TestMethod, TestCategory( "ViewServices" )]
 		public void InvalidShowTest()
 		{
-			DialogServiceManager.Show<TextInputService>();
+			ViewServiceManager serviceManager = new ViewServiceManager();
+			ExceptionAssert.Throws<ArgumentException>( () => serviceManager.Show<TextInputService>() );
 		}
 
 		[TestMethod, TestCategory( "ViewServices" )]
@@ -69,29 +73,24 @@ namespace Blitzy.Tests.ViewServices
 			TextInputServiceMock mock = new TextInputServiceMock();
 			mock.Value = "test";
 
-			DialogServiceManager.RegisterService( typeof( TextInputService ), mock );
-			string result = DialogServiceManager.Show<TextInputService, string>();
+			ViewServiceManager serviceManager = new ViewServiceManager();
+			serviceManager.RegisterService( typeof( TextInputService ), mock );
+			string result = serviceManager.Show<TextInputService, string>();
 
 			Assert.AreEqual( "test", result );
 		}
 
-		[TestMethod, TestCategory( "ViewServices" ), ExpectedException( typeof( ArgumentException ) )]
+		[TestMethod, TestCategory( "ViewServices" )]
 		public void UnregisterServiceTest()
 		{
 			CallCheckServiceMock mock = new CallCheckServiceMock();
-			DialogServiceManager.RegisterService( typeof( TextInputService ), mock );
+			ViewServiceManager serviceManager = new ViewServiceManager();
+			serviceManager.RegisterService( typeof( TextInputService ), mock );
 
-			try
-			{
-				DialogServiceManager.Show<TextInputService>();
-			}
-			catch
-			{
-				Assert.Fail();
-			}
+			serviceManager.Show<TextInputService>();
 
-			DialogServiceManager.UnregisterService( typeof( TextInputService ) );
-			DialogServiceManager.Show<TextInputService>();
+			serviceManager.UnregisterService( typeof( TextInputService ) );
+			ExceptionAssert.Throws<ArgumentException>( () => serviceManager.Show<TextInputService>() );
 		}
 	}
 }

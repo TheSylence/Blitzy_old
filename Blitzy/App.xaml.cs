@@ -67,7 +67,7 @@ namespace Blitzy
 			LogEnvironmentInfo();
 
 			DispatcherHelper.Initialize();
-			DialogServiceManager.RegisterServices();
+			ViewServiceManager.Default.RegisterServices();
 			Messenger.Default.Register<LanguageMessage>( this, ChangeLanguage );
 		}
 

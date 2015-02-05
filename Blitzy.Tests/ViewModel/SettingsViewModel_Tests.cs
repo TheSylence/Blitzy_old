@@ -24,11 +24,12 @@ namespace Blitzy.Tests.ViewModel
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void AddExcludeTest()
 		{
-			using( SettingsViewModel vm = GenerateViewModel() )
-			{
-				TextInputServiceMock mock = new TextInputServiceMock();
-				DialogServiceManager.RegisterService( typeof( TextInputService ), mock );
+			TextInputServiceMock mock = new TextInputServiceMock();
+			ViewServiceManager serviceManager = new ViewServiceManager();
+			serviceManager.RegisterService( typeof( TextInputService ), mock );
 
+			using( SettingsViewModel vm = GenerateViewModel( serviceManager ) )
+			{
 				Assert.IsFalse( vm.AddExcludeCommand.CanExecute( null ) );
 				vm.SelectedFolder = new Folder();
 				Assert.IsTrue( vm.AddExcludeCommand.CanExecute( null ) );
@@ -46,11 +47,13 @@ namespace Blitzy.Tests.ViewModel
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void AddFolderTest()
 		{
-			using( SettingsViewModel vm = GenerateViewModel() )
+			TextInputServiceMock mock = new TextInputServiceMock();
+			ViewServiceManager serviceManager = new ViewServiceManager();
+			serviceManager.RegisterService( typeof( SelectFolderService ), mock );
+
+			using( SettingsViewModel vm = GenerateViewModel( serviceManager ) )
 			{
-				TextInputServiceMock mock = new TextInputServiceMock();
 				mock.Value = "C:\\temp";
-				DialogServiceManager.RegisterService( typeof( SelectFolderService ), mock );
 
 				Assert.AreEqual( 0, vm.Settings.Folders.Count() );
 				vm.AddFolderCommand.Execute( null );
@@ -73,11 +76,12 @@ namespace Blitzy.Tests.ViewModel
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void AddRuleTest()
 		{
-			using( SettingsViewModel vm = GenerateViewModel() )
-			{
-				TextInputServiceMock mock = new TextInputServiceMock();
-				DialogServiceManager.RegisterService( typeof( TextInputService ), mock );
+			TextInputServiceMock mock = new TextInputServiceMock();
+			ViewServiceManager serviceManager = new ViewServiceManager();
+			serviceManager.RegisterService( typeof( TextInputService ), mock );
 
+			using( SettingsViewModel vm = GenerateViewModel( serviceManager ) )
+			{
 				Assert.IsFalse( vm.AddRuleCommand.CanExecute( null ) );
 				vm.SelectedFolder = new Folder();
 				Assert.IsTrue( vm.AddRuleCommand.CanExecute( null ) );
@@ -155,12 +159,13 @@ namespace Blitzy.Tests.ViewModel
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void DefaultsTest()
 		{
-			using( SettingsViewModel vm = GenerateViewModel() )
+			MessageBoxServiceMock mock = new MessageBoxServiceMock( System.Windows.MessageBoxResult.No );
+			ViewServiceManager serviceManager = new ViewServiceManager();
+			serviceManager.RegisterService( typeof( MessageBoxService ), mock );
+
+			using( SettingsViewModel vm = GenerateViewModel( serviceManager ) )
 			{
 				vm.Settings.SetValue( SystemSetting.MaxMatchingItems, 123 );
-
-				MessageBoxServiceMock mock = new MessageBoxServiceMock( System.Windows.MessageBoxResult.No );
-				DialogServiceManager.RegisterService( typeof( MessageBoxService ), mock );
 
 				vm.DefaultsCommand.Execute( null );
 				Assert.AreEqual( 123, vm.Settings.GetValue<int>( SystemSetting.MaxMatchingItems ) );
@@ -174,7 +179,11 @@ namespace Blitzy.Tests.ViewModel
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void DownloadUpdateTest()
 		{
-			using( SettingsViewModel vm = GenerateViewModel() )
+			CallCheckServiceMock mock = new CallCheckServiceMock();
+			ViewServiceManager serviceManager = new ViewServiceManager();
+			serviceManager.RegisterService( typeof( DownloadService ), mock );
+
+			using( SettingsViewModel vm = GenerateViewModel( serviceManager ) )
 			{
 				Assert.IsFalse( vm.DownloadUpdateCommand.CanExecute( null ) );
 
@@ -186,8 +195,6 @@ namespace Blitzy.Tests.ViewModel
 				vm.LatestVersionInfo = new btbapi.VersionInfo( System.Net.HttpStatusCode.OK, new Version( 1, 2 ), downloadLink, "123", 123, new System.Collections.Generic.Dictionary<Version, string>(), null );
 				Assert.IsTrue( vm.DownloadUpdateCommand.CanExecute( null ) );
 
-				CallCheckServiceMock mock = new CallCheckServiceMock();
-				DialogServiceManager.RegisterService( typeof( DownloadService ), mock );
 				vm.DownloadUpdateCommand.Execute( null );
 
 				Assert.IsTrue( mock.WasCalled );
@@ -199,8 +206,10 @@ namespace Blitzy.Tests.ViewModel
 		public void PluginDialogTest()
 		{
 			CallCheckServiceMock mock = new CallCheckServiceMock();
-			DialogServiceManager.RegisterService( typeof( PluginSettingsService ), mock );
-			using( SettingsViewModel vm = GenerateViewModel() )
+			ViewServiceManager serviceManager = new ViewServiceManager();
+			serviceManager.RegisterService( typeof( PluginSettingsService ), mock );
+
+			using( SettingsViewModel vm = GenerateViewModel( serviceManager ) )
 			{
 				vm.PluginsDialogCommand.Execute( null );
 				Assert.IsTrue( mock.WasCalled );
@@ -244,8 +253,10 @@ namespace Blitzy.Tests.ViewModel
 		public void RemoveExcludeTest()
 		{
 			MessageBoxServiceMock mock = new MessageBoxServiceMock( System.Windows.MessageBoxResult.No );
-			DialogServiceManager.RegisterService( typeof( MessageBoxService ), mock );
-			using( SettingsViewModel vm = GenerateViewModel() )
+			ViewServiceManager serviceManager = new ViewServiceManager();
+			serviceManager.RegisterService( typeof( MessageBoxService ), mock );
+
+			using( SettingsViewModel vm = GenerateViewModel( serviceManager ) )
 			{
 				Assert.IsFalse( vm.RemoveExcludeCommand.CanExecute( null ) );
 				vm.SelectedFolder = new Folder();
@@ -266,21 +277,22 @@ namespace Blitzy.Tests.ViewModel
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void RemoveFolderTest()
 		{
+			MessageBoxServiceMock mock = new MessageBoxServiceMock( System.Windows.MessageBoxResult.No );
+			ViewServiceManager serviceManager = new ViewServiceManager();
+			serviceManager.RegisterService( typeof( MessageBoxService ), mock );
+
 			using( Folder folder = new Folder() )
 			{
 				folder.ID = 123;
 				folder.Path = "C:\\temp";
 
-				using( SettingsViewModel vm = GenerateViewModel() )
+				using( SettingsViewModel vm = GenerateViewModel( serviceManager ) )
 				{
 					vm.Settings.Folders.Add( folder );
 
 					Assert.IsFalse( vm.RemoveFolderCommand.CanExecute( null ) );
 					vm.SelectedFolder = folder;
 					Assert.IsTrue( vm.RemoveFolderCommand.CanExecute( null ) );
-
-					MessageBoxServiceMock mock = new MessageBoxServiceMock( System.Windows.MessageBoxResult.No );
-					DialogServiceManager.RegisterService( typeof( MessageBoxService ), mock );
 
 					vm.RemoveFolderCommand.Execute( null );
 
@@ -314,8 +326,10 @@ namespace Blitzy.Tests.ViewModel
 		public void RemoveRuleTest()
 		{
 			MessageBoxServiceMock mock = new MessageBoxServiceMock( System.Windows.MessageBoxResult.No );
-			DialogServiceManager.RegisterService( typeof( MessageBoxService ), mock );
-			using( SettingsViewModel vm = GenerateViewModel() )
+			ViewServiceManager serviceManager = new ViewServiceManager();
+			serviceManager.RegisterService( typeof( MessageBoxService ), mock );
+
+			using( SettingsViewModel vm = GenerateViewModel( serviceManager ) )
 			{
 				Assert.IsFalse( vm.RemoveRuleCommand.CanExecute( null ) );
 				vm.SelectedFolder = new Folder();
@@ -388,8 +402,9 @@ namespace Blitzy.Tests.ViewModel
 		public void ViewChangelogTest()
 		{
 			CallCheckServiceMock mock = new CallCheckServiceMock();
-			DialogServiceManager.RegisterService( typeof( ViewChangelogService ), mock );
-			using( SettingsViewModel vm = GenerateViewModel() )
+			ViewServiceManager serviceManager = new ViewServiceManager();
+			serviceManager.RegisterService( typeof( ViewChangelogService ), mock );
+			using( SettingsViewModel vm = GenerateViewModel( serviceManager ) )
 			{
 				vm.LatestVersionInfo = new btbapi.VersionInfo( System.Net.HttpStatusCode.OK, null, null, null, 0, null, null );
 				vm.ViewChangelogCommand.Execute( null );
@@ -400,9 +415,9 @@ namespace Blitzy.Tests.ViewModel
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Reliability", "CA2000:Dispose objects before losing scope" )]
-		private SettingsViewModel GenerateViewModel()
+		private SettingsViewModel GenerateViewModel( ViewServiceManager serviceManager = null )
 		{
-			SettingsViewModel vm = new SettingsViewModel();
+			SettingsViewModel vm = new SettingsViewModel( serviceManager );
 
 			vm.Settings = new Blitzy.Model.Settings( Connection );
 			MockPluginHost host = new MockPluginHost( vm.Settings );

@@ -126,10 +126,10 @@
     <Compile Include="Converter\StringToImageConverter_Tests.cs" />
     <Compile Include="Converter\StringToVisibilityConverter_Tests.cs" />
     <Compile Include="Converter\TimeSpanConverter_Tests.cs" />
+    <Compile Include="ExceptionAssert.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Global\BaseObject_Tests.cs" />
-    <Compile Include="Mocks\MockMessenger.cs" />
     <Compile Include="Mocks\Services\DelegateServiceMock.cs" />
     <Compile Include="Model\UpdateChecker_Tests.cs" />
     <Compile Include="Plugins\Runny_Tests.cs" />
@@ -192,7 +192,6 @@
     <Compile Include="ViewModel\NotifyIconViewModel_Tests.cs" />
     <Compile Include="ViewModel\PluginsDialogViewModel_Tests.cs" />
     <Compile Include="ViewModel\PuttySettingsViewModel_Tests.cs" />
-    <Compile Include="ViewModel\ViewModelLocator_Tests.cs" />
     <Compile Include="ViewModel\WorkspaceSettingsViewModel_Tests.cs" />
     <Compile Include="ViewServices\DialogServiceManager_Tests.cs" />
     <Compile Include="ViewModel\DialogViewModelBase_Tests.cs" />

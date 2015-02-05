@@ -13,8 +13,6 @@ namespace Blitzy.Plugin.SystemPlugins
 {
 	internal class Runny : ISystemPlugin
 	{
-		#region Methods
-
 		public void ClearCache()
 		{
 			ItemCache.Clear();
@@ -66,7 +64,7 @@ namespace Blitzy.Plugin.SystemPlugins
 			return null;
 		}
 
-		public IPluginViewModel GetSettingsDataContext()
+		public IPluginViewModel GetSettingsDataContext( IViewServiceManager viewServices )
 		{
 			return null;
 		}
@@ -157,12 +155,6 @@ namespace Blitzy.Plugin.SystemPlugins
 			Process.Start( procInf );
 		}
 
-		#endregion Methods
-
-		#region Properties
-
-		private Guid? Guid;
-
 		public int ApiVersion
 		{
 			get { return Constants.ApiVersion; }
@@ -208,13 +200,8 @@ namespace Blitzy.Plugin.SystemPlugins
 			get { return new Uri( "http://btbsoft.org" ); }
 		}
 
-		#endregion Properties
-
-		#region Attributes
-
+		private Guid? Guid;
 		private IPluginHost Host;
 		private List<CommandItem> ItemCache = new List<CommandItem>();
-
-		#endregion Attributes
 	}
 }

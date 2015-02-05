@@ -67,13 +67,14 @@ namespace Blitzy.Tests.ViewModel
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void SettingsTest()
 		{
+			CallCheckServiceMock mock = new CallCheckServiceMock();
+			ViewServiceManager serviceManager = new ViewServiceManager();
+			serviceManager.RegisterService( typeof( SettingsService ), mock );
+
 			using( NotifyIconViewModel vm = new NotifyIconViewModel() )
 			{
-				using( vm.MainVm = new MainViewModel() )
+				using( vm.MainVm = new MainViewModel( serviceManager ) )
 				{
-					CallCheckServiceMock mock = new CallCheckServiceMock();
-					DialogServiceManager.RegisterService( typeof( SettingsService ), mock );
-
 					Assert.IsTrue( vm.SettingsCommand.CanExecute( null ) );
 					vm.SettingsCommand.Execute( null );
 

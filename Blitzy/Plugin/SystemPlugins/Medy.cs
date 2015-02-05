@@ -10,8 +10,6 @@ namespace Blitzy.Plugin.SystemPlugins
 {
 	internal class Medy : IPlugin
 	{
-		#region Methods
-
 		public void ClearCache()
 		{
 			RootItem = CommandItem.Create( "medy", "ControlMediaPlayer".Localize(), this, "Medy.png" );
@@ -66,7 +64,7 @@ namespace Blitzy.Plugin.SystemPlugins
 			return null;
 		}
 
-		public IPluginViewModel GetSettingsDataContext()
+		public IPluginViewModel GetSettingsDataContext( IViewServiceManager viewServices )
 		{
 			return null;
 		}
@@ -99,14 +97,6 @@ namespace Blitzy.Plugin.SystemPlugins
 		{
 			// Do nothing
 		}
-
-		#endregion Methods
-
-		#region Properties
-
-		private Guid? Guid;
-
-		private CommandItem RootItem;
 
 		public int ApiVersion
 		{
@@ -153,10 +143,6 @@ namespace Blitzy.Plugin.SystemPlugins
 			get { return new Uri( "http://btbsoft.org" ); }
 		}
 
-		#endregion Properties
-
-		#region Constants
-
 		internal const int APPCOMMAND_MEDIA_NEXTTRACK = 11;
 		internal const int APPCOMMAND_MEDIA_PAUSE = 47;
 		internal const int APPCOMMAND_MEDIA_PLAY = 46;
@@ -165,7 +151,8 @@ namespace Blitzy.Plugin.SystemPlugins
 		internal const int APPCOMMAND_VOLUME_UP = 10;
 		internal const int WM_APPCOMMAND = 0x0319;
 		private readonly IntPtr HWND_BROADCAST = (IntPtr)0xffff;
+		private Guid? Guid;
 
-		#endregion Constants
+		private CommandItem RootItem;
 	}
 }

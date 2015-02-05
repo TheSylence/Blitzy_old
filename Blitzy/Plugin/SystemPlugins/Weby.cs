@@ -16,8 +16,6 @@ namespace Blitzy.Plugin.SystemPlugins
 {
 	internal class Weby : IPlugin
 	{
-		#region Methods
-
 		public void ClearCache()
 		{
 			Items = null;
@@ -81,9 +79,9 @@ namespace Blitzy.Plugin.SystemPlugins
 			return null;
 		}
 
-		public IPluginViewModel GetSettingsDataContext()
+		public IPluginViewModel GetSettingsDataContext( IViewServiceManager viewServices )
 		{
-			return new ViewModel.WebySettingsViewModel( (Settings)Host.Settings );
+			return new ViewModel.WebySettingsViewModel( (Settings)Host.Settings, viewServices );
 		}
 
 		public System.Windows.Controls.Control GetSettingsUI()
@@ -164,20 +162,6 @@ namespace Blitzy.Plugin.SystemPlugins
 			return HttpUtility.UrlEncode( term );
 		}
 
-		#endregion Methods
-
-		#region Constants
-
-		internal const string GuidString = "01CB38CB-A064-4AE7-9B35-28F3FE65416E";
-
-		#endregion Constants
-
-		#region Properties
-
-		private Guid? Guid;
-		private IPluginHost Host;
-		private List<CommandItem> Items;
-
 		public int ApiVersion
 		{
 			get { return Constants.ApiVersion; }
@@ -223,6 +207,10 @@ namespace Blitzy.Plugin.SystemPlugins
 			get { return new Uri( "http://btbsoft.org" ); }
 		}
 
-		#endregion Properties
+		internal const string GuidString = "01CB38CB-A064-4AE7-9B35-28F3FE65416E";
+
+		private Guid? Guid;
+		private IPluginHost Host;
+		private List<CommandItem> Items;
 	}
 }

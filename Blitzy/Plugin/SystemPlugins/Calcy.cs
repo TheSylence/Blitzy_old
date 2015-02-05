@@ -11,8 +11,6 @@ namespace Blitzy.Plugin.SystemPlugins
 {
 	internal class Calcy : IPlugin
 	{
-		#region Methods
-
 		public void ClearCache()
 		{
 			// Nothing to do
@@ -44,7 +42,7 @@ namespace Blitzy.Plugin.SystemPlugins
 			return Calculator.Calculate( data[1] );
 		}
 
-		public IPluginViewModel GetSettingsDataContext()
+		public IPluginViewModel GetSettingsDataContext( IViewServiceManager viewServices )
 		{
 			return null;
 		}
@@ -69,12 +67,6 @@ namespace Blitzy.Plugin.SystemPlugins
 		{
 			// Nothing to do
 		}
-
-		#endregion Methods
-
-		#region Properties
-
-		private Guid? Guid;
 
 		public int ApiVersion
 		{
@@ -121,12 +113,7 @@ namespace Blitzy.Plugin.SystemPlugins
 			get { return new Uri( "http://btbsoft.org" ); }
 		}
 
-		#endregion Properties
-
-		#region Attributes
-
 		private ShuntingYard Calculator;
-
-		#endregion Attributes
+		private Guid? Guid;
 	}
 }

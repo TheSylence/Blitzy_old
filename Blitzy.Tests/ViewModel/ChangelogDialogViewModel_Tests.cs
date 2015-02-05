@@ -43,15 +43,16 @@ namespace Blitzy.Tests.ViewModel
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void DownloadTest()
 		{
-			using( ChangelogDialogViewModel vm = new ChangelogDialogViewModel() )
+			CallCheckServiceMock mock = new CallCheckServiceMock();
+			ViewServiceManager serviceManager = new ViewServiceManager();
+			serviceManager.RegisterService( typeof( DownloadService ), mock );
+
+			using( ChangelogDialogViewModel vm = new ChangelogDialogViewModel( serviceManager ) )
 			{
 				Assert.IsFalse( vm.DownloadCommand.CanExecute( null ) );
 
 				vm.LatestVersionInfo = new VersionInfo( HttpStatusCode.OK, new Version(), new Uri( "http://localhost/file.name" ), string.Empty, 123, new Dictionary<Version, string>(), null );
 				Assert.IsTrue( vm.DownloadCommand.CanExecute( null ) );
-
-				CallCheckServiceMock mock = new CallCheckServiceMock();
-				DialogServiceManager.RegisterService( typeof( DownloadService ), mock );
 
 				vm.DownloadCommand.Execute( null );
 				Assert.IsTrue( mock.WasCalled );

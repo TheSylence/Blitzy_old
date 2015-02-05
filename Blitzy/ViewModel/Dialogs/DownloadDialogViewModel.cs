@@ -18,19 +18,10 @@ namespace Blitzy.ViewModel.Dialogs
 {
 	internal class DownloadDialogViewModel : ViewModelBaseEx
 	{
-		#region Constructor
-
-		protected override void RegisterMessages()
+		public DownloadDialogViewModel( ViewServiceManager serivceManager = null )
+			: base( serivceManager )
 		{
-			base.RegisterMessages();
-
-			MessengerInstance.Register<DownloadStatusMessage>( this, MessageTokens.DownloadCorrupted, OnDownloadCorrupted );
-			MessengerInstance.Register<DownloadStatusMessage>( this, MessageTokens.DownloadFailed, OnDownloadFailed );
 		}
-
-		#endregion Constructor
-
-		#region Methods
 
 		public async Task StartDownload()
 		{
@@ -83,6 +74,25 @@ namespace Blitzy.ViewModel.Dialogs
 
 				FinishDownload();
 			} );
+		}
+
+		protected override void RegisterMessages()
+		{
+			base.RegisterMessages();
+
+			MessengerInstance.Register<DownloadStatusMessage>( this, MessageTokens.DownloadCorrupted, OnDownloadCorrupted );
+			MessengerInstance.Register<DownloadStatusMessage>( this, MessageTokens.DownloadFailed, OnDownloadFailed );
+		}
+
+		private bool CanExecuteCancelCommand()
+		{
+			return CopyArguments != null;
+		}
+
+		private void ExecuteCancelCommand()
+		{
+			ManualResetEvent evt = new ManualResetEvent( true );
+			CopyArguments.StopEvent = evt;
 		}
 
 		private void FinishDownload()
@@ -147,11 +157,11 @@ namespace Blitzy.ViewModel.Dialogs
 				Close();
 
 				MessageBoxParameter args = new MessageBoxParameter( message, "DownloadFailed".Localize(), MessageBoxButton.YesNo, MessageBoxImage.Error );
-				MessageBoxResult result = DialogServiceManager.Show<MessageBoxService, MessageBoxResult>( args );
+				MessageBoxResult result = ServiceManagerInstance.Show<MessageBoxService, MessageBoxResult>( args );
 				if( result == MessageBoxResult.Yes )
 				{
 					DownloadServiceParameters downloadArgs = new DownloadServiceParameters( new Uri( msg.DownloadLink ), msg.TargetPath, msg.DownloadSize, msg.MD5 );
-					DialogServiceManager.Show<DownloadService>( downloadArgs );
+					ServiceManagerInstance.Show<DownloadService>( downloadArgs );
 				}
 			} );
 		}
@@ -163,64 +173,6 @@ namespace Blitzy.ViewModel.Dialogs
 				TimeLeft = e.ProgressStatistic.EstimatedFinishingTime - DateTime.Now;
 				BytesDownloaded = e.ProgressStatistic.BytesRead;
 			} );
-		}
-
-		#endregion Methods
-
-		#region Commands
-
-		private RelayCommand _CancelCommand;
-
-		public RelayCommand CancelCommand
-		{
-			get
-			{
-				return _CancelCommand ??
-					( _CancelCommand = new RelayCommand( ExecuteCancelCommand, CanExecuteCancelCommand ) );
-			}
-		}
-
-		private bool CanExecuteCancelCommand()
-		{
-			return CopyArguments != null;
-		}
-
-		private void ExecuteCancelCommand()
-		{
-			ManualResetEvent evt = new ManualResetEvent( true );
-			CopyArguments.StopEvent = evt;
-		}
-
-		#endregion Commands
-
-		#region Properties
-
-		private long _BytesDownloaded;
-		private string _DownloadLink;
-		private long _DownloadSize;
-		private string _MD5;
-		private string _TargetPath;
-		private TimeSpan _TimeLeft;
-		private bool _DownloadSuccessfull;
-
-		public bool DownloadSuccessfull
-		{
-			get
-			{
-				return _DownloadSuccessfull;
-			}
-
-			set
-			{
-				if( _DownloadSuccessfull == value )
-				{
-					return;
-				}
-
-				RaisePropertyChanging( () => DownloadSuccessfull );
-				_DownloadSuccessfull = value;
-				RaisePropertyChanged( () => DownloadSuccessfull );
-			}
 		}
 
 		public long BytesDownloaded
@@ -240,6 +192,15 @@ namespace Blitzy.ViewModel.Dialogs
 				RaisePropertyChanging( () => BytesDownloaded );
 				_BytesDownloaded = value;
 				RaisePropertyChanged( () => BytesDownloaded );
+			}
+		}
+
+		public RelayCommand CancelCommand
+		{
+			get
+			{
+				return _CancelCommand ??
+					( _CancelCommand = new RelayCommand( ExecuteCancelCommand, CanExecuteCancelCommand ) );
 			}
 		}
 
@@ -280,6 +241,26 @@ namespace Blitzy.ViewModel.Dialogs
 				RaisePropertyChanging( () => DownloadSize );
 				_DownloadSize = value;
 				RaisePropertyChanged( () => DownloadSize );
+			}
+		}
+
+		public bool DownloadSuccessfull
+		{
+			get
+			{
+				return _DownloadSuccessfull;
+			}
+
+			set
+			{
+				if( _DownloadSuccessfull == value )
+				{
+					return;
+				}
+
+				RaisePropertyChanging( () => DownloadSuccessfull );
+				_DownloadSuccessfull = value;
+				RaisePropertyChanged( () => DownloadSuccessfull );
 			}
 		}
 
@@ -343,12 +324,15 @@ namespace Blitzy.ViewModel.Dialogs
 			}
 		}
 
-		#endregion Properties
-
-		#region Attributes
+		private long _BytesDownloaded;
+		private RelayCommand _CancelCommand;
+		private string _DownloadLink;
+		private long _DownloadSize;
+		private bool _DownloadSuccessfull;
+		private string _MD5;
+		private string _TargetPath;
+		private TimeSpan _TimeLeft;
 
 		private CopyFromArguments CopyArguments;
-
-		#endregion Attributes
 	}
 }

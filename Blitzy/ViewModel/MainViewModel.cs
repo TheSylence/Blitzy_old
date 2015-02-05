@@ -22,12 +22,11 @@ namespace Blitzy.ViewModel
 {
 	public sealed class MainViewModel : ViewModelBaseEx, IPluginHost
 	{
-		#region Constructor
-
 		/// <summary>
 		/// Initializes a new instance of the MainViewModel class.
 		/// </summary>
-		public MainViewModel()
+		public MainViewModel( ViewServiceManager serviceManager = null )
+			: base( serviceManager )
 		{
 			Database = ToDispose( new Database() );
 			Settings = new Settings( Database.Connection );
@@ -74,10 +73,6 @@ namespace Blitzy.ViewModel
 			MessengerInstance.Register<SettingsChangedMessage>( this, OnSettingsChanged );
 		}
 
-		#endregion Constructor
-
-		#region Methods
-
 		public override void Cleanup()
 		{
 			History.Save();
@@ -121,7 +116,7 @@ namespace Blitzy.ViewModel
 				string text = "HotkeyAlreadyRegistered".Localize();
 				string caption = "Error".Localize();
 				MessageBoxParameter args = new MessageBoxParameter( text, caption, System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error );
-				DialogServiceManager.Show<MessageBoxService>( args );
+				ServiceManagerInstance.Show<MessageBoxService>( args );
 			}
 		}
 
@@ -228,10 +223,6 @@ namespace Blitzy.ViewModel
 				CommandInfo = CmdManager.CurrentItem.Plugin.GetInfo( data, CmdManager.CurrentItem );
 			}
 		}
-
-		#endregion Methods
-
-		#region Commands
 
 		private RelayCommand _ExecuteCommand;
 		private RelayCommand<KeyEventArgs> _KeyPreviewCommand;
@@ -604,12 +595,8 @@ namespace Blitzy.ViewModel
 		private void ExecuteSettingsCommand()
 		{
 			SettingsServiceParameters args = new SettingsServiceParameters( Settings, Builder, Plugins );
-			DialogServiceManager.Show<SettingsService>( args );
+			ServiceManagerInstance.Show<SettingsService>( args );
 		}
-
-		#endregion Commands
-
-		#region Properties
 
 		private string _CommandInfo;
 		private string _CommandInput;
@@ -691,17 +678,9 @@ namespace Blitzy.ViewModel
 
 		internal Settings Settings { get; private set; }
 
-		#endregion Properties
-
-		#region Attributes
-
 		internal HashSet<int> TaskList = new HashSet<int>();
 		private readonly DispatcherTimer RebuildTimer;
 		private readonly object TaskListLock = new object();
-
-		#endregion Attributes
-
-		#region IPluginHost
 
 		private readonly PluginDatabase ApiDatabase;
 
@@ -722,7 +701,5 @@ namespace Blitzy.ViewModel
 		{
 			return Plugins.IsLoaded( id );
 		}
-
-		#endregion IPluginHost
 	}
 }

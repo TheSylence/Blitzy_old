@@ -64,17 +64,11 @@ namespace Blitzy.Model
 
 	internal class Settings : ObservableObject, ISettings
 	{
-		#region Constructor
-
 		public Settings( SQLiteConnection connection )
 		{
 			Connection = connection;
 			Folders = new ObservableCollection<Folder>();
 		}
-
-		#endregion Constructor
-
-		#region Methods
 
 		public T GetValue<T>( SystemSetting setting )
 		{
@@ -91,6 +85,54 @@ namespace Blitzy.Model
 				object value = cmd.ExecuteScalar();
 				return ConvertValue<T>( value );
 			}
+		}
+
+		T ISettings.GetSystemSetting<T>( SystemSetting setting )
+		{
+			return GetValue<T>( setting );
+		}
+
+		T ISettings.GetValue<T>( IPlugin plugin, string key )
+		{
+			if( plugin == null )
+			{
+				throw new ArgumentNullException( "plugin" );
+			}
+			if( string.IsNullOrWhiteSpace( key ) )
+			{
+				throw new ArgumentNullException( "key" );
+			}
+
+			return GetPluginSetting<T>( plugin.PluginID, key );
+		}
+
+		void ISettings.RemoveValue( IPlugin plugin, string key )
+		{
+			if( plugin == null )
+			{
+				throw new ArgumentNullException( "plugin" );
+			}
+
+			if( string.IsNullOrWhiteSpace( key ) )
+			{
+				throw new ArgumentNullException( "key" );
+			}
+
+			RemovePluginSetting( plugin.PluginID, key );
+		}
+
+		void ISettings.SetValue( IPlugin plugin, string key, object value )
+		{
+			if( plugin == null )
+			{
+				throw new ArgumentNullException( "plugin" );
+			}
+			if( string.IsNullOrWhiteSpace( key ) )
+			{
+				throw new ArgumentNullException( "key" );
+			}
+
+			SetPluginSetting( plugin.PluginID, key, value );
 		}
 
 		internal T ConvertValue<T>( object value )
@@ -257,58 +299,6 @@ namespace Blitzy.Model
 			}
 		}
 
-		#region ISettings
-
-		T ISettings.GetSystemSetting<T>( SystemSetting setting )
-		{
-			return GetValue<T>( setting );
-		}
-
-		T ISettings.GetValue<T>( IPlugin plugin, string key )
-		{
-			if( plugin == null )
-			{
-				throw new ArgumentNullException( "plugin" );
-			}
-			if( string.IsNullOrWhiteSpace( key ) )
-			{
-				throw new ArgumentNullException( "key" );
-			}
-
-			return GetPluginSetting<T>( plugin.PluginID, key );
-		}
-
-		void ISettings.RemoveValue( IPlugin plugin, string key )
-		{
-			if( plugin == null )
-			{
-				throw new ArgumentNullException( "plugin" );
-			}
-
-			if( string.IsNullOrWhiteSpace( key ) )
-			{
-				throw new ArgumentNullException( "key" );
-			}
-
-			RemovePluginSetting( plugin.PluginID, key );
-		}
-
-		void ISettings.SetValue( IPlugin plugin, string key, object value )
-		{
-			if( plugin == null )
-			{
-				throw new ArgumentNullException( "plugin" );
-			}
-			if( string.IsNullOrWhiteSpace( key ) )
-			{
-				throw new ArgumentNullException( "key" );
-			}
-
-			SetPluginSetting( plugin.PluginID, key, value );
-		}
-
-		#endregion ISettings
-
 		internal void SetValue( SystemSetting setting, object value )
 		{
 			using( SQLiteCommand cmd = Connection.CreateCommand() )
@@ -330,14 +320,8 @@ namespace Blitzy.Model
 			}
 		}
 
-		#endregion Methods
-
-		#region Properties
-
 		public ObservableCollection<Folder> Folders { get; private set; }
 
 		internal SQLiteConnection Connection { get; private set; }
-
-		#endregion Properties
 	}
 }

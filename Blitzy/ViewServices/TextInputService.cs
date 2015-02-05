@@ -10,7 +10,7 @@ using Blitzy.ViewModel.Dialogs;
 namespace Blitzy.ViewServices
 {
 	[ExcludeFromCodeCoverage]
-	internal class TextInputService : IDialogService
+	internal class TextInputService : IViewService
 	{
 		public object Show( Window parent, object parameter = null )
 		{

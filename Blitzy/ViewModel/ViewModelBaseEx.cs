@@ -4,25 +4,30 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using Blitzy.ViewServices;
 using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Messaging;
 using log4net;
 
 namespace Blitzy.ViewModel
 {
 	public class ViewModelBaseEx : ViewModelBase, IRequestCloseViewModel, IDisposable
 	{
-		#region Constructor
-
-		public ViewModelBaseEx()
+		public ViewModelBaseEx( ViewServiceManager serviceManager = null, IMessenger messenger = null )
 		{
+			if( messenger != null )
+			{
+				MessengerInstance = messenger;
+			}
+
+			ServiceManagerInstance = serviceManager ?? ViewServiceManager.Default;
+
 			Log = LogManager.GetLogger( GetType() );
 			IsDisposed = false;
 			ObjectsToDispose = new Stack<IDisposable>();
 		}
 
-		#endregion Constructor
-
-		#region Disposable
+		protected ViewServiceManager ServiceManagerInstance { get; private set; }
 
 		/// <summary>
 		/// Releases unmanaged resources and performs other cleanup operations before the
@@ -67,12 +72,6 @@ namespace Blitzy.ViewModel
 			}
 		}
 
-		#endregion Disposable
-
-		#region Methods
-
-		#region Logging
-
 		protected void LogDebug( string format, params object[] args )
 		{
 #if DEBUG
@@ -114,8 +113,6 @@ namespace Blitzy.ViewModel
 				Log.WarnFormat( CultureInfo.InvariantCulture, format, args );
 			}
 		}
-
-		#endregion Logging
 
 		public virtual void Reset()
 		{
@@ -189,10 +186,6 @@ namespace Blitzy.ViewModel
 			return obj;
 		}
 
-		#endregion Methods
-
-		#region Properties
-
 		/// <summary>
 		/// Gets a value indicating whether this instance is disposed.
 		/// </summary>
@@ -201,24 +194,14 @@ namespace Blitzy.ViewModel
 		/// </value>
 		public bool IsDisposed { get; protected set; }
 
-		#endregion Properties
-
-		#region Attributes
-
 		internal Stack<IDisposable> ObjectsToDispose;
 		protected ILog Log;
 		private bool MessagesRegistered;
-
-		#endregion Attributes
-
-		#region Events
 
 		public event EventHandler<CloseViewEventArgs> RequestClose;
 
 		public event EventHandler<EventArgs> RequestHide;
 
 		public event EventHandler<EventArgs> RequestShow;
-
-		#endregion Events
 	}
 }

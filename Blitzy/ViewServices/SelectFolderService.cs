@@ -7,7 +7,7 @@ using Ookii.Dialogs.Wpf;
 namespace Blitzy.ViewServices
 {
 	[ExcludeFromCodeCoverage]
-	internal class SelectFolderService : IDialogService
+	internal class SelectFolderService : IViewService
 	{
 		public object Show( Window parent, object parameter = null )
 		{
