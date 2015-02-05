@@ -4,13 +4,13 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Documents;
+using Blitzy.btbapi;
 using Blitzy.Messages;
 using Blitzy.Model;
 using Blitzy.Tests.Mocks;
 using Blitzy.Tests.Mocks.Services;
 using Blitzy.ViewModel;
 using Blitzy.ViewServices;
-using btbapi;
 using GalaSoft.MvvmLight.Messaging;
 using Microsoft.QualityTools.Testing.Fakes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -90,19 +90,6 @@ namespace Blitzy.Tests.ViewModel
 				vm.AddRuleCommand.Execute( null );
 				CollectionAssert.Contains( vm.SelectedFolder.Rules, "test" );
 			}
-		}
-
-		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Reliability", "CA2000:Dispose objects before losing scope" )]
-		private SettingsViewModel GenerateViewModel()
-		{
-			SettingsViewModel vm = new SettingsViewModel();
-
-			vm.Settings = new Blitzy.Model.Settings( Connection );
-			MockPluginHost host = new MockPluginHost( vm.Settings );
-			vm.PluginManager = new Plugin.PluginManager( host, Connection );
-			vm.PluginManager.LoadPlugins();
-
-			return vm;
 		}
 
 		[TestMethod, TestCategory( "ViewModel" )]
@@ -410,6 +397,19 @@ namespace Blitzy.Tests.ViewModel
 				Assert.IsTrue( mock.WasCalled );
 				Assert.IsInstanceOfType( mock.Parameter, typeof( btbapi.VersionInfo ) );
 			}
+		}
+
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Reliability", "CA2000:Dispose objects before losing scope" )]
+		private SettingsViewModel GenerateViewModel()
+		{
+			SettingsViewModel vm = new SettingsViewModel();
+
+			vm.Settings = new Blitzy.Model.Settings( Connection );
+			MockPluginHost host = new MockPluginHost( vm.Settings );
+			vm.PluginManager = new Plugin.PluginManager( host, Connection );
+			vm.PluginManager.LoadPlugins();
+
+			return vm;
 		}
 	}
 }

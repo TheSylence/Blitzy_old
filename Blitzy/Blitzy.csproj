@@ -102,6 +102,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\CommonServiceLocator.1.3\lib\portable-net4+sl5+netcore45+wpa81+wp8\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="Ookii.Dialogs.Wpf">
       <HintPath>..\packages\Ookii.Dialogs.1.0\lib\net35\Ookii.Dialogs.Wpf.dll</HintPath>
     </Reference>
@@ -170,6 +174,13 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Behaviors\HtmlBehavior.cs" />
+    <Compile Include="btbapi\API.cs" />
+    <Compile Include="btbapi\APIEndPoint.cs" />
+    <Compile Include="btbapi\APIHelper.cs" />
+    <Compile Include="btbapi\APIResult.cs" />
+    <Compile Include="btbapi\ErrorReport.cs" />
+    <Compile Include="btbapi\ErrorReportResult.cs" />
+    <Compile Include="btbapi\VersionInfo.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Controls\CommandListView.cs" />
     <Compile Include="Controls\CommandTextBox.cs" />
@@ -457,12 +468,6 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\btbapi\btbapi\btbapi.csproj">
-      <Project>{f656ea31-9755-4188-b662-02beacc5652f}</Project>
-      <Name>btbapi</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <COMReference Include="Shell32">

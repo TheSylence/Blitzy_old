@@ -5,11 +5,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Blitzy.btbapi;
 using Blitzy.Messages;
 using Blitzy.Model;
 using Blitzy.Tests.Mocks.Services;
 using Blitzy.ViewServices;
-using btbapi;
 using GalaSoft.MvvmLight.Messaging;
 using Microsoft.QualityTools.Testing.Fakes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -34,12 +34,12 @@ namespace Blitzy.Tests.Model
 
 				Assert.AreEqual( "1234", args.MD5 );
 				Assert.AreEqual( 1234, args.FileSize );
-				Assert.AreEqual( new Uri( "http://example.com" ).AbsoluteUri, args.DownloadLink.AbsoluteUri );
+				Assert.AreEqual( new Uri( "http://example.com/file.name" ).AbsoluteUri, args.DownloadLink.AbsoluteUri );
 				called = true;
 				return null;
 			};
 
-			VersionInfo info = new VersionInfo( System.Net.HttpStatusCode.OK, null, new Uri( "http://example.com" ), "1234", 1234, new Dictionary<Version, string>() );
+			VersionInfo info = new VersionInfo( System.Net.HttpStatusCode.OK, null, new Uri( "http://example.com/file.name" ), "1234", 1234, new Dictionary<Version, string>() );
 			UpdateChecker.Instance.DownloadLatestVersion( info );
 
 			Assert.IsTrue( called );
@@ -50,7 +50,7 @@ namespace Blitzy.Tests.Model
 		{
 			using( ShimsContext.Create() )
 			{
-				btbapi.Fakes.ShimAPI.AllInstances.CheckVersionStringVersionBoolean = ( api, str, ver, force ) =>
+				Blitzy.btbapi.Fakes.ShimAPI.AllInstances.CheckVersionStringVersionBoolean = ( api, str, ver, force ) =>
 					{
 						return Task.Run<VersionInfo>( () => new VersionInfo( System.Net.HttpStatusCode.BadRequest, null, null, null, 0, null ) );
 					};
@@ -60,7 +60,7 @@ namespace Blitzy.Tests.Model
 
 				Assert.AreNotEqual( System.Net.HttpStatusCode.OK, t.Result.Status );
 
-				btbapi.Fakes.ShimAPI.AllInstances.CheckVersionStringVersionBoolean = ( api, str, ver, force ) =>
+				Blitzy.btbapi.Fakes.ShimAPI.AllInstances.CheckVersionStringVersionBoolean = ( api, str, ver, force ) =>
 				{
 					return Task.Run<VersionInfo>( () => new VersionInfo( System.Net.HttpStatusCode.OK, new Version( 1, 2 ), new Uri( "http://localhost/file.name" ), "123", 123, new Dictionary<Version, string>() ) );
 				};

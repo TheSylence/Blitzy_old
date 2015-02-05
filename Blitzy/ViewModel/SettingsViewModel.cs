@@ -12,12 +12,12 @@ using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using Blitzy.btbapi;
 using Blitzy.Messages;
 using Blitzy.Model;
 using Blitzy.Plugin;
 using Blitzy.Utility;
 using Blitzy.ViewServices;
-using btbapi;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Threading;
@@ -268,147 +268,6 @@ namespace Blitzy.ViewModel
 		#endregion Methods
 
 		#region Commands
-
-		private RelayCommand _AddExcludeCommand;
-		private RelayCommand _AddFolderCommand;
-		private RelayCommand _AddRuleCommand;
-		private RelayCommand _CancelCommand;
-		private RelayCommand _DefaultsCommand;
-		private RelayCommand _DownloadUpdateCommand;
-		private RelayCommand _PluginsDialogCommand;
-		private RelayCommand _RemoveExcludeCommand;
-		private RelayCommand _RemoveFolderCommand;
-		private RelayCommand _RemoveRuleCommand;
-		private RelayCommand _SaveCommand;
-		private RelayCommand _UpdateCatalogCommand;
-		private RelayCommand _UpdateCheckCommand;
-		private RelayCommand _ViewChangelogCommand;
-
-		public RelayCommand AddExcludeCommand
-		{
-			get
-			{
-				return _AddExcludeCommand ??
-					( _AddExcludeCommand = new RelayCommand( ExecuteAddExcludeCommand, CanExecuteAddExcludeCommand ) );
-			}
-		}
-
-		public RelayCommand AddFolderCommand
-		{
-			get
-			{
-				return _AddFolderCommand ??
-					( _AddFolderCommand = new RelayCommand( ExecuteAddFolderCommand, CanExecuteAddFolderCommand ) );
-			}
-		}
-
-		public RelayCommand AddRuleCommand
-		{
-			get
-			{
-				return _AddRuleCommand ??
-					( _AddRuleCommand = new RelayCommand( ExecuteAddRuleCommand, CanExecuteAddRuleCommand ) );
-			}
-		}
-
-		public RelayCommand CancelCommand
-		{
-			get
-			{
-				return _CancelCommand ??
-					( _CancelCommand = new RelayCommand( ExecuteCancelCommand, CanExecuteCancelCommand ) );
-			}
-		}
-
-		public RelayCommand DefaultsCommand
-		{
-			get
-			{
-				return _DefaultsCommand ??
-					( _DefaultsCommand = new RelayCommand( ExecuteDefaultsCommand, CanExecuteDefaultsCommand ) );
-			}
-		}
-
-		public RelayCommand DownloadUpdateCommand
-		{
-			get
-			{
-				return _DownloadUpdateCommand ??
-					( _DownloadUpdateCommand = new RelayCommand( ExecuteDownloadUpdateCommand, CanExecuteDownloadUpdateCommand ) );
-			}
-		}
-
-		public RelayCommand PluginsDialogCommand
-		{
-			get
-			{
-				return _PluginsDialogCommand ??
-					( _PluginsDialogCommand = new RelayCommand( ExecutePluginsDialogCommand, CanExecutePluginsDialogCommand ) );
-			}
-		}
-
-		public RelayCommand RemoveExcludeCommand
-		{
-			get
-			{
-				return _RemoveExcludeCommand ??
-					( _RemoveExcludeCommand = new RelayCommand( ExecuteRemoveExcludeCommand, CanExecuteRemoveExcludeCommand ) );
-			}
-		}
-
-		public RelayCommand RemoveFolderCommand
-		{
-			get
-			{
-				return _RemoveFolderCommand ??
-					( _RemoveFolderCommand = new RelayCommand( ExecuteRemoveFolderCommand, CanExecuteRemoveFolderCommand ) );
-			}
-		}
-
-		public RelayCommand RemoveRuleCommand
-		{
-			get
-			{
-				return _RemoveRuleCommand ??
-					( _RemoveRuleCommand = new RelayCommand( ExecuteRemoveRuleCommand, CanExecuteRemoveRuleCommand ) );
-			}
-		}
-
-		public RelayCommand SaveCommand
-		{
-			get
-			{
-				return _SaveCommand ??
-					( _SaveCommand = new RelayCommand( ExecuteSaveCommand, CanExecuteSaveCommand ) );
-			}
-		}
-
-		public RelayCommand UpdateCatalogCommand
-		{
-			get
-			{
-				return _UpdateCatalogCommand ??
-					( _UpdateCatalogCommand = new RelayCommand( ExecuteUpdateCatalogCommand, CanExecuteUpdateCatalogCommand ) );
-			}
-		}
-
-		public RelayCommand UpdateCheckCommand
-		{
-			get
-			{
-				return _UpdateCheckCommand ??
-					( _UpdateCheckCommand = new RelayCommand( ExecuteUpdateCheckCommand, CanExecuteUpdateCheckCommand ) );
-			}
-		}
-
-		public RelayCommand ViewChangelogCommand
-		{
-			get
-			{
-				return _ViewChangelogCommand ??
-					( _ViewChangelogCommand = new RelayCommand( ExecuteViewChangelogCommand, CanExecuteViewChangelogCommand ) );
-			}
-		}
 
 		internal async Task UpdateCheckAsync()
 		{
@@ -670,25 +529,152 @@ namespace Blitzy.ViewModel
 			DialogServiceManager.Show<ViewChangelogService>( LatestVersionInfo );
 		}
 
+		public RelayCommand AddExcludeCommand
+		{
+			get
+			{
+				return _AddExcludeCommand ??
+					( _AddExcludeCommand = new RelayCommand( ExecuteAddExcludeCommand, CanExecuteAddExcludeCommand ) );
+			}
+		}
+
+		public RelayCommand AddFolderCommand
+		{
+			get
+			{
+				return _AddFolderCommand ??
+					( _AddFolderCommand = new RelayCommand( ExecuteAddFolderCommand, CanExecuteAddFolderCommand ) );
+			}
+		}
+
+		public RelayCommand AddRuleCommand
+		{
+			get
+			{
+				return _AddRuleCommand ??
+					( _AddRuleCommand = new RelayCommand( ExecuteAddRuleCommand, CanExecuteAddRuleCommand ) );
+			}
+		}
+
+		public RelayCommand CancelCommand
+		{
+			get
+			{
+				return _CancelCommand ??
+					( _CancelCommand = new RelayCommand( ExecuteCancelCommand, CanExecuteCancelCommand ) );
+			}
+		}
+
+		public RelayCommand DefaultsCommand
+		{
+			get
+			{
+				return _DefaultsCommand ??
+					( _DefaultsCommand = new RelayCommand( ExecuteDefaultsCommand, CanExecuteDefaultsCommand ) );
+			}
+		}
+
+		public RelayCommand DownloadUpdateCommand
+		{
+			get
+			{
+				return _DownloadUpdateCommand ??
+					( _DownloadUpdateCommand = new RelayCommand( ExecuteDownloadUpdateCommand, CanExecuteDownloadUpdateCommand ) );
+			}
+		}
+
+		public RelayCommand PluginsDialogCommand
+		{
+			get
+			{
+				return _PluginsDialogCommand ??
+					( _PluginsDialogCommand = new RelayCommand( ExecutePluginsDialogCommand, CanExecutePluginsDialogCommand ) );
+			}
+		}
+
+		public RelayCommand RemoveExcludeCommand
+		{
+			get
+			{
+				return _RemoveExcludeCommand ??
+					( _RemoveExcludeCommand = new RelayCommand( ExecuteRemoveExcludeCommand, CanExecuteRemoveExcludeCommand ) );
+			}
+		}
+
+		public RelayCommand RemoveFolderCommand
+		{
+			get
+			{
+				return _RemoveFolderCommand ??
+					( _RemoveFolderCommand = new RelayCommand( ExecuteRemoveFolderCommand, CanExecuteRemoveFolderCommand ) );
+			}
+		}
+
+		public RelayCommand RemoveRuleCommand
+		{
+			get
+			{
+				return _RemoveRuleCommand ??
+					( _RemoveRuleCommand = new RelayCommand( ExecuteRemoveRuleCommand, CanExecuteRemoveRuleCommand ) );
+			}
+		}
+
+		public RelayCommand SaveCommand
+		{
+			get
+			{
+				return _SaveCommand ??
+					( _SaveCommand = new RelayCommand( ExecuteSaveCommand, CanExecuteSaveCommand ) );
+			}
+		}
+
+		public RelayCommand UpdateCatalogCommand
+		{
+			get
+			{
+				return _UpdateCatalogCommand ??
+					( _UpdateCatalogCommand = new RelayCommand( ExecuteUpdateCatalogCommand, CanExecuteUpdateCatalogCommand ) );
+			}
+		}
+
+		public RelayCommand UpdateCheckCommand
+		{
+			get
+			{
+				return _UpdateCheckCommand ??
+					( _UpdateCheckCommand = new RelayCommand( ExecuteUpdateCheckCommand, CanExecuteUpdateCheckCommand ) );
+			}
+		}
+
+		public RelayCommand ViewChangelogCommand
+		{
+			get
+			{
+				return _ViewChangelogCommand ??
+					( _ViewChangelogCommand = new RelayCommand( ExecuteViewChangelogCommand, CanExecuteViewChangelogCommand ) );
+			}
+		}
+
+		private RelayCommand _AddExcludeCommand;
+		private RelayCommand _AddFolderCommand;
+		private RelayCommand _AddRuleCommand;
+		private RelayCommand _CancelCommand;
+		private RelayCommand _DefaultsCommand;
+		private RelayCommand _DownloadUpdateCommand;
+		private RelayCommand _PluginsDialogCommand;
+		private RelayCommand _RemoveExcludeCommand;
+		private RelayCommand _RemoveFolderCommand;
+		private RelayCommand _RemoveRuleCommand;
+		private RelayCommand _SaveCommand;
+		private RelayCommand _UpdateCatalogCommand;
+		private RelayCommand _UpdateCheckCommand;
+		private RelayCommand _ViewChangelogCommand;
+
 		#endregion Commands
 
 		#region Properties
 
 		#region SettingItems
-
-		private bool _BackupShortcuts;
-		private DateTime _BuildDate;
-		private bool _CloseOnCommand;
-		private bool _CloseOnEscape;
-		private bool _CloseOnFocusLost;
-		private int _HistoryCount;
-		private bool _KeepInput;
-		private bool _PeriodicallyRebuild;
-		private bool _RebuildOnChange;
-		private int _RebuildTime;
-		private bool _StayOnTop;
-		private bool _TrayIcon;
-		private bool _UpdateCheck;
 
 		public bool BackupShortcuts
 		{
@@ -950,26 +936,21 @@ namespace Blitzy.ViewModel
 			}
 		}
 
-		#endregion SettingItems
+		private bool _BackupShortcuts;
+		private DateTime _BuildDate;
+		private bool _CloseOnCommand;
+		private bool _CloseOnEscape;
+		private bool _CloseOnFocusLost;
+		private int _HistoryCount;
+		private bool _KeepInput;
+		private bool _PeriodicallyRebuild;
+		private bool _RebuildOnChange;
+		private int _RebuildTime;
+		private bool _StayOnTop;
+		private bool _TrayIcon;
+		private bool _UpdateCheck;
 
-		private CatalogBuilder _CatalogBuilder;
-		private int _CatalogItemsProcessed;
-		private string _FilesProcessed;
-		private bool _IsCatalogBuilding;
-		private bool _IsNewerVersionAvailable;
-		private int _ItemsInCatalog;
-		private DateTime _LastCatalogBuild;
-		private VersionInfo _LatestVersionInfo;
-		private string _SelectedExclude;
-		private Folder _SelectedFolder;
-		private Key _SelectedKey;
-		private CultureInfo _SelectedLanguage;
-		private string _SelectedModifierKey;
-		private PluginPage _SelectedPluginPage;
-		private string _SelectedRule;
-		private Settings _Settings;
-		private bool _VersionCheckError;
-		private bool _VersionCheckInProgress;
+		#endregion SettingItems
 
 		public API API { get; private set; }
 
@@ -1362,6 +1343,25 @@ namespace Blitzy.ViewModel
 		}
 
 		public WorkspaceSettingsViewModel WorkspaceSettings { get; private set; }
+
+		private CatalogBuilder _CatalogBuilder;
+		private int _CatalogItemsProcessed;
+		private string _FilesProcessed;
+		private bool _IsCatalogBuilding;
+		private bool _IsNewerVersionAvailable;
+		private int _ItemsInCatalog;
+		private DateTime _LastCatalogBuild;
+		private VersionInfo _LatestVersionInfo;
+		private string _SelectedExclude;
+		private Folder _SelectedFolder;
+		private Key _SelectedKey;
+		private CultureInfo _SelectedLanguage;
+		private string _SelectedModifierKey;
+		private PluginPage _SelectedPluginPage;
+		private string _SelectedRule;
+		private Settings _Settings;
+		private bool _VersionCheckError;
+		private bool _VersionCheckInProgress;
 
 		#endregion Properties
 

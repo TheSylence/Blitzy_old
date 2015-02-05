@@ -3,11 +3,11 @@
 using System;
 using System.Collections.Generic;
 using System.Net;
+using Blitzy.btbapi;
 using Blitzy.Tests.Mocks;
 using Blitzy.Tests.Mocks.Services;
 using Blitzy.ViewModel.Dialogs;
 using Blitzy.ViewServices;
-using btbapi;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Blitzy.Tests.ViewModel

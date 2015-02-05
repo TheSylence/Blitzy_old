@@ -7,7 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
-using btbapi;
+using Blitzy.btbapi;
 
 namespace Blitzy.Tests
 {

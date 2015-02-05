@@ -1,11 +1,11 @@
 ﻿// $Id$
 
 using System;
+using Blitzy.btbapi;
 using Blitzy.Messages;
 using Blitzy.Tests.Mocks.Services;
 using Blitzy.ViewModel;
 using Blitzy.ViewServices;
-using btbapi;
 using GalaSoft.MvvmLight.Messaging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 

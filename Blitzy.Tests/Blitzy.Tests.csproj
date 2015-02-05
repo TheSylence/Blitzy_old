@@ -59,9 +59,6 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="btbapi.Fakes">
-      <HintPath>FakesAssemblies\btbapi.Fakes.dll</HintPath>
-    </Reference>
     <Reference Include="Blitzy.Fakes">
       <HintPath>FakesAssemblies\Blitzy.Fakes.dll</HintPath>
     </Reference>
@@ -212,9 +209,8 @@
     <Fakes Include="Fakes\mscorlib.fakes" />
     <Fakes Include="Fakes\PresentationFramework.fakes" />
     <Fakes Include="Fakes\PresentationCore.fakes" />
-    <Fakes Include="Fakes\btbapi.fakes" />
-    <Fakes Include="Fakes\Blitzy.fakes" />
     <Fakes Include="Fakes\System.Net.Http.fakes" />
+    <Fakes Include="Fakes\Blitzy.fakes" />
     <None Include="packages.config" />
     <None Include="TestData\Blitzy.exe.lnk">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -224,10 +220,6 @@
     <ProjectReference Include="..\Blitzy\Blitzy.csproj">
       <Project>{82e328eb-8b53-4d67-b7df-639a8ec1b92e}</Project>
       <Name>Blitzy</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\btbapi\btbapi\btbapi.csproj">
-      <Project>{f656ea31-9755-4188-b662-02beacc5652f}</Project>
-      <Name>btbapi</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

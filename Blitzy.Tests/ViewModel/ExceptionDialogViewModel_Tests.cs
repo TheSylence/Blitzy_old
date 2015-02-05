@@ -4,10 +4,10 @@ using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows;
+using Blitzy.btbapi;
 using Blitzy.Tests.Mocks.Services;
 using Blitzy.ViewModel.Dialogs;
 using Blitzy.ViewServices;
-using btbapi;
 using Microsoft.QualityTools.Testing.Fakes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -66,7 +66,7 @@ namespace Blitzy.Tests.ViewModel
 				Assert.IsTrue( vm.SendCommand.CanExecute( null ) );
 				using( ShimsContext.Create() )
 				{
-					btbapi.Fakes.ShimAPI.AllInstances.SendReportErrorReportStringVersion = ( api, report, software, version ) =>
+					Blitzy.btbapi.Fakes.ShimAPI.AllInstances.SendReportErrorReportStringVersion = ( api, report, software, version ) =>
 					{
 						return Task.Run<ErrorReportResult>( () =>
 						{
@@ -94,7 +94,7 @@ namespace Blitzy.Tests.ViewModel
 
 				using( ShimsContext.Create() )
 				{
-					btbapi.Fakes.ShimAPI.AllInstances.SendReportErrorReportStringVersion = ( report, text, version, task ) =>
+					Blitzy.btbapi.Fakes.ShimAPI.AllInstances.SendReportErrorReportStringVersion = ( report, text, version, task ) =>
 						{
 							return Task.Run<btbapi.ErrorReportResult>( () =>
 								{

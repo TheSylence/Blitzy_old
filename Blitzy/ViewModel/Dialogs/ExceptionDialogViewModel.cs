@@ -5,9 +5,9 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
+using Blitzy.btbapi;
 using Blitzy.Utility;
 using Blitzy.ViewServices;
-using btbapi;
 using GalaSoft.MvvmLight.Command;
 
 namespace Blitzy.ViewModel.Dialogs

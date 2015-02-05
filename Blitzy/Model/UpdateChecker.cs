@@ -5,10 +5,10 @@ using System.Diagnostics;
 using System.Net;
 using System.Reflection;
 using System.Threading.Tasks;
+using Blitzy.btbapi;
 using Blitzy.Messages;
 using Blitzy.Utility;
 using Blitzy.ViewServices;
-using btbapi;
 using GalaSoft.MvvmLight.Messaging;
 
 namespace Blitzy.Model
@@ -85,8 +85,6 @@ namespace Blitzy.Model
 
 		#region Properties
 
-		private static UpdateChecker _Instance;
-
 		internal static UpdateChecker Instance
 		{
 			get { return _Instance ?? ( _Instance = new UpdateChecker() ); }
@@ -104,6 +102,8 @@ namespace Blitzy.Model
 				return new API( APIEndPoint.Localhost );
 			}
 		}
+
+		private static UpdateChecker _Instance;
 
 		#endregion Properties
 
