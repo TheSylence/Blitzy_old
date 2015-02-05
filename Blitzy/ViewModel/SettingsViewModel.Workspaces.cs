@@ -62,67 +62,6 @@ namespace Blitzy.ViewModel
 
 		#region Commands
 
-		private RelayCommand _AddItemCommand;
-		private RelayCommand _AddWorkspaceCommand;
-		private RelayCommand _DeleteWorkspaceCommand;
-		private RelayCommand _MoveItemDownCommand;
-		private RelayCommand _MoveItemUpCommand;
-		private RelayCommand _RemoveItemCommand;
-
-		public RelayCommand AddItemCommand
-		{
-			get
-			{
-				return _AddItemCommand ??
-					( _AddItemCommand = new RelayCommand( ExecuteAddItemCommand, CanExecuteAddItemCommand ) );
-			}
-		}
-
-		public RelayCommand AddWorkspaceCommand
-		{
-			get
-			{
-				return _AddWorkspaceCommand ??
-					( _AddWorkspaceCommand = new RelayCommand( ExecuteAddWorkspaceCommand, CanExecuteAddWorkspaceCommand ) );
-			}
-		}
-
-		public RelayCommand DeleteWorkspaceCommand
-		{
-			get
-			{
-				return _DeleteWorkspaceCommand ??
-					( _DeleteWorkspaceCommand = new RelayCommand( ExecuteDeleteWorkspaceCommand, CanExecuteDeleteWorkspaceCommand ) );
-			}
-		}
-
-		public RelayCommand MoveItemDownCommand
-		{
-			get
-			{
-				return _MoveItemDownCommand ??
-					( _MoveItemDownCommand = new RelayCommand( ExecuteMoveItemDownCommand, CanExecuteMoveItemDownCommand ) );
-			}
-		}
-
-		public RelayCommand MoveItemUpCommand
-		{
-			get
-			{
-				return _MoveItemUpCommand ??
-					( _MoveItemUpCommand = new RelayCommand( ExecuteMoveItemUpCommand, CanExecuteMoveItemUpCommand ) );
-			}
-		}
-
-		public RelayCommand RemoveItemCommand
-		{
-			get
-			{
-				return _RemoveItemCommand ??
-					( _RemoveItemCommand = new RelayCommand( ExecuteRemoveItemCommand, CanExecuteRemoveItemCommand ) );
-			}
-		}
-
 		private bool CanExecuteAddItemCommand()
 		{
 			return SelectedWorkspace != null;
@@ -177,7 +116,7 @@ namespace Blitzy.ViewModel
 				IEnumerable<WorkspaceItem> allItems = Workspaces.SelectMany( ws => ws.Items ).ToArray();
 				if( allItems.Any() )
 				{
-					item.ItemID = allItems.Max( i => i.ItemOrder ) + 1;
+					item.ItemID = allItems.Max( i => i.ItemID ) + 1;
 				}
 
 				SelectedWorkspace.Items.Add( item );
@@ -252,12 +191,70 @@ namespace Blitzy.ViewModel
 			}
 		}
 
+		public RelayCommand AddItemCommand
+		{
+			get
+			{
+				return _AddItemCommand ??
+					( _AddItemCommand = new RelayCommand( ExecuteAddItemCommand, CanExecuteAddItemCommand ) );
+			}
+		}
+
+		public RelayCommand AddWorkspaceCommand
+		{
+			get
+			{
+				return _AddWorkspaceCommand ??
+					( _AddWorkspaceCommand = new RelayCommand( ExecuteAddWorkspaceCommand, CanExecuteAddWorkspaceCommand ) );
+			}
+		}
+
+		public RelayCommand DeleteWorkspaceCommand
+		{
+			get
+			{
+				return _DeleteWorkspaceCommand ??
+					( _DeleteWorkspaceCommand = new RelayCommand( ExecuteDeleteWorkspaceCommand, CanExecuteDeleteWorkspaceCommand ) );
+			}
+		}
+
+		public RelayCommand MoveItemDownCommand
+		{
+			get
+			{
+				return _MoveItemDownCommand ??
+					( _MoveItemDownCommand = new RelayCommand( ExecuteMoveItemDownCommand, CanExecuteMoveItemDownCommand ) );
+			}
+		}
+
+		public RelayCommand MoveItemUpCommand
+		{
+			get
+			{
+				return _MoveItemUpCommand ??
+					( _MoveItemUpCommand = new RelayCommand( ExecuteMoveItemUpCommand, CanExecuteMoveItemUpCommand ) );
+			}
+		}
+
+		public RelayCommand RemoveItemCommand
+		{
+			get
+			{
+				return _RemoveItemCommand ??
+					( _RemoveItemCommand = new RelayCommand( ExecuteRemoveItemCommand, CanExecuteRemoveItemCommand ) );
+			}
+		}
+
+		private RelayCommand _AddItemCommand;
+		private RelayCommand _AddWorkspaceCommand;
+		private RelayCommand _DeleteWorkspaceCommand;
+		private RelayCommand _MoveItemDownCommand;
+		private RelayCommand _MoveItemUpCommand;
+		private RelayCommand _RemoveItemCommand;
+
 		#endregion Commands
 
 		#region Properties
-
-		private WorkspaceItem _SelectedItem;
-		private Workspace _SelectedWorkspace;
 
 		public WorkspaceItem SelectedItem
 		{
@@ -300,6 +297,9 @@ namespace Blitzy.ViewModel
 		}
 
 		public ObservableCollection<Workspace> Workspaces { get; private set; }
+
+		private WorkspaceItem _SelectedItem;
+		private Workspace _SelectedWorkspace;
 
 		#endregion Properties
 	}

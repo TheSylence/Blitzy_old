@@ -258,5 +258,39 @@ namespace Blitzy.Tests.ViewModel
 				Assert.AreEqual( 1, vm.Workspaces.First().ID );
 			}
 		}
+
+		[TestMethod, TestCategory( "ViewModel" )]
+		public void UniqueConstraintFail()
+		{
+			MockPluginHost host = new MockPluginHost();
+			using( SettingsViewModel baseVM = new SettingsViewModel() )
+			{
+				baseVM.Settings = new Blitzy.Model.Settings( Connection );
+				baseVM.PluginManager = new Plugin.PluginManager( host, Connection );
+				baseVM.Reset();
+				WorkspaceSettingsViewModel vm = new WorkspaceSettingsViewModel( baseVM.Settings );
+
+				TextInputServiceMock mock = new TextInputServiceMock();
+				DialogServiceManager.RegisterService( typeof( TextInputService ), mock );
+				DialogServiceManager.RegisterService( typeof( OpenFileService ), mock );
+
+				mock.Value = "test 1";
+				vm.AddWorkspaceCommand.Execute( null );
+				mock.Value = "test1.txt";
+				vm.AddItemCommand.Execute( null );
+
+				mock.Value = "test 2";
+				vm.AddWorkspaceCommand.Execute( null );
+				mock.Value = "test2.txt";
+				vm.AddItemCommand.Execute( null );
+
+				mock.Value = "test 2";
+				vm.AddWorkspaceCommand.Execute( null );
+				mock.Value = "test2.txt";
+				vm.AddItemCommand.Execute( null );
+
+				vm.Save();
+			}
+		}
 	}
 }
