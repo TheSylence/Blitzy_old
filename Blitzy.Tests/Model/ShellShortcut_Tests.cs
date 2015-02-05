@@ -37,7 +37,6 @@ namespace Blitzy.Tests.Model
 			Assert.AreEqual( "Test", sh.Description );
 			Assert.IsNotNull( sh.IconPath );
 			Assert.IsTrue( System.IO.Path.IsPathRooted( sh.IconPath ) );
-			Assert.IsTrue( File.Exists( sh.IconPath ) );
 		}
 	}
 }
