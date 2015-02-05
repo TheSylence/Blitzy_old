@@ -280,7 +280,7 @@ namespace Blitzy.ViewModel
 			}
 			else if( LatestVersionInfo.LatestVersion.Major == 0 && LatestVersionInfo.LatestVersion.Minor == 0 )
 			{
-				LatestVersionInfo = new VersionInfo( HttpStatusCode.OK, Assembly.GetExecutingAssembly().GetName().Version, null, null, 0, null );
+				LatestVersionInfo = new VersionInfo( HttpStatusCode.OK, Assembly.GetExecutingAssembly().GetName().Version, null, null, 0, null, null );
 			}
 
 			VersionCheckInProgress = false;

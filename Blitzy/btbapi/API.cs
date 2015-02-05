@@ -40,7 +40,7 @@ namespace Blitzy.btbapi
 				}
 				catch( HttpRequestException )
 				{
-					return new VersionInfo( HttpStatusCode.BadRequest, null, null, null, 0, null );
+					return new VersionInfo( HttpStatusCode.BadRequest, null, null, null, 0, null, null );
 				}
 
 				response = await msg.Content.ReadAsStringAsync();
@@ -50,7 +50,7 @@ namespace Blitzy.btbapi
 				}
 				catch( HttpRequestException )
 				{
-					return new VersionInfo( msg.StatusCode, null, null, null, 0, null );
+					return new VersionInfo( msg.StatusCode, null, null, null, 0, null, null );
 				}
 			}
 
@@ -93,7 +93,7 @@ namespace Blitzy.btbapi
 				changes.Add( new Version( kvp.Key ), kvp.Value );
 			}
 
-			return new VersionInfo( HttpStatusCode.OK, version, downloadLink, md5, size, changes );
+			return new VersionInfo( HttpStatusCode.OK, version, downloadLink, md5, size, changes, response );
 		}
 
 		public async Task<ErrorReportResult> SendReport( ErrorReport report, string product, Version currentVersion )
@@ -115,7 +115,7 @@ namespace Blitzy.btbapi
 				}
 				catch( HttpRequestException )
 				{
-					return new ErrorReportResult( HttpStatusCode.BadRequest, null, false );
+					return new ErrorReportResult( HttpStatusCode.BadRequest, null, false, null );
 				}
 
 				string response = await msg.Content.ReadAsStringAsync();
@@ -125,12 +125,12 @@ namespace Blitzy.btbapi
 				}
 				catch( HttpRequestException )
 				{
-					return new ErrorReportResult( msg.StatusCode, null, false );
+					return new ErrorReportResult( msg.StatusCode, null, false, null );
 				}
 
 				Dictionary<string, string> results = JsonConvert.DeserializeObject<Dictionary<string, string>>( response );
 
-				return new ErrorReportResult( HttpStatusCode.OK, new Uri( results["url"] ), Convert.ToBoolean( results["already_known"] ) );
+				return new ErrorReportResult( HttpStatusCode.OK, new Uri( results["url"] ), Convert.ToBoolean( results["already_known"] ), response );
 			}
 		}
 

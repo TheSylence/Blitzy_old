@@ -13,8 +13,8 @@ namespace Blitzy.btbapi
 	/// </summary>
 	public class VersionInfo : APIResult
 	{
-		public VersionInfo( HttpStatusCode status, Version currentVersion, Uri downloadLink, string md5, long size, Dictionary<Version, string> changes )
-			: base( status )
+		public VersionInfo( HttpStatusCode status, Version currentVersion, Uri downloadLink, string md5, long size, Dictionary<Version, string> changes, string rawResponse )
+			: base( status, rawResponse )
 		{
 			LatestVersion = currentVersion;
 			DownloadLink = downloadLink;

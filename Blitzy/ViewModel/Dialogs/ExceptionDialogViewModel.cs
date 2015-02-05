@@ -83,13 +83,15 @@ namespace Blitzy.ViewModel.Dialogs
 			} ).Wait();
 			if( result.Status != System.Net.HttpStatusCode.OK )
 			{
+				LogWarning( "Failed to send error report: {0}", result.RawResponse );
+
 				DialogServiceManager.Show<MessageBoxService>( new MessageBoxParameter( "ErrorReportError".Localize(),
 					"Error".Localize(), MessageBoxButton.OK, MessageBoxImage.Error ) );
 			}
 			else
 			{
 				DialogServiceManager.Show<MessageBoxService>( new MessageBoxParameter( "ErrorReportSend".Localize(),
-					"Error".Localize(), MessageBoxButton.OK, MessageBoxImage.Information ) );
+					"Success".Localize(), MessageBoxButton.OK, MessageBoxImage.Information ) );
 			}
 
 			CloseDialog();
@@ -153,11 +155,7 @@ namespace Blitzy.ViewModel.Dialogs
 			{
 				if( !RuntimeConfig.Tests )
 				{
-#if DEBUG
-					return new API( APIEndPoint.Localhost );
-#else
-					return new btbapi.API( APIEndPoint.Default );
-#endif
+					return new API( APIEndPoint.Default );
 				}
 
 				return new API( APIEndPoint.Localhost );

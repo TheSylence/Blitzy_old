@@ -274,7 +274,17 @@ namespace Blitzy.Plugin
 			LogDebug( "Loading plugins from {0}...", file );
 
 			Assembly asm = Assembly.LoadFrom( file );
-			foreach( Type type in asm.GetTypes().Where( t => !t.IsAbstract && interfaceFace.IsAssignableFrom( t ) ) )
+			IEnumerable<Type> types = Enumerable.Empty<Type>();
+			try
+			{
+				types = asm.GetTypes().Where( t => !t.IsAbstract && interfaceFace.IsAssignableFrom( t ) );
+			}
+			catch( Exception ex )
+			{
+				LogError( "Failed to load plugins from {0}: {1}", file, ex );
+			}
+
+			foreach( Type type in types )
 			{
 				LoadPlugin( asm, type );
 			}

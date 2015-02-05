@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interop;
 using Blitzy.Messages;
 using Blitzy.Utility;
 using Blitzy.ViewModel;
+using Blitzy.ViewServices;
 using GalaSoft.MvvmLight.Messaging;
 
 namespace Blitzy.View
@@ -55,7 +57,10 @@ namespace Blitzy.View
 				}
 				catch( HotKeyAlreadyRegisteredException )
 				{
-					// TODO: Inform the user about this?
+					string text = "HotKeyAlreadyRegistered".Localize();
+					string caption = "HotKeyError".Localize();
+					MessageBoxParameter args = new MessageBoxParameter( text, caption, MessageBoxButton.OK, MessageBoxImage.Warning );
+					DialogServiceManager.Show<MessageBoxService>( args );
 				}
 			} );
 
@@ -78,21 +83,9 @@ namespace Blitzy.View
 			Hide();
 		}
 
-		private void FocusInput()
+		~MainWindow()
 		{
-			FocusManager.SetFocusedElement( this, txtInput );
-			txtInput.Focus();
-		}
-
-		private IntPtr WndProc( IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled )
-		{
-			if( msg == SingleInstance.WM_SHOWFIRSTINSTANCE )
-			{
-				Show();
-				handled = true;
-			}
-
-			return IntPtr.Zero;
+			Dispose( false );
 		}
 
 		public void Dispose()
@@ -109,9 +102,21 @@ namespace Blitzy.View
 			}
 		}
 
-		~MainWindow()
+		private void FocusInput()
 		{
-			Dispose( false );
+			FocusManager.SetFocusedElement( this, txtInput );
+			txtInput.Focus();
+		}
+
+		private IntPtr WndProc( IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled )
+		{
+			if( msg == SingleInstance.WM_SHOWFIRSTINSTANCE )
+			{
+				Show();
+				handled = true;
+			}
+
+			return IntPtr.Zero;
 		}
 	}
 }

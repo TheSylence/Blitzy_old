@@ -173,7 +173,7 @@ namespace Blitzy.Tests.ViewModel
 
 					vm.StartDownload().Wait();
 
-					Assert.IsTrue( vm.DownloadSuccessfull );
+					Assert.IsFalse( vm.DownloadSuccessfull );
 				}
 			}
 		}

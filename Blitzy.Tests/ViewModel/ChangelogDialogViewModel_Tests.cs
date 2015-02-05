@@ -14,7 +14,7 @@ namespace Blitzy.Tests.ViewModel
 {
 	[TestClass]
 	[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-	public class ChangelogDialogViewModel_Tests
+	public class ChangelogDialogViewModel_Tests : TestBase
 	{
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void ChangelogTest()
@@ -30,7 +30,7 @@ namespace Blitzy.Tests.ViewModel
 				changes.Add( new Version( 1, 3 ), "Changes 1.3" );
 				changes.Add( new Version( 2, 1 ), "Changes 2.1" );
 
-				vm.LatestVersionInfo = new VersionInfo( HttpStatusCode.OK, currentVersion, downloadLink, md5, size, changes );
+				vm.LatestVersionInfo = new VersionInfo( HttpStatusCode.OK, currentVersion, downloadLink, md5, size, changes, null );
 
 				string expected = "<u>Changes in Version 2.1:</u><br />Changes 2.1" + Environment.NewLine + Environment.NewLine + Environment.NewLine
 					+ "<u>Changes in Version 1.3:</u><br />Changes 1.3" + Environment.NewLine + Environment.NewLine + Environment.NewLine
@@ -47,7 +47,7 @@ namespace Blitzy.Tests.ViewModel
 			{
 				Assert.IsFalse( vm.DownloadCommand.CanExecute( null ) );
 
-				vm.LatestVersionInfo = new VersionInfo( HttpStatusCode.OK, new Version(), new Uri( "http://localhost" ), string.Empty, 123, new Dictionary<Version, string>() );
+				vm.LatestVersionInfo = new VersionInfo( HttpStatusCode.OK, new Version(), new Uri( "http://localhost/file.name" ), string.Empty, 123, new Dictionary<Version, string>(), null );
 				Assert.IsTrue( vm.DownloadCommand.CanExecute( null ) );
 
 				CallCheckServiceMock mock = new CallCheckServiceMock();

@@ -70,7 +70,7 @@ namespace Blitzy.Tests.ViewModel
 					{
 						return Task.Run<ErrorReportResult>( () =>
 						{
-							return new ErrorReportResult( System.Net.HttpStatusCode.OK, new Uri( "http://localhost/issue" ), false );
+							return new ErrorReportResult( System.Net.HttpStatusCode.OK, new Uri( "http://localhost/issue" ), false, null );
 						} );
 					};
 
@@ -98,7 +98,7 @@ namespace Blitzy.Tests.ViewModel
 						{
 							return Task.Run<btbapi.ErrorReportResult>( () =>
 								{
-									return new btbapi.ErrorReportResult( System.Net.HttpStatusCode.BadRequest, null, false );
+									return new btbapi.ErrorReportResult( System.Net.HttpStatusCode.BadRequest, null, false, null );
 								} );
 						};
 

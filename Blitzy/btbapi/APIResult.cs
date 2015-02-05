@@ -11,10 +11,16 @@ namespace Blitzy.btbapi
 	/// </summary>
 	public abstract class APIResult
 	{
-		protected APIResult( HttpStatusCode status )
+		protected APIResult( HttpStatusCode status, string rawResponse )
 		{
+			RawResponse = rawResponse;
 			Status = status;
 		}
+
+		/// <summary>
+		/// The Raw and unparsed response of the API
+		/// </summary>
+		public readonly string RawResponse;
 
 		/// <summary>
 		/// HTTP Status of the result.

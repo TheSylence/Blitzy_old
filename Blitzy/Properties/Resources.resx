@@ -503,4 +503,10 @@ To help us fixing the error we encourage you to send an error report to the deve
   <data name="ScanningCatalogProgress" xml:space="preserve">
     <value>Scanned {0} of {1} folders</value>
   </data>
+  <data name="HotKeyAlreadyRegistered" xml:space="preserve">
+    <value>The HotKey that was specified in the settings could not be registered because it is already in use by another application. You will not be able to open Blitzy using the HotKey.</value>
+  </data>
+  <data name="HotKeyError" xml:space="preserve">
+    <value>Error during HotKey registration</value>
+  </data>
 </root>

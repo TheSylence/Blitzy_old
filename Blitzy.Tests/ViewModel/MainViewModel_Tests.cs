@@ -85,6 +85,17 @@ namespace Blitzy.Tests.ViewModel
 		}
 
 		[TestMethod, TestCategory( "ViewModel" )]
+		public void DoubleTabTest()
+		{
+			using( MainViewModel vm = new MainViewModel() )
+			{
+				vm.CommandInput = "weby";
+				Assert.IsTrue( vm.OnKeyTab() );
+				Assert.IsTrue( vm.OnKeyTab() );
+			}
+		}
+
+		[TestMethod, TestCategory( "ViewModel" )]
 		public void DownTestHistory()
 		{
 			using( MainViewModel vm = new MainViewModel() )
@@ -182,6 +193,18 @@ namespace Blitzy.Tests.ViewModel
 
 				Assert.IsTrue( vm.ExecuteCommand.CanExecute( null ) );
 				Assert.IsTrue( vm.MouseExecuteCommand.CanExecute( null ) );
+			}
+		}
+
+		[TestMethod, TestCategory( "ViewModel" )]
+		public void MultipleTabTest()
+		{
+			using( MainViewModel vm = new MainViewModel() )
+			{
+				vm.CommandInput = "google";
+				Assert.IsTrue( vm.OnKeyTab() );
+				Assert.IsTrue( vm.OnKeyTab() );
+				Assert.AreEqual( "google" + vm.CmdManager.Separator, vm.CommandInput );
 			}
 		}
 

@@ -12,8 +12,8 @@ namespace Blitzy.btbapi
 	/// </summary>
 	public class ErrorReportResult : APIResult
 	{
-		public ErrorReportResult( HttpStatusCode status, Uri issueLink, bool alreadyKnown )
-			: base( status )
+		public ErrorReportResult( HttpStatusCode status, Uri issueLink, bool alreadyKnown, string rawResponse )
+			: base( status, rawResponse )
 		{
 			IssueLink = issueLink;
 			AlreadyKnown = alreadyKnown;

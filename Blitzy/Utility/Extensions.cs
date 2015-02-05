@@ -11,7 +11,7 @@ using WPFLocalizeExtension.Engine;
 
 namespace Blitzy.Utility
 {
-	internal static class Extensions
+	public static class Extensions
 	{
 		public static string FormatLocalized( this string str, params object[] args )
 		{
@@ -29,36 +29,6 @@ namespace Blitzy.Utility
 			string value = LocalizeDictionary.Instance.GetLocalizedObject( str, null, Thread.CurrentThread.CurrentUICulture ) as string;
 
 			return string.Format( value, args );
-		}
-
-		public static double GetDiceCoefficent( this string str, string other, int n = 3 )
-		{
-			string[] strGrams = str.GetNGrams( n );
-			string[] otherGrams = other.GetNGrams( n );
-
-			int matches = strGrams.Intersect( otherGrams ).Count();
-
-			return ( 2.0 * matches ) / ( strGrams.Length + otherGrams.Length );
-		}
-
-		public static string GetNameFromExpression<T>( this Expression<Func<T, object>> exp )
-		{
-			MemberExpression mem = exp.Body as MemberExpression;
-			if( mem == null )
-			{
-				UnaryExpression un = exp.Body as UnaryExpression;
-				if( un == null )
-				{
-					return null;
-				}
-				mem = un.Operand as MemberExpression;
-			}
-
-			if( mem == null )
-			{
-				return null;
-			}
-			return mem.Member.Name;
 		}
 
 		public static string Localize( this string str, string prefix = null, string suffix = null )
@@ -88,16 +58,34 @@ namespace Blitzy.Utility
 			return value;
 		}
 
-		public static string WildcardToRegex( this string pattern, bool wholeString = false )
+		internal static double GetDiceCoefficent( this string str, string other, int n = 3 )
 		{
-			string ex = Regex.Escape( pattern ).Replace( @"\*", ".*" ).Replace( @"\?", "." );
+			string[] strGrams = str.GetNGrams( n );
+			string[] otherGrams = other.GetNGrams( n );
 
-			if( wholeString )
+			int matches = strGrams.Intersect( otherGrams ).Count();
+
+			return ( 2.0 * matches ) / ( strGrams.Length + otherGrams.Length );
+		}
+
+		internal static string GetNameFromExpression<T>( this Expression<Func<T, object>> exp )
+		{
+			MemberExpression mem = exp.Body as MemberExpression;
+			if( mem == null )
 			{
-				return "^" + ex + "$";
+				UnaryExpression un = exp.Body as UnaryExpression;
+				if( un == null )
+				{
+					return null;
+				}
+				mem = un.Operand as MemberExpression;
 			}
 
-			return ex;
+			if( mem == null )
+			{
+				return null;
+			}
+			return mem.Member.Name;
 		}
 
 		internal static DateTime LinkerTimestamp( this Assembly assembly )
@@ -127,6 +115,18 @@ namespace Blitzy.Utility
 			dt = dt.AddSeconds( secondsSince1970 );
 			dt = dt.AddHours( TimeZone.CurrentTimeZone.GetUtcOffset( dt ).Hours );
 			return dt;
+		}
+
+		internal static string WildcardToRegex( this string pattern, bool wholeString = false )
+		{
+			string ex = Regex.Escape( pattern ).Replace( @"\*", ".*" ).Replace( @"\?", "." );
+
+			if( wholeString )
+			{
+				return "^" + ex + "$";
+			}
+
+			return ex;
 		}
 
 		/// <summary>

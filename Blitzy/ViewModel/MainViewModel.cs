@@ -394,6 +394,11 @@ namespace Blitzy.ViewModel
 			}
 			itemChain.Reverse();
 
+			if( commandParts.Count > itemChain.Count )
+			{
+				return true;
+			}
+
 			for( int i = 0; i < commandParts.Count; ++i )
 			{
 				commandParts[i] = itemChain[i].Name;
@@ -472,6 +477,13 @@ namespace Blitzy.ViewModel
 		{
 			Collection<string> commandData = new Collection<string>( CmdManager.GetCommandParts( CommandInput ) );
 			CommandItem item = CmdManager.CurrentItem;
+
+#if DEBUG
+			if( item.Name.Equals( "exception" ) )
+			{
+				throw new ArgumentException( "This is a test exception" );
+			}
+#endif
 
 			Action taskAction = () =>
 			{

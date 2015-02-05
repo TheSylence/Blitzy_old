@@ -179,11 +179,11 @@ namespace Blitzy.Tests.ViewModel
 				Assert.IsFalse( vm.DownloadUpdateCommand.CanExecute( null ) );
 
 				Uri downloadLink = null;
-				vm.LatestVersionInfo = new btbapi.VersionInfo( System.Net.HttpStatusCode.OK, new Version( 1, 2 ), downloadLink, "123", 123, new System.Collections.Generic.Dictionary<Version, string>() );
+				vm.LatestVersionInfo = new btbapi.VersionInfo( System.Net.HttpStatusCode.OK, new Version( 1, 2 ), downloadLink, "123", 123, new System.Collections.Generic.Dictionary<Version, string>(), null );
 				Assert.IsFalse( vm.DownloadUpdateCommand.CanExecute( null ) );
 
 				downloadLink = new Uri( "http://localhost/file.exe" );
-				vm.LatestVersionInfo = new btbapi.VersionInfo( System.Net.HttpStatusCode.OK, new Version( 1, 2 ), downloadLink, "123", 123, new System.Collections.Generic.Dictionary<Version, string>() );
+				vm.LatestVersionInfo = new btbapi.VersionInfo( System.Net.HttpStatusCode.OK, new Version( 1, 2 ), downloadLink, "123", 123, new System.Collections.Generic.Dictionary<Version, string>(), null );
 				Assert.IsTrue( vm.DownloadUpdateCommand.CanExecute( null ) );
 
 				CallCheckServiceMock mock = new CallCheckServiceMock();
@@ -364,7 +364,7 @@ namespace Blitzy.Tests.ViewModel
 						{
 							return Task.Run<VersionInfo>( () =>
 								{
-									return new VersionInfo( System.Net.HttpStatusCode.BadRequest, null, null, null, 0, null );
+									return new VersionInfo( System.Net.HttpStatusCode.BadRequest, null, null, null, 0, null, null );
 								} );
 						};
 					vm.UpdateCheckAsync().Wait();
@@ -374,7 +374,7 @@ namespace Blitzy.Tests.ViewModel
 					{
 						return Task.Run<VersionInfo>( () =>
 						{
-							return new VersionInfo( System.Net.HttpStatusCode.OK, new Version( 1, 2 ), new Uri( "http://localhost/file.name" ), "123", 123, new System.Collections.Generic.Dictionary<Version, string>() );
+							return new VersionInfo( System.Net.HttpStatusCode.OK, new Version( 1, 2 ), new Uri( "http://localhost/file.name" ), "123", 123, new System.Collections.Generic.Dictionary<Version, string>(), null );
 						} );
 					};
 
@@ -391,7 +391,7 @@ namespace Blitzy.Tests.ViewModel
 			DialogServiceManager.RegisterService( typeof( ViewChangelogService ), mock );
 			using( SettingsViewModel vm = GenerateViewModel() )
 			{
-				vm.LatestVersionInfo = new btbapi.VersionInfo( System.Net.HttpStatusCode.OK, null, null, null, 0, null );
+				vm.LatestVersionInfo = new btbapi.VersionInfo( System.Net.HttpStatusCode.OK, null, null, null, 0, null, null );
 				vm.ViewChangelogCommand.Execute( null );
 
 				Assert.IsTrue( mock.WasCalled );
