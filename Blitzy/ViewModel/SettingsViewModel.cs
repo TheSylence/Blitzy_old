@@ -37,8 +37,8 @@ namespace Blitzy.ViewModel
 
 	internal class SettingsViewModel : ViewModelBaseEx
 	{
-		public SettingsViewModel( ViewServiceManager serviceManager = null )
-			: base( serviceManager )
+		public SettingsViewModel( ViewServiceManager serviceManager = null, IMessenger messenger = null )
+			: base( serviceManager, messenger )
 		{
 			FoldersToRemove = new List<Folder>();
 			CurrentVersion = Assembly.GetExecutingAssembly().GetName().Version;

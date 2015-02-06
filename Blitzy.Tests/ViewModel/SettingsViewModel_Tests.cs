@@ -111,13 +111,14 @@ namespace Blitzy.Tests.ViewModel
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void CatalogBuildTest()
 		{
-			using( SettingsViewModel vm = GenerateViewModel() )
+			Messenger messenger = new Messenger();
+			using( SettingsViewModel vm = GenerateViewModel( null, messenger ) )
 			{
 				vm.Settings.Folders.Add( new Folder() );
 				using( vm.CatalogBuilder = new CatalogBuilder( new Settings( Connection ) ) )
 				{
 					bool received = false;
-					Messenger.Default.Register<InternalCommandMessage>( this, ( msg ) => received = true );
+					messenger.Register<InternalCommandMessage>( this, ( msg ) => received = true );
 
 					vm.UpdateCatalogCommand.Execute( null );
 					Assert.IsTrue( received );
@@ -128,7 +129,9 @@ namespace Blitzy.Tests.ViewModel
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void CatalogTest()
 		{
-			using( SettingsViewModel vm = GenerateViewModel() )
+			Messenger messenger = new Messenger();
+
+			using( SettingsViewModel vm = GenerateViewModel( null, messenger ) )
 			{
 				vm.Reset();
 				using( vm.CatalogBuilder = new CatalogBuilder( vm.Settings ) )
@@ -137,17 +140,17 @@ namespace Blitzy.Tests.ViewModel
 					vm.CatalogBuilder.ItemsSaved = 456;
 					vm.CatalogBuilder.ProgressStep = CatalogProgressStep.Parsing;
 					DateTime oldDate = vm.LastCatalogBuild;
-					Messenger.Default.Send( new CatalogStatusMessage( CatalogStatus.BuildStarted ) );
+					messenger.Send( new CatalogStatusMessage( CatalogStatus.BuildStarted ) );
 					Assert.IsTrue( vm.IsCatalogBuilding );
 
-					Messenger.Default.Send( new CatalogStatusMessage( CatalogStatus.ProgressUpdated ) );
+					messenger.Send( new CatalogStatusMessage( CatalogStatus.ProgressUpdated ) );
 					Assert.AreEqual( vm.CatalogBuilder.ItemsProcessed, vm.CatalogItemsProcessed );
 
 					vm.CatalogBuilder.ProgressStep = CatalogProgressStep.Saving;
-					Messenger.Default.Send( new CatalogStatusMessage( CatalogStatus.ProgressUpdated ) );
+					messenger.Send( new CatalogStatusMessage( CatalogStatus.ProgressUpdated ) );
 					Assert.AreEqual( vm.CatalogBuilder.ItemsSaved, vm.CatalogItemsProcessed );
 
-					Messenger.Default.Send( new CatalogStatusMessage( CatalogStatus.BuildFinished ) );
+					messenger.Send( new CatalogStatusMessage( CatalogStatus.BuildFinished ) );
 					Assert.IsFalse( vm.IsCatalogBuilding );
 					Assert.AreNotEqual( oldDate, vm.LastCatalogBuild );
 				}
@@ -217,15 +220,17 @@ namespace Blitzy.Tests.ViewModel
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void PluginMessageTest()
 		{
-			using( SettingsViewModel vm = GenerateViewModel() )
+			Messenger messenger = new Messenger();
+
+			using( SettingsViewModel vm = GenerateViewModel( null, messenger ) )
 			{
 				vm.Reset();
 				MockPlugin plugin = new MockPlugin();
 
-				Messenger.Default.Send<PluginMessage>( new PluginMessage( plugin, PluginAction.Enabled ) );
+				messenger.Send<PluginMessage>( new PluginMessage( plugin, PluginAction.Enabled ) );
 				Assert.IsNotNull( vm.PluginPages.FirstOrDefault( x => x.Plugin == plugin ) );
 
-				Messenger.Default.Send<PluginMessage>( new PluginMessage( plugin, PluginAction.Disabled ) );
+				messenger.Send<PluginMessage>( new PluginMessage( plugin, PluginAction.Disabled ) );
 				Assert.IsNull( vm.PluginPages.FirstOrDefault( x => x.Plugin == plugin ) );
 			}
 		}
@@ -303,12 +308,7 @@ namespace Blitzy.Tests.ViewModel
 					CollectionAssert.DoesNotContain( vm.Settings.Folders, folder );
 
 					vm.Reset();
-					using( ShimsContext.Create() )
-					{
-						//GalaSoft.MvvmLight.Messaging.Fakes.
-
-						vm.SaveCommand.Execute( null );
-					}
+					vm.SaveCommand.Execute( null );
 				}
 
 				using( SettingsViewModel vm = new SettingsViewModel() )
@@ -413,9 +413,9 @@ namespace Blitzy.Tests.ViewModel
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Reliability", "CA2000:Dispose objects before losing scope" )]
-		private SettingsViewModel GenerateViewModel( ViewServiceManager serviceManager = null )
+		private SettingsViewModel GenerateViewModel( ViewServiceManager serviceManager = null, IMessenger messenger = null )
 		{
-			SettingsViewModel vm = new SettingsViewModel( serviceManager );
+			SettingsViewModel vm = new SettingsViewModel( serviceManager, messenger );
 
 			vm.Settings = new Blitzy.Model.Settings( Connection );
 			MockPluginHost host = new MockPluginHost( vm.Settings );

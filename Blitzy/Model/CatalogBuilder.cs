@@ -26,8 +26,9 @@ namespace Blitzy.Model
 
 	internal class CatalogBuilder : BaseObject
 	{
-		public CatalogBuilder( Settings settings )
+		public CatalogBuilder( Settings settings, IMessenger messenger = null )
 		{
+			MessengerInstance = messenger ?? Messenger.Default;
 			CanProcess = ToDispose( new AutoResetEvent( false ) );
 			Settings = settings;
 			_ItemsToProcess = int.MaxValue;
@@ -63,7 +64,7 @@ namespace Blitzy.Model
 		internal void ProcessFiles()
 		{
 			IsBuilding = true;
-			DispatcherHelper.CheckBeginInvokeOnUI( () => Messenger.Default.Send( new CatalogStatusMessage( CatalogStatus.BuildStarted ) ) );
+			DispatcherHelper.CheckBeginInvokeOnUI( () => MessengerInstance.Send( new CatalogStatusMessage( CatalogStatus.BuildStarted ) ) );
 
 			ItemsScanned = 0;
 			ProgressStep = CatalogProgressStep.Scanning;
@@ -74,7 +75,7 @@ namespace Blitzy.Model
 				FilesToProcess.AddRange( folder.GetFiles() );
 
 				++ItemsScanned;
-				DispatcherHelper.CheckBeginInvokeOnUI( () => Messenger.Default.Send( new CatalogStatusMessage( CatalogStatus.ProgressUpdated ) ) );
+				DispatcherHelper.CheckBeginInvokeOnUI( () => MessengerInstance.Send( new CatalogStatusMessage( CatalogStatus.ProgressUpdated ) ) );
 			}
 
 			ShouldStop = false;
@@ -177,7 +178,7 @@ namespace Blitzy.Model
 					entries.Add( new FileEntry( filePath, fileName, icon, ext, arguments ) );
 
 					ItemsProcessed++;
-					DispatcherHelper.CheckBeginInvokeOnUI( () => Messenger.Default.Send( new CatalogStatusMessage( CatalogStatus.ProgressUpdated ) ) );
+					DispatcherHelper.CheckBeginInvokeOnUI( () => MessengerInstance.Send( new CatalogStatusMessage( CatalogStatus.ProgressUpdated ) ) );
 				}
 
 				ProgressStep = CatalogProgressStep.Saving;
@@ -187,7 +188,7 @@ namespace Blitzy.Model
 			}
 
 			IsBuilding = false;
-			DispatcherHelper.CheckBeginInvokeOnUI( () => Messenger.Default.Send( new CatalogStatusMessage( CatalogStatus.BuildFinished ) ) );
+			DispatcherHelper.CheckBeginInvokeOnUI( () => MessengerInstance.Send( new CatalogStatusMessage( CatalogStatus.BuildFinished ) ) );
 		}
 
 		protected override void Dispose( bool managed )
@@ -267,7 +268,7 @@ namespace Blitzy.Model
 					list = list.Skip( batchSize );
 					++count;
 					ItemsSaved += batchSize;
-					DispatcherHelper.CheckBeginInvokeOnUI( () => Messenger.Default.Send( new CatalogStatusMessage( CatalogStatus.ProgressUpdated ) ) );
+					DispatcherHelper.CheckBeginInvokeOnUI( () => MessengerInstance.Send( new CatalogStatusMessage( CatalogStatus.ProgressUpdated ) ) );
 				}
 
 				if( !ShouldStop )
@@ -413,6 +414,7 @@ namespace Blitzy.Model
 		private int _ItemsToProcess;
 		private CatalogProgressStep _ProgressStep;
 		private bool IsRunning;
+		private IMessenger MessengerInstance;
 		private volatile bool ShouldStop;
 		private StackTrace Trace;
 	}

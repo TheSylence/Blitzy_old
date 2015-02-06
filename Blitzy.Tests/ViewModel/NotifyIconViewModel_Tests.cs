@@ -16,19 +16,21 @@ namespace Blitzy.Tests.ViewModel
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void IconTest()
 		{
-			using( NotifyIconViewModel vm = new NotifyIconViewModel() )
+			Messenger messenger = new Messenger();
+
+			using( NotifyIconViewModel vm = new NotifyIconViewModel( messenger ) )
 			{
 				using( vm.MainVm = new MainViewModel() )
 				{
 					vm.Reset();
 
-					Messenger.Default.Send<CommandMessage>( new CommandMessage( CommandStatus.Finished, null, null ) );
+					messenger.Send<CommandMessage>( new CommandMessage( CommandStatus.Finished, null, null ) );
 					Assert.IsTrue( vm.IconSource.Contains( "TrayIcon.ico" ) );
 
-					Messenger.Default.Send<CommandMessage>( new CommandMessage( CommandStatus.Error, null, null ) );
+					messenger.Send<CommandMessage>( new CommandMessage( CommandStatus.Error, null, null ) );
 					Assert.IsTrue( vm.IconSource.Contains( "TrayIconFailure.ico" ) );
 
-					Messenger.Default.Send<CommandMessage>( new CommandMessage( CommandStatus.Executing, null, null ) );
+					messenger.Send<CommandMessage>( new CommandMessage( CommandStatus.Executing, null, null ) );
 					Assert.IsTrue( vm.IconSource.Contains( "CommandExecuting.ico" ) );
 				}
 			}
@@ -48,12 +50,14 @@ namespace Blitzy.Tests.ViewModel
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void QuitTest()
 		{
-			using( NotifyIconViewModel vm = new NotifyIconViewModel() )
+			Messenger messenger = new Messenger();
+
+			using( NotifyIconViewModel vm = new NotifyIconViewModel( messenger ) )
 			{
 				using( vm.MainVm = new MainViewModel() )
 				{
 					bool quit = false;
-					Messenger.Default.Register<InternalCommandMessage>( this, msg => quit = msg.Command.Equals( "quit" ) );
+					messenger.Register<InternalCommandMessage>( this, msg => quit = msg.Command.Equals( "quit" ) );
 
 					Assert.IsTrue( vm.QuitCommand.CanExecute( null ) );
 					vm.QuitCommand.Execute( null );
@@ -71,7 +75,7 @@ namespace Blitzy.Tests.ViewModel
 
 			using( NotifyIconViewModel vm = new NotifyIconViewModel() )
 			{
-				using( vm.MainVm = new MainViewModel( serviceManager ) )
+				using( vm.MainVm = new MainViewModel( Connection, serviceManager ) )
 				{
 					Assert.IsTrue( vm.SettingsCommand.CanExecute( null ) );
 					vm.SettingsCommand.Execute( null );
@@ -102,7 +106,9 @@ namespace Blitzy.Tests.ViewModel
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void VersionCheckTest()
 		{
-			using( NotifyIconViewModel vm = new NotifyIconViewModel() )
+			Messenger messenger = new Messenger();
+
+			using( NotifyIconViewModel vm = new NotifyIconViewModel( messenger ) )
 			{
 				vm.Reset();
 
@@ -113,21 +119,21 @@ namespace Blitzy.Tests.ViewModel
 				VersionCheckMessage msg = new VersionCheckMessage( currentVersion, versionInfo, false );
 
 				BalloonTipMessage msgReceived = null;
-				Messenger.Default.Register<BalloonTipMessage>( this, m => msgReceived = m );
+				messenger.Register<BalloonTipMessage>( this, m => msgReceived = m );
 
-				Messenger.Default.Send( msg );
+				messenger.Send( msg );
 				Assert.IsNull( msgReceived );
 
 				currentVersion = new Version( 0, 9 );
 				msg = new VersionCheckMessage( currentVersion, versionInfo, false );
-				Messenger.Default.Send( msg );
+				messenger.Send( msg );
 				Assert.IsNotNull( msgReceived );
 				Assert.AreSame( msg, msgReceived.Token );
 
 				msgReceived = null;
 				currentVersion = new Version( 1, 0 );
 				msg = new VersionCheckMessage( currentVersion, versionInfo, true );
-				Messenger.Default.Send( msg );
+				messenger.Send( msg );
 				Assert.IsNotNull( msgReceived );
 				Assert.IsNull( msgReceived.Token );
 			}
@@ -138,7 +144,7 @@ namespace Blitzy.Tests.ViewModel
 		{
 			using( NotifyIconViewModel vm = new NotifyIconViewModel() )
 			{
-				using( vm.MainVm = new MainViewModel() )
+				using( vm.MainVm = new MainViewModel( Connection ) )
 				{
 					vm.MainVm.Settings.SetDefaults();
 

@@ -1,6 +1,4 @@
-﻿
-
-using System.IO;
+﻿using System.IO;
 using Blitzy.Messages;
 using Blitzy.Model;
 using GalaSoft.MvvmLight.Messaging;
@@ -30,12 +28,14 @@ namespace Blitzy.Tests.Model
 
 				settings.Folders.Add( folder );
 			}
-			using( CatalogBuilder builder = new CatalogBuilder( settings ) )
+
+			Messenger messenger = new Messenger();
+			using( CatalogBuilder builder = new CatalogBuilder( settings, messenger ) )
 			{
 				bool started = false;
 				bool done = false;
 
-				Messenger.Default.Register<CatalogStatusMessage>( this, msg =>
+				messenger.Register<CatalogStatusMessage>( this, msg =>
 					{
 						switch( msg.Status )
 						{

@@ -109,7 +109,8 @@ namespace Blitzy.Tests.ViewModel
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void DownloadFailedTest()
 		{
-			using( DownloadDialogViewModel vm = new DownloadDialogViewModel() )
+			Messenger messenger = new Messenger();
+			using( DownloadDialogViewModel vm = new DownloadDialogViewModel( null, messenger ) )
 			{
 				vm.DownloadSize = 123;
 				vm.DownloadLink = "file:///" + Directory.GetCurrentDirectory().Replace( '\\', '/' ) + '/' + "test.txt";
@@ -125,7 +126,7 @@ namespace Blitzy.Tests.ViewModel
 					};
 
 					bool received = false;
-					Messenger.Default.Register<DownloadStatusMessage>( this, MessageTokens.DownloadFailed, msg =>
+					messenger.Register<DownloadStatusMessage>( this, MessageTokens.DownloadFailed, msg =>
 					{
 						received = true;
 					} );
@@ -196,7 +197,8 @@ namespace Blitzy.Tests.ViewModel
 			serviceManager.RegisterService( typeof( MessageBoxService ), msgMock );
 			serviceManager.RegisterService( typeof( DownloadService ), callMock );
 
-			using( DownloadDialogViewModel vm = new DownloadDialogViewModel( serviceManager ) )
+			Messenger messenger = new Messenger();
+			using( DownloadDialogViewModel vm = new DownloadDialogViewModel( serviceManager, messenger ) )
 			{
 				vm.Reset();
 
@@ -204,14 +206,14 @@ namespace Blitzy.Tests.ViewModel
 				vm.RequestClose += ( s, e ) => closed = true;
 				DownloadStatusMessage msg = new DownloadStatusMessage( "path", "http://localhost/link", 123, "md5" );
 
-				Messenger.Default.Send<DownloadStatusMessage>( msg, MessageTokens.DownloadCorrupted );
+				messenger.Send<DownloadStatusMessage>( msg, MessageTokens.DownloadCorrupted );
 				Assert.IsTrue( closed );
 				Assert.IsFalse( callMock.WasCalled );
 
 				closed = false;
 				msgMock.Result = System.Windows.MessageBoxResult.Yes;
 
-				Messenger.Default.Send<DownloadStatusMessage>( msg, MessageTokens.DownloadCorrupted );
+				messenger.Send<DownloadStatusMessage>( msg, MessageTokens.DownloadCorrupted );
 				Assert.IsTrue( closed );
 				Assert.IsTrue( callMock.WasCalled );
 				Assert.IsInstanceOfType( callMock.Parameter, typeof( DownloadServiceParameters ) );
@@ -234,7 +236,8 @@ namespace Blitzy.Tests.ViewModel
 			serviceManager.RegisterService( typeof( MessageBoxService ), msgMock );
 			serviceManager.RegisterService( typeof( DownloadService ), callMock );
 
-			using( DownloadDialogViewModel vm = new DownloadDialogViewModel( serviceManager ) )
+			Messenger messenger = new Messenger();
+			using( DownloadDialogViewModel vm = new DownloadDialogViewModel( serviceManager, messenger ) )
 			{
 				vm.Reset();
 
@@ -242,14 +245,14 @@ namespace Blitzy.Tests.ViewModel
 				vm.RequestClose += ( s, e ) => closed = true;
 				DownloadStatusMessage msg = new DownloadStatusMessage( "path", "http://localhost/link", 123, "md5" );
 
-				Messenger.Default.Send<DownloadStatusMessage>( msg, MessageTokens.DownloadFailed );
+				messenger.Send<DownloadStatusMessage>( msg, MessageTokens.DownloadFailed );
 				Assert.IsTrue( closed );
 				Assert.IsFalse( callMock.WasCalled );
 
 				closed = false;
 				msgMock.Result = System.Windows.MessageBoxResult.Yes;
 
-				Messenger.Default.Send<DownloadStatusMessage>( msg, MessageTokens.DownloadFailed );
+				messenger.Send<DownloadStatusMessage>( msg, MessageTokens.DownloadFailed );
 				Assert.IsTrue( closed );
 				Assert.IsTrue( callMock.WasCalled );
 				Assert.IsInstanceOfType( callMock.Parameter, typeof( DownloadServiceParameters ) );

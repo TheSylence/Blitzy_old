@@ -29,6 +29,7 @@ namespace Blitzy.Tests
 		[AssemblyInitialize()]
 		public static void AssemblyInit( TestContext context )
 		{
+			RuntimeConfig.Tests = true;
 			TestFolders = new Stack<string>();
 
 			DispatcherHelper.Initialize();

@@ -1,22 +1,20 @@
-﻿
-
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows;
 using Blitzy.Messages;
 using Blitzy.Model;
 using Blitzy.Utility;
 using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Messaging;
 using Hardcodet.Wpf.TaskbarNotification;
 
 namespace Blitzy.ViewModel
 {
 	internal class NotifyIconViewModel : ViewModelBaseEx
 	{
-		#region Constructor
-
 		[SuppressMessage( "Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors" )]
-		public NotifyIconViewModel()
+		public NotifyIconViewModel( IMessenger messenger = null )
+			: base( null, messenger )
 		{
 			if( !RuntimeConfig.Tests && !IsInDesignMode )
 			{
@@ -36,10 +34,6 @@ namespace Blitzy.ViewModel
 			MessengerInstance.Register<CommandMessage>( this, OnCommand );
 			MessengerInstance.Register<VersionCheckMessage>( this, OnVersionCheck );
 		}
-
-		#endregion Constructor
-
-		#region Methods
 
 		private void OnCommand( CommandMessage msg )
 		{
@@ -72,10 +66,6 @@ namespace Blitzy.ViewModel
 				MessengerInstance.Send( new BalloonTipMessage( "VersionUpToDate".Localize(), "VersionUpToDateMessage".Localize(), BalloonIcon.Info ) );
 			}
 		}
-
-		#endregion Methods
-
-		#region Commands
 
 		private RelayCommand _QuitCommand;
 		private RelayCommand _SettingsCommand;
@@ -138,10 +128,6 @@ namespace Blitzy.ViewModel
 			MainVm.RaiseShow();
 		}
 
-		#endregion Commands
-
-		#region Properties
-
 		private string _IconSource;
 
 		public string IconSource
@@ -185,12 +171,6 @@ namespace Blitzy.ViewModel
 			}
 		}
 
-		#endregion Properties
-
-		#region Attributes
-
 		internal MainViewModel MainVm;
-
-		#endregion Attributes
 	}
 }

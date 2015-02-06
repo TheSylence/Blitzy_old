@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Data.Common;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
@@ -15,6 +16,7 @@ using Blitzy.Plugin;
 using Blitzy.Utility;
 using Blitzy.ViewServices;
 using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Threading;
 using CommandManager = Blitzy.Model.CommandManager;
 
@@ -25,10 +27,10 @@ namespace Blitzy.ViewModel
 		/// <summary>
 		/// Initializes a new instance of the MainViewModel class.
 		/// </summary>
-		public MainViewModel( ViewServiceManager serviceManager = null )
-			: base( serviceManager )
+		public MainViewModel( DbConnection connection = null, ViewServiceManager serviceManager = null, IMessenger messenger = null )
+			: base( serviceManager, messenger )
 		{
-			Database = ToDispose( new Database() );
+			Database = ToDispose( new Database( connection ) );
 			Settings = new Settings( Database.Connection );
 
 			if( !Database.CheckExistance() )

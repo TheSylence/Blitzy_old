@@ -96,15 +96,16 @@ namespace Blitzy.Tests.ViewModel
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void DownTestHistory()
 		{
-			using( MainViewModel vm = new MainViewModel() )
+			Messenger messenger = new Messenger();
+			using( MainViewModel vm = new MainViewModel( null, null, messenger ) )
 			{
 				vm.History.Commands = new ObservableCollection<string>( new[] { "test", "test2" } );
 				vm.History.SelectedItem = "historytest";
-				Messenger.Default.Unregister( vm.History );
+				messenger.Unregister( vm.History );
 				bool receivedHistoryShow = false;
 				bool receivedHistoryDown = false;
 
-				Messenger.Default.Register<HistoryMessage>( this, ( msg ) =>
+				messenger.Register<HistoryMessage>( this, ( msg ) =>
 				{
 					if( msg.Type == HistoryMessageType.Show )
 					{
@@ -147,7 +148,7 @@ namespace Blitzy.Tests.ViewModel
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void EscapeTest()
 		{
-			using( MainViewModel vm = new MainViewModel() )
+			using( MainViewModel vm = new MainViewModel( Connection ) )
 			{
 				bool hidden = false;
 				vm.RequestHide += ( s, e ) => hidden = true;
@@ -165,14 +166,17 @@ namespace Blitzy.Tests.ViewModel
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void InternalCommandHistoryTest()
 		{
-			using( MainViewModel vm = new MainViewModel() )
+			Messenger messenger = new Messenger();
+			using( MainViewModel vm = new MainViewModel( Connection, null, messenger ) )
 			{
+				int oldCount = vm.History.Commands.Count;
+
 				vm.History.AddItem( "item1" );
 				vm.History.AddItem( "item2" );
 				vm.History.AddItem( "item3" );
-				Assert.AreEqual( 3, vm.History.Commands.Count );
+				Assert.AreEqual( oldCount + 3, vm.History.Commands.Count );
 
-				Messenger.Default.Send( new InternalCommandMessage( "history" ) );
+				messenger.Send( new InternalCommandMessage( "history" ) );
 
 				Assert.AreEqual( 0, vm.History.Commands.Count );
 			}
@@ -181,7 +185,7 @@ namespace Blitzy.Tests.ViewModel
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void MouseCommandTest()
 		{
-			using( MainViewModel vm = new MainViewModel() )
+			using( MainViewModel vm = new MainViewModel( Connection ) )
 			{
 				vm.Reset();
 				Assert.IsFalse( vm.ExecuteCommand.CanExecute( null ) );
@@ -197,7 +201,7 @@ namespace Blitzy.Tests.ViewModel
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void MultipleTabTest()
 		{
-			using( MainViewModel vm = new MainViewModel() )
+			using( MainViewModel vm = new MainViewModel( Connection ) )
 			{
 				vm.CommandInput = "google";
 				Assert.IsTrue( vm.OnKeyTab() );
@@ -222,7 +226,9 @@ namespace Blitzy.Tests.ViewModel
 		public void QuitCommandTest()
 		{
 			bool? closed = null;
-			using( MainViewModel vm = new MainViewModel() )
+			Messenger messenger = new Messenger();
+
+			using( MainViewModel vm = new MainViewModel( Connection, null, messenger ) )
 			{
 				vm.Reset();
 				Assert.IsFalse( vm.ExecuteCommand.CanExecute( null ) );
@@ -239,7 +245,7 @@ namespace Blitzy.Tests.ViewModel
 				bool started = false;
 				bool completed = false;
 
-				Messenger.Default.Register<CommandMessage>( this, msg =>
+				messenger.Register<CommandMessage>( this, msg =>
 				{
 					if( msg.Status == CommandStatus.Executing )
 					{
@@ -264,14 +270,16 @@ namespace Blitzy.Tests.ViewModel
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void ReturnHistoryTest()
 		{
-			using( MainViewModel vm = new MainViewModel() )
+			Messenger messenger = new Messenger();
+
+			using( MainViewModel vm = new MainViewModel( Connection, null, messenger ) )
 			{
 				vm.History.SelectedItem = "historytest";
 				bool receivedHistoryClose = false;
 				bool receivedNewCaret = false;
 
-				Messenger.Default.Register<HistoryMessage>( this, ( msg ) => receivedHistoryClose = msg.Type == HistoryMessageType.Hide );
-				Messenger.Default.Register<InputCaretPositionMessage>( this, ( msg ) => receivedNewCaret = true );
+				messenger.Register<HistoryMessage>( this, ( msg ) => receivedHistoryClose = msg.Type == HistoryMessageType.Hide );
+				messenger.Register<InputCaretPositionMessage>( this, ( msg ) => receivedNewCaret = true );
 
 				using( ShimsContext.Create() )
 				{
@@ -302,7 +310,7 @@ namespace Blitzy.Tests.ViewModel
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void ReturnSecondaryTest()
 		{
-			using( MainViewModel vm = new MainViewModel() )
+			using( MainViewModel vm = new MainViewModel( Connection ) )
 			{
 				MockPlugin plug = new MockPlugin();
 				CommandItem item = CommandItem.Create( "test", "test", plug );
@@ -333,14 +341,16 @@ namespace Blitzy.Tests.ViewModel
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void ReturnTest()
 		{
-			using( MainViewModel vm = new MainViewModel() )
+			Messenger messenger = new Messenger();
+
+			using( MainViewModel vm = new MainViewModel( Connection, null, messenger ) )
 			{
 				Assert.IsFalse( vm.OnKeyReturn() );
 
 				vm.CommandInput = "quit";
 
 				bool started = false;
-				Messenger.Default.Register<CommandMessage>( this, msg =>
+				messenger.Register<CommandMessage>( this, msg =>
 				{
 					if( msg.Status == CommandStatus.Executing )
 					{
@@ -360,7 +370,7 @@ namespace Blitzy.Tests.ViewModel
 			ViewServiceManager serviceManager = new ViewServiceManager();
 			serviceManager.RegisterService( typeof( SettingsService ), mock );
 
-			using( MainViewModel vm = new MainViewModel( serviceManager ) )
+			using( MainViewModel vm = new MainViewModel( Connection, serviceManager ) )
 			{
 				Assert.IsTrue( vm.SettingsCommand.CanExecute( null ) );
 
@@ -420,16 +430,18 @@ namespace Blitzy.Tests.ViewModel
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void UpTestHistory()
 		{
-			using( MainViewModel vm = new MainViewModel() )
+			Messenger messenger = new Messenger();
+
+			using( MainViewModel vm = new MainViewModel( null, null, messenger ) )
 			{
 				vm.History.Commands = new ObservableCollection<string>( new[] { "test", "test2" } );
 				vm.History.SelectedItem = "historytest";
 
-				Messenger.Default.Unregister( vm.History );
+				messenger.Unregister( vm.History );
 				bool receivedHistoryShow = false;
 				bool receivedHistoryUp = false;
 
-				Messenger.Default.Register<HistoryMessage>( this, ( msg ) =>
+				messenger.Register<HistoryMessage>( this, ( msg ) =>
 					{
 						if( msg.Type == HistoryMessageType.Show )
 						{

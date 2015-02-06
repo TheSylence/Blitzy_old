@@ -8,26 +8,27 @@ namespace Blitzy.Model
 {
 	internal class Database : BaseObject
 	{
-		public Database()
+		public Database( DbConnection connection = null )
 		{
-			SQLiteConnectionStringBuilder connectionStringBuilder = new SQLiteConnectionStringBuilder
+			if( connection != null )
 			{
-				JournalMode = SQLiteJournalModeEnum.Wal
-			};
-
-			if( RuntimeConfig.Tests )
-			{
-				connectionStringBuilder.FullUri = ":memory:";
-				Existed = false;
+				Connection = connection;
+				Existed = true;
 			}
 			else
 			{
+				SQLiteConnectionStringBuilder connectionStringBuilder = new SQLiteConnectionStringBuilder
+				{
+					JournalMode = SQLiteJournalModeEnum.Wal,
+					Pooling = true
+				};
+
 				connectionStringBuilder.DataSource = Path.Combine( Constants.DataPath, Constants.DataFileName );
 				Existed = File.Exists( connectionStringBuilder.DataSource );
-			}
 
-			Connection = ToDispose( new SQLiteConnection( connectionStringBuilder.ToString() ) );
-			Connection.Open();
+				Connection = ToDispose( new SQLiteConnection( connectionStringBuilder.ToString() ) );
+				Connection.Open();
+			}
 		}
 
 		[SuppressMessage( "Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities" )]
@@ -58,7 +59,7 @@ namespace Blitzy.Model
 			return Existed;
 		}
 
-		internal SQLiteConnection Connection { get; private set; }
+		internal DbConnection Connection { get; private set; }
 
 		private readonly bool Existed;
 	}

@@ -28,7 +28,7 @@ namespace Blitzy.Model
 
 		[SuppressMessage( "Microsoft.Security", "CA2100" )]
 		[SuppressMessage( "Microsoft.Performance", "CA1811", Justification = "This is just plain bullshit" )]
-		internal void UpgradeDatabase( int oldVersion, SQLiteConnection db )
+		internal void UpgradeDatabase( int oldVersion, DbConnection db )
 		{
 			if( oldVersion > DatabaseVersion )
 			{

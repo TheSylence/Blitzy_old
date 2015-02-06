@@ -1,22 +1,16 @@
-﻿
-
-using Blitzy.Messages;
+﻿using Blitzy.Messages;
 using Blitzy.Model;
+using GalaSoft.MvvmLight.Messaging;
 
 namespace Blitzy.ViewModel
 {
 	internal class HistoryViewModel : ViewModelBaseEx
 	{
-		#region Constructor
-
-		public HistoryViewModel()
+		public HistoryViewModel( IMessenger messenger = null )
+			: base( null, messenger )
 		{
 			MessengerInstance.Register<HistoryMessage>( this, OnMessage );
 		}
-
-		#endregion Constructor
-
-		#region Methods
 
 		private void OnMessage( HistoryMessage msg )
 		{
@@ -49,12 +43,6 @@ namespace Blitzy.ViewModel
 			Manager.SelectedItem = Manager.Commands[SelectedIndex];
 		}
 
-		#endregion Methods
-
-		#region Properties
-
-		private HistoryManager _Manager;
-
 		public HistoryManager Manager
 		{
 			get
@@ -75,12 +63,7 @@ namespace Blitzy.ViewModel
 			}
 		}
 
-		#endregion Properties
-
-		#region Attributes
-
+		private HistoryManager _Manager;
 		private int SelectedIndex;
-
-		#endregion Attributes
 	}
 }

@@ -31,7 +31,6 @@ namespace Blitzy.Tests
 		{
 			NativeMethods = new NativeMethodsMock();
 			SetNativeMethods( NativeMethodsType.Real );
-			RuntimeConfig.Tests = true;
 
 			//CreatePluginTables();
 		}

@@ -10,14 +10,15 @@ using Blitzy.Messages;
 using Blitzy.Utility;
 using Blitzy.ViewServices;
 using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Threading;
 
 namespace Blitzy.ViewModel.Dialogs
 {
 	internal class DownloadDialogViewModel : ViewModelBaseEx
 	{
-		public DownloadDialogViewModel( ViewServiceManager serivceManager = null )
-			: base( serivceManager )
+		public DownloadDialogViewModel( ViewServiceManager serivceManager = null, IMessenger messenger = null )
+			: base( serivceManager, messenger )
 		{
 		}
 

@@ -86,7 +86,7 @@ namespace Blitzy.Plugin.SystemPlugins
 		public bool Load( IPluginHost host, string oldVersion = null )
 		{
 			Host = host;
-			if( oldVersion == null && !RuntimeConfig.Tests )
+			if( oldVersion == null )
 			{
 				SetDefaultValues( host.Settings );
 			}
