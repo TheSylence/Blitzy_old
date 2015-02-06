@@ -6,7 +6,7 @@
     <ProjectGuid>{CD0469A9-A35A-4DDD-BB67-9A3B58D8DCB3}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Blitzy.Tests</RootNamespace>
+    <RootNamespace>Blitzy</RootNamespace>
     <AssemblyName>Blitzy.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -122,29 +122,23 @@
     <Compile Include="ConnectionWrapper.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Converter\CultureAwareConverter_Tests.cs" />
-    <Compile Include="Converter\ElementNotNullConverter_Tests.cs" />
-    <Compile Include="Converter\FileSizeConverter_Tests.cs" />
-    <Compile Include="Converter\LocalizeFormatterConverter_Tests.cs" />
-    <Compile Include="Converter\StringToImageConverter_Tests.cs" />
-    <Compile Include="Converter\StringToVisibilityConverter_Tests.cs" />
-    <Compile Include="Converter\TimeSpanConverter_Tests.cs" />
+    <Compile Include="Tests\ConverterTests.cs" />
     <Compile Include="ExceptionAssert.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="GlobalSuppressions.cs" />
-    <Compile Include="Global\BaseObject_Tests.cs" />
+    <Compile Include="Tests\BaseObjectTests.cs" />
     <Compile Include="Mocks\Services\DelegateServiceMock.cs" />
-    <Compile Include="Model\UpdateChecker_Tests.cs" />
-    <Compile Include="Plugins\Runny_Tests.cs" />
-    <Compile Include="Global\Constants_Tests.cs" />
+    <Compile Include="Tests\Model\UpdateChecker_Tests.cs" />
+    <Compile Include="Tests\Plugins\Runny_Tests.cs" />
+    <Compile Include="Tests\ConstantsTests.cs" />
     <Compile Include="TestConnectionFactory.cs" />
-    <Compile Include="Utility\CopyFromArguments_Tests.cs" />
-    <Compile Include="Utility\Extensions_Tests.cs" />
-    <Compile Include="Utility\HotKeyHost_Tests.cs" />
-    <Compile Include="Utility\HotKey_Tests.cs" />
-    <Compile Include="Global\Log_Tests.cs" />
-    <Compile Include="Utility\ProgressStatistic_Tests.cs" />
-    <Compile Include="Utility\SingleInstance_Tests.cs" />
+    <Compile Include="Tests\Utility\CopyFromArguments_Tests.cs" />
+    <Compile Include="Tests\Utility\Extensions_Tests.cs" />
+    <Compile Include="Tests\Utility\HotKeyHost_Tests.cs" />
+    <Compile Include="Tests\Utility\HotKey_Tests.cs" />
+    <Compile Include="Tests\LogTests.cs" />
+    <Compile Include="Tests\Utility\ProgressStatistic_Tests.cs" />
+    <Compile Include="Tests\Utility\SingleInstance_Tests.cs" />
     <Compile Include="LogChecker.cs" />
     <Compile Include="Mocks\MockLogObject.cs" />
     <Compile Include="Mocks\MockModel.cs" />
@@ -157,52 +151,51 @@
     <Compile Include="Mocks\Services\MessageBoxServiceMock.cs" />
     <Compile Include="Mocks\Services\TextInputServiceMock.cs" />
     <Compile Include="Mocks\SlowStream.cs" />
-    <Compile Include="Model\CatalogBuilder_Tests.cs" />
-    <Compile Include="Model\CommandItem_Tests.cs" />
-    <Compile Include="Model\CommandManager_Tests.cs" />
-    <Compile Include="Model\CommandName_Tests.cs" />
-    <Compile Include="Model\FileEntry_Tests.cs" />
-    <Compile Include="Model\Folder_Tests.cs" />
-    <Compile Include="Model\HistoryManager_Tests.cs" />
-    <Compile Include="Model\Settings_Tests.cs" />
-    <Compile Include="Model\ShellShortcut_Tests.cs" />
-    <Compile Include="Model\ShuntingYard_Tests.cs" />
-    <Compile Include="Model\WebyWebsite_Tests.cs" />
-    <Compile Include="Model\WorkspaceItem_Tests.cs" />
-    <Compile Include="Model\Workspace_Tests.cs" />
-    <Compile Include="Plugins\Blitzy_Tests.cs" />
-    <Compile Include="Plugins\Calcy_Tests.cs" />
-    <Compile Include="Plugins\Medy_Tests.cs" />
-    <Compile Include="Plugins\PluginManager_Tests.cs" />
-    <Compile Include="Plugins\PluginTestBase.cs" />
-    <Compile Include="Plugins\PluginTester.cs" />
-    <Compile Include="Plugins\Putty_Tests.cs" />
-    <Compile Include="Plugins\Weby_Tests.cs" />
-    <Compile Include="Plugins\Winy_Tests.cs" />
+    <Compile Include="Tests\Model\CatalogBuilder_Tests.cs" />
+    <Compile Include="Tests\Model\CommandItem_Tests.cs" />
+    <Compile Include="Tests\Model\CommandManager_Tests.cs" />
+    <Compile Include="Tests\Model\CommandName_Tests.cs" />
+    <Compile Include="Tests\Model\FileEntry_Tests.cs" />
+    <Compile Include="Tests\Model\Folder_Tests.cs" />
+    <Compile Include="Tests\Model\HistoryManager_Tests.cs" />
+    <Compile Include="Tests\Model\Settings_Tests.cs" />
+    <Compile Include="Tests\Model\ShellShortcut_Tests.cs" />
+    <Compile Include="Tests\Model\ShuntingYard_Tests.cs" />
+    <Compile Include="Tests\Model\WebyWebsite_Tests.cs" />
+    <Compile Include="Tests\Model\WorkspaceItem_Tests.cs" />
+    <Compile Include="Tests\Model\Workspace_Tests.cs" />
+    <Compile Include="Tests\Plugins\Blitzy_Tests.cs" />
+    <Compile Include="Tests\Plugins\Calcy_Tests.cs" />
+    <Compile Include="Tests\Plugins\Medy_Tests.cs" />
+    <Compile Include="Tests\Plugins\PluginManager_Tests.cs" />
+    <Compile Include="Tests\Plugins\PluginTestBase.cs" />
+    <Compile Include="Tests\Plugins\PluginTester.cs" />
+    <Compile Include="Tests\Plugins\Putty_Tests.cs" />
+    <Compile Include="Tests\Plugins\Weby_Tests.cs" />
+    <Compile Include="Tests\Plugins\Winy_Tests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PropertyChangedListener.cs" />
     <Compile Include="TestBase.cs" />
     <Compile Include="TestHelper.cs" />
-    <Compile Include="Utility\STAThread_Tests.cs" />
-    <Compile Include="Utility\StreamHelper_Tests.cs" />
-    <Compile Include="ViewModel\ChangelogDialogViewModel_Tests.cs" />
-    <Compile Include="ViewModel\CloseableView_Tests.cs" />
-    <Compile Include="ViewModel\CloseViewEventArgs_Tests.cs" />
-    <Compile Include="ViewModel\DownloadDialogViewModel_Tests.cs" />
-    <Compile Include="ViewModel\ExceptionDialogViewModel_Tests.cs" />
-    <Compile Include="ViewModel\HistoryViewModel_Tests.cs" />
-    <Compile Include="ViewModel\NotifyIconViewModel_Tests.cs" />
-    <Compile Include="ViewModel\PluginsDialogViewModel_Tests.cs" />
-    <Compile Include="ViewModel\PuttySettingsViewModel_Tests.cs" />
-    <Compile Include="ViewModel\WorkspaceSettingsViewModel_Tests.cs" />
-    <Compile Include="ViewServices\DialogServiceManager_Tests.cs" />
-    <Compile Include="ViewModel\DialogViewModelBase_Tests.cs" />
-    <Compile Include="ViewModel\MainViewModel_Tests.cs" />
-    <Compile Include="ViewModel\SettingsViewModel_Tests.cs" />
-    <Compile Include="ViewModel\TextInputDialogViewModel_Tests.cs" />
-    <Compile Include="ViewModel\ViewModelBaseEx_Tests.cs" />
-    <Compile Include="ViewModel\WebySettingsViewModel_Tests.cs" />
-    <Compile Include="ViewModel\WinySettingsViewModel_Tests.cs" />
+    <Compile Include="Tests\Utility\StreamHelper_Tests.cs" />
+    <Compile Include="Tests\ViewModel\ChangelogDialogViewModel_Tests.cs" />
+    <Compile Include="Tests\ViewModel\CloseableView_Tests.cs" />
+    <Compile Include="Tests\ViewModel\CloseViewEventArgs_Tests.cs" />
+    <Compile Include="Tests\ViewModel\DownloadDialogViewModel_Tests.cs" />
+    <Compile Include="Tests\ViewModel\ExceptionDialogViewModel_Tests.cs" />
+    <Compile Include="Tests\ViewModel\HistoryViewModel_Tests.cs" />
+    <Compile Include="Tests\ViewModel\NotifyIconViewModel_Tests.cs" />
+    <Compile Include="Tests\ViewModel\PluginsDialogViewModel_Tests.cs" />
+    <Compile Include="Tests\ViewModel\PuttySettingsViewModel_Tests.cs" />
+    <Compile Include="Tests\ViewModel\WorkspaceSettingsViewModel_Tests.cs" />
+    <Compile Include="Tests\ViewServices\DialogServiceManager_Tests.cs" />
+    <Compile Include="Tests\ViewModel\DialogViewModelBase_Tests.cs" />
+    <Compile Include="Tests\ViewModel\MainViewModel_Tests.cs" />
+    <Compile Include="Tests\ViewModel\SettingsViewModel_Tests.cs" />
+    <Compile Include="Tests\ViewModel\TextInputDialogViewModel_Tests.cs" />
+    <Compile Include="Tests\ViewModel\ViewModelBaseEx_Tests.cs" />
+    <Compile Include="Tests\ViewModel\WebySettingsViewModel_Tests.cs" />
+    <Compile Include="Tests\ViewModel\WinySettingsViewModel_Tests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
