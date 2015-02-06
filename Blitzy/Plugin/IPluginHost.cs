@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data.Common;
 
 namespace Blitzy.Plugin
 {
@@ -6,7 +7,7 @@ namespace Blitzy.Plugin
 	{
 		bool IsPluginLoaded( Guid id );
 
-		IDatabase Database { get; }
+		DbConnectionFactory ConnectionFactory { get; }
 
 		ISettings Settings { get; }
 	}

@@ -9,8 +9,8 @@ namespace Blitzy.ViewModel
 {
 	internal class PuttySettingsViewModel : SettingsViewModelBase, IPluginViewModel
 	{
-		public PuttySettingsViewModel( Settings settings, IViewServiceManager serviceManager = null )
-			: base( settings, serviceManager )
+		public PuttySettingsViewModel( DbConnectionFactory factory, Settings settings, IViewServiceManager serviceManager = null )
+			: base( settings, factory, serviceManager )
 		{
 			_PuttyPath = Settings.GetPluginSetting<string>( Putty.GuidString, Putty.PathKey );
 			_ImportSessions = Settings.GetPluginSetting<bool>( Putty.GuidString, Putty.ImportKey );

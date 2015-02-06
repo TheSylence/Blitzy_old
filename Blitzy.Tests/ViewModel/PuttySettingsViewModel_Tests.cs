@@ -18,11 +18,11 @@ namespace Blitzy.Tests.ViewModel
 			ViewServiceManager serviceManager = new ViewServiceManager();
 			serviceManager.RegisterService( typeof( OpenFileService ), mock );
 
-			using( SettingsViewModel baseVM = new SettingsViewModel( serviceManager ) )
+			using( SettingsViewModel baseVM = new SettingsViewModel( ConnectionFactory, serviceManager ) )
 			{
-				baseVM.Settings = new Blitzy.Model.Settings( Connection );
+				baseVM.Settings = new Blitzy.Model.Settings( ConnectionFactory );
 				MockPluginHost host = new MockPluginHost( baseVM.Settings );
-				baseVM.PluginManager = new Plugin.PluginManager( host, Connection );
+				baseVM.PluginManager = new Plugin.PluginManager( host, ConnectionFactory );
 				baseVM.PluginManager.LoadPlugins();
 				baseVM.Reset();
 
@@ -44,11 +44,11 @@ namespace Blitzy.Tests.ViewModel
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void PropertyChangedTest()
 		{
-			using( SettingsViewModel baseVM = new SettingsViewModel() )
+			using( SettingsViewModel baseVM = new SettingsViewModel( ConnectionFactory ) )
 			{
-				baseVM.Settings = new Blitzy.Model.Settings( Connection );
+				baseVM.Settings = new Blitzy.Model.Settings( ConnectionFactory );
 				MockPluginHost host = new MockPluginHost( baseVM.Settings );
-				baseVM.PluginManager = new Plugin.PluginManager( host, Connection );
+				baseVM.PluginManager = new Plugin.PluginManager( host, ConnectionFactory );
 				baseVM.PluginManager.LoadPlugins();
 				baseVM.Reset();
 
@@ -63,11 +63,11 @@ namespace Blitzy.Tests.ViewModel
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void SaveTest()
 		{
-			using( SettingsViewModel baseVM = new SettingsViewModel() )
+			using( SettingsViewModel baseVM = new SettingsViewModel( ConnectionFactory ) )
 			{
-				baseVM.Settings = new Blitzy.Model.Settings( Connection );
+				baseVM.Settings = new Blitzy.Model.Settings( ConnectionFactory );
 				MockPluginHost host = new MockPluginHost( baseVM.Settings );
-				baseVM.PluginManager = new Plugin.PluginManager( host, Connection );
+				baseVM.PluginManager = new Plugin.PluginManager( host, ConnectionFactory );
 				baseVM.PluginManager.LoadPlugins();
 				baseVM.Reset();
 

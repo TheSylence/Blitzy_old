@@ -11,7 +11,7 @@ namespace Blitzy.ViewModel
 {
 	public class ViewModelBaseEx : ViewModelBase, IRequestCloseViewModel, IDisposable
 	{
-		public ViewModelBaseEx( ViewServiceManager serviceManager = null, IMessenger messenger = null )
+		public ViewModelBaseEx( DbConnectionFactory connectionFactory, ViewServiceManager serviceManager = null, IMessenger messenger = null )
 		{
 			if( messenger != null )
 			{
@@ -19,11 +19,14 @@ namespace Blitzy.ViewModel
 			}
 
 			ServiceManagerInstance = serviceManager ?? ViewServiceManager.Default;
+			ConnectionFactory = connectionFactory;
 
 			Log = LogManager.GetLogger( GetType() );
 			IsDisposed = false;
 			ObjectsToDispose = new Stack<IDisposable>();
 		}
+
+		protected DbConnectionFactory ConnectionFactory { get; private set; }
 
 		protected ViewServiceManager ServiceManagerInstance { get; private set; }
 

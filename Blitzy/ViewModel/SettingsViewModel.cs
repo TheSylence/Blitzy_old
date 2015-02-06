@@ -37,8 +37,8 @@ namespace Blitzy.ViewModel
 
 	internal class SettingsViewModel : ViewModelBaseEx
 	{
-		public SettingsViewModel( ViewServiceManager serviceManager = null, IMessenger messenger = null )
-			: base( serviceManager, messenger )
+		public SettingsViewModel( DbConnectionFactory factory, ViewServiceManager serviceManager = null, IMessenger messenger = null )
+			: base( factory, serviceManager, messenger )
 		{
 			FoldersToRemove = new List<Folder>();
 			CurrentVersion = Assembly.GetExecutingAssembly().GetName().Version;
@@ -96,7 +96,7 @@ namespace Blitzy.ViewModel
 			}
 			RaisePropertyChanged( () => PluginPages );
 
-			WorkspaceSettings = new WorkspaceSettingsViewModel( Settings, ServiceManagerInstance );
+			WorkspaceSettings = new WorkspaceSettingsViewModel( ConnectionFactory, Settings, ServiceManagerInstance );
 			RaisePropertyChanged( () => WorkspaceSettings );
 
 			UpdateCheck = Settings.GetValue<bool>( SystemSetting.AutoUpdate );
@@ -368,9 +368,12 @@ namespace Blitzy.ViewModel
 
 		private void ExecuteSaveCommand()
 		{
-			foreach( Folder folder in FoldersToRemove )
+			using( DbConnection connection = ConnectionFactory.OpenConnection() )
 			{
-				folder.Delete( Settings.Connection );
+				foreach( Folder folder in FoldersToRemove )
+				{
+					folder.Delete( connection );
+				}
 			}
 
 			Settings.SetValue( SystemSetting.AutoUpdate, UpdateCheck );
@@ -427,11 +430,14 @@ namespace Blitzy.ViewModel
 
 		private int GetItemCount()
 		{
-			using( DbCommand cmd = Settings.Connection.CreateCommand() )
+			using( DbConnection conncetion = ConnectionFactory.OpenConnection() )
 			{
-				cmd.CommandText = "SELECT COUNT(*) FROM files";
+				using( DbCommand cmd = conncetion.CreateCommand() )
+				{
+					cmd.CommandText = "SELECT COUNT(*) FROM files";
 
-				return Convert.ToInt32( cmd.ExecuteScalar() );
+					return Convert.ToInt32( cmd.ExecuteScalar() );
+				}
 			}
 		}
 
@@ -547,8 +553,6 @@ namespace Blitzy.ViewModel
 		}
 
 		public API API { get; private set; }
-
-		public PluginDatabase ApiDatabase { get; set; }
 
 		public ObservableCollection<CultureInfo> AvailableLanguages { get; private set; }
 

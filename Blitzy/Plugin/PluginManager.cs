@@ -13,12 +13,13 @@ namespace Blitzy.Plugin
 {
 	internal class PluginManager : BaseObject
 	{
-		public PluginManager( IPluginHost host, DbConnection connection )
+		public PluginManager( IPluginHost host, DbConnectionFactory factory, IMessenger messenger = null )
 		{
-			Connection = connection;
+			MessengerInstance = messenger ?? Messenger.Default;
+			Factory = factory;
 			Host = host;
 
-			Messenger.Default.Register<PluginMessage>( this, HandlePluginAction );
+			MessengerInstance.Register<PluginMessage>( this, HandlePluginAction );
 		}
 
 		public bool IsLoaded( Guid id )
@@ -119,61 +120,64 @@ namespace Blitzy.Plugin
 			string version = null;
 			bool disabled = false;
 
-			using( DbCommand cmd = Connection.CreateCommand() )
+			using( DbConnection connection = Factory.OpenConnection() )
 			{
-				cmd.AddParameter( "pluginID", plugin.PluginID );
-
-				cmd.CommandText = "SELECT Version, Disabled FROM plugins WHERE PluginID = @pluginID;";
-				cmd.Prepare();
-
-				using( DbDataReader reader = cmd.ExecuteReader() )
+				using( DbCommand cmd = connection.CreateCommand() )
 				{
-					if( reader.Read() )
+					cmd.AddParameter( "pluginID", plugin.PluginID );
+
+					cmd.CommandText = "SELECT Version, Disabled FROM plugins WHERE PluginID = @pluginID;";
+					cmd.Prepare();
+
+					using( DbDataReader reader = cmd.ExecuteReader() )
 					{
-						version = reader.GetString( 0 );
-						disabled = reader.GetInt32( 1 ) == 1;
+						if( reader.Read() )
+						{
+							version = reader.GetString( 0 );
+							disabled = reader.GetInt32( 1 ) == 1;
+						}
 					}
 				}
-			}
 
-			if( disabled )
-			{
-				LogInfo( "Plugin {0} was disabled by the user", plugin.Name );
-				DisabledPlugins.Add( plugin );
-				return null;
-			}
-
-			if( version == null )
-			{
-				LogInfo( "Plugin {0} is started for the first time", plugin.Name );
-				using( DbCommand cmd = Connection.CreateCommand() )
+				if( disabled )
 				{
-					cmd.AddParameter( "pluginID", plugin.PluginID );
-					cmd.AddParameter( "version", plugin.Version );
-
-					cmd.CommandText = "INSERT INTO plugins (PluginID, Version) VALUES (@pluginID, @version);";
-					cmd.Prepare();
-
-					cmd.ExecuteNonQuery();
+					LogInfo( "Plugin {0} was disabled by the user", plugin.Name );
+					DisabledPlugins.Add( plugin );
+					return null;
 				}
-			}
-			else if( !version.Equals( plugin.Version ) )
-			{
-				LogInfo( "Plugin {0} is updated from version {1} to {2}", plugin.Name, version, plugin.Version );
 
-				using( DbCommand cmd = Connection.CreateCommand() )
+				if( version == null )
 				{
-					cmd.AddParameter( "pluginID", plugin.PluginID );
-					cmd.AddParameter( "version", plugin.Version );
+					LogInfo( "Plugin {0} is started for the first time", plugin.Name );
+					using( DbCommand cmd = connection.CreateCommand() )
+					{
+						cmd.AddParameter( "pluginID", plugin.PluginID );
+						cmd.AddParameter( "version", plugin.Version );
 
-					cmd.CommandText = "UPDATE plugins SET Version = @version WHERE PluginID = @pluginID;";
-					cmd.Prepare();
+						cmd.CommandText = "INSERT INTO plugins (PluginID, Version) VALUES (@pluginID, @version);";
+						cmd.Prepare();
 
-					cmd.ExecuteNonQuery();
+						cmd.ExecuteNonQuery();
+					}
 				}
-			}
+				else if( !version.Equals( plugin.Version ) )
+				{
+					LogInfo( "Plugin {0} is updated from version {1} to {2}", plugin.Name, version, plugin.Version );
 
-			return version;
+					using( DbCommand cmd = connection.CreateCommand() )
+					{
+						cmd.AddParameter( "pluginID", plugin.PluginID );
+						cmd.AddParameter( "version", plugin.Version );
+
+						cmd.CommandText = "UPDATE plugins SET Version = @version WHERE PluginID = @pluginID;";
+						cmd.Prepare();
+
+						cmd.ExecuteNonQuery();
+					}
+				}
+
+				return version;
+			}
 		}
 
 		private void HandlePluginAction( PluginMessage msg )
@@ -266,11 +270,10 @@ namespace Blitzy.Plugin
 			}
 		}
 
-		internal DbConnection Connection { get; private set; }
-
 		internal List<IPlugin> DisabledPlugins = new List<IPlugin>();
 		internal List<IPlugin> Plugins = new List<IPlugin>();
-
 		private readonly IPluginHost Host;
+		private DbConnectionFactory Factory;
+		private IMessenger MessengerInstance;
 	}
 }

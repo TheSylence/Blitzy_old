@@ -115,7 +115,7 @@ namespace Blitzy.Tests.ViewModel
 			using( SettingsViewModel vm = GenerateViewModel( null, messenger ) )
 			{
 				vm.Settings.Folders.Add( new Folder() );
-				using( vm.CatalogBuilder = new CatalogBuilder( new Settings( Connection ) ) )
+				using( vm.CatalogBuilder = new CatalogBuilder( ConnectionFactory, new Settings( ConnectionFactory ) ) )
 				{
 					bool received = false;
 					messenger.Register<InternalCommandMessage>( this, ( msg ) => received = true );
@@ -134,7 +134,7 @@ namespace Blitzy.Tests.ViewModel
 			using( SettingsViewModel vm = GenerateViewModel( null, messenger ) )
 			{
 				vm.Reset();
-				using( vm.CatalogBuilder = new CatalogBuilder( vm.Settings ) )
+				using( vm.CatalogBuilder = new CatalogBuilder( ConnectionFactory, vm.Settings ) )
 				{
 					vm.CatalogBuilder.ItemsProcessed = 123;
 					vm.CatalogBuilder.ItemsSaved = 456;
@@ -241,7 +241,6 @@ namespace Blitzy.Tests.ViewModel
 			using( SettingsViewModel vm = GenerateViewModel() )
 			{
 				PropertyChangedListener listener = new PropertyChangedListener( vm );
-				listener.Exclude<SettingsViewModel>( v => v.ApiDatabase );
 				listener.Exclude<SettingsViewModel>( v => v.BlitzyLicense );
 				listener.Exclude<SettingsViewModel>( v => v.Changelog );
 				listener.Exclude<SettingsViewModel>( v => v.CatalogBuilder );
@@ -311,9 +310,9 @@ namespace Blitzy.Tests.ViewModel
 					vm.SaveCommand.Execute( null );
 				}
 
-				using( SettingsViewModel vm = new SettingsViewModel() )
+				using( SettingsViewModel vm = new SettingsViewModel( ConnectionFactory ) )
 				{
-					vm.Settings = new Settings( Connection );
+					vm.Settings = new Settings( ConnectionFactory );
 
 					CollectionAssert.DoesNotContain( vm.Settings.Folders, folder );
 				}
@@ -358,7 +357,7 @@ namespace Blitzy.Tests.ViewModel
 
 				Assert.IsFalse( vm.UpdateCatalogCommand.CanExecute( null ) );
 				vm.Settings.Folders.Add( new Folder() );
-				using( vm.CatalogBuilder = new CatalogBuilder( new Settings( Connection ) ) )
+				using( vm.CatalogBuilder = new CatalogBuilder( ConnectionFactory, new Settings( ConnectionFactory ) ) )
 				{
 					Assert.IsTrue( vm.UpdateCatalogCommand.CanExecute( null ) );
 				}
@@ -415,11 +414,11 @@ namespace Blitzy.Tests.ViewModel
 		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Reliability", "CA2000:Dispose objects before losing scope" )]
 		private SettingsViewModel GenerateViewModel( ViewServiceManager serviceManager = null, IMessenger messenger = null )
 		{
-			SettingsViewModel vm = new SettingsViewModel( serviceManager, messenger );
+			SettingsViewModel vm = new SettingsViewModel( ConnectionFactory, serviceManager, messenger );
 
-			vm.Settings = new Blitzy.Model.Settings( Connection );
+			vm.Settings = new Blitzy.Model.Settings( ConnectionFactory );
 			MockPluginHost host = new MockPluginHost( vm.Settings );
-			vm.PluginManager = new Plugin.PluginManager( host, Connection );
+			vm.PluginManager = new Plugin.PluginManager( host, ConnectionFactory );
 			vm.PluginManager.LoadPlugins();
 
 			return vm;

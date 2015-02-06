@@ -11,9 +11,9 @@ namespace Blitzy.Model
 {
 	public class CommandManager : BaseObject
 	{
-		internal CommandManager( DbConnection connection, Settings settings, PluginManager plugins )
+		internal CommandManager( DbConnectionFactory factory, Settings settings, PluginManager plugins )
 		{
-			Connection = connection;
+			ConnectionFactory = factory;
 			Settings = settings;
 			Plugins = plugins;
 
@@ -59,10 +59,13 @@ namespace Blitzy.Model
 		{
 			CommandExecutionBuffer.Clear();
 
-			using( DbCommand cmd = Connection.CreateCommand() )
+			using( DbConnection connection = ConnectionFactory.OpenConnection() )
 			{
-				cmd.CommandText = "DELETE FROM commands";
-				cmd.ExecuteNonQuery();
+				using( DbCommand cmd = connection.CreateCommand() )
+				{
+					cmd.CommandText = "DELETE FROM commands";
+					cmd.ExecuteNonQuery();
+				}
 			}
 		}
 
@@ -106,27 +109,29 @@ namespace Blitzy.Model
 			Guid pluginId = item.Plugin.PluginID;
 
 			// Check if command was executed before
-			bool registered;
-			using( DbCommand cmd = Connection.CreateCommand() )
+			bool registered; using( DbConnection connection = ConnectionFactory.OpenConnection() )
 			{
-				cmd.CommandText = "SELECT ExecutionCount FROM commands WHERE Plugin = @plugin AND Name = @name;";
-				cmd.AddParameter( "name", itemName );
-				cmd.AddParameter( "plugin", pluginId );
+				using( DbCommand cmd = connection.CreateCommand() )
+				{
+					cmd.CommandText = "SELECT ExecutionCount FROM commands WHERE Plugin = @plugin AND Name = @name;";
+					cmd.AddParameter( "name", itemName );
+					cmd.AddParameter( "plugin", pluginId );
 
-				registered = cmd.ExecuteScalar() != null;
-			}
+					registered = cmd.ExecuteScalar() != null;
+				}
 
-			// Update execution count of the command
-			using( DbCommand cmd = Connection.CreateCommand() )
-			{
-				cmd.AddParameter( "name", itemName );
-				cmd.AddParameter( "plugin", pluginId );
+				// Update execution count of the command
+				using( DbCommand cmd = connection.CreateCommand() )
+				{
+					cmd.AddParameter( "name", itemName );
+					cmd.AddParameter( "plugin", pluginId );
 
-				cmd.CommandText = registered ?
-					"UPDATE commands SET ExecutionCount = ExecutionCount + 1 WHERE Plugin = @plugin AND Name = @name;" :
-					"INSERT INTO commands (Plugin, Name, ExecutionCount) VALUES (@plugin, @name, 1);";
+					cmd.CommandText = registered ?
+						"UPDATE commands SET ExecutionCount = ExecutionCount + 1 WHERE Plugin = @plugin AND Name = @name;" :
+						"INSERT INTO commands (Plugin, Name, ExecutionCount) VALUES (@plugin, @name, 1);";
 
-				cmd.ExecuteNonQuery();
+					cmd.ExecuteNonQuery();
+				}
 			}
 
 			int hash = item.GetHashCode();
@@ -152,14 +157,17 @@ namespace Blitzy.Model
 
 		private int ReadExecutionCount( CommandItem item )
 		{
-			using( DbCommand cmd = Connection.CreateCommand() )
+			using( DbConnection connection = ConnectionFactory.OpenConnection() )
 			{
-				cmd.AddParameter( "PluginID", item.Plugin.PluginID );
-				cmd.AddParameter( "Name", item.Name );
+				using( DbCommand cmd = connection.CreateCommand() )
+				{
+					cmd.AddParameter( "PluginID", item.Plugin.PluginID );
+					cmd.AddParameter( "Name", item.Name );
 
-				cmd.CommandText = "SELECT ExecutionCount FROM commands WHERE Plugin = @PluginID AND Name = @Name";
+					cmd.CommandText = "SELECT ExecutionCount FROM commands WHERE Plugin = @PluginID AND Name = @Name";
 
-				return Convert.ToInt32( cmd.ExecuteScalar() );
+					return Convert.ToInt32( cmd.ExecuteScalar() );
+				}
 			}
 		}
 
@@ -190,9 +198,9 @@ namespace Blitzy.Model
 		internal List<CommandItem> AvailableCommands { get; private set; }
 
 		private readonly Dictionary<int, int> CommandExecutionBuffer = new Dictionary<int, int>();
-		private readonly DbConnection Connection;
 		private readonly PluginManager Plugins;
 		private readonly Settings Settings;
 		private CommandItem _CurrentItem;
+		private DbConnectionFactory ConnectionFactory;
 	}
 }

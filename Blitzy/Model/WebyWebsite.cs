@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data.Common;
 using System.Data.SQLite;
+using Blitzy.Plugin;
 
 namespace Blitzy.Model
 {

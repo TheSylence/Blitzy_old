@@ -13,23 +13,26 @@ namespace Blitzy.ViewModel
 {
 	internal class WebySettingsViewModel : SettingsViewModelBase, IPluginViewModel
 	{
-		public WebySettingsViewModel( Settings settings, IViewServiceManager serviceManager = null )
-			: base( settings, serviceManager )
+		public WebySettingsViewModel( DbConnectionFactory factory, Settings settings, IViewServiceManager serviceManager = null )
+			: base( settings, factory, serviceManager )
 		{
 			Websites = new ObservableCollection<WebyWebsite>();
 
-			using( DbCommand cmd = Settings.Connection.CreateCommand() )
+			using( DbConnection connection = ConnectionFactory.OpenConnection() )
 			{
-				cmd.CommandText = "SELECT WebyID FROM weby_websites";
-
-				using( DbDataReader reader = cmd.ExecuteReader() )
+				using( DbCommand cmd = connection.CreateCommand() )
 				{
-					while( reader.Read() )
-					{
-						WebyWebsite site = new WebyWebsite { ID = reader.GetInt32( 0 ) };
+					cmd.CommandText = "SELECT WebyID FROM weby_websites";
 
-						site.Load( Settings.Connection );
-						Websites.Add( site );
+					using( DbDataReader reader = cmd.ExecuteReader() )
+					{
+						while( reader.Read() )
+						{
+							WebyWebsite site = new WebyWebsite { ID = reader.GetInt32( 0 ) };
+
+							site.Load( connection );
+							Websites.Add( site );
+						}
 					}
 				}
 			}
@@ -42,14 +45,17 @@ namespace Blitzy.ViewModel
 
 		public override void Save()
 		{
-			foreach( WebyWebsite site in WebsitesToRemove )
+			using( DbConnection connection = ConnectionFactory.OpenConnection() )
 			{
-				site.Delete( Settings.Connection );
-			}
+				foreach( WebyWebsite site in WebsitesToRemove )
+				{
+					site.Delete( connection );
+				}
 
-			foreach( WebyWebsite site in Websites )
-			{
-				site.Save( Settings.Connection );
+				foreach( WebyWebsite site in Websites )
+				{
+					site.Save( connection );
+				}
 			}
 		}
 

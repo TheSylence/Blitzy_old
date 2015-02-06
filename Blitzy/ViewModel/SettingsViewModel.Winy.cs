@@ -7,8 +7,8 @@ namespace Blitzy.ViewModel
 {
 	internal class WinySettingsViewModel : SettingsViewModelBase, IPluginViewModel
 	{
-		public WinySettingsViewModel( Settings settings, IViewServiceManager serviceManager )
-			: base( settings, serviceManager )
+		public WinySettingsViewModel( DbConnectionFactory connectionFactory, Settings settings, IViewServiceManager serviceManager )
+			: base( settings, connectionFactory, serviceManager )
 		{
 			_LogoffConfirmation = Settings.GetPluginSetting<bool>( Winy.GuidString, Winy.LogoffKey );
 			_ShutdownConfirmation = Settings.GetPluginSetting<bool>( Winy.GuidString, Winy.ShutdownKey );

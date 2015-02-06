@@ -55,7 +55,7 @@ namespace Blitzy.Plugin.SystemPlugins
 
 		public IPluginViewModel GetSettingsDataContext( IViewServiceManager viewServices )
 		{
-			return new ViewModel.PuttySettingsViewModel( (Settings)Host.Settings, viewServices );
+			return new ViewModel.PuttySettingsViewModel( Host.ConnectionFactory, (Settings)Host.Settings, viewServices );
 		}
 
 		public System.Windows.Controls.Control GetSettingsUI()

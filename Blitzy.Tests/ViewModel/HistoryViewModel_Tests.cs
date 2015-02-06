@@ -15,7 +15,7 @@ namespace Blitzy.Tests.ViewModel
 			Messenger messenger = new Messenger();
 			using( HistoryViewModel vm = new HistoryViewModel( messenger ) )
 			{
-				vm.Manager = new Blitzy.Model.HistoryManager( new Blitzy.Model.Settings( Connection ) );
+				vm.Manager = new Blitzy.Model.HistoryManager( ConnectionFactory, new Blitzy.Model.Settings( ConnectionFactory ) );
 				vm.Manager.AddItem( "item1" );
 				vm.Manager.AddItem( "item2" );
 				vm.Manager.AddItem( "item3" );

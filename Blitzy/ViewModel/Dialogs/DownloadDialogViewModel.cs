@@ -18,7 +18,7 @@ namespace Blitzy.ViewModel.Dialogs
 	internal class DownloadDialogViewModel : ViewModelBaseEx
 	{
 		public DownloadDialogViewModel( ViewServiceManager serivceManager = null, IMessenger messenger = null )
-			: base( serivceManager, messenger )
+			: base( null, serivceManager, messenger )
 		{
 		}
 

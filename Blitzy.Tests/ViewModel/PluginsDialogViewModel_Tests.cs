@@ -20,7 +20,7 @@ namespace Blitzy.Tests.ViewModel
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void CommandsTest()
 		{
-			using( PluginsDialogViewModel vm = new PluginsDialogViewModel() )
+			using( PluginsDialogViewModel vm = new PluginsDialogViewModel( ConnectionFactory ) )
 			{
 				Assert.IsFalse( vm.DisableCommand.CanExecute( null ) );
 				Assert.IsFalse( vm.EnableCommand.CanExecute( null ) );
@@ -43,9 +43,9 @@ namespace Blitzy.Tests.ViewModel
 		{
 			MockPluginHost host = new MockPluginHost();
 
-			using( PluginsDialogViewModel vm = new PluginsDialogViewModel() )
+			using( PluginsDialogViewModel vm = new PluginsDialogViewModel( ConnectionFactory ) )
 			{
-				vm.PluginManager = new Plugin.PluginManager( host, Connection );
+				vm.PluginManager = new Plugin.PluginManager( host, ConnectionFactory );
 				vm.PluginManager.LoadPlugins();
 				vm.Reset();
 
@@ -74,7 +74,7 @@ namespace Blitzy.Tests.ViewModel
 			ViewServiceManager serviceManager = new ViewServiceManager();
 			serviceManager.RegisterService( typeof( OpenFileService ), mock );
 
-			using( PluginsDialogViewModel vm = new PluginsDialogViewModel( serviceManager ) )
+			using( PluginsDialogViewModel vm = new PluginsDialogViewModel( ConnectionFactory, serviceManager ) )
 			{
 				using( ShimsContext.Create() )
 				{
@@ -112,7 +112,7 @@ namespace Blitzy.Tests.ViewModel
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void PropertyChangedTest()
 		{
-			using( PluginsDialogViewModel vm = new PluginsDialogViewModel() )
+			using( PluginsDialogViewModel vm = new PluginsDialogViewModel( ConnectionFactory ) )
 			{
 				PropertyChangedListener listener = new PropertyChangedListener( vm );
 				Assert.IsTrue( listener.TestProperties() );

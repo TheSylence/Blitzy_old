@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data.Common;
 using Blitzy.Model;
 using Blitzy.Plugin;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -14,8 +15,7 @@ namespace Blitzy.Tests.Plugins
 		{
 			base.BeforeTestRun();
 
-			APIDatabase = new PluginDatabase( Connection );
-			Settings = new Settings( Connection );
+			Settings = new Settings( ConnectionFactory );
 		}
 
 		bool IPluginHost.IsPluginLoaded( Guid id )
@@ -23,9 +23,9 @@ namespace Blitzy.Tests.Plugins
 			throw new NotImplementedException();
 		}
 
-		IDatabase IPluginHost.Database
+		DbConnectionFactory IPluginHost.ConnectionFactory
 		{
-			get { return APIDatabase; }
+			get { return ConnectionFactory; }
 		}
 
 		ISettings IPluginHost.Settings
@@ -33,7 +33,6 @@ namespace Blitzy.Tests.Plugins
 			get { return Settings; }
 		}
 
-		private PluginDatabase APIDatabase;
 		private Settings Settings;
 	}
 }

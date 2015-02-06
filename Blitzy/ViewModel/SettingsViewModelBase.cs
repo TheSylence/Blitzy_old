@@ -6,8 +6,8 @@ namespace Blitzy.ViewModel
 {
 	internal abstract class SettingsViewModelBase : ViewModelBaseEx
 	{
-		protected SettingsViewModelBase( Settings settings, IViewServiceManager serviceManager = null )
-			: base( serviceManager as ViewServiceManager )
+		protected SettingsViewModelBase( Settings settings, DbConnectionFactory connectionFactory, IViewServiceManager serviceManager = null )
+			: base( connectionFactory, serviceManager as ViewServiceManager )
 		{
 			Settings = settings;
 		}

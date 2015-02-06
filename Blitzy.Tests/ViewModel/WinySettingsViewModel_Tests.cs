@@ -1,6 +1,4 @@
-﻿
-
-using Blitzy.Plugin.SystemPlugins;
+﻿using Blitzy.Plugin.SystemPlugins;
 using Blitzy.Tests.Mocks;
 using Blitzy.ViewModel;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -14,10 +12,10 @@ namespace Blitzy.Tests.ViewModel
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void LoadSaveTest()
 		{
-			SettingsViewModel baseVM = new SettingsViewModel();
-			baseVM.Settings = new Blitzy.Model.Settings( Connection );
+			SettingsViewModel baseVM = new SettingsViewModel( ConnectionFactory );
+			baseVM.Settings = new Blitzy.Model.Settings( ConnectionFactory );
 			MockPluginHost host = new MockPluginHost( baseVM.Settings );
-			baseVM.PluginManager = new Plugin.PluginManager( host, Connection );
+			baseVM.PluginManager = new Plugin.PluginManager( host, ConnectionFactory );
 			baseVM.PluginManager.LoadPlugins();
 
 			Winy winy = new Winy();

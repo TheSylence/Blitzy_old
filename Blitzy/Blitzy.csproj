@@ -196,7 +196,8 @@
     <Compile Include="Converter\StringToImageConverter.cs" />
     <Compile Include="Converter\StringToVisibilityConverter.cs" />
     <Compile Include="Converter\TimeSpanConverter.cs" />
-    <Compile Include="Extensions.cs" />
+    <Compile Include="DbConnectionFactory.cs" />
+    <Compile Include="Plugin\Extensions.cs" />
     <Compile Include="Messages\BalloonActivatedMessage.cs" />
     <Compile Include="Messages\BalloonTipMessage.cs" />
     <Compile Include="Messages\DownloadStatusMessage.cs" />
@@ -243,7 +244,6 @@
     <Compile Include="Model\HistoryManager.cs" />
     <Compile Include="Model\ModelBase.cs" />
     <Compile Include="Model\Operators.cs" />
-    <Compile Include="Model\PluginDatabase.cs" />
     <Compile Include="Model\QueryBuilder.cs" />
     <Compile Include="Model\Settings.cs" />
     <Compile Include="Model\ShellLinkHelper.cs" />
@@ -253,7 +253,6 @@
     <Compile Include="Model\Workspace.cs" />
     <Compile Include="Model\WorkspaceItem.cs" />
     <Compile Include="NativeMethods.cs" />
-    <Compile Include="Plugin\IDatabase.cs" />
     <Compile Include="Plugin\IPlugin.cs" />
     <Compile Include="Plugin\IPluginHost.cs" />
     <Compile Include="Plugin\ISettings.cs" />
@@ -264,8 +263,6 @@
     <Compile Include="Plugin\SystemPlugins\Putty.cs" />
     <Compile Include="Plugin\SystemPlugins\Weby.cs" />
     <Compile Include="Plugin\SystemPlugins\Winy.cs" />
-    <Compile Include="Plugin\TableColumn.cs" />
-    <Compile Include="Plugin\WhereClause.cs" />
     <Compile Include="RuntimeConfig.cs" />
     <Compile Include="Utility\IOUtils.cs" />
     <Compile Include="Utility\LanguageHelper.cs" />

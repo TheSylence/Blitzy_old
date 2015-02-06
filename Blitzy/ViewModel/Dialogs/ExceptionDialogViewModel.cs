@@ -14,7 +14,7 @@ namespace Blitzy.ViewModel.Dialogs
 	{
 		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors" )]
 		public ExceptionDialogViewModel( Exception ex, StackTrace trace, ViewServiceManager serviceManager = null )
-			: base( serviceManager )
+			: base( null, serviceManager )
 		{
 			ErrorReport = new ErrorReport( ex, trace );
 		}

@@ -13,23 +13,26 @@ namespace Blitzy.ViewModel
 {
 	internal class WorkspaceSettingsViewModel : SettingsViewModelBase
 	{
-		public WorkspaceSettingsViewModel( Settings settings, ViewServiceManager serviceManager )
-			: base( settings, serviceManager )
+		public WorkspaceSettingsViewModel( DbConnectionFactory factory, Settings settings, ViewServiceManager serviceManager )
+			: base( settings, factory, serviceManager )
 		{
 			Workspaces = new ObservableCollection<Workspace>();
 
-			using( DbCommand cmd = Settings.Connection.CreateCommand() )
+			using( DbConnection connection = ConnectionFactory.OpenConnection() )
 			{
-				cmd.CommandText = "SELECT WorkspaceID FROM workspaces";
-
-				using( DbDataReader reader = cmd.ExecuteReader() )
+				using( DbCommand cmd = connection.CreateCommand() )
 				{
-					while( reader.Read() )
-					{
-						Workspace workspace = new Workspace { ID = reader.GetInt32( 0 ) };
+					cmd.CommandText = "SELECT WorkspaceID FROM workspaces";
 
-						workspace.Load( Settings.Connection );
-						Workspaces.Add( workspace );
+					using( DbDataReader reader = cmd.ExecuteReader() )
+					{
+						while( reader.Read() )
+						{
+							Workspace workspace = new Workspace { ID = reader.GetInt32( 0 ) };
+
+							workspace.Load( connection );
+							Workspaces.Add( workspace );
+						}
 					}
 				}
 			}
@@ -37,9 +40,12 @@ namespace Blitzy.ViewModel
 
 		public override void Save()
 		{
-			foreach( Workspace ws in Workspaces )
+			using( DbConnection connection = ConnectionFactory.OpenConnection() )
 			{
-				ws.Save( Settings.Connection );
+				foreach( Workspace ws in Workspaces )
+				{
+					ws.Save( connection );
+				}
 			}
 		}
 
@@ -128,9 +134,12 @@ namespace Blitzy.ViewModel
 			MessageBoxResult result = ServiceManagerInstance.Show<MessageBoxService, MessageBoxResult>( args );
 			if( result == MessageBoxResult.Yes )
 			{
-				SelectedWorkspace.Delete( Settings.Connection );
-				Workspaces.Remove( SelectedWorkspace );
-				SelectedWorkspace = null;
+				using( DbConnection connection = ConnectionFactory.OpenConnection() )
+				{
+					SelectedWorkspace.Delete( connection );
+					Workspaces.Remove( SelectedWorkspace );
+					SelectedWorkspace = null;
+				}
 			}
 		}
 
@@ -164,9 +173,12 @@ namespace Blitzy.ViewModel
 			MessageBoxResult result = ServiceManagerInstance.Show<MessageBoxService, MessageBoxResult>( args );
 			if( result == MessageBoxResult.Yes )
 			{
-				SelectedItem.Delete( Settings.Connection );
-				SelectedWorkspace.Items.Remove( SelectedItem );
-				SelectedItem = null;
+				using( DbConnection connection = ConnectionFactory.OpenConnection() )
+				{
+					SelectedItem.Delete( connection );
+					SelectedWorkspace.Items.Remove( SelectedItem );
+					SelectedItem = null;
+				}
 
 				UpdateItemOrders();
 			}

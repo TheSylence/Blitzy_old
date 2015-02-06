@@ -13,7 +13,7 @@ namespace Blitzy.Tests.Model
 		[TestMethod, TestCategory( "Model" )]
 		public void BuildTest()
 		{
-			Settings settings = new Settings( Connection );
+			Settings settings = new Settings( ConnectionFactory );
 
 			using( Folder folder = new Folder() )
 			{
@@ -30,7 +30,7 @@ namespace Blitzy.Tests.Model
 			}
 
 			Messenger messenger = new Messenger();
-			using( CatalogBuilder builder = new CatalogBuilder( settings, messenger ) )
+			using( CatalogBuilder builder = new CatalogBuilder( ConnectionFactory, settings, messenger ) )
 			{
 				bool started = false;
 				bool done = false;
@@ -59,8 +59,8 @@ namespace Blitzy.Tests.Model
 		[TestMethod, TestCategory( "Model" )]
 		public void PropertyChangedTest()
 		{
-			Settings settings = new Settings( Connection );
-			using( CatalogBuilder builder = new CatalogBuilder( settings ) )
+			Settings settings = new Settings( ConnectionFactory );
+			using( CatalogBuilder builder = new CatalogBuilder( ConnectionFactory, settings ) )
 			{
 				PropertyChangedListener listener = new PropertyChangedListener( builder );
 				Assert.IsTrue( listener.TestProperties() );

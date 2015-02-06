@@ -20,7 +20,7 @@ namespace Blitzy.Tests.ViewModel
 
 			using( NotifyIconViewModel vm = new NotifyIconViewModel( messenger ) )
 			{
-				using( vm.MainVm = new MainViewModel() )
+				using( vm.MainVm = new MainViewModel( ConnectionFactory ) )
 				{
 					vm.Reset();
 
@@ -54,7 +54,7 @@ namespace Blitzy.Tests.ViewModel
 
 			using( NotifyIconViewModel vm = new NotifyIconViewModel( messenger ) )
 			{
-				using( vm.MainVm = new MainViewModel() )
+				using( vm.MainVm = new MainViewModel( ConnectionFactory ) )
 				{
 					bool quit = false;
 					messenger.Register<InternalCommandMessage>( this, msg => quit = msg.Command.Equals( "quit" ) );
@@ -75,7 +75,7 @@ namespace Blitzy.Tests.ViewModel
 
 			using( NotifyIconViewModel vm = new NotifyIconViewModel() )
 			{
-				using( vm.MainVm = new MainViewModel( Connection, serviceManager ) )
+				using( vm.MainVm = new MainViewModel( ConnectionFactory, serviceManager ) )
 				{
 					Assert.IsTrue( vm.SettingsCommand.CanExecute( null ) );
 					vm.SettingsCommand.Execute( null );
@@ -90,7 +90,7 @@ namespace Blitzy.Tests.ViewModel
 		{
 			using( NotifyIconViewModel vm = new NotifyIconViewModel() )
 			{
-				using( vm.MainVm = new MainViewModel() )
+				using( vm.MainVm = new MainViewModel( ConnectionFactory ) )
 				{
 					bool shown = false;
 					vm.MainVm.RequestShow += ( s, e ) => shown = true;
@@ -144,7 +144,7 @@ namespace Blitzy.Tests.ViewModel
 		{
 			using( NotifyIconViewModel vm = new NotifyIconViewModel() )
 			{
-				using( vm.MainVm = new MainViewModel( Connection ) )
+				using( vm.MainVm = new MainViewModel( ConnectionFactory ) )
 				{
 					vm.MainVm.Settings.SetDefaults();
 

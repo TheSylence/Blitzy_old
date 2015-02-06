@@ -53,19 +53,29 @@ namespace Blitzy.Plugin.SystemPlugins
 					CommandItem.Create( "weby", "OpenWebsite".Localize(), this, "Weby.png" )
 				};
 
-				IEnumerable<IDictionary<string, object>> sites = Host.Database.Select( this, "websites", new[] { "Name", "Description", "URL", "Icon" } );
-				foreach( IDictionary<string, object> site in sites )
+				using( DbConnection connection = Host.ConnectionFactory.OpenConnection() )
 				{
-					string url = site["Url"].ToString();
-					string name = site["Name"].ToString();
-					string desc = site["Description"].ToString();
-					string icon = site["Icon"].ToString();
-					if( string.IsNullOrWhiteSpace( icon ) )
+					using( DbCommand cmd = connection.CreateCommand() )
 					{
-						icon = "Weby.png";
-					}
+						cmd.CommandText = "SELECT Name, Description, URL, Icon FROM weby_websites;";
 
-					Items.Add( CommandItem.Create( name, desc, this, icon, url, null, null, true ) );
+						using( DbDataReader reader = cmd.ExecuteReader() )
+						{
+							while( reader.Read() )
+							{
+								string url = reader.ReadString( "Url" );
+								string name = reader.ReadString( "Name" );
+								string desc = reader.ReadString( "Description" );
+								string icon = reader.ReadString( "Icon" );
+								if( string.IsNullOrWhiteSpace( icon ) )
+								{
+									icon = "Weby.png";
+								}
+
+								Items.Add( CommandItem.Create( name, desc, this, icon, url, null, null, true ) );
+							}
+						}
+					}
 				}
 			}
 
@@ -79,7 +89,7 @@ namespace Blitzy.Plugin.SystemPlugins
 
 		public IPluginViewModel GetSettingsDataContext( IViewServiceManager viewServices )
 		{
-			return new ViewModel.WebySettingsViewModel( (Settings)Host.Settings, viewServices );
+			return new ViewModel.WebySettingsViewModel( Host.ConnectionFactory, (Settings)Host.Settings, viewServices );
 		}
 
 		public System.Windows.Controls.Control GetSettingsUI()
@@ -99,17 +109,45 @@ namespace Blitzy.Plugin.SystemPlugins
 
 			if( oldVersion == null )
 			{
-				TableColumn[] columns =
+				using( DbConnection connection = host.ConnectionFactory.OpenConnection() )
 				{
-					new TableColumn( "WebyID", ColumnType.Integer ),
-					new TableColumn( "Name", ColumnType.Text, 50 ),
-					new TableColumn( "Description", ColumnType.Text, 255 ),
-					new	TableColumn( "Url", ColumnType.Text ),
-					new TableColumn( "Icon", ColumnType.Text, 0, true )
-				};
-				if( !Host.Database.CreateTable( this, "websites", columns ) )
-				{
-					return false;
+					DbTransaction tx = connection.BeginTransaction();
+					try
+					{
+						using( DbCommand cmd = connection.CreateCommand() )
+						{
+							cmd.CommandText = QueryBuilder.CreateTable( "weby_websites", new Dictionary<string, string>
+						{
+							{ "WebyID", "INTEGER PRIMARY KEY" },
+							{ "Name", "VARCHAR(50) NOT NULL" },
+							{ "Description", "VARCHAR(255) NOT NULL" },
+							{ "Url", "TEXT NOT NULL" },
+							{ "Icon", "TEXT" }
+						} );
+
+							cmd.ExecuteNonQuery();
+						}
+
+						List<WebyWebsite> defaultSites = new List<WebyWebsite>();
+						defaultSites.Add( new WebyWebsite { ID = 1, Name = "google", URL = "https://www.google.com/search?source=Blitzy&q={0}", Description = "Search the internet using Google", Icon = "https://www.google.de/images/google_favicon_128.png" } );
+						defaultSites.Add( new WebyWebsite { ID = 2, Name = "wiki", URL = "http://en.wikipedia.org/wiki/{0}", Description = "Search in wikipedia (en)", Icon = "http://bits.wikimedia.org/favicon/wikipedia.ico" } );
+						defaultSites.Add( new WebyWebsite { ID = 3, Name = "youtube", URL = "http://www.youtube.com/results?search_query={0}", Description = "Search in YouTube", Icon = "http://s.ytimg.com/yts/img/favicon-vfldLzJxy.ico" } );
+						defaultSites.Add( new WebyWebsite { ID = 4, Name = "bing", URL = "http://www.bing.com/search?q={0}", Description = "Seach the internet using Bing", Icon = "http://www.bing.com/s/a/bing_p.ico" } );
+						defaultSites.Add( new WebyWebsite { ID = 5, Name = "facebook", URL = "https://www.facebook.com/search/results.php?q={0}", Description = "Search in facebook", Icon = "https://fbstatic-a.akamaihd.net/rsrc.php/yl/r/H3nktOa7ZMg.ico" } );
+						defaultSites.Add( new WebyWebsite { ID = 6, Name = "wolfram", URL = "http://www.wolframalpha.com/input/?i={0}", Description = "Compute something using Wolfram Alpha", Icon = "http://www.wolframalpha.com/favicon_calculate.ico" } );
+
+						foreach( WebyWebsite site in defaultSites )
+						{
+							site.Save( connection );
+						}
+
+						tx.Commit();
+					}
+					catch
+					{
+						tx.Rollback();
+						return false;
+					}
 				}
 
 				Dictionary<string, object>[] values =
@@ -121,22 +159,6 @@ namespace Blitzy.Plugin.SystemPlugins
 					new Dictionary<string,object>{ {"WebyID", 5 }, {"Name", "facebook" }, {"Url", "https://www.facebook.com/search/results.php?q={0}"}, {"Description", "Search in facebook" }, {"Icon", "https://fbstatic-a.akamaihd.net/rsrc.php/yl/r/H3nktOa7ZMg.ico" } },
 					new Dictionary<string,object>{ {"WebyID", 6 }, {"Name", "wolfram" }, {"Url", "http://www.wolframalpha.com/input/?i={0}" }, {"Description", "Compute something using Wolfram Alpha" }, {"Icon", "http://www.wolframalpha.com/favicon_calculate.ico"} }
 				};
-
-				DbTransaction transaction = Host.Database.BeginTransaction();
-				try
-				{
-					if( Host.Database.Insert( this, "websites", values ) != values.Count() )
-					{
-						transaction.Rollback();
-						return false;
-					}
-					transaction.Commit();
-				}
-				catch
-				{
-					transaction.Rollback();
-					throw;
-				}
 			}
 
 			return true;

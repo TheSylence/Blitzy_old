@@ -23,12 +23,12 @@ namespace Blitzy.Tests.ViewModel
 			serviceManager.RegisterService( typeof( OpenFileService ), mock );
 
 			MockPluginHost host = new MockPluginHost();
-			using( SettingsViewModel baseVM = new SettingsViewModel( serviceManager ) )
+			using( SettingsViewModel baseVM = new SettingsViewModel( ConnectionFactory, serviceManager ) )
 			{
-				baseVM.Settings = new Blitzy.Model.Settings( Connection );
-				baseVM.PluginManager = new Plugin.PluginManager( host, Connection );
+				baseVM.Settings = new Blitzy.Model.Settings( ConnectionFactory );
+				baseVM.PluginManager = new Plugin.PluginManager( host, ConnectionFactory );
 				baseVM.Reset();
-				WorkspaceSettingsViewModel vm = new WorkspaceSettingsViewModel( baseVM.Settings, serviceManager );
+				WorkspaceSettingsViewModel vm = new WorkspaceSettingsViewModel( ConnectionFactory, baseVM.Settings, serviceManager );
 
 				Assert.IsFalse( vm.AddItemCommand.CanExecute( null ) );
 
@@ -60,12 +60,12 @@ namespace Blitzy.Tests.ViewModel
 			serviceManager.RegisterService( typeof( TextInputService ), mock );
 
 			MockPluginHost host = new MockPluginHost();
-			using( SettingsViewModel baseVM = new SettingsViewModel( serviceManager ) )
+			using( SettingsViewModel baseVM = new SettingsViewModel( ConnectionFactory, serviceManager ) )
 			{
-				baseVM.Settings = new Blitzy.Model.Settings( Connection );
-				baseVM.PluginManager = new Plugin.PluginManager( host, Connection );
+				baseVM.Settings = new Blitzy.Model.Settings( ConnectionFactory );
+				baseVM.PluginManager = new Plugin.PluginManager( host, ConnectionFactory );
 				baseVM.Reset();
-				WorkspaceSettingsViewModel vm = new WorkspaceSettingsViewModel( baseVM.Settings, serviceManager );
+				WorkspaceSettingsViewModel vm = new WorkspaceSettingsViewModel( ConnectionFactory, baseVM.Settings, serviceManager );
 
 				Assert.IsTrue( vm.AddWorkspaceCommand.CanExecute( null ) );
 				int oldCount = vm.Workspaces.Count;
@@ -92,12 +92,12 @@ namespace Blitzy.Tests.ViewModel
 			serviceManager.RegisterService( typeof( MessageBoxService ), mock );
 
 			MockPluginHost host = new MockPluginHost();
-			using( SettingsViewModel baseVM = new SettingsViewModel( serviceManager ) )
+			using( SettingsViewModel baseVM = new SettingsViewModel( ConnectionFactory, serviceManager ) )
 			{
-				baseVM.Settings = new Blitzy.Model.Settings( Connection );
-				baseVM.PluginManager = new Plugin.PluginManager( host, Connection );
+				baseVM.Settings = new Blitzy.Model.Settings( ConnectionFactory );
+				baseVM.PluginManager = new Plugin.PluginManager( host, ConnectionFactory );
 				baseVM.Reset();
-				WorkspaceSettingsViewModel vm = new WorkspaceSettingsViewModel( baseVM.Settings, serviceManager );
+				WorkspaceSettingsViewModel vm = new WorkspaceSettingsViewModel( ConnectionFactory, baseVM.Settings, serviceManager );
 
 				Assert.IsFalse( vm.RemoveItemCommand.CanExecute( null ) );
 
@@ -130,12 +130,12 @@ namespace Blitzy.Tests.ViewModel
 			serviceManager.RegisterService( typeof( MessageBoxService ), mock );
 
 			MockPluginHost host = new MockPluginHost();
-			using( SettingsViewModel baseVM = new SettingsViewModel( serviceManager ) )
+			using( SettingsViewModel baseVM = new SettingsViewModel( ConnectionFactory, serviceManager ) )
 			{
-				baseVM.Settings = new Blitzy.Model.Settings( Connection );
-				baseVM.PluginManager = new Plugin.PluginManager( host, Connection );
+				baseVM.Settings = new Blitzy.Model.Settings( ConnectionFactory );
+				baseVM.PluginManager = new Plugin.PluginManager( host, ConnectionFactory );
 				baseVM.Reset();
-				WorkspaceSettingsViewModel vm = new WorkspaceSettingsViewModel( baseVM.Settings, serviceManager );
+				WorkspaceSettingsViewModel vm = new WorkspaceSettingsViewModel( ConnectionFactory, baseVM.Settings, serviceManager );
 
 				Assert.IsFalse( vm.DeleteWorkspaceCommand.CanExecute( null ) );
 
@@ -162,12 +162,12 @@ namespace Blitzy.Tests.ViewModel
 		{
 			ViewServiceManager serviceManager = new ViewServiceManager();
 			MockPluginHost host = new MockPluginHost();
-			using( SettingsViewModel baseVM = new SettingsViewModel( serviceManager ) )
+			using( SettingsViewModel baseVM = new SettingsViewModel( ConnectionFactory, serviceManager ) )
 			{
-				baseVM.Settings = new Blitzy.Model.Settings( Connection );
-				baseVM.PluginManager = new Plugin.PluginManager( host, Connection );
+				baseVM.Settings = new Blitzy.Model.Settings( ConnectionFactory );
+				baseVM.PluginManager = new Plugin.PluginManager( host, ConnectionFactory );
 				baseVM.Reset();
-				WorkspaceSettingsViewModel vm = new WorkspaceSettingsViewModel( baseVM.Settings, serviceManager );
+				WorkspaceSettingsViewModel vm = new WorkspaceSettingsViewModel( ConnectionFactory, baseVM.Settings, serviceManager );
 
 				Assert.IsFalse( vm.MoveItemDownCommand.CanExecute( null ) );
 				Assert.IsFalse( vm.MoveItemUpCommand.CanExecute( null ) );
@@ -220,12 +220,12 @@ namespace Blitzy.Tests.ViewModel
 		{
 			ViewServiceManager serviceManager = new ViewServiceManager();
 			MockPluginHost host = new MockPluginHost();
-			using( SettingsViewModel baseVM = new SettingsViewModel( serviceManager ) )
+			using( SettingsViewModel baseVM = new SettingsViewModel( ConnectionFactory, serviceManager ) )
 			{
-				baseVM.Settings = new Blitzy.Model.Settings( Connection );
-				baseVM.PluginManager = new Plugin.PluginManager( host, Connection );
+				baseVM.Settings = new Blitzy.Model.Settings( ConnectionFactory );
+				baseVM.PluginManager = new Plugin.PluginManager( host, ConnectionFactory );
 				baseVM.Reset();
-				WorkspaceSettingsViewModel vm = new WorkspaceSettingsViewModel( baseVM.Settings, serviceManager );
+				WorkspaceSettingsViewModel vm = new WorkspaceSettingsViewModel( ConnectionFactory, baseVM.Settings, serviceManager );
 
 				PropertyChangedListener listener = new PropertyChangedListener( vm );
 				Assert.IsTrue( listener.TestProperties() );
@@ -237,12 +237,12 @@ namespace Blitzy.Tests.ViewModel
 		{
 			ViewServiceManager serviceManager = new ViewServiceManager();
 			MockPluginHost host = new MockPluginHost();
-			using( SettingsViewModel baseVM = new SettingsViewModel( serviceManager ) )
+			using( SettingsViewModel baseVM = new SettingsViewModel( ConnectionFactory, serviceManager ) )
 			{
-				baseVM.Settings = new Blitzy.Model.Settings( Connection );
-				baseVM.PluginManager = new Plugin.PluginManager( host, Connection );
+				baseVM.Settings = new Blitzy.Model.Settings( ConnectionFactory );
+				baseVM.PluginManager = new Plugin.PluginManager( host, ConnectionFactory );
 				baseVM.Reset();
-				WorkspaceSettingsViewModel vm = new WorkspaceSettingsViewModel( baseVM.Settings, serviceManager );
+				WorkspaceSettingsViewModel vm = new WorkspaceSettingsViewModel( ConnectionFactory, baseVM.Settings, serviceManager );
 
 				int id = TestHelper.NextID();
 				vm.Workspaces.Add( new Blitzy.Model.Workspace
@@ -255,7 +255,7 @@ namespace Blitzy.Tests.ViewModel
 
 				vm.Save();
 
-				vm = new WorkspaceSettingsViewModel( baseVM.Settings, serviceManager );
+				vm = new WorkspaceSettingsViewModel( ConnectionFactory, baseVM.Settings, serviceManager );
 				vm.Reset();
 
 				Assert.AreEqual( expectedCount, vm.Workspaces.Count );
@@ -273,12 +273,12 @@ namespace Blitzy.Tests.ViewModel
 			serviceManager.RegisterService( typeof( OpenFileService ), mock );
 
 			MockPluginHost host = new MockPluginHost();
-			using( SettingsViewModel baseVM = new SettingsViewModel( serviceManager ) )
+			using( SettingsViewModel baseVM = new SettingsViewModel( ConnectionFactory, serviceManager ) )
 			{
-				baseVM.Settings = new Blitzy.Model.Settings( Connection );
-				baseVM.PluginManager = new Plugin.PluginManager( host, Connection );
+				baseVM.Settings = new Blitzy.Model.Settings( ConnectionFactory );
+				baseVM.PluginManager = new Plugin.PluginManager( host, ConnectionFactory );
 				baseVM.Reset();
-				WorkspaceSettingsViewModel vm = new WorkspaceSettingsViewModel( baseVM.Settings, serviceManager );
+				WorkspaceSettingsViewModel vm = new WorkspaceSettingsViewModel( ConnectionFactory, baseVM.Settings, serviceManager );
 
 				mock.Value = "test 1";
 				vm.AddWorkspaceCommand.Execute( null );

@@ -1,6 +1,4 @@
-﻿
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -18,11 +16,11 @@ namespace Blitzy.Tests.Model
 		[TestMethod, TestCategory( "Model" )]
 		public void ExecutionCountTest()
 		{
-			Settings settings = new Settings( Connection );
-			using( PluginManager plugins = new PluginManager( this, Connection ) )
+			Settings settings = new Settings( ConnectionFactory );
+			using( PluginManager plugins = new PluginManager( this, ConnectionFactory ) )
 			{
 				Mocks.MockPlugin plug = new Mocks.MockPlugin();
-				using( CommandManager mgr = new CommandManager( Connection, settings, plugins ) )
+				using( CommandManager mgr = new CommandManager( ConnectionFactory, settings, plugins ) )
 				{
 					CommandItem item = CommandItem.Create( "lorem", "", plug );
 
@@ -40,12 +38,12 @@ namespace Blitzy.Tests.Model
 		[TestMethod, TestCategory( "Model" )]
 		public void PerformanceTest()
 		{
-			Settings settings = new Settings( Connection );
-			using( PluginManager plugins = new PluginManager( this, Connection ) )
+			Settings settings = new Settings( ConnectionFactory );
+			using( PluginManager plugins = new PluginManager( this, ConnectionFactory ) )
 			{
 				Mocks.MockPlugin plug = new Mocks.MockPlugin();
 
-				using( CommandManager mgr = new CommandManager( Connection, settings, plugins ) )
+				using( CommandManager mgr = new CommandManager( ConnectionFactory, settings, plugins ) )
 				{
 					string[] names = TestData.Split( ',' );
 					int totalCount = names.Length;
@@ -82,12 +80,12 @@ namespace Blitzy.Tests.Model
 		[TestMethod, TestCategory( "Model" )]
 		public void SearchTest()
 		{
-			Settings settings = new Settings( Connection );
-			using( PluginManager plugins = new PluginManager( this, Connection ) )
+			Settings settings = new Settings( ConnectionFactory );
+			using( PluginManager plugins = new PluginManager( this, ConnectionFactory ) )
 			{
 				Mocks.MockPlugin plug = new Mocks.MockPlugin();
 
-				using( CommandManager mgr = new CommandManager( Connection, settings, plugins ) )
+				using( CommandManager mgr = new CommandManager( ConnectionFactory, settings, plugins ) )
 				{
 					mgr.AvailableCommands.Add( CommandItem.Create( "lorem", "", plug ) );
 					mgr.AvailableCommands.Add( CommandItem.Create( "ipsum", "", plug ) );

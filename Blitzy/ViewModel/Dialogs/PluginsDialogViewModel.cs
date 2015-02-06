@@ -52,8 +52,8 @@ namespace Blitzy.ViewModel.Dialogs
 
 	public class PluginsDialogViewModel : ViewModelBaseEx
 	{
-		public PluginsDialogViewModel( ViewServiceManager serviceManager = null )
-			: base( serviceManager )
+		public PluginsDialogViewModel( DbConnectionFactory factory, ViewServiceManager serviceManager = null )
+			: base( factory, serviceManager )
 		{
 		}
 
@@ -82,42 +82,46 @@ namespace Blitzy.ViewModel.Dialogs
 
 		private void ExecuteDisableCommand()
 		{
-			using( DbCommand cmd = PluginManager.Connection.CreateCommand() )
+			using( DbConnection connection = ConnectionFactory.OpenConnection() )
 			{
-				cmd.CommandText = "UPDATE plugins SET disabled = 1 WHERE PluginID = @pluginID";
+				using( DbCommand cmd = connection.CreateCommand() )
+				{
+					cmd.CommandText = "UPDATE plugins SET disabled = 1 WHERE PluginID = @pluginID";
 
-				DbParameter param = cmd.CreateParameter();
-				param.ParameterName = "pluginID";
-				param.Value = SelectedPlugin.Id;
-				cmd.Parameters.Add( param );
+					DbParameter param = cmd.CreateParameter();
+					param.ParameterName = "pluginID";
+					param.Value = SelectedPlugin.Id;
+					cmd.Parameters.Add( param );
 
-				cmd.Prepare();
-				cmd.ExecuteNonQuery();
-
-				SelectedPlugin.Enabled = false;
-
-				MessengerInstance.Send( new PluginMessage( SelectedPlugin.Instance, PluginAction.Disabled ) );
+					cmd.Prepare();
+					cmd.ExecuteNonQuery();
+				}
 			}
+
+			SelectedPlugin.Enabled = false;
+			MessengerInstance.Send( new PluginMessage( SelectedPlugin.Instance, PluginAction.Disabled ) );
 		}
 
 		private void ExecuteEnableCommand()
 		{
-			using( DbCommand cmd = PluginManager.Connection.CreateCommand() )
+			using( DbConnection connection = ConnectionFactory.OpenConnection() )
 			{
-				cmd.CommandText = "UPDATE plugins SET disabled = 0 WHERE PluginID = @pluginID";
+				using( DbCommand cmd = connection.CreateCommand() )
+				{
+					cmd.CommandText = "UPDATE plugins SET disabled = 0 WHERE PluginID = @pluginID";
 
-				DbParameter param = cmd.CreateParameter();
-				param.ParameterName = "pluginID";
-				param.Value = SelectedPlugin.Id;
-				cmd.Parameters.Add( param );
+					DbParameter param = cmd.CreateParameter();
+					param.ParameterName = "pluginID";
+					param.Value = SelectedPlugin.Id;
+					cmd.Parameters.Add( param );
 
-				cmd.Prepare();
-				cmd.ExecuteNonQuery();
-
-				SelectedPlugin.Enabled = true;
-
-				MessengerInstance.Send( new PluginMessage( SelectedPlugin.Instance, PluginAction.Enabled ) );
+					cmd.Prepare();
+					cmd.ExecuteNonQuery();
+				}
 			}
+
+			SelectedPlugin.Enabled = true;
+			MessengerInstance.Send( new PluginMessage( SelectedPlugin.Instance, PluginAction.Enabled ) );
 		}
 
 		private void ExecuteInstallCommand()

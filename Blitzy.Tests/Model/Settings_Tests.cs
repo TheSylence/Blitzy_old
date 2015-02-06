@@ -16,7 +16,7 @@ namespace Blitzy.Tests.Model
 		[TestMethod, TestCategory( "Model" )]
 		public void ConvertValueTest()
 		{
-			Settings cfg = new Settings( Connection );
+			Settings cfg = new Settings( ConnectionFactory );
 
 			Assert.AreEqual( 0L, cfg.ConvertValue<long>( null ) );
 			Assert.AreEqual( 0L, cfg.ConvertValue<long>( DBNull.Value ) );
@@ -28,7 +28,7 @@ namespace Blitzy.Tests.Model
 		[TestMethod, TestCategory( "Model" )]
 		public void DefaultsTest()
 		{
-			Settings cfg = new Settings( Connection );
+			Settings cfg = new Settings( ConnectionFactory );
 			cfg.SetDefaults();
 
 			Type type = typeof( SystemSetting );
@@ -45,7 +45,7 @@ namespace Blitzy.Tests.Model
 		[TestMethod, TestCategory( "Model" ), ExpectedException( typeof( ArgumentNullException ) )]
 		public void InvalidGetPluginSettingTest()
 		{
-			Settings cfg = new Settings( Connection );
+			Settings cfg = new Settings( ConnectionFactory );
 			cfg.GetPluginSetting<string>( null, null );
 		}
 
@@ -54,14 +54,14 @@ namespace Blitzy.Tests.Model
 		{
 			MockPlugin plug = new MockPlugin();
 
-			ISettings cfg = new Settings( Connection );
+			ISettings cfg = new Settings( ConnectionFactory );
 			cfg.GetValue<string>( plug, null );
 		}
 
 		[TestMethod, TestCategory( "Plugins" ), ExpectedException( typeof( ArgumentNullException ) )]
 		public void ISettings_InvalidGetPluginTest()
 		{
-			ISettings cfg = new Settings( Connection );
+			ISettings cfg = new Settings( ConnectionFactory );
 			cfg.GetValue<string>( null, "test" );
 		}
 
@@ -70,14 +70,14 @@ namespace Blitzy.Tests.Model
 		{
 			MockPlugin plug = new MockPlugin();
 
-			ISettings cfg = new Settings( Connection );
+			ISettings cfg = new Settings( ConnectionFactory );
 			cfg.RemoveValue( plug, null );
 		}
 
 		[TestMethod, TestCategory( "Plugins" ), ExpectedException( typeof( ArgumentNullException ) )]
 		public void ISettings_InvalidRemovePluginTest()
 		{
-			ISettings cfg = new Settings( Connection );
+			ISettings cfg = new Settings( ConnectionFactory );
 			cfg.RemoveValue( null, "test" );
 		}
 
@@ -86,14 +86,14 @@ namespace Blitzy.Tests.Model
 		{
 			MockPlugin plug = new MockPlugin();
 
-			ISettings cfg = new Settings( Connection );
+			ISettings cfg = new Settings( ConnectionFactory );
 			cfg.SetValue( plug, null, null );
 		}
 
 		[TestMethod, TestCategory( "Plugins" ), ExpectedException( typeof( ArgumentNullException ) )]
 		public void ISettings_InvalidSetPluginTest()
 		{
-			ISettings cfg = new Settings( Connection );
+			ISettings cfg = new Settings( ConnectionFactory );
 			cfg.SetValue( null, "test", null );
 		}
 
@@ -101,7 +101,7 @@ namespace Blitzy.Tests.Model
 		public void ISettings_RemovePluginTest()
 		{
 			MockPlugin plug = new MockPlugin();
-			ISettings cfg = new Settings( Connection );
+			ISettings cfg = new Settings( ConnectionFactory );
 
 			cfg.RemoveValue( plug, "test" );
 		}
@@ -110,7 +110,7 @@ namespace Blitzy.Tests.Model
 		public void ISettings_SetGetValueTest()
 		{
 			MockPlugin plug = new MockPlugin();
-			ISettings cfg = new Settings( Connection );
+			ISettings cfg = new Settings( ConnectionFactory );
 
 			const int expected = 123;
 			cfg.SetValue( plug, "test", expected );
@@ -120,7 +120,7 @@ namespace Blitzy.Tests.Model
 		[TestMethod, TestCategory( "Plugins" )]
 		public void ISettings_SystemSettingsTest()
 		{
-			ISettings cfg = new Settings( Connection );
+			ISettings cfg = new Settings( ConnectionFactory );
 
 			Assert.AreEqual( ( (Settings)cfg ).GetValue<int>( SystemSetting.MaxMatchingItems ), cfg.GetSystemSetting<int>( SystemSetting.MaxMatchingItems ) );
 		}
@@ -131,7 +131,7 @@ namespace Blitzy.Tests.Model
 			int id1 = TestHelper.NextID();
 			int id2 = TestHelper.NextID();
 
-			Settings cfg = new Settings( Connection );
+			Settings cfg = new Settings( ConnectionFactory );
 			using( Folder f1 = new Folder() { ID = id1, IsRecursive = true, Path = "C:\\temp" } )
 			{
 				cfg.Folders.Add( f1 );
@@ -141,7 +141,7 @@ namespace Blitzy.Tests.Model
 
 					cfg.Save();
 
-					cfg = new Settings( Connection );
+					cfg = new Settings( ConnectionFactory );
 					cfg.Load();
 
 					Assert.IsTrue( cfg.Folders.Count >= 4 ); // 2 Start menu entries + 2 tested ones
@@ -161,7 +161,7 @@ namespace Blitzy.Tests.Model
 		[TestMethod, TestCategory( "Model" )]
 		public void SystemSettingTest()
 		{
-			Settings cfg = new Settings( Connection );
+			Settings cfg = new Settings( ConnectionFactory );
 			cfg.SetDefaults();
 			try
 			{

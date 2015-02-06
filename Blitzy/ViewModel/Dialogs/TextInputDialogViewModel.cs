@@ -1,16 +1,42 @@
-﻿
-
-using GalaSoft.MvvmLight.Command;
+﻿using GalaSoft.MvvmLight.Command;
 
 namespace Blitzy.ViewModel.Dialogs
 {
 	public class TextInputDialogViewModel : ViewModelBaseEx
 	{
-		#region Properties
+		public TextInputDialogViewModel()
+			: base( null )
+		{
+		}
 
-		private string _Caption;
-		private string _Input;
-		private string _LabelText;
+		private bool CanExecuteCancelCommand()
+		{
+			return true;
+		}
+
+		private bool CanExecuteOkCommand()
+		{
+			return true;
+		}
+
+		private void ExecuteCancelCommand()
+		{
+			Close( false );
+		}
+
+		private void ExecuteOkCommand()
+		{
+			Close( true );
+		}
+
+		public RelayCommand CancelCommand
+		{
+			get
+			{
+				return _CancelCommand ??
+					( _CancelCommand = new RelayCommand( ExecuteCancelCommand, CanExecuteCancelCommand ) );
+			}
+		}
 
 		public string Caption
 		{
@@ -72,22 +98,6 @@ namespace Blitzy.ViewModel.Dialogs
 			}
 		}
 
-		#endregion Properties
-
-		#region Commands
-
-		private RelayCommand _CancelCommand;
-		private RelayCommand _OkCommand;
-
-		public RelayCommand CancelCommand
-		{
-			get
-			{
-				return _CancelCommand ??
-					( _CancelCommand = new RelayCommand( ExecuteCancelCommand, CanExecuteCancelCommand ) );
-			}
-		}
-
 		public RelayCommand OkCommand
 		{
 			get
@@ -97,26 +107,10 @@ namespace Blitzy.ViewModel.Dialogs
 			}
 		}
 
-		private bool CanExecuteCancelCommand()
-		{
-			return true;
-		}
-
-		private bool CanExecuteOkCommand()
-		{
-			return true;
-		}
-
-		private void ExecuteCancelCommand()
-		{
-			Close( false );
-		}
-
-		private void ExecuteOkCommand()
-		{
-			Close( true );
-		}
-
-		#endregion Commands
+		private RelayCommand _CancelCommand;
+		private string _Caption;
+		private string _Input;
+		private string _LabelText;
+		private RelayCommand _OkCommand;
 	}
 }

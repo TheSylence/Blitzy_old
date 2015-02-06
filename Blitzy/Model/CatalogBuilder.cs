@@ -26,8 +26,9 @@ namespace Blitzy.Model
 
 	internal class CatalogBuilder : BaseObject
 	{
-		public CatalogBuilder( Settings settings, IMessenger messenger = null )
+		public CatalogBuilder( DbConnectionFactory factory, Settings settings, IMessenger messenger = null )
 		{
+			Factory = factory;
 			MessengerInstance = messenger ?? Messenger.Default;
 			CanProcess = ToDispose( new AutoResetEvent( false ) );
 			Settings = settings;
@@ -222,64 +223,67 @@ namespace Blitzy.Model
 
 		private void SaveEntries( IEnumerable<FileEntry> list )
 		{
-			DbTransaction transaction = Settings.Connection.BeginTransaction( IsolationLevel.ReadCommitted );
-			try
+			using( DbConnection connection = Factory.OpenConnection() )
 			{
-				using( DbCommand cmd = Settings.Connection.CreateCommand() )
+				DbTransaction transaction = connection.BeginTransaction( IsolationLevel.ReadCommitted );
+				try
 				{
-					cmd.Transaction = transaction;
-					cmd.CommandText = "DELETE FROM files";
-					cmd.ExecuteNonQuery();
-				}
-
-				const int maxBatchSize = 500; // SQLite limit: SQLITE_MAX_COMPOUND_SELECT
-				const int maxParameters = 999; // SQLite limit: SQLITE_MAX_VARIABLE_NUMBER
-				const int columns = FileEntry.ParameterCount;
-				int batchSize = maxBatchSize;
-				int objectCount = list.Count();
-
-				int count = 0;
-				int runs;
-				if( objectCount * columns <= maxParameters )
-				{
-					runs = (int)Math.Ceiling( objectCount / (double)batchSize );
-				}
-				else
-				{
-					runs = (int)Math.Ceiling( objectCount * columns / (double)maxParameters );
-					batchSize = (int)Math.Floor( objectCount / (double)runs );
-
-					if( runs * batchSize < objectCount )
-					{
-						++runs;
-					}
-				}
-
-				while( count < runs && !ShouldStop )
-				{
-					using( DbCommand cmd = Settings.Connection.CreateCommand() )
+					using( DbCommand cmd = connection.CreateCommand() )
 					{
 						cmd.Transaction = transaction;
-						FileEntry.CreateBatchStatement( cmd, list.Take( batchSize ) );
-						cmd.Prepare();
+						cmd.CommandText = "DELETE FROM files";
 						cmd.ExecuteNonQuery();
 					}
 
-					list = list.Skip( batchSize );
-					++count;
-					ItemsSaved += batchSize;
-					DispatcherHelper.CheckBeginInvokeOnUI( () => MessengerInstance.Send( new CatalogStatusMessage( CatalogStatus.ProgressUpdated ) ) );
-				}
+					const int maxBatchSize = 500; // SQLite limit: SQLITE_MAX_COMPOUND_SELECT
+					const int maxParameters = 999; // SQLite limit: SQLITE_MAX_VARIABLE_NUMBER
+					const int columns = FileEntry.ParameterCount;
+					int batchSize = maxBatchSize;
+					int objectCount = list.Count();
 
-				if( !ShouldStop )
-				{
-					transaction.Commit();
+					int count = 0;
+					int runs;
+					if( objectCount * columns <= maxParameters )
+					{
+						runs = (int)Math.Ceiling( objectCount / (double)batchSize );
+					}
+					else
+					{
+						runs = (int)Math.Ceiling( objectCount * columns / (double)maxParameters );
+						batchSize = (int)Math.Floor( objectCount / (double)runs );
+
+						if( runs * batchSize < objectCount )
+						{
+							++runs;
+						}
+					}
+
+					while( count < runs && !ShouldStop )
+					{
+						using( DbCommand cmd = connection.CreateCommand() )
+						{
+							cmd.Transaction = transaction;
+							FileEntry.CreateBatchStatement( cmd, list.Take( batchSize ) );
+							cmd.Prepare();
+							cmd.ExecuteNonQuery();
+						}
+
+						list = list.Skip( batchSize );
+						++count;
+						ItemsSaved += batchSize;
+						DispatcherHelper.CheckBeginInvokeOnUI( () => MessengerInstance.Send( new CatalogStatusMessage( CatalogStatus.ProgressUpdated ) ) );
+					}
+
+					if( !ShouldStop )
+					{
+						transaction.Commit();
+					}
 				}
-			}
-			catch( Exception ex )
-			{
-				LogError( "Failed updating the catalog: {0}", ex );
-				transaction.Rollback();
+				catch( Exception ex )
+				{
+					LogError( "Failed updating the catalog: {0}", ex );
+					transaction.Rollback();
+				}
 			}
 		}
 
@@ -413,6 +417,7 @@ namespace Blitzy.Model
 		private int _ItemsScanned;
 		private int _ItemsToProcess;
 		private CatalogProgressStep _ProgressStep;
+		private DbConnectionFactory Factory;
 		private bool IsRunning;
 		private IMessenger MessengerInstance;
 		private volatile bool ShouldStop;

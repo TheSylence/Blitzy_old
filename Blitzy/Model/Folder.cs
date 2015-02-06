@@ -6,6 +6,7 @@ using System.Data.SQLite;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Blitzy.Plugin;
 using Blitzy.Utility;
 
 namespace Blitzy.Model

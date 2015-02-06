@@ -1,6 +1,4 @@
-﻿
-
-using Blitzy.Model;
+﻿using Blitzy.Model;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Blitzy.Tests.Model
@@ -12,9 +10,9 @@ namespace Blitzy.Tests.Model
 		[TestMethod, TestCategory( "Model" )]
 		public void ClearTest()
 		{
-			Settings cfg = new Settings( Connection );
+			Settings cfg = new Settings( ConnectionFactory );
 
-			using( HistoryManager mgr = new HistoryManager( cfg ) )
+			using( HistoryManager mgr = new HistoryManager( ConnectionFactory, cfg ) )
 			{
 				mgr.AddItem( "item1" );
 				mgr.AddItem( "item2" );
@@ -24,7 +22,7 @@ namespace Blitzy.Tests.Model
 				mgr.Save();
 			}
 
-			using( HistoryManager mgr = new HistoryManager( cfg ) )
+			using( HistoryManager mgr = new HistoryManager( ConnectionFactory, cfg ) )
 			{
 				Assert.AreEqual( 0, mgr.Commands.Count );
 			}
@@ -33,8 +31,8 @@ namespace Blitzy.Tests.Model
 		[TestMethod, TestCategory( "Model" )]
 		public void DoubleAddTest()
 		{
-			Settings cfg = new Settings( Connection );
-			using( HistoryManager mgr = new HistoryManager( cfg ) )
+			Settings cfg = new Settings( ConnectionFactory );
+			using( HistoryManager mgr = new HistoryManager( ConnectionFactory, cfg ) )
 			{
 				mgr.AddItem( "item" );
 				mgr.AddItem( "item" );
@@ -46,9 +44,9 @@ namespace Blitzy.Tests.Model
 		[TestMethod, TestCategory( "Model" )]
 		public void OverflowTest()
 		{
-			Settings cfg = new Settings( Connection );
+			Settings cfg = new Settings( ConnectionFactory );
 			cfg.SetValue( SystemSetting.HistoryCount, 3 );
-			using( HistoryManager mgr = new HistoryManager( cfg ) )
+			using( HistoryManager mgr = new HistoryManager( ConnectionFactory, cfg ) )
 			{
 				mgr.AddItem( "item1" );
 				mgr.AddItem( "item2" );
@@ -63,9 +61,9 @@ namespace Blitzy.Tests.Model
 		[TestMethod, TestCategory( "Model" )]
 		public void SaveLoadTest()
 		{
-			Settings cfg = new Settings( Connection );
+			Settings cfg = new Settings( ConnectionFactory );
 
-			using( HistoryManager mgr = new HistoryManager( cfg ) )
+			using( HistoryManager mgr = new HistoryManager( ConnectionFactory, cfg ) )
 			{
 				mgr.AddItem( "item1" );
 				mgr.AddItem( "item2" );
@@ -74,7 +72,7 @@ namespace Blitzy.Tests.Model
 				mgr.Save();
 			}
 
-			using( HistoryManager mgr = new HistoryManager( cfg ) )
+			using( HistoryManager mgr = new HistoryManager( ConnectionFactory, cfg ) )
 			{
 				Assert.AreEqual( 3, mgr.Commands.Count );
 				Assert.IsTrue( mgr.Commands.Contains( "item1" ) );

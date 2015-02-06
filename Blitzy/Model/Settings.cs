@@ -63,23 +63,26 @@ namespace Blitzy.Model
 
 	internal class Settings : ObservableObject, ISettings
 	{
-		public Settings( DbConnection connection )
+		public Settings( DbConnectionFactory factory )
 		{
-			Connection = connection;
+			Factory = factory;
 			Folders = new ObservableCollection<Folder>();
 		}
 
 		public T GetValue<T>( SystemSetting setting )
 		{
-			using( DbCommand cmd = Connection.CreateCommand() )
+			using( DbConnection connection = Factory.OpenConnection() )
 			{
-				cmd.AddParameter( "key", setting.ToString() );
+				using( DbCommand cmd = connection.CreateCommand() )
+				{
+					cmd.AddParameter( "key", setting.ToString() );
 
-				cmd.CommandText = "SELECT [Value] FROM settings WHERE [Key] = @key;";
-				cmd.Prepare();
+					cmd.CommandText = "SELECT [Value] FROM settings WHERE [Key] = @key;";
+					cmd.Prepare();
 
-				object value = cmd.ExecuteScalar();
-				return ConvertValue<T>( value );
+					object value = cmd.ExecuteScalar();
+					return ConvertValue<T>( value );
+				}
 			}
 		}
 
@@ -166,33 +169,39 @@ namespace Blitzy.Model
 				throw new ArgumentNullException( "key" );
 			}
 
-			using( DbCommand cmd = Connection.CreateCommand() )
+			using( DbConnection connection = Factory.OpenConnection() )
 			{
-				cmd.AddParameter( "pluginID", pluginID );
-				cmd.AddParameter( "key", key );
+				using( DbCommand cmd = connection.CreateCommand() )
+				{
+					cmd.AddParameter( "pluginID", pluginID );
+					cmd.AddParameter( "key", key );
 
-				cmd.CommandText = "SELECT [Value] FROM plugin_settings WHERE PluginID = @pluginID AND [Key] = @key;";
-				cmd.Prepare();
+					cmd.CommandText = "SELECT [Value] FROM plugin_settings WHERE PluginID = @pluginID AND [Key] = @key;";
+					cmd.Prepare();
 
-				object value = cmd.ExecuteScalar();
-				return ConvertValue<T>( value );
+					object value = cmd.ExecuteScalar();
+					return ConvertValue<T>( value );
+				}
 			}
 		}
 
 		internal void Load()
 		{
-			using( DbCommand cmd = Connection.CreateCommand() )
+			using( DbConnection connection = Factory.OpenConnection() )
 			{
-				cmd.CommandText = "SELECT FolderID FROM folders";
-
-				using( DbDataReader reader = cmd.ExecuteReader() )
+				using( DbCommand cmd = connection.CreateCommand() )
 				{
-					while( reader.Read() )
-					{
-						Folder f = new Folder { ID = reader.GetInt32( 0 ) };
-						f.Load( Connection );
+					cmd.CommandText = "SELECT FolderID FROM folders";
 
-						Folders.Add( f );
+					using( DbDataReader reader = cmd.ExecuteReader() )
+					{
+						while( reader.Read() )
+						{
+							Folder f = new Folder { ID = reader.GetInt32( 0 ) };
+							f.Load( connection );
+
+							Folders.Add( f );
+						}
 					}
 				}
 			}
@@ -200,46 +209,54 @@ namespace Blitzy.Model
 
 		internal void RemovePluginSetting( Guid pluginId, string key )
 		{
-			using( DbCommand cmd = Connection.CreateCommand() )
+			using( DbConnection connection = Factory.OpenConnection() )
 			{
-				cmd.AddParameter( "pluginID", pluginId );
-				cmd.AddParameter( "key", key );
+				using( DbCommand cmd = connection.CreateCommand() )
+				{
+					cmd.AddParameter( "pluginID", pluginId );
+					cmd.AddParameter( "key", key );
 
-				cmd.CommandText = "DELETE FROM plugin_settings WHERE PluginID = @pluginID AND [Key] = @key;";
-				cmd.Prepare();
+					cmd.CommandText = "DELETE FROM plugin_settings WHERE PluginID = @pluginID AND [Key] = @key;";
+					cmd.Prepare();
 
-				cmd.ExecuteNonQuery();
+					cmd.ExecuteNonQuery();
+				}
 			}
 		}
 
 		internal void Save()
 		{
-			foreach( Folder f in Folders )
+			using( DbConnection connection = Factory.OpenConnection() )
 			{
-				f.Save( Connection );
+				foreach( Folder f in Folders )
+				{
+					f.Save( connection );
+				}
 			}
 		}
 
 		internal void SetDefaults()
 		{
 			Type type = typeof( SystemSetting );
-
-			DbTransaction transaction = Connection.BeginTransaction();
-			try
+			using( DbConnection connection = Factory.OpenConnection() )
 			{
-				foreach( SystemSetting setting in Enum.GetValues( type ) )
+				DbTransaction transaction = connection.BeginTransaction();
+				try
 				{
-					MemberInfo member = type.GetMember( setting.ToString() ).First();
-					SetValue( setting, member.GetCustomAttribute<DefaultValueAttribute>().Value );
-				}
+					foreach( SystemSetting setting in Enum.GetValues( type ) )
+					{
+						MemberInfo member = type.GetMember( setting.ToString() ).First();
+						SetValue( setting, member.GetCustomAttribute<DefaultValueAttribute>().Value );
+					}
 
-				transaction.Commit();
-			}
-			catch( Exception ex )
-			{
-				LogHelper.LogError( MethodInfo.GetCurrentMethod().DeclaringType, "Failed to restore default values: {0}", ex );
-				transaction.Rollback();
-				throw;
+					transaction.Commit();
+				}
+				catch( Exception ex )
+				{
+					LogHelper.LogError( MethodInfo.GetCurrentMethod().DeclaringType, "Failed to restore default values: {0}", ex );
+					transaction.Rollback();
+					throw;
+				}
 			}
 		}
 
@@ -256,36 +273,41 @@ namespace Blitzy.Model
 			{
 				value = ( (bool)value ) ? 1 : 0;
 			}
-
-			using( DbCommand cmd = Connection.CreateCommand() )
+			using( DbConnection connection = Factory.OpenConnection() )
 			{
-				cmd.AddParameter( "pluginID", pluginID );
-				cmd.AddParameter( "key", key );
-				cmd.AddParameter( "value", value );
+				using( DbCommand cmd = connection.CreateCommand() )
+				{
+					cmd.AddParameter( "pluginID", pluginID );
+					cmd.AddParameter( "key", key );
+					cmd.AddParameter( "value", value );
 
-				cmd.CommandText = "INSERT INTO plugin_settings (PluginID, [Key], [Value]) VALUES( @pluginID ,@key, @value );";
-				cmd.Prepare();
+					cmd.CommandText = "INSERT INTO plugin_settings (PluginID, [Key], [Value]) VALUES( @pluginID ,@key, @value );";
+					cmd.Prepare();
 
-				cmd.ExecuteNonQuery();
+					cmd.ExecuteNonQuery();
+				}
 			}
 		}
 
 		internal void SetValue( SystemSetting setting, object value )
 		{
-			using( DbCommand cmd = Connection.CreateCommand() )
+			using( DbConnection connection = Factory.OpenConnection() )
 			{
-				cmd.AddParameter( "key", setting.ToString() );
-				cmd.AddParameter( "value", value );
+				using( DbCommand cmd = connection.CreateCommand() )
+				{
+					cmd.AddParameter( "key", setting.ToString() );
+					cmd.AddParameter( "value", value );
 
-				cmd.CommandText = "UPDATE settings SET [Value] = @value WHERE [Key] = @key;";
-				cmd.Prepare();
+					cmd.CommandText = "UPDATE settings SET [Value] = @value WHERE [Key] = @key;";
+					cmd.Prepare();
 
-				cmd.ExecuteNonQuery();
+					cmd.ExecuteNonQuery();
+				}
 			}
 		}
 
 		public ObservableCollection<Folder> Folders { get; private set; }
 
-		internal DbConnection Connection { get; private set; }
+		private DbConnectionFactory Factory;
 	}
 }

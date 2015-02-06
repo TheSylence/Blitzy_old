@@ -1,6 +1,4 @@
-﻿
-
-using System;
+﻿using System;
 using Blitzy.Model;
 using Blitzy.Utility;
 using GalaSoft.MvvmLight.Command;
@@ -10,11 +8,10 @@ namespace Blitzy.ViewModel.Dialogs
 	internal abstract class DialogViewModelBase<TModel> : ViewModelBaseEx
 		where TModel : ModelBase
 	{
-		#region Constructor
-
-		#endregion Constructor
-
-		#region Methods
+		public DialogViewModelBase( DbConnectionFactory factory = null )
+			: base( factory )
+		{
+		}
 
 		public override void Reset()
 		{
@@ -22,13 +19,34 @@ namespace Blitzy.ViewModel.Dialogs
 			Model = (TModel)Activator.CreateInstance( typeof( TModel ) );
 		}
 
-		#endregion Methods
+		protected virtual bool CanExecuteOkCommand()
+		{
+			return true;
+		}
 
-		#region Properties
+		private bool CanExecuteCancelCommand()
+		{
+			return true;
+		}
 
-		private TModel _Model;
-		private bool _New;
-		private string _Title;
+		private void ExecuteCancelCommand()
+		{
+			Close( false );
+		}
+
+		private void ExecuteOkCommand()
+		{
+			Close( true );
+		}
+
+		public RelayCommand CancelCommand
+		{
+			get
+			{
+				return _CancelCommand ??
+					( _CancelCommand = new RelayCommand( ExecuteCancelCommand, CanExecuteCancelCommand ) );
+			}
+		}
 
 		public TModel Model
 		{
@@ -76,6 +94,15 @@ namespace Blitzy.ViewModel.Dialogs
 			}
 		}
 
+		public RelayCommand OkCommand
+		{
+			get
+			{
+				return _OkCommand ??
+					( _OkCommand = new RelayCommand( ExecuteOkCommand, CanExecuteOkCommand ) );
+			}
+		}
+
 		public string Title
 		{
 			get
@@ -96,51 +123,10 @@ namespace Blitzy.ViewModel.Dialogs
 			}
 		}
 
-		#endregion Properties
-
-		#region Commands
-
 		private RelayCommand _CancelCommand;
+		private TModel _Model;
+		private bool _New;
 		private RelayCommand _OkCommand;
-
-		public RelayCommand CancelCommand
-		{
-			get
-			{
-				return _CancelCommand ??
-					( _CancelCommand = new RelayCommand( ExecuteCancelCommand, CanExecuteCancelCommand ) );
-			}
-		}
-
-		public RelayCommand OkCommand
-		{
-			get
-			{
-				return _OkCommand ??
-					( _OkCommand = new RelayCommand( ExecuteOkCommand, CanExecuteOkCommand ) );
-			}
-		}
-
-		protected virtual bool CanExecuteOkCommand()
-		{
-			return true;
-		}
-
-		private bool CanExecuteCancelCommand()
-		{
-			return true;
-		}
-
-		private void ExecuteCancelCommand()
-		{
-			Close( false );
-		}
-
-		private void ExecuteOkCommand()
-		{
-			Close( true );
-		}
-
-		#endregion Commands
+		private string _Title;
 	}
 }

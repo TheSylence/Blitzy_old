@@ -4,37 +4,36 @@ using System.Data;
 using System.Data.Common;
 using System.Data.SQLite;
 using System.Linq;
+using Blitzy.Plugin;
 
 namespace Blitzy.Model
 {
 	public class HistoryManager : BaseObject
 	{
-		#region Constructor
-
-		internal HistoryManager( Settings settings )
+		internal HistoryManager( DbConnectionFactory factory, Settings settings )
 		{
+			Factory = factory;
 			Settings = settings;
 			Commands = new ObservableCollection<string>();
 
-			using( DbCommand cmd = settings.Connection.CreateCommand() )
+			using( DbConnection connection = Factory.OpenConnection() )
 			{
-				cmd.CommandText = "SELECT Command FROM history ORDER BY HistoryID LIMIT 0, @historyCount";
-				cmd.AddParameter( "historyCount", settings.GetValue<int>( SystemSetting.HistoryCount ) );
-				cmd.Prepare();
-
-				using( DbDataReader reader = cmd.ExecuteReader() )
+				using( DbCommand cmd = connection.CreateCommand() )
 				{
-					while( reader.Read() )
+					cmd.CommandText = "SELECT Command FROM history ORDER BY HistoryID LIMIT 0, @historyCount";
+					cmd.AddParameter( "historyCount", settings.GetValue<int>( SystemSetting.HistoryCount ) );
+					cmd.Prepare();
+
+					using( DbDataReader reader = cmd.ExecuteReader() )
 					{
-						Commands.Add( reader.GetString( 0 ) );
+						while( reader.Read() )
+						{
+							Commands.Add( reader.GetString( 0 ) );
+						}
 					}
 				}
 			}
 		}
-
-		#endregion Constructor
-
-		#region Methods
 
 		public void AddItem( string command )
 		{
@@ -58,41 +57,40 @@ namespace Blitzy.Model
 
 		public void Save()
 		{
-			DbTransaction transaction = Settings.Connection.BeginTransaction( IsolationLevel.ReadCommitted );
-			try
+			using( DbConnection connection = Factory.OpenConnection() )
 			{
-				using( DbCommand cmd = Settings.Connection.CreateCommand() )
+				DbTransaction transaction = connection.BeginTransaction( IsolationLevel.ReadCommitted );
+				try
 				{
-					cmd.Transaction = transaction;
-					cmd.CommandText = "DELETE FROM history";
-					cmd.ExecuteNonQuery();
-				}
-
-				for( int i = 0; i < Math.Min( Settings.GetValue<int>( SystemSetting.HistoryCount ), Commands.Count ); ++i )
-				{
-					using( DbCommand cmd = Settings.Connection.CreateCommand() )
+					using( DbCommand cmd = connection.CreateCommand() )
 					{
 						cmd.Transaction = transaction;
-						cmd.CommandText = "INSERT INTO history ( HistoryID, Command ) VALUES ( @id, @cmd );";
-						cmd.AddParameter( "id", i );
-						cmd.AddParameter( "cmd", Commands[i] );
-
+						cmd.CommandText = "DELETE FROM history";
 						cmd.ExecuteNonQuery();
 					}
-				}
 
-				transaction.Commit();
-			}
-			catch( Exception ex )
-			{
-				LogError( "Failed to save command history: {0}", ex );
-				transaction.Rollback();
+					for( int i = 0; i < Math.Min( Settings.GetValue<int>( SystemSetting.HistoryCount ), Commands.Count ); ++i )
+					{
+						using( DbCommand cmd = connection.CreateCommand() )
+						{
+							cmd.Transaction = transaction;
+							cmd.CommandText = "INSERT INTO history ( HistoryID, Command ) VALUES ( @id, @cmd );";
+							cmd.AddParameter( "id", i );
+							cmd.AddParameter( "cmd", Commands[i] );
+
+							cmd.ExecuteNonQuery();
+						}
+					}
+
+					transaction.Commit();
+				}
+				catch( Exception ex )
+				{
+					LogError( "Failed to save command history: {0}", ex );
+					transaction.Rollback();
+				}
 			}
 		}
-
-		#endregion Methods
-
-		#region Properties
 
 		public ObservableCollection<string> Commands { get; internal set; }
 
@@ -116,14 +114,8 @@ namespace Blitzy.Model
 			}
 		}
 
-		private string _SelectedItem;
-
-		#endregion Properties
-
-		#region Attributes
-
 		private readonly Settings Settings;
-
-		#endregion Attributes
+		private string _SelectedItem;
+		private DbConnectionFactory Factory;
 	}
 }

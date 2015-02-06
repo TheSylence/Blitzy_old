@@ -57,6 +57,14 @@ namespace Blitzy.Tests
 			}
 		}
 
+		protected DbConnectionFactory ConnectionFactory
+		{
+			get
+			{
+				return new TestConnectionFactory();
+			}
+		}
+
 		protected NativeMethodsMock NativeMethods { get; private set; }
 	}
 }

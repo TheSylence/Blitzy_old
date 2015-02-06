@@ -137,6 +137,7 @@
     <Compile Include="Model\UpdateChecker_Tests.cs" />
     <Compile Include="Plugins\Runny_Tests.cs" />
     <Compile Include="Global\Constants_Tests.cs" />
+    <Compile Include="TestConnectionFactory.cs" />
     <Compile Include="Utility\CopyFromArguments_Tests.cs" />
     <Compile Include="Utility\Extensions_Tests.cs" />
     <Compile Include="Utility\HotKeyHost_Tests.cs" />
@@ -172,13 +173,11 @@
     <Compile Include="Plugins\Blitzy_Tests.cs" />
     <Compile Include="Plugins\Calcy_Tests.cs" />
     <Compile Include="Plugins\Medy_Tests.cs" />
-    <Compile Include="Plugins\PluginDatabase_Tests.cs" />
     <Compile Include="Plugins\PluginManager_Tests.cs" />
     <Compile Include="Plugins\PluginTestBase.cs" />
     <Compile Include="Plugins\PluginTester.cs" />
     <Compile Include="Plugins\Putty_Tests.cs" />
     <Compile Include="Plugins\Weby_Tests.cs" />
-    <Compile Include="Plugins\WhereClause_Tests.cs" />
     <Compile Include="Plugins\Winy_Tests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PropertyChangedListener.cs" />

@@ -24,33 +24,30 @@ namespace Blitzy.ViewModel
 {
 	public sealed class MainViewModel : ViewModelBaseEx, IPluginHost
 	{
+		private DbConnectionFactory Factory;
+
 		/// <summary>
 		/// Initializes a new instance of the MainViewModel class.
 		/// </summary>
-		public MainViewModel( DbConnection connection = null, ViewServiceManager serviceManager = null, IMessenger messenger = null )
-			: base( serviceManager, messenger )
+		public MainViewModel( DbConnectionFactory factory, ViewServiceManager serviceManager = null, IMessenger messenger = null )
+			: base( factory, serviceManager, messenger )
 		{
-			Database = ToDispose( new Database( connection ) );
-			Settings = new Settings( Database.Connection );
+			Factory = factory;
+			Settings = new Settings( Factory );
 
-			if( !Database.CheckExistance() )
+			if( !Factory.Existed )
 			{
 				Settings.SetDefaults();
-				Settings.Load();
 			}
-			else
-			{
-				Settings.Load();
-			}
+			Settings.Load();
 
 			CultureInfo currentLanguage = LanguageHelper.GetLanguage( Settings.GetValue<string>( SystemSetting.Language ) );
 			MessengerInstance.Send( new LanguageMessage( currentLanguage ) );
 
-			ApiDatabase = ToDispose( new PluginDatabase( Database.Connection ) );
-			Plugins = ToDispose( new PluginManager( this, Database.Connection ) );
+			Plugins = ToDispose( new PluginManager( this, Factory ) );
 			Plugins.LoadPlugins();
 
-			CmdManager = ToDispose( new CommandManager( Database.Connection, Settings, Plugins ) );
+			CmdManager = ToDispose( new CommandManager( Factory, Settings, Plugins ) );
 
 			int rebuildTime = Settings.GetValue<int>( SystemSetting.AutoCatalogRebuild );
 			if( rebuildTime > 0 )
@@ -60,8 +57,8 @@ namespace Blitzy.ViewModel
 				RebuildTimer.Start();
 			}
 
-			Builder = ToDispose( new CatalogBuilder( Settings ) );
-			History = ToDispose( new HistoryManager( Settings ) );
+			Builder = ToDispose( new CatalogBuilder( ConnectionFactory, Settings, MessengerInstance ) );
+			History = ToDispose( new HistoryManager( ConnectionFactory, Settings ) );
 
 			Reset();
 		}
@@ -674,8 +671,6 @@ namespace Blitzy.ViewModel
 
 		internal CatalogBuilder Builder { get; private set; }
 
-		internal Database Database { get; private set; }
-
 		internal PluginManager Plugins { get; private set; }
 
 		internal Settings Settings { get; private set; }
@@ -683,16 +678,6 @@ namespace Blitzy.ViewModel
 		internal HashSet<int> TaskList = new HashSet<int>();
 		private readonly DispatcherTimer RebuildTimer;
 		private readonly object TaskListLock = new object();
-
-		private readonly PluginDatabase ApiDatabase;
-
-		IDatabase IPluginHost.Database
-		{
-			get
-			{
-				return ApiDatabase;
-			}
-		}
 
 		ISettings IPluginHost.Settings
 		{
@@ -702,6 +687,11 @@ namespace Blitzy.ViewModel
 		bool IPluginHost.IsPluginLoaded( Guid id )
 		{
 			return Plugins.IsLoaded( id );
+		}
+
+		DbConnectionFactory IPluginHost.ConnectionFactory
+		{
+			get { return ConnectionFactory; }
 		}
 	}
 }

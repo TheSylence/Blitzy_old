@@ -7,7 +7,7 @@ namespace Blitzy.ViewModel
 	internal class HistoryViewModel : ViewModelBaseEx
 	{
 		public HistoryViewModel( IMessenger messenger = null )
-			: base( null, messenger )
+			: base( null, null, messenger )
 		{
 			MessengerInstance.Register<HistoryMessage>( this, OnMessage );
 		}

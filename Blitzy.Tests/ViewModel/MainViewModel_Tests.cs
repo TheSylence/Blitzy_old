@@ -20,7 +20,7 @@ namespace Blitzy.Tests.ViewModel
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void ArrowsTest()
 		{
-			using( MainViewModel vm = new MainViewModel() )
+			using( MainViewModel vm = new MainViewModel( ConnectionFactory ) )
 			{
 				vm.CommandInput = "t";
 
@@ -38,7 +38,7 @@ namespace Blitzy.Tests.ViewModel
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void BackTest()
 		{
-			using( MainViewModel vm = new MainViewModel() )
+			using( MainViewModel vm = new MainViewModel( ConnectionFactory ) )
 			{
 				vm.CommandInput = "test";
 				Assert.IsFalse( vm.OnKeyBack() );
@@ -53,7 +53,7 @@ namespace Blitzy.Tests.ViewModel
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void CommandsTest()
 		{
-			using( MainViewModel vm = new MainViewModel() )
+			using( MainViewModel vm = new MainViewModel( ConnectionFactory ) )
 			{
 				Assert.IsTrue( vm.OnClosingCommand.CanExecute( null ) );
 				Assert.IsTrue( vm.OnDeactivatedCommand.CanExecute( null ) );
@@ -65,7 +65,7 @@ namespace Blitzy.Tests.ViewModel
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void DeactivatedTest()
 		{
-			using( MainViewModel vm = new MainViewModel() )
+			using( MainViewModel vm = new MainViewModel( ConnectionFactory ) )
 			{
 				bool hidden = false;
 				vm.RequestHide += ( s, e ) => hidden = true;
@@ -85,7 +85,7 @@ namespace Blitzy.Tests.ViewModel
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void DoubleTabTest()
 		{
-			using( MainViewModel vm = new MainViewModel() )
+			using( MainViewModel vm = new MainViewModel( ConnectionFactory ) )
 			{
 				vm.CommandInput = "weby";
 				Assert.IsTrue( vm.OnKeyTab() );
@@ -97,7 +97,7 @@ namespace Blitzy.Tests.ViewModel
 		public void DownTestHistory()
 		{
 			Messenger messenger = new Messenger();
-			using( MainViewModel vm = new MainViewModel( null, null, messenger ) )
+			using( MainViewModel vm = new MainViewModel( ConnectionFactory, null, messenger ) )
 			{
 				vm.History.Commands = new ObservableCollection<string>( new[] { "test", "test2" } );
 				vm.History.SelectedItem = "historytest";
@@ -148,7 +148,7 @@ namespace Blitzy.Tests.ViewModel
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void EscapeTest()
 		{
-			using( MainViewModel vm = new MainViewModel( Connection ) )
+			using( MainViewModel vm = new MainViewModel( ConnectionFactory ) )
 			{
 				bool hidden = false;
 				vm.RequestHide += ( s, e ) => hidden = true;
@@ -167,7 +167,7 @@ namespace Blitzy.Tests.ViewModel
 		public void InternalCommandHistoryTest()
 		{
 			Messenger messenger = new Messenger();
-			using( MainViewModel vm = new MainViewModel( Connection, null, messenger ) )
+			using( MainViewModel vm = new MainViewModel( ConnectionFactory, null, messenger ) )
 			{
 				int oldCount = vm.History.Commands.Count;
 
@@ -185,7 +185,7 @@ namespace Blitzy.Tests.ViewModel
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void MouseCommandTest()
 		{
-			using( MainViewModel vm = new MainViewModel( Connection ) )
+			using( MainViewModel vm = new MainViewModel( ConnectionFactory ) )
 			{
 				vm.Reset();
 				Assert.IsFalse( vm.ExecuteCommand.CanExecute( null ) );
@@ -201,7 +201,7 @@ namespace Blitzy.Tests.ViewModel
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void MultipleTabTest()
 		{
-			using( MainViewModel vm = new MainViewModel( Connection ) )
+			using( MainViewModel vm = new MainViewModel( ConnectionFactory ) )
 			{
 				vm.CommandInput = "google";
 				Assert.IsTrue( vm.OnKeyTab() );
@@ -213,7 +213,7 @@ namespace Blitzy.Tests.ViewModel
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void PropertyChangedTest()
 		{
-			using( MainViewModel vm = new MainViewModel() )
+			using( MainViewModel vm = new MainViewModel( ConnectionFactory ) )
 			{
 				PropertyChangedListener listener = new PropertyChangedListener( vm );
 				listener.Exclude<MainViewModel>( o => o.ShouldClose );
@@ -228,7 +228,7 @@ namespace Blitzy.Tests.ViewModel
 			bool? closed = null;
 			Messenger messenger = new Messenger();
 
-			using( MainViewModel vm = new MainViewModel( Connection, null, messenger ) )
+			using( MainViewModel vm = new MainViewModel( ConnectionFactory, null, messenger ) )
 			{
 				vm.Reset();
 				Assert.IsFalse( vm.ExecuteCommand.CanExecute( null ) );
@@ -272,7 +272,7 @@ namespace Blitzy.Tests.ViewModel
 		{
 			Messenger messenger = new Messenger();
 
-			using( MainViewModel vm = new MainViewModel( Connection, null, messenger ) )
+			using( MainViewModel vm = new MainViewModel( ConnectionFactory, null, messenger ) )
 			{
 				vm.History.SelectedItem = "historytest";
 				bool receivedHistoryClose = false;
@@ -310,7 +310,7 @@ namespace Blitzy.Tests.ViewModel
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void ReturnSecondaryTest()
 		{
-			using( MainViewModel vm = new MainViewModel( Connection ) )
+			using( MainViewModel vm = new MainViewModel( ConnectionFactory ) )
 			{
 				MockPlugin plug = new MockPlugin();
 				CommandItem item = CommandItem.Create( "test", "test", plug );
@@ -343,7 +343,7 @@ namespace Blitzy.Tests.ViewModel
 		{
 			Messenger messenger = new Messenger();
 
-			using( MainViewModel vm = new MainViewModel( Connection, null, messenger ) )
+			using( MainViewModel vm = new MainViewModel( ConnectionFactory, null, messenger ) )
 			{
 				Assert.IsFalse( vm.OnKeyReturn() );
 
@@ -370,7 +370,7 @@ namespace Blitzy.Tests.ViewModel
 			ViewServiceManager serviceManager = new ViewServiceManager();
 			serviceManager.RegisterService( typeof( SettingsService ), mock );
 
-			using( MainViewModel vm = new MainViewModel( Connection, serviceManager ) )
+			using( MainViewModel vm = new MainViewModel( ConnectionFactory, serviceManager ) )
 			{
 				Assert.IsTrue( vm.SettingsCommand.CanExecute( null ) );
 
@@ -384,7 +384,7 @@ namespace Blitzy.Tests.ViewModel
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void TabTest()
 		{
-			using( MainViewModel vm = new MainViewModel() )
+			using( MainViewModel vm = new MainViewModel( ConnectionFactory ) )
 			{
 				Assert.IsFalse( vm.OnKeyTab() );
 
@@ -432,7 +432,7 @@ namespace Blitzy.Tests.ViewModel
 		{
 			Messenger messenger = new Messenger();
 
-			using( MainViewModel vm = new MainViewModel( null, null, messenger ) )
+			using( MainViewModel vm = new MainViewModel( ConnectionFactory, null, messenger ) )
 			{
 				vm.History.Commands = new ObservableCollection<string>( new[] { "test", "test2" } );
 				vm.History.SelectedItem = "historytest";

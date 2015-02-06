@@ -31,6 +31,11 @@ namespace Blitzy.Model
 			}
 		}
 
+		public static implicit operator DbConnection( Database db )
+		{
+			return db.Connection;
+		}
+
 		[SuppressMessage( "Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities" )]
 		internal bool CheckExistance()
 		{

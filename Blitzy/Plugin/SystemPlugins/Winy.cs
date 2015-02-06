@@ -75,7 +75,7 @@ namespace Blitzy.Plugin.SystemPlugins
 
 		public IPluginViewModel GetSettingsDataContext( IViewServiceManager viewServices )
 		{
-			return new ViewModel.WinySettingsViewModel( (Settings)Settings, viewServices );
+			return new ViewModel.WinySettingsViewModel( Host.ConnectionFactory, (Settings)Settings, viewServices );
 		}
 
 		public System.Windows.Controls.Control GetSettingsUI()
@@ -90,6 +90,7 @@ namespace Blitzy.Plugin.SystemPlugins
 
 		public bool Load( IPluginHost host, string oldVersion = null )
 		{
+			Host = host;
 			Settings = host.Settings;
 			if( oldVersion == null )
 			{
@@ -162,6 +163,7 @@ namespace Blitzy.Plugin.SystemPlugins
 		internal const string ShutdownKey = "ConfirmShutdown";
 		private Dictionary<string, bool> Confirmations;
 		private Guid? Guid;
+		private IPluginHost Host;
 		private ISettings Settings;
 	}
 }

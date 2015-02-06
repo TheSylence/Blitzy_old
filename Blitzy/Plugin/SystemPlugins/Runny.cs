@@ -50,9 +50,10 @@ namespace Blitzy.Plugin.SystemPlugins
 		{
 			if( ItemCache.Count == 0 )
 			{
-				DbConnection connection = ( (Settings)Host.Settings ).Connection;
-
-				ItemCache = new List<CommandItem>( ReadAllCommands( connection ) );
+				using( DbConnection connection = Host.ConnectionFactory.OpenConnection() )
+				{
+					ItemCache = new List<CommandItem>( ReadAllCommands( connection ) );
+				}
 			}
 
 			return ItemCache;

@@ -11,7 +11,7 @@ namespace Blitzy.ViewModel.Dialogs
 	public class ChangelogDialogViewModel : ViewModelBaseEx
 	{
 		public ChangelogDialogViewModel( ViewServiceManager serviceManager = null )
-			: base( serviceManager )
+			: base( null, serviceManager )
 		{
 		}
 

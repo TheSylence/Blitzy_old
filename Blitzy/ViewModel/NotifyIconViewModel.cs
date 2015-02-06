@@ -14,7 +14,7 @@ namespace Blitzy.ViewModel
 	{
 		[SuppressMessage( "Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors" )]
 		public NotifyIconViewModel( IMessenger messenger = null )
-			: base( null, messenger )
+			: base( null, null, messenger )
 		{
 			if( !RuntimeConfig.Tests && !IsInDesignMode )
 			{

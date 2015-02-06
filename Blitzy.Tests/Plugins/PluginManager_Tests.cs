@@ -1,6 +1,4 @@
-﻿
-
-using Blitzy.Plugin;
+﻿using Blitzy.Plugin;
 using Blitzy.Tests.Mocks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -14,7 +12,7 @@ namespace Blitzy.Tests.Plugins
 		public void GetPluginTest()
 		{
 			MockPluginHost host = new MockPluginHost();
-			using( PluginManager pmgr = new PluginManager( host, Connection ) )
+			using( PluginManager pmgr = new PluginManager( host, ConnectionFactory ) )
 			{
 				pmgr.LoadPlugins();
 				Assert.AreNotEqual( 0, pmgr.Plugins.Count );
@@ -33,7 +31,7 @@ namespace Blitzy.Tests.Plugins
 		public void IsLoadedTest()
 		{
 			MockPluginHost host = new MockPluginHost();
-			using( PluginManager pmgr = new PluginManager( host, Connection ) )
+			using( PluginManager pmgr = new PluginManager( host, ConnectionFactory ) )
 			{
 				pmgr.LoadPlugins();
 
@@ -47,7 +45,7 @@ namespace Blitzy.Tests.Plugins
 		public void LoadTest()
 		{
 			MockPluginHost host = new MockPluginHost();
-			using( PluginManager pmgr = new PluginManager( host, Connection ) )
+			using( PluginManager pmgr = new PluginManager( host, ConnectionFactory ) )
 			{
 				pmgr.LoadPlugins();
 
