@@ -1,6 +1,4 @@
-﻿
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -18,12 +16,6 @@ namespace Blitzy.Utility
 	/// </summary>
 	internal class HotKey : INotifyPropertyChanged
 	{
-		private bool _Enabled;
-
-		private Key _Key;
-
-		private ModifierKeys _Modifiers;
-
 		/// <summary>
 		/// Creates an HotKey object. This instance has to be registered in an HotKeyHost.
 		/// </summary>
@@ -61,6 +53,28 @@ namespace Blitzy.Utility
 		public event EventHandler<HotKeyEventArgs> HotKeyPressed;
 
 		public event PropertyChangedEventHandler PropertyChanged;
+
+		public override string ToString()
+		{
+			return string.Format( CultureInfo.InvariantCulture, "{0} + {1} ({2}Enabled)", Modifiers, Key, Enabled ? "" : "Not " );
+		}
+
+		internal void RaiseOnHotKeyPressed()
+		{
+			OnHotKeyPress();
+		}
+
+		protected virtual void OnHotKeyPress()
+		{
+			if( HotKeyPressed != null )
+				HotKeyPressed( this, new HotKeyEventArgs( this ) );
+		}
+
+		protected virtual void OnPropertyChanged( string propertyName )
+		{
+			if( PropertyChanged != null )
+				PropertyChanged( this, new PropertyChangedEventArgs( propertyName ) );
+		}
 
 		public bool Enabled
 		{
@@ -116,27 +130,11 @@ namespace Blitzy.Utility
 			}
 		}
 
-		public override string ToString()
-		{
-			return string.Format( CultureInfo.InvariantCulture, "{0} + {1} ({2}Enabled)", Modifiers, Key, Enabled ? "" : "Not " );
-		}
+		private bool _Enabled;
 
-		internal void RaiseOnHotKeyPressed()
-		{
-			OnHotKeyPress();
-		}
+		private Key _Key;
 
-		protected virtual void OnHotKeyPress()
-		{
-			if( HotKeyPressed != null )
-				HotKeyPressed( this, new HotKeyEventArgs( this ) );
-		}
-
-		protected virtual void OnPropertyChanged( string propertyName )
-		{
-			if( PropertyChanged != null )
-				PropertyChanged( this, new PropertyChangedEventArgs( propertyName ) );
-		}
+		private ModifierKeys _Modifiers;
 	}
 
 	[SuppressMessage( "Microsoft.Design", "CA1064:ExceptionsShouldBePublic" )]
@@ -173,10 +171,6 @@ namespace Blitzy.Utility
 	/// </summary>
 	internal sealed class HotKeyHost : IDisposable
 	{
-		private static readonly SerialCounter IDGen = new SerialCounter( 1 );
-
-		private readonly Dictionary<int, HotKey> _HotKeys = new Dictionary<int, HotKey>();
-
 		/// <summary>
 		/// Creates a new HotKeyHost
 		/// </summary>
@@ -191,60 +185,10 @@ namespace Blitzy.Utility
 			hwndSource.AddHook( Hook );
 		}
 
-		#region HotKey Interop
-
-		internal const int WM_HOTKEY = 786;
-
-		#endregion HotKey Interop
-
-		#region Interop-Encapsulation
-
-		private readonly HwndSourceHook Hook;
-		private readonly HwndSource HwndSource;
-
-		private void RegisterHotKey( int id, HotKey hotKey )
-		{
-			if( (int)HwndSource.Handle != 0 )
-			{
-				int error = INativeMethods.Instance.RegisterHotKey_Wrapper( HwndSource.Handle, id, (int)hotKey.Modifiers, KeyInterop.VirtualKeyFromKey( hotKey.Key ) );
-				if( error == 0 )
-				{
-					error = Marshal.GetLastWin32Error();
-					Exception e = new Win32Exception( error );
-
-					if( error == 1409 )
-						throw new HotKeyAlreadyRegisteredException( e.Message, hotKey, e );
-
-					throw e;
-				}
-			}
-			else
-				throw new InvalidOperationException( "Handle is invalid" );
-		}
-
-		private void UnregisterHotKey( int id )
-		{
-			if( (int)HwndSource.Handle != 0 )
-			{
-				int error = INativeMethods.Instance.UnregisterHotKey_Wrapper( HwndSource.Handle, id );
-				if( error == 0 )
-				{
-					throw new Win32Exception( Marshal.GetLastWin32Error() );
-				}
-			}
-		}
-
-		#endregion Interop-Encapsulation
-
 		/// <summary>
 		/// Will be raised if any registered hotKey is pressed
 		/// </summary>
 		public event EventHandler<HotKeyEventArgs> HotKeyPressed;
-
-		/// <summary>
-		/// All registered hotKeys
-		/// </summary>
-		public IEnumerable<HotKey> HotKeys { get { return _HotKeys.Values; } }
 
 		/// <summary>
 		/// Adds an hotKey.
@@ -336,6 +280,55 @@ namespace Blitzy.Utility
 			return new IntPtr( 0 );
 		}
 
+		/// <summary>
+		/// All registered hotKeys
+		/// </summary>
+		public IEnumerable<HotKey> HotKeys { get { return _HotKeys.Values; } }
+
+		internal const int WM_HOTKEY = 786;
+		private static readonly SerialCounter IDGen = new SerialCounter( 1 );
+
+		private readonly Dictionary<int, HotKey> _HotKeys = new Dictionary<int, HotKey>();
+
+		#region Interop-Encapsulation
+
+		private void RegisterHotKey( int id, HotKey hotKey )
+		{
+			if( (int)HwndSource.Handle != 0 )
+			{
+				int error = INativeMethods.Instance.RegisterHotKey_Wrapper( HwndSource.Handle, id, (int)hotKey.Modifiers, KeyInterop.VirtualKeyFromKey( hotKey.Key ) );
+				if( error == 0 )
+				{
+					error = Marshal.GetLastWin32Error();
+					Exception e = new Win32Exception( error );
+
+					if( error == 1409 )
+						throw new HotKeyAlreadyRegisteredException( e.Message, hotKey, e );
+
+					throw e;
+				}
+			}
+			else
+				throw new InvalidOperationException( "Handle is invalid" );
+		}
+
+		private void UnregisterHotKey( int id )
+		{
+			if( (int)HwndSource.Handle != 0 )
+			{
+				int error = INativeMethods.Instance.UnregisterHotKey_Wrapper( HwndSource.Handle, id );
+				if( error == 0 )
+				{
+					throw new Win32Exception( Marshal.GetLastWin32Error() );
+				}
+			}
+		}
+
+		private readonly HwndSourceHook Hook;
+		private readonly HwndSource HwndSource;
+
+		#endregion Interop-Encapsulation
+
 		public class SerialCounter
 		{
 			public SerialCounter( int start )
@@ -343,17 +336,15 @@ namespace Blitzy.Utility
 				Current = start;
 			}
 
-			public int Current { get; private set; }
-
 			public int Next()
 			{
 				return ++Current;
 			}
+
+			public int Current { get; private set; }
 		}
 
 		#region Destructor
-
-		private bool Disposed;
 
 		~HotKeyHost()
 		{
@@ -383,6 +374,8 @@ namespace Blitzy.Utility
 
 			Disposed = true;
 		}
+
+		private bool Disposed;
 
 		#endregion Destructor
 	}

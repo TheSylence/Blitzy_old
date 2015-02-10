@@ -1,6 +1,4 @@
-﻿
-
-using Blitzy.Utility;
+﻿using Blitzy.Utility;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Blitzy.Tests.Global

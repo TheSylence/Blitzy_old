@@ -1,6 +1,4 @@
-﻿
-
-using System;
+﻿using System;
 using System.IO;
 using System.Threading;
 
@@ -26,8 +24,6 @@ namespace Blitzy.Tests.Mocks
 		}
 
 		#endregion Constructor
-
-		#region Methods
 
 		public override void Flush()
 		{
@@ -85,8 +81,6 @@ namespace Blitzy.Tests.Mocks
 				Thread.Sleep( SleepDelay );
 			}
 		}
-
-		#endregion Methods
 
 		#region Properties
 

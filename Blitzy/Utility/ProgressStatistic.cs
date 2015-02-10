@@ -1,6 +1,4 @@
-﻿
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace Blitzy.Utility
@@ -11,8 +9,6 @@ namespace Blitzy.Utility
 	/// </summary>
 	public class ProgressStatistic
 	{
-		#region Constructor
-
 		public ProgressStatistic()
 		{
 			StartingTime = DateTime.MinValue;
@@ -20,8 +16,6 @@ namespace Blitzy.Utility
 
 			ProgressChangedArgs = new ProgressEventArgs( this ); //Event args can be cached
 		}
-
-		#endregion Constructor
 
 		#region Methods
 
@@ -105,8 +99,6 @@ namespace Blitzy.Utility
 		public bool IsRunning { get { return HasStarted && !HasFinished; } }
 
 		#region Time
-
-		private EstimatingMethod _EstimatingMethod = EstimatingMethod.CurrentBytesPerSecond;
 
 		/// <summary>
 		/// The method which will be used for estimating duration and finishing time
@@ -213,6 +205,8 @@ namespace Blitzy.Utility
 			}
 		}
 
+		private EstimatingMethod _EstimatingMethod = EstimatingMethod.CurrentBytesPerSecond;
+
 		#endregion Time
 
 		/// <summary>
@@ -239,13 +233,32 @@ namespace Blitzy.Utility
 
 		#region CurrentBytesPerSecond
 
-		private TimeSpan _CurrentBytesCalculationInterval = TimeSpan.FromSeconds( 0.5 );
+		//current sample index in currentBytesSamples
+		private void ProcessSample( long bytes )
+		{
+			if( ( DateTime.Now - LastSample ).Ticks > CurrentBytesCalculationInterval.Ticks / CurrentBytesSamples.Length )
+			{
+				LastSample = DateTime.Now;
 
-		private KeyValuePair<DateTime, long>[] CurrentBytesSamples = new KeyValuePair<DateTime, long>[6];
+				KeyValuePair<DateTime, long> current = new KeyValuePair<DateTime, long>( DateTime.Now, bytes );
 
-		private int CurrentSample;
+				var old = CurrentBytesSamples[CurrentSample];
+				CurrentBytesSamples[CurrentSample] = current;
 
-		private DateTime LastSample;
+				if( old.Key == DateTime.MinValue )
+				{
+					CurrentBytesPerSecond = AverageBytesPerSecond;
+				}
+				else
+				{
+					CurrentBytesPerSecond = ( current.Value - old.Value ) / ( current.Key - old.Key ).TotalSeconds;
+				}
+
+				CurrentSample++;
+				if( CurrentSample >= CurrentBytesSamples.Length )
+					CurrentSample = 0;
+			}
+		}
 
 		/// <summary>
 		/// Gets or sets the interval used for the calculation of the current bytes per second. Default is 500 ms.
@@ -287,40 +300,19 @@ namespace Blitzy.Utility
 			}
 		}
 
-		//current sample index in currentBytesSamples
-		private void ProcessSample( long bytes )
-		{
-			if( ( DateTime.Now - LastSample ).Ticks > CurrentBytesCalculationInterval.Ticks / CurrentBytesSamples.Length )
-			{
-				LastSample = DateTime.Now;
+		private TimeSpan _CurrentBytesCalculationInterval = TimeSpan.FromSeconds( 0.5 );
 
-				KeyValuePair<DateTime, long> current = new KeyValuePair<DateTime, long>( DateTime.Now, bytes );
+		private KeyValuePair<DateTime, long>[] CurrentBytesSamples = new KeyValuePair<DateTime, long>[6];
 
-				var old = CurrentBytesSamples[CurrentSample];
-				CurrentBytesSamples[CurrentSample] = current;
+		private int CurrentSample;
 
-				if( old.Key == DateTime.MinValue )
-				{
-					CurrentBytesPerSecond = AverageBytesPerSecond;
-				}
-				else
-				{
-					CurrentBytesPerSecond = ( current.Value - old.Value ) / ( current.Key - old.Key ).TotalSeconds;
-				}
-
-				CurrentSample++;
-				if( CurrentSample >= CurrentBytesSamples.Length )
-					CurrentSample = 0;
-			}
-		}
+		private DateTime LastSample;
 
 		#endregion CurrentBytesPerSecond
 
 		#endregion Properties
 
 		#region Events
-
-		private readonly ProgressEventArgs ProgressChangedArgs;
 
 		/// <summary>
 		/// Will be raised when the operation has finished
@@ -354,6 +346,8 @@ namespace Blitzy.Utility
 			if( Started != null )
 				Started( this, ProgressChangedArgs );
 		}
+
+		private readonly ProgressEventArgs ProgressChangedArgs;
 
 		#endregion Events
 

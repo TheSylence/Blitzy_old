@@ -16,7 +16,9 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using Blitzy.ViewModel.Dialogs;
+using Blitzy.ViewServices;
 using GalaSoft.MvvmLight.Ioc;
+using GalaSoft.MvvmLight.Messaging;
 using Microsoft.Practices.ServiceLocation;
 
 namespace Blitzy.ViewModel
@@ -27,10 +29,6 @@ namespace Blitzy.ViewModel
 	/// </summary>
 	internal class ViewModelLocator
 	{
-		#region Constructor
-
-		private static readonly List<Type> ViewModelTypes = new List<Type>();
-
 		/// <summary>
 		/// Initializes a new instance of the ViewModelLocator class.
 		/// </summary>
@@ -50,6 +48,33 @@ namespace Blitzy.ViewModel
 			Register<PluginsDialogViewModel>();
 
 			Register<NotifyIconViewModel>();
+
+			SimpleIoc.Default.Register<DbConnectionFactory>();
+			SimpleIoc.Default.Register<ViewServiceManager>( () => ViewServiceManager.Default );
+			SimpleIoc.Default.Register<IMessenger>( () => Messenger.Default );
+		}
+
+		public static void Cleanup()
+		{
+			LogHelper.LogInfo( MethodBase.GetCurrentMethod().DeclaringType, "Cleaning up ViewModels..." );
+
+			foreach( Type type in ViewModelTypes )
+			{
+				try
+				{
+					foreach( ViewModelBaseEx vm in ServiceLocator.Current.GetAllInstances( type ) )
+					{
+						vm.Cleanup();
+						vm.Dispose();
+					}
+				}
+				catch( Exception ex )
+				{
+					LogHelper.LogError( MethodInfo.GetCurrentMethod().DeclaringType, "While cleaning up {0}: {1}", type, ex );
+				}
+			}
+
+			LogHelper.LogInfo( MethodBase.GetCurrentMethod().DeclaringType, "All ViewModels cleared" );
 		}
 
 		private void Register<T>() where T : class
@@ -58,9 +83,21 @@ namespace Blitzy.ViewModel
 			ViewModelTypes.Add( typeof( T ) );
 		}
 
-		#endregion Constructor
+		public ChangelogDialogViewModel ChangelogDialog
+		{
+			get
+			{
+				return ServiceLocator.Current.GetInstance<ChangelogDialogViewModel>();
+			}
+		}
 
-		#region ViewModels
+		public DownloadDialogViewModel DownloadDialog
+		{
+			get
+			{
+				return ServiceLocator.Current.GetInstance<DownloadDialogViewModel>();
+			}
+		}
 
 		public HistoryViewModel History
 		{
@@ -86,39 +123,19 @@ namespace Blitzy.ViewModel
 			}
 		}
 
-		public SettingsViewModel Settings
-		{
-			get
-			{
-				return ServiceLocator.Current.GetInstance<SettingsViewModel>();
-			}
-		}
-
-		#endregion ViewModels
-
-		#region Dialogs
-
-		public ChangelogDialogViewModel ChangelogDialog
-		{
-			get
-			{
-				return ServiceLocator.Current.GetInstance<ChangelogDialogViewModel>();
-			}
-		}
-
-		public DownloadDialogViewModel DownloadDialog
-		{
-			get
-			{
-				return ServiceLocator.Current.GetInstance<DownloadDialogViewModel>();
-			}
-		}
-
 		public PluginsDialogViewModel PluginsDialog
 		{
 			get
 			{
 				return ServiceLocator.Current.GetInstance<PluginsDialogViewModel>();
+			}
+		}
+
+		public SettingsViewModel Settings
+		{
+			get
+			{
+				return ServiceLocator.Current.GetInstance<SettingsViewModel>();
 			}
 		}
 
@@ -138,29 +155,6 @@ namespace Blitzy.ViewModel
 			}
 		}
 
-		#endregion Dialogs
-
-		public static void Cleanup()
-		{
-			LogHelper.LogInfo( MethodBase.GetCurrentMethod().DeclaringType, "Cleaning up ViewModels..." );
-
-			foreach( Type type in ViewModelTypes )
-			{
-				try
-				{
-					foreach( ViewModelBaseEx vm in ServiceLocator.Current.GetAllInstances( type ) )
-					{
-						vm.Cleanup();
-						vm.Dispose();
-					}
-				}
-				catch( Exception ex )
-				{
-					LogHelper.LogError( MethodInfo.GetCurrentMethod().DeclaringType, "While cleaning up {0}: {1}", type, ex );
-				}
-			}
-
-			LogHelper.LogInfo( MethodBase.GetCurrentMethod().DeclaringType, "All ViewModels cleared" );
-		}
+		private static readonly List<Type> ViewModelTypes = new List<Type>();
 	}
 }

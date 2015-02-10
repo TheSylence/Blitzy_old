@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Blitzy.btbapi
 {
@@ -13,8 +11,6 @@ namespace Blitzy.btbapi
 	/// </summary>
 	internal static class APIHelper
 	{
-		#region Methods
-
 		/// <summary>
 		/// Builds an url that can be used for making API calls
 		/// </summary>
@@ -53,8 +49,6 @@ namespace Blitzy.btbapi
 
 			return System.BitConverter.ToString( result ).Replace( "-", "" ).ToLower();
 		}
-
-		#endregion Methods
 
 		#region Constants
 

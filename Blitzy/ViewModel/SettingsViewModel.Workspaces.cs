@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data.Common;
-using System.Data.SQLite;
 using System.Linq;
 using System.Windows;
 using Blitzy.Model;

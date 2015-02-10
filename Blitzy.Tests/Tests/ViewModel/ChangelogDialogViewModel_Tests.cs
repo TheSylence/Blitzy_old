@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Net;
 using Blitzy.btbapi;
-using Blitzy.Tests.Mocks;
 using Blitzy.Tests.Mocks.Services;
 using Blitzy.ViewModel.Dialogs;
 using Blitzy.ViewServices;

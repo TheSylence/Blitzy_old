@@ -1,6 +1,4 @@
-﻿
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq.Expressions;
@@ -22,8 +20,6 @@ namespace Blitzy.Tests
 		}
 
 		#endregion Constructor
-
-		#region Methods
 
 		public void Exclude<T>( Expression<Func<T, object>> exp )
 		{
@@ -94,8 +90,6 @@ namespace Blitzy.Tests
 		{
 			return ChangedProperties.Contains( propName );
 		}
-
-		#endregion Methods
 
 		#region Attributes
 

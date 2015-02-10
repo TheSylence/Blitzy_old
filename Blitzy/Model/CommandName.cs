@@ -1,6 +1,4 @@
-﻿
-
-using System;
+﻿using System;
 using System.Globalization;
 using System.Linq;
 
@@ -68,11 +66,7 @@ namespace Blitzy.Model
 
 		#endregion Methods
 
-		#region Properties
-
 		public string OrigName { get; private set; }
-
-		#endregion Properties
 
 		#region Attributes
 

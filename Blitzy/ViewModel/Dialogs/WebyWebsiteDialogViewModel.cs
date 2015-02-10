@@ -1,6 +1,4 @@
-﻿
-
-using Blitzy.Model;
+﻿using Blitzy.Model;
 
 namespace Blitzy.ViewModel.Dialogs
 {

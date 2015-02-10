@@ -204,7 +204,7 @@
     <Fakes Include="Fakes\System.Net.Http.fakes" />
     <Fakes Include="Fakes\Blitzy.fakes" />
     <Fakes Include="Fakes\System.fakes" />
-    <None Include="Fakes\mscorlib.fakes" />
+    <Fakes Include="Fakes\mscorlib.fakes" />
     <None Include="packages.config" />
     <None Include="TestData\Blitzy.exe.lnk">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

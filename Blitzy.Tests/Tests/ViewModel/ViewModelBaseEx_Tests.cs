@@ -1,6 +1,4 @@
-﻿
-
-using System.Linq;
+﻿using System.Linq;
 using Blitzy.Tests.Mocks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 

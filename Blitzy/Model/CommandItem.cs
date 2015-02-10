@@ -1,6 +1,4 @@
-﻿
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Blitzy.Plugin;
@@ -9,14 +7,10 @@ namespace Blitzy.Model
 {
 	public class CommandItem
 	{
-		#region Constructor
-
 		private CommandItem()
 		{
 			CmdNames = new List<CommandName>();
 		}
-
-		#endregion Constructor
 
 		#region Methods
 

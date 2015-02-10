@@ -1,6 +1,4 @@
-﻿
-
-using Blitzy.Tests.Mocks;
+﻿using Blitzy.Tests.Mocks;
 using Blitzy.Utility;
 using Blitzy.ViewModel.Dialogs;
 using Microsoft.VisualStudio.TestTools.UnitTesting;

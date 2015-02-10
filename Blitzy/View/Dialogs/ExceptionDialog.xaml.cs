@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Windows;
 using Blitzy.ViewModel.Dialogs;
 
 namespace Blitzy.View.Dialogs

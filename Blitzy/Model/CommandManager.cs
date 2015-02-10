@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data.Common;
-using System.Data.SQLite;
 using System.Linq;
 using Blitzy.Plugin;
 using Blitzy.Utility;

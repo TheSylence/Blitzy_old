@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Data.Common;
 using Blitzy.Model;
 using Blitzy.Plugin;
 using Microsoft.VisualStudio.TestTools.UnitTesting;

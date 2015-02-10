@@ -1,6 +1,4 @@
-﻿
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -10,8 +8,6 @@ namespace Blitzy.Model
 {
 	internal class ShuntingYard
 	{
-		#region Constructor
-
 		public ShuntingYard()
 		{
 			OpMap.Add( "+", new AddOperator() );
@@ -32,8 +28,6 @@ namespace Blitzy.Model
 			OpMap.Add( "pow", new PowOperator() );
 			OpMap.Add( "^", new PowOperator() );
 		}
-
-		#endregion Constructor
 
 		#region Methods
 

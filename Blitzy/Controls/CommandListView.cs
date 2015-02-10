@@ -36,8 +36,6 @@ namespace Blitzy.Controls
 	[ExcludeFromCodeCoverage]
 	public class CommandListView : ListView
 	{
-		#region Constructor
-
 		public CommandListView()
 		{
 			DependencyPropertyDescriptor dpd = DependencyPropertyDescriptor.FromProperty( SelectedIndexProperty, typeof( ListView ) );
@@ -58,8 +56,6 @@ namespace Blitzy.Controls
 				} );
 			}
 		}
-
-		#endregion Constructor
 
 		#region Methods
 

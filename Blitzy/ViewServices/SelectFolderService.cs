@@ -1,6 +1,4 @@
-﻿
-
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Windows;
 using Ookii.Dialogs.Wpf;
 

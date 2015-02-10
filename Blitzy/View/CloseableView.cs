@@ -6,10 +6,6 @@ namespace Blitzy.View
 {
 	public class CloseableView : Window
 	{
-		#region Constructor
-
-		private IRequestCloseViewModel Model;
-
 		public CloseableView()
 		{
 			DataContextChanged += CloseableView_DataContextChanged;
@@ -69,7 +65,7 @@ namespace Blitzy.View
 			}
 		}
 
-		#endregion Constructor
+		private IRequestCloseViewModel Model;
 
 		#region Events
 

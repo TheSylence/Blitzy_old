@@ -1,6 +1,4 @@
-﻿
-
-using Blitzy.ViewModel.Dialogs;
+﻿using Blitzy.ViewModel.Dialogs;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Blitzy.Tests.ViewModel

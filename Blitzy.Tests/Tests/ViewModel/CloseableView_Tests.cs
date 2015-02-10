@@ -1,6 +1,4 @@
-﻿
-
-using System;
+﻿using System;
 using Blitzy.View;
 using Blitzy.ViewModel;
 using Microsoft.QualityTools.Testing.Fakes;

@@ -1,6 +1,4 @@
-﻿
-
-using System;
+﻿using System;
 using Blitzy.Plugin;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -9,8 +7,6 @@ namespace Blitzy.Tests.Plugins
 	[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	internal class PluginTester
 	{
-		public readonly bool TestRunComplete;
-
 		public PluginTester( IPlugin plug )
 		{
 			Assert.IsNotNull( plug, "Plugin null" );
@@ -25,5 +21,7 @@ namespace Blitzy.Tests.Plugins
 
 			TestRunComplete = true;
 		}
+
+		public readonly bool TestRunComplete;
 	}
 }

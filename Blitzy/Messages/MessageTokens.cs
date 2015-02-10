@@ -1,6 +1,4 @@
-﻿
-
-namespace Blitzy.Messages
+﻿namespace Blitzy.Messages
 {
 	internal enum MessageTokens
 	{
