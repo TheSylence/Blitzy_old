@@ -7,8 +7,6 @@ namespace Blitzy.Tests.Mocks
 	[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	internal class SlowStream : Stream
 	{
-		#region Constructor
-
 		public SlowStream( int length, int delay = 10 )
 		{
 			SleepDelay = delay;
@@ -22,8 +20,6 @@ namespace Blitzy.Tests.Mocks
 			_Length = data.Length;
 			Buffer = data;
 		}
-
-		#endregion Constructor
 
 		public override void Flush()
 		{
@@ -82,8 +78,6 @@ namespace Blitzy.Tests.Mocks
 			}
 		}
 
-		#region Properties
-
 		public override bool CanRead
 		{
 			get { return true; }
@@ -103,14 +97,8 @@ namespace Blitzy.Tests.Mocks
 
 		public override long Position { get; set; }
 
-		#endregion Properties
-
-		#region Attributes
-
 		internal byte[] Buffer;
 		private readonly long _Length;
 		private readonly int SleepDelay;
-
-		#endregion Attributes
 	}
 }

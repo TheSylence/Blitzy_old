@@ -29,9 +29,37 @@ namespace Blitzy.Model
 			OpMap.Add( "^", new PowOperator() );
 		}
 
-		#region Methods
+		public string Calculate( string input )
+		{
+			Valid = true;
 
-		#region Helper
+			IEnumerable<string> tokens = Parse( input );
+			Queue<string> tokenQueue = ConvertToRpn( tokens );
+
+			if( !Valid )
+			{
+				return "SyntaxError".Localize();
+			}
+
+			if( tokenQueue.Count == 0 )
+			{
+				return "EmptyExpression".Localize();
+			}
+
+			string res = Compute( tokenQueue );
+			double num;
+			if( double.TryParse( res, NumberStyles.Any, CultureInfo.InvariantCulture, out num ) )
+			{
+				return num.ToString( "G", CultureInfo.InvariantCulture );
+			}
+
+			if( res.Equals( "IncompleteExpression".Localize() ) )
+			{
+				return "IncompleteExpression".Localize();
+			}
+
+			return "SyntaxError".Localize();
+		}
 
 		private static int GetOperatorPrecedence( string str )
 		{
@@ -92,58 +120,6 @@ namespace Blitzy.Model
 		private static bool IsRightParanthesis( string str )
 		{
 			return str.Trim().Equals( ")" );
-		}
-
-		private int GetOperatorArguments( string str )
-		{
-			if( OpMap.ContainsKey( str ) )
-				return OpMap[str].GetArgumentCount();
-
-			return 0;
-		}
-
-		private bool IsFunction( string str )
-		{
-			return Functions.Contains( str.ToLowerInvariant() );
-		}
-
-		private bool IsOperator( string str )
-		{
-			return Operators.Contains( str.Trim() );
-		}
-
-		#endregion Helper
-
-		public string Calculate( string input )
-		{
-			Valid = true;
-
-			IEnumerable<string> tokens = Parse( input );
-			Queue<string> tokenQueue = ConvertToRpn( tokens );
-
-			if( !Valid )
-			{
-				return "SyntaxError".Localize();
-			}
-
-			if( tokenQueue.Count == 0 )
-			{
-				return "EmptyExpression".Localize();
-			}
-
-			string res = Compute( tokenQueue );
-			double num;
-			if( double.TryParse( res, NumberStyles.Any, CultureInfo.InvariantCulture, out num ) )
-			{
-				return num.ToString( "G", CultureInfo.InvariantCulture );
-			}
-
-			if( res.Equals( "IncompleteExpression".Localize() ) )
-			{
-				return "IncompleteExpression".Localize();
-			}
-
-			return "SyntaxError".Localize();
 		}
 
 		private string Compute( Queue<string> tokens )
@@ -296,6 +272,24 @@ namespace Blitzy.Model
 			return output;
 		}
 
+		private int GetOperatorArguments( string str )
+		{
+			if( OpMap.ContainsKey( str ) )
+				return OpMap[str].GetArgumentCount();
+
+			return 0;
+		}
+
+		private bool IsFunction( string str )
+		{
+			return Functions.Contains( str.ToLowerInvariant() );
+		}
+
+		private bool IsOperator( string str )
+		{
+			return Operators.Contains( str.Trim() );
+		}
+
 		private IEnumerable<string> Parse( string input )
 		{
 			if( !string.IsNullOrWhiteSpace( input ) )
@@ -337,10 +331,6 @@ namespace Blitzy.Model
 			return new List<string>();
 		}
 
-		#endregion Methods
-
-		#region Constants
-
 		private readonly string[] Functions = { "cos", "sin", "tan", "acos", "asin", "atan", "sqrt", "ln", "log", "rnd", "pow" };
 		private readonly string[] Operators = { "+", "-", "*", "/", "%", "!", "^" };
 		private readonly Dictionary<string, IOperator> OpMap = new Dictionary<string, IOperator>();
@@ -351,12 +341,6 @@ namespace Blitzy.Model
 			{ "e", Math.E.ToString(CultureInfo.InvariantCulture) }
 		};
 
-		#endregion Constants
-
-		#region Attributes
-
 		private bool Valid = true;
-
-		#endregion Attributes
 	}
 }

@@ -12,6 +12,10 @@ namespace Blitzy.View
 			Closed += CloseableView_Closed;
 		}
 
+		public event EventHandler Hidden;
+
+		public event EventHandler Shown;
+
 		private void CloseableView_Closed( object sender, EventArgs e )
 		{
 			if( Model != null )
@@ -66,13 +70,5 @@ namespace Blitzy.View
 		}
 
 		private IRequestCloseViewModel Model;
-
-		#region Events
-
-		public event EventHandler Hidden;
-
-		public event EventHandler Shown;
-
-		#endregion Events
 	}
 }

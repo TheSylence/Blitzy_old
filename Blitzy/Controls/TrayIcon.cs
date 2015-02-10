@@ -18,8 +18,6 @@ namespace Blitzy.Controls
 			TrayBalloonTipClicked += TrayIcon_TrayBalloonTipClicked;
 		}
 
-		#region Methods
-
 		private void OnBallon( BalloonTipMessage msg )
 		{
 			BallonToken = msg.Token;
@@ -39,12 +37,6 @@ namespace Blitzy.Controls
 			Messenger.Default.Send( new BalloonActivatedMessage( BallonToken ) );
 		}
 
-		#endregion Methods
-
-		#region Attributes
-
 		private object BallonToken;
-
-		#endregion Attributes
 	}
 }

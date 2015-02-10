@@ -17,7 +17,36 @@ namespace Blitzy.Utility
 			ProgressChangedArgs = new ProgressEventArgs( this ); //Event args can be cached
 		}
 
-		#region Methods
+		/// <summary>
+		/// Will be raised when the operation has finished
+		/// </summary>
+		public event EventHandler<ProgressEventArgs> Finished;
+
+		/// <summary>
+		/// Will be raised when the progress has changed
+		/// </summary>
+		public event EventHandler<ProgressEventArgs> ProgressChanged;
+
+		/// <summary>
+		/// Will be raised when the operation has started
+		/// </summary>
+		public event EventHandler<ProgressEventArgs> Started;
+
+		/// <summary>
+		/// The method which will be used for estimating duration and finishing time
+		/// </summary>
+		public enum EstimatingMethod
+		{
+			/// <summary>
+			/// Current bytes per second will be used for estimating.
+			/// </summary>
+			CurrentBytesPerSecond,
+
+			/// <summary>
+			/// Average bytes per second will be used for estimating
+			/// </summary>
+			AverageBytesPerSecond
+		}
 
 		/// <summary>
 		/// This method can be called to finish an aborted operation.
@@ -69,9 +98,50 @@ namespace Blitzy.Utility
 			}
 		}
 
-		#endregion Methods
+		protected virtual void OnFinished()
+		{
+			if( Finished != null )
+				Finished( this, ProgressChangedArgs );
+		}
 
-		#region Properties
+		protected virtual void OnProgressChanged()
+		{
+			if( ProgressChanged != null )
+				ProgressChanged( this, ProgressChangedArgs );
+		}
+
+		protected virtual void OnStarted()
+		{
+			if( Started != null )
+				Started( this, ProgressChangedArgs );
+		}
+
+		//current sample index in currentBytesSamples
+		private void ProcessSample( long bytes )
+		{
+			if( ( DateTime.Now - LastSample ).Ticks > CurrentBytesCalculationInterval.Ticks / CurrentBytesSamples.Length )
+			{
+				LastSample = DateTime.Now;
+
+				KeyValuePair<DateTime, long> current = new KeyValuePair<DateTime, long>( DateTime.Now, bytes );
+
+				var old = CurrentBytesSamples[CurrentSample];
+				CurrentBytesSamples[CurrentSample] = current;
+
+				if( old.Key == DateTime.MinValue )
+				{
+					CurrentBytesPerSecond = AverageBytesPerSecond;
+				}
+				else
+				{
+					CurrentBytesPerSecond = ( current.Value - old.Value ) / ( current.Key - old.Key ).TotalSeconds;
+				}
+
+				CurrentSample++;
+				if( CurrentSample >= CurrentBytesSamples.Length )
+					CurrentSample = 0;
+			}
+		}
 
 		/// <summary>
 		/// Gets the average bytes per second.
@@ -84,36 +154,43 @@ namespace Blitzy.Utility
 		public long BytesRead { get; private set; }
 
 		/// <summary>
-		/// Gets whether the operation has finished
+		/// Gets or sets the interval used for the calculation of the current bytes per second. Default is 500 ms.
 		/// </summary>
-		public bool HasFinished { get { return FinishingTime != DateTime.MinValue; } }
-
-		/// <summary>
-		/// Gets whether the operation has started
-		/// </summary>
-		public bool HasStarted { get { return _HasStarted; } }
-
-		/// <summary>
-		/// Gets whether the operation is still running
-		/// </summary>
-		public bool IsRunning { get { return HasStarted && !HasFinished; } }
-
-		#region Time
-
-		/// <summary>
-		/// The method which will be used for estimating duration and finishing time
-		/// </summary>
-		public enum EstimatingMethod
+		/// <exception cref="OperationAlreadyStartedException">
+		/// Thrown when trying to set although the operation has already started.</exception>
+		public TimeSpan CurrentBytesCalculationInterval
 		{
-			/// <summary>
-			/// Current bytes per second will be used for estimating.
-			/// </summary>
-			CurrentBytesPerSecond,
+			get { return _CurrentBytesCalculationInterval; }
+			set
+			{
+				if( HasStarted )
+					throw new InvalidOperationException( "Task has already started!" );
+				_CurrentBytesCalculationInterval = value;
+			}
+		}
 
-			/// <summary>
-			/// Average bytes per second will be used for estimating
-			/// </summary>
-			AverageBytesPerSecond
+		/// <summary>
+		/// Gets the approximated current count of bytes processed per second
+		/// </summary>
+		public double CurrentBytesPerSecond { get; private set; }
+
+		/// <summary>
+		/// Gets or sets the number of samples in CurrentBytesPerSecondInterval used for current bytes per second approximation
+		/// </summary>
+		/// <exception cref="OperationAlreadyStartedException">
+		/// Thrown when trying to set although the operation has already started.</exception>
+		public int CurrentBytesSampleCount
+		{
+			get { return CurrentBytesSamples.Length; }
+			set
+			{
+				if( HasStarted )
+					throw new InvalidOperationException( "Task has already started!" );
+				if( value != CurrentBytesSamples.Length )
+				{
+					CurrentBytesSamples = new KeyValuePair<DateTime, long>[value];
+				}
+			}
 		}
 
 		/// <summary>
@@ -186,28 +263,19 @@ namespace Blitzy.Utility
 		public DateTime FinishingTime { get; private set; }
 
 		/// <summary>
-		/// Gets the date time when the operation has started
+		/// Gets whether the operation has finished
 		/// </summary>
-		public DateTime StartingTime { get; private set; }
+		public bool HasFinished { get { return FinishingTime != DateTime.MinValue; } }
 
 		/// <summary>
-		/// Gets or sets which method will be used for estimating.
-		/// Can only be set before the operation has started, otherwise an OperationAlreadyStartedException will be thrown.
+		/// Gets whether the operation has started
 		/// </summary>
-		public EstimatingMethod UsedEstimatingMethod
-		{
-			get { return _EstimatingMethod; }
-			set
-			{
-				if( HasStarted )
-					throw new OperationAlreadyStartedException();
-				_EstimatingMethod = value;
-			}
-		}
+		public bool HasStarted { get { return _HasStarted; } }
 
-		private EstimatingMethod _EstimatingMethod = EstimatingMethod.CurrentBytesPerSecond;
-
-		#endregion Time
+		/// <summary>
+		/// Gets whether the operation is still running
+		/// </summary>
+		public bool IsRunning { get { return HasStarted && !HasFinished; } }
 
 		/// <summary>
 		/// Gets the progress in percent between 0 and 1.
@@ -227,134 +295,38 @@ namespace Blitzy.Utility
 		}
 
 		/// <summary>
+		/// Gets the date time when the operation has started
+		/// </summary>
+		public DateTime StartingTime { get; private set; }
+
+		/// <summary>
 		/// Gets the amount of total bytes to read. Can be -1 if unknown.
 		/// </summary>
 		public long TotalBytesToRead { get; private set; }
 
-		#region CurrentBytesPerSecond
-
-		//current sample index in currentBytesSamples
-		private void ProcessSample( long bytes )
-		{
-			if( ( DateTime.Now - LastSample ).Ticks > CurrentBytesCalculationInterval.Ticks / CurrentBytesSamples.Length )
-			{
-				LastSample = DateTime.Now;
-
-				KeyValuePair<DateTime, long> current = new KeyValuePair<DateTime, long>( DateTime.Now, bytes );
-
-				var old = CurrentBytesSamples[CurrentSample];
-				CurrentBytesSamples[CurrentSample] = current;
-
-				if( old.Key == DateTime.MinValue )
-				{
-					CurrentBytesPerSecond = AverageBytesPerSecond;
-				}
-				else
-				{
-					CurrentBytesPerSecond = ( current.Value - old.Value ) / ( current.Key - old.Key ).TotalSeconds;
-				}
-
-				CurrentSample++;
-				if( CurrentSample >= CurrentBytesSamples.Length )
-					CurrentSample = 0;
-			}
-		}
-
 		/// <summary>
-		/// Gets or sets the interval used for the calculation of the current bytes per second. Default is 500 ms.
+		/// Gets or sets which method will be used for estimating.
+		/// Can only be set before the operation has started, otherwise an OperationAlreadyStartedException will be thrown.
 		/// </summary>
-		/// <exception cref="OperationAlreadyStartedException">
-		/// Thrown when trying to set although the operation has already started.</exception>
-		public TimeSpan CurrentBytesCalculationInterval
+		public EstimatingMethod UsedEstimatingMethod
 		{
-			get { return _CurrentBytesCalculationInterval; }
+			get { return _EstimatingMethod; }
 			set
 			{
 				if( HasStarted )
-					throw new InvalidOperationException( "Task has already started!" );
-				_CurrentBytesCalculationInterval = value;
+					throw new OperationAlreadyStartedException();
+				_EstimatingMethod = value;
 			}
 		}
 
-		/// <summary>
-		/// Gets the approximated current count of bytes processed per second
-		/// </summary>
-		public double CurrentBytesPerSecond { get; private set; }
-
-		/// <summary>
-		/// Gets or sets the number of samples in CurrentBytesPerSecondInterval used for current bytes per second approximation
-		/// </summary>
-		/// <exception cref="OperationAlreadyStartedException">
-		/// Thrown when trying to set although the operation has already started.</exception>
-		public int CurrentBytesSampleCount
-		{
-			get { return CurrentBytesSamples.Length; }
-			set
-			{
-				if( HasStarted )
-					throw new InvalidOperationException( "Task has already started!" );
-				if( value != CurrentBytesSamples.Length )
-				{
-					CurrentBytesSamples = new KeyValuePair<DateTime, long>[value];
-				}
-			}
-		}
-
+		private readonly ProgressEventArgs ProgressChangedArgs;
 		private TimeSpan _CurrentBytesCalculationInterval = TimeSpan.FromSeconds( 0.5 );
-
+		private EstimatingMethod _EstimatingMethod = EstimatingMethod.CurrentBytesPerSecond;
+		private bool _HasStarted;
 		private KeyValuePair<DateTime, long>[] CurrentBytesSamples = new KeyValuePair<DateTime, long>[6];
 
 		private int CurrentSample;
 
 		private DateTime LastSample;
-
-		#endregion CurrentBytesPerSecond
-
-		#endregion Properties
-
-		#region Events
-
-		/// <summary>
-		/// Will be raised when the operation has finished
-		/// </summary>
-		public event EventHandler<ProgressEventArgs> Finished;
-
-		/// <summary>
-		/// Will be raised when the progress has changed
-		/// </summary>
-		public event EventHandler<ProgressEventArgs> ProgressChanged;
-
-		/// <summary>
-		/// Will be raised when the operation has started
-		/// </summary>
-		public event EventHandler<ProgressEventArgs> Started;
-
-		protected virtual void OnFinished()
-		{
-			if( Finished != null )
-				Finished( this, ProgressChangedArgs );
-		}
-
-		protected virtual void OnProgressChanged()
-		{
-			if( ProgressChanged != null )
-				ProgressChanged( this, ProgressChangedArgs );
-		}
-
-		protected virtual void OnStarted()
-		{
-			if( Started != null )
-				Started( this, ProgressChangedArgs );
-		}
-
-		private readonly ProgressEventArgs ProgressChangedArgs;
-
-		#endregion Events
-
-		#region Attributes
-
-		private bool _HasStarted;
-
-		#endregion Attributes
 	}
 }

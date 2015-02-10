@@ -43,14 +43,10 @@ namespace Blitzy.Controls
 			Messenger.Default.Register<InputCaretPositionMessage>( this, msg => OnCaretMessage( msg.Index ) );
 		}
 
-		#region Methods
-
 		private void OnCaretMessage( int index )
 		{
 			CaretIndex = index;
 			SelectionStart = index;
 		}
-
-		#endregion Methods
 	}
 }

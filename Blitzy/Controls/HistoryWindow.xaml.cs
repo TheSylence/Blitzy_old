@@ -19,8 +19,6 @@ namespace Blitzy.Controls
 			Messenger.Default.Register<HistoryMessage>( this, OnMessage );
 		}
 
-		#region Methods
-
 		private void OnMessage( HistoryMessage msg )
 		{
 			switch( msg.Type )
@@ -36,10 +34,6 @@ namespace Blitzy.Controls
 			}
 		}
 
-		#endregion Methods
-
-		#region Properties
-
 		private HistoryViewModel VM
 		{
 			get
@@ -47,7 +41,5 @@ namespace Blitzy.Controls
 				return DataContext as HistoryViewModel;
 			}
 		}
-
-		#endregion Properties
 	}
 }

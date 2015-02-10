@@ -57,13 +57,9 @@ namespace Blitzy.Controls
 			}
 		}
 
-		#region Methods
-
 		private void HandleSelectionChanged()
 		{
 			ScrollIntoView( SelectedItem );
 		}
-
-		#endregion Methods
 	}
 }

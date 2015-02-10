@@ -16,8 +16,6 @@ namespace Blitzy.Utility
 			WM_SHOWFIRSTINSTANCE = INativeMethods.Instance.RegisterWindowMessage_Wrapper( "WM_SHOWFIRSTINSTANCE|{0}", AssemblyGuid );
 		}
 
-		#region Methods
-
 		internal static void ShowFirstInstance()
 		{
 			INativeMethods.Instance.PostMessage_Wrapper( (IntPtr)INativeMethods.HWND_BROADCAST, WM_SHOWFIRSTINSTANCE, IntPtr.Zero, IntPtr.Zero );
@@ -46,10 +44,6 @@ namespace Blitzy.Utility
 			AppMutex.Dispose();
 		}
 
-		#endregion Methods
-
-		#region Properties
-
 		private static string AssemblyGuid
 		{
 			get
@@ -64,13 +58,7 @@ namespace Blitzy.Utility
 			}
 		}
 
-		#endregion Properties
-
-		#region Attributes
-
 		internal static readonly int WM_SHOWFIRSTINSTANCE;
 		private static Mutex AppMutex;
-
-		#endregion Attributes
 	}
 }

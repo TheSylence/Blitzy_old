@@ -17,8 +17,6 @@ namespace Blitzy.Utility
 			ThreadObject.Start();
 		}
 
-		#region Methods
-
 		internal static void QueueAction( Action action )
 		{
 			if( Instance == null )
@@ -60,16 +58,10 @@ namespace Blitzy.Utility
 			ThreadObject.Join();
 		}
 
-		#endregion Methods
-
-		#region Attributes
-
 		private static STAThread Instance;
 		private readonly ConcurrentQueue<Action> ActionQueue;
 		private readonly AutoResetEvent CanProcess;
 		private readonly Thread ThreadObject;
 		private bool IsRunning;
-
-		#endregion Attributes
 	}
 }

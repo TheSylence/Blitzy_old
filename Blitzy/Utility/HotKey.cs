@@ -185,6 +185,11 @@ namespace Blitzy.Utility
 			hwndSource.AddHook( Hook );
 		}
 
+		~HotKeyHost()
+		{
+			Dispose( false );
+		}
+
 		/// <summary>
 		/// Will be raised if any registered hotKey is pressed
 		/// </summary>
@@ -208,6 +213,12 @@ namespace Blitzy.Utility
 				RegisterHotKey( id, hotKey );
 			hotKey.PropertyChanged += hotKey_PropertyChanged;
 			_HotKeys[id] = hotKey;
+		}
+
+		public void Dispose()
+		{
+			Dispose( true );
+			GC.SuppressFinalize( this );
 		}
 
 		/// <summary>
@@ -238,6 +249,24 @@ namespace Blitzy.Utility
 			return false;
 		}
 
+		private void Dispose( bool disposing )
+		{
+			if( Disposed )
+				return;
+
+			if( disposing )
+			{
+				HwndSource.RemoveHook( Hook );
+			}
+
+			for( int i = _HotKeys.Count - 1; i >= 0; i-- )
+			{
+				RemoveHotKey( _HotKeys.Values.ElementAt( i ) );
+			}
+
+			Disposed = true;
+		}
+
 		private void hotKey_PropertyChanged( object sender, PropertyChangedEventArgs e )
 		{
 			var kvPair = _HotKeys.FirstOrDefault( h => h.Value == sender );
@@ -260,37 +289,6 @@ namespace Blitzy.Utility
 				}
 			}
 		}
-
-		private IntPtr WndProc( IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled )
-		{
-			if( msg == WM_HOTKEY )
-			{
-				if( _HotKeys.Count == 0 )
-					Debugger.Break();
-
-				if( _HotKeys.ContainsKey( (int)wParam ) )
-				{
-					HotKey h = _HotKeys[(int)wParam];
-					h.RaiseOnHotKeyPressed();
-					if( HotKeyPressed != null )
-						HotKeyPressed( this, new HotKeyEventArgs( h ) );
-				}
-			}
-
-			return new IntPtr( 0 );
-		}
-
-		/// <summary>
-		/// All registered hotKeys
-		/// </summary>
-		public IEnumerable<HotKey> HotKeys { get { return _HotKeys.Values; } }
-
-		internal const int WM_HOTKEY = 786;
-		private static readonly SerialCounter IDGen = new SerialCounter( 1 );
-
-		private readonly Dictionary<int, HotKey> _HotKeys = new Dictionary<int, HotKey>();
-
-		#region Interop-Encapsulation
 
 		private void RegisterHotKey( int id, HotKey hotKey )
 		{
@@ -324,10 +322,38 @@ namespace Blitzy.Utility
 			}
 		}
 
+		private IntPtr WndProc( IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled )
+		{
+			if( msg == WM_HOTKEY )
+			{
+				if( _HotKeys.Count == 0 )
+					Debugger.Break();
+
+				if( _HotKeys.ContainsKey( (int)wParam ) )
+				{
+					HotKey h = _HotKeys[(int)wParam];
+					h.RaiseOnHotKeyPressed();
+					if( HotKeyPressed != null )
+						HotKeyPressed( this, new HotKeyEventArgs( h ) );
+				}
+			}
+
+			return new IntPtr( 0 );
+		}
+
+		/// <summary>
+		/// All registered hotKeys
+		/// </summary>
+		public IEnumerable<HotKey> HotKeys { get { return _HotKeys.Values; } }
+
+		internal const int WM_HOTKEY = 786;
+		private static readonly SerialCounter IDGen = new SerialCounter( 1 );
+
+		private readonly Dictionary<int, HotKey> _HotKeys = new Dictionary<int, HotKey>();
 		private readonly HwndSourceHook Hook;
 		private readonly HwndSource HwndSource;
 
-		#endregion Interop-Encapsulation
+		private bool Disposed;
 
 		public class SerialCounter
 		{
@@ -343,40 +369,5 @@ namespace Blitzy.Utility
 
 			public int Current { get; private set; }
 		}
-
-		#region Destructor
-
-		~HotKeyHost()
-		{
-			Dispose( false );
-		}
-
-		public void Dispose()
-		{
-			Dispose( true );
-			GC.SuppressFinalize( this );
-		}
-
-		private void Dispose( bool disposing )
-		{
-			if( Disposed )
-				return;
-
-			if( disposing )
-			{
-				HwndSource.RemoveHook( Hook );
-			}
-
-			for( int i = _HotKeys.Count - 1; i >= 0; i-- )
-			{
-				RemoveHotKey( _HotKeys.Values.ElementAt( i ) );
-			}
-
-			Disposed = true;
-		}
-
-		private bool Disposed;
-
-		#endregion Destructor
 	}
 }

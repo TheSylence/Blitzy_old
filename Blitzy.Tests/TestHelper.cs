@@ -24,6 +24,8 @@ namespace Blitzy.Tests
 
 			Connection.Close();
 			Connection.Dispose();
+
+			Blitzy.Utility.STAThread.Stop();
 		}
 
 		[AssemblyInitialize()]

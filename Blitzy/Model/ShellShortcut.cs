@@ -46,8 +46,6 @@ namespace Blitzy.Model
 			}
 		}
 
-		#region Properties
-
 		public string Arguments
 		{
 			get
@@ -114,12 +112,6 @@ namespace Blitzy.Model
 			}
 		}
 
-		#endregion Properties
-
-		#region Attributes
-
 		private Shell32.ShellLinkObject Link;
-
-		#endregion Attributes
 	}
 }

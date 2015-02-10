@@ -11,15 +11,11 @@ namespace Blitzy.Tests
 	[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	public class PropertyChangedListener
 	{
-		#region Constructor
-
 		public PropertyChangedListener( INotifyPropertyChanged obj )
 		{
 			Obj = obj;
 			Obj.PropertyChanged += Obj_PropertyChanged;
 		}
-
-		#endregion Constructor
 
 		public void Exclude<T>( Expression<Func<T, object>> exp )
 		{
@@ -91,13 +87,9 @@ namespace Blitzy.Tests
 			return ChangedProperties.Contains( propName );
 		}
 
-		#region Attributes
-
 		private HashSet<string> ChangedProperties = new HashSet<string>();
 		private HashSet<string> Excludes = new HashSet<string>();
 		private INotifyPropertyChanged Obj;
 		private Dictionary<string, object> ValueMap = new Dictionary<string, object>();
-
-		#endregion Attributes
 	}
 }

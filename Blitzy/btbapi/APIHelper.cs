@@ -50,8 +50,6 @@ namespace Blitzy.btbapi
 			return System.BitConverter.ToString( result ).Replace( "-", "" ).ToLower();
 		}
 
-		#region Constants
-
 		/// <summary>
 		/// Action that is used for reporting an error
 		/// </summary>
@@ -61,7 +59,5 @@ namespace Blitzy.btbapi
 		/// Action that is used for checking for updates
 		/// </summary>
 		internal const string UpdateCheckAction = "version_check";
-
-		#endregion Constants
 	}
 }

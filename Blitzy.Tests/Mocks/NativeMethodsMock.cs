@@ -86,10 +86,6 @@ namespace Blitzy.Tests.Mocks
 			throw new NotImplementedException();
 		}
 
-		#region Delegates
-
 		internal Func<IntPtr, int, IntPtr, IntPtr, IntPtr> OnSendMessage;
-
-		#endregion Delegates
 	}
 }

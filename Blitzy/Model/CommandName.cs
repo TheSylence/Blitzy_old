@@ -6,18 +6,12 @@ namespace Blitzy.Model
 {
 	internal class CommandName
 	{
-		#region Constructor
-
 		public CommandName( string name )
 		{
 			OrigName = name;
 			Name = name.ToLowerInvariant();
 			Words = Name.Split( SplitChars, StringSplitOptions.RemoveEmptyEntries );
 		}
-
-		#endregion Constructor
-
-		#region Methods
 
 		public bool Match( string input )
 		{
@@ -64,21 +58,10 @@ namespace Blitzy.Model
 			return match;
 		}
 
-		#endregion Methods
-
 		public string OrigName { get; private set; }
 
-		#region Attributes
-
+		private static readonly char[] SplitChars = { ' ', '-', '.', ',', ';', '/', '\\' };
 		private readonly string Name;
 		private readonly string[] Words;
-
-		#endregion Attributes
-
-		#region Constants
-
-		private static readonly char[] SplitChars = { ' ', '-', '.', ',', ';', '/', '\\' };
-
-		#endregion Constants
 	}
 }

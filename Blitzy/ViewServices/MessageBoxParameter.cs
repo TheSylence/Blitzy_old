@@ -14,8 +14,6 @@ namespace Blitzy.ViewServices
 			Icon = icon;
 		}
 
-		#region Properties
-
 		public MessageBoxButton Button { get; set; }
 
 		public string Caption { get; set; }
@@ -23,7 +21,5 @@ namespace Blitzy.ViewServices
 		public MessageBoxImage Icon { get; set; }
 
 		public string Text { get; set; }
-
-		#endregion Properties
 	}
 }
