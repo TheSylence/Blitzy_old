@@ -6,7 +6,7 @@ using Blitzy.Model;
 using Blitzy.Plugin;
 using Blitzy.Utility;
 using Blitzy.ViewServices;
-using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.CommandWpf;
 
 namespace Blitzy.ViewModel
 {
@@ -124,7 +124,6 @@ namespace Blitzy.ViewModel
 					return;
 				}
 
-				RaisePropertyChanging( () => SelectedWebsite );
 				_SelectedWebsite = value;
 				RaisePropertyChanged( () => SelectedWebsite );
 			}

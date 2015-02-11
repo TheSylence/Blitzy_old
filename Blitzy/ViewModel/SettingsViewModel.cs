@@ -16,7 +16,7 @@ using Blitzy.Model;
 using Blitzy.Plugin;
 using Blitzy.Utility;
 using Blitzy.ViewServices;
-using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Threading;
 using CommandManager = System.Windows.Input.CommandManager;
@@ -584,7 +584,6 @@ namespace Blitzy.ViewModel
 					return;
 				}
 
-				RaisePropertyChanging( () => BackupShortcuts );
 				_BackupShortcuts = value;
 				RaisePropertyChanged( () => BackupShortcuts );
 			}
@@ -606,7 +605,6 @@ namespace Blitzy.ViewModel
 					return;
 				}
 
-				RaisePropertyChanging( () => BuildDate );
 				_BuildDate = value;
 				RaisePropertyChanged( () => BuildDate );
 			}
@@ -635,7 +633,6 @@ namespace Blitzy.ViewModel
 					return;
 				}
 
-				RaisePropertyChanging( () => CatalogBuilder );
 				_CatalogBuilder = value;
 				RaisePropertyChanged( () => CatalogBuilder );
 			}
@@ -655,7 +652,6 @@ namespace Blitzy.ViewModel
 					return;
 				}
 
-				RaisePropertyChanging( () => CatalogItemsProcessed );
 				_CatalogItemsProcessed = value;
 				RaisePropertyChanged( () => CatalogItemsProcessed );
 			}
@@ -677,7 +673,6 @@ namespace Blitzy.ViewModel
 					return;
 				}
 
-				RaisePropertyChanging( () => CloseOnCommand );
 				_CloseOnCommand = value;
 				RaisePropertyChanged( () => CloseOnCommand );
 			}
@@ -697,7 +692,6 @@ namespace Blitzy.ViewModel
 					return;
 				}
 
-				RaisePropertyChanging( () => CloseOnEscape );
 				_CloseOnEscape = value;
 				RaisePropertyChanged( () => CloseOnEscape );
 			}
@@ -717,7 +711,6 @@ namespace Blitzy.ViewModel
 					return;
 				}
 
-				RaisePropertyChanging( () => CloseOnFocusLost );
 				_CloseOnFocusLost = value;
 				RaisePropertyChanged( () => CloseOnFocusLost );
 			}
@@ -757,7 +750,6 @@ namespace Blitzy.ViewModel
 					return;
 				}
 
-				RaisePropertyChanging( () => FilesProcessed );
 				_FilesProcessed = value;
 				RaisePropertyChanged( () => FilesProcessed );
 			}
@@ -777,7 +769,6 @@ namespace Blitzy.ViewModel
 					return;
 				}
 
-				RaisePropertyChanging( () => HistoryCount );
 				_HistoryCount = value;
 				RaisePropertyChanged( () => HistoryCount );
 			}
@@ -797,7 +788,6 @@ namespace Blitzy.ViewModel
 					return;
 				}
 
-				RaisePropertyChanging( () => IsCatalogBuilding );
 				_IsCatalogBuilding = value;
 				RaisePropertyChanged( () => IsCatalogBuilding );
 			}
@@ -817,7 +807,6 @@ namespace Blitzy.ViewModel
 					return;
 				}
 
-				RaisePropertyChanging( () => IsNewerVersionAvailable );
 				_IsNewerVersionAvailable = value;
 				RaisePropertyChanged( () => IsNewerVersionAvailable );
 			}
@@ -837,7 +826,6 @@ namespace Blitzy.ViewModel
 					return;
 				}
 
-				RaisePropertyChanging( () => ItemsInCatalog );
 				_ItemsInCatalog = value;
 				RaisePropertyChanged( () => ItemsInCatalog );
 			}
@@ -857,7 +845,6 @@ namespace Blitzy.ViewModel
 					return;
 				}
 
-				RaisePropertyChanging( () => KeepInput );
 				_KeepInput = value;
 				RaisePropertyChanged( () => KeepInput );
 			}
@@ -879,7 +866,6 @@ namespace Blitzy.ViewModel
 					return;
 				}
 
-				RaisePropertyChanging( () => LastCatalogBuild );
 				_LastCatalogBuild = value;
 				RaisePropertyChanged( () => LastCatalogBuild );
 			}
@@ -899,7 +885,6 @@ namespace Blitzy.ViewModel
 					return;
 				}
 
-				RaisePropertyChanging( () => LatestVersionInfo );
 				_LatestVersionInfo = value;
 				RaisePropertyChanged( () => LatestVersionInfo );
 
@@ -930,7 +915,6 @@ namespace Blitzy.ViewModel
 					return;
 				}
 
-				RaisePropertyChanging( () => PeriodicallyRebuild );
 				_PeriodicallyRebuild = value;
 				RaisePropertyChanged( () => PeriodicallyRebuild );
 			}
@@ -963,7 +947,6 @@ namespace Blitzy.ViewModel
 					return;
 				}
 
-				RaisePropertyChanging( () => RebuildOnChange );
 				_RebuildOnChange = value;
 				RaisePropertyChanged( () => RebuildOnChange );
 			}
@@ -983,7 +966,6 @@ namespace Blitzy.ViewModel
 					return;
 				}
 
-				RaisePropertyChanging( () => RebuildTime );
 				_RebuildTime = value;
 				RaisePropertyChanged( () => RebuildTime );
 			}
@@ -1039,7 +1021,6 @@ namespace Blitzy.ViewModel
 					return;
 				}
 
-				RaisePropertyChanging( () => SelectedExclude );
 				_SelectedExclude = value;
 				RaisePropertyChanged( () => SelectedExclude );
 			}
@@ -1059,7 +1040,6 @@ namespace Blitzy.ViewModel
 					return;
 				}
 
-				RaisePropertyChanging( () => SelectedFolder );
 				_SelectedFolder = value;
 				RaisePropertyChanged( () => SelectedFolder );
 			}
@@ -1079,7 +1059,6 @@ namespace Blitzy.ViewModel
 					return;
 				}
 
-				RaisePropertyChanging( () => SelectedKey );
 				_SelectedKey = value;
 				RaisePropertyChanged( () => SelectedKey );
 			}
@@ -1099,7 +1078,6 @@ namespace Blitzy.ViewModel
 					return;
 				}
 
-				RaisePropertyChanging( () => SelectedLanguage );
 				_SelectedLanguage = value;
 				SetLanguage( value );
 				RaisePropertyChanged( () => SelectedLanguage );
@@ -1120,7 +1098,6 @@ namespace Blitzy.ViewModel
 					return;
 				}
 
-				RaisePropertyChanging( () => SelectedModifierKey );
 				_SelectedModifierKey = value;
 				RaisePropertyChanged( () => SelectedModifierKey );
 			}
@@ -1140,7 +1117,6 @@ namespace Blitzy.ViewModel
 					return;
 				}
 
-				RaisePropertyChanging( () => SelectedPluginPage );
 				_SelectedPluginPage = value;
 				RaisePropertyChanged( () => SelectedPluginPage );
 			}
@@ -1160,7 +1136,6 @@ namespace Blitzy.ViewModel
 					return;
 				}
 
-				RaisePropertyChanging( () => SelectedRule );
 				_SelectedRule = value;
 				RaisePropertyChanged( () => SelectedRule );
 			}
@@ -1180,7 +1155,6 @@ namespace Blitzy.ViewModel
 					return;
 				}
 
-				RaisePropertyChanging( () => Settings );
 				_Settings = value;
 				RaisePropertyChanged( () => Settings );
 			}
@@ -1200,7 +1174,6 @@ namespace Blitzy.ViewModel
 					return;
 				}
 
-				RaisePropertyChanging( () => StayOnTop );
 				_StayOnTop = value;
 				RaisePropertyChanged( () => StayOnTop );
 			}
@@ -1220,7 +1193,6 @@ namespace Blitzy.ViewModel
 					return;
 				}
 
-				RaisePropertyChanging( () => TrayIcon );
 				_TrayIcon = value;
 				RaisePropertyChanged( () => TrayIcon );
 			}
@@ -1249,7 +1221,6 @@ namespace Blitzy.ViewModel
 					return;
 				}
 
-				RaisePropertyChanging( () => UpdateCheck );
 				_UpdateCheck = value;
 				RaisePropertyChanged( () => UpdateCheck );
 			}
@@ -1278,7 +1249,6 @@ namespace Blitzy.ViewModel
 					return;
 				}
 
-				RaisePropertyChanging( () => VersionCheckError );
 				_VersionCheckError = value;
 				RaisePropertyChanged( () => VersionCheckError );
 			}
@@ -1298,7 +1268,6 @@ namespace Blitzy.ViewModel
 					return;
 				}
 
-				RaisePropertyChanging( () => VersionCheckInProgress );
 				_VersionCheckInProgress = value;
 				RaisePropertyChanged( () => VersionCheckInProgress );
 			}

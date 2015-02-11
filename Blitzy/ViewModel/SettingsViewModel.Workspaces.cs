@@ -6,7 +6,7 @@ using System.Windows;
 using Blitzy.Model;
 using Blitzy.Utility;
 using Blitzy.ViewServices;
-using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.CommandWpf;
 
 namespace Blitzy.ViewModel
 {
@@ -259,7 +259,6 @@ namespace Blitzy.ViewModel
 					return;
 				}
 
-				RaisePropertyChanging( () => SelectedItem );
 				_SelectedItem = value;
 				RaisePropertyChanged( () => SelectedItem );
 			}
@@ -279,7 +278,6 @@ namespace Blitzy.ViewModel
 					return;
 				}
 
-				RaisePropertyChanging( () => SelectedWorkspace );
 				_SelectedWorkspace = value;
 				RaisePropertyChanged( () => SelectedWorkspace );
 			}

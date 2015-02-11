@@ -107,7 +107,6 @@ namespace Blitzy.Model
 					return;
 				}
 
-				RaisePropertyChanging( () => SelectedItem );
 				_SelectedItem = value;
 				RaisePropertyChanged( () => SelectedItem );
 			}

@@ -40,7 +40,6 @@ namespace Blitzy.ViewModel
 					return;
 				}
 
-				RaisePropertyChanging( () => LogoffConfirmation );
 				_LogoffConfirmation = value;
 				RaisePropertyChanged( () => LogoffConfirmation );
 			}
@@ -60,7 +59,6 @@ namespace Blitzy.ViewModel
 					return;
 				}
 
-				RaisePropertyChanging( () => RestartConfirmation );
 				_RestartConfirmation = value;
 				RaisePropertyChanged( () => RestartConfirmation );
 			}
@@ -80,7 +78,6 @@ namespace Blitzy.ViewModel
 					return;
 				}
 
-				RaisePropertyChanging( () => ShutdownConfirmation );
 				_ShutdownConfirmation = value;
 				RaisePropertyChanged( () => ShutdownConfirmation );
 			}

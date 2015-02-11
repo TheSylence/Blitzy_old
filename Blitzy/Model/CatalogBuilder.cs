@@ -299,7 +299,6 @@ namespace Blitzy.Model
 					return;
 				}
 
-				RaisePropertyChanging( () => IsBuilding );
 				_IsBuilding = value;
 				RaisePropertyChanged( () => IsBuilding );
 			}
@@ -319,7 +318,6 @@ namespace Blitzy.Model
 					return;
 				}
 
-				RaisePropertyChanging( () => ItemsProcessed );
 				_ItemsProcessed = value;
 				RaisePropertyChanged( () => ItemsProcessed );
 			}
@@ -339,7 +337,6 @@ namespace Blitzy.Model
 					return;
 				}
 
-				RaisePropertyChanging( () => ItemsSaved );
 				_ItemsSaved = value;
 				RaisePropertyChanged( () => ItemsSaved );
 			}
@@ -359,7 +356,6 @@ namespace Blitzy.Model
 					return;
 				}
 
-				RaisePropertyChanging( () => ItemsScanned );
 				_ItemsScanned = value;
 				RaisePropertyChanged( () => ItemsScanned );
 			}
@@ -379,7 +375,6 @@ namespace Blitzy.Model
 					return;
 				}
 
-				RaisePropertyChanging( () => ItemsToProcess );
 				_ItemsToProcess = value;
 				RaisePropertyChanged( () => ItemsToProcess );
 			}
@@ -399,7 +394,6 @@ namespace Blitzy.Model
 					return;
 				}
 
-				RaisePropertyChanging( () => ProgressStep );
 				_ProgressStep = value;
 				RaisePropertyChanged( () => ProgressStep );
 			}

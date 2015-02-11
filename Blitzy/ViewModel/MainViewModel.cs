@@ -13,7 +13,7 @@ using Blitzy.Model;
 using Blitzy.Plugin;
 using Blitzy.Utility;
 using Blitzy.ViewServices;
-using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Threading;
 using CommandManager = Blitzy.Model.CommandManager;
@@ -615,7 +615,6 @@ namespace Blitzy.ViewModel
 					return;
 				}
 
-				RaisePropertyChanging( () => CommandInfo );
 				_CommandInfo = value;
 				RaisePropertyChanged( () => CommandInfo );
 			}
@@ -635,7 +634,6 @@ namespace Blitzy.ViewModel
 					return;
 				}
 
-				RaisePropertyChanging( () => CommandInput );
 				_CommandInput = value;
 				RaisePropertyChanged( () => CommandInput );
 
@@ -659,7 +657,6 @@ namespace Blitzy.ViewModel
 					return;
 				}
 
-				RaisePropertyChanging( () => SelectedCommandIndex );
 				_SelectedCommandIndex = value;
 				RaisePropertyChanged( () => SelectedCommandIndex );
 			}

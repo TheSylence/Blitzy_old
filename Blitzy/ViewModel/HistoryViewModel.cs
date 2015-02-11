@@ -57,7 +57,6 @@ namespace Blitzy.ViewModel
 					return;
 				}
 
-				RaisePropertyChanging( () => Manager );
 				_Manager = value;
 				RaisePropertyChanged( () => Manager );
 			}

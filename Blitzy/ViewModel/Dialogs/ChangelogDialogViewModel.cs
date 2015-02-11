@@ -4,7 +4,7 @@ using System.Text;
 using Blitzy.btbapi;
 using Blitzy.Model;
 using Blitzy.ViewServices;
-using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.CommandWpf;
 
 namespace Blitzy.ViewModel.Dialogs
 {
@@ -40,7 +40,6 @@ namespace Blitzy.ViewModel.Dialogs
 					return;
 				}
 
-				RaisePropertyChanging( () => Changelog );
 				_Changelog = value;
 				RaisePropertyChanged( () => Changelog );
 			}
@@ -69,7 +68,6 @@ namespace Blitzy.ViewModel.Dialogs
 					return;
 				}
 
-				RaisePropertyChanging( () => LatestVersionInfo );
 				_LatestVersionInfo = value;
 				RaisePropertyChanged( () => LatestVersionInfo );
 

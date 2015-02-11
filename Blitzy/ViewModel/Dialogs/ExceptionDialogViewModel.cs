@@ -6,7 +6,7 @@ using System.Windows;
 using Blitzy.btbapi;
 using Blitzy.Utility;
 using Blitzy.ViewServices;
-using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.CommandWpf;
 
 namespace Blitzy.ViewModel.Dialogs
 {
@@ -83,7 +83,6 @@ namespace Blitzy.ViewModel.Dialogs
 					return;
 				}
 
-				RaisePropertyChanging( () => ErrorReport );
 				_ErrorReport = value;
 				RaisePropertyChanged( () => ErrorReport );
 
@@ -108,7 +107,6 @@ namespace Blitzy.ViewModel.Dialogs
 					return;
 				}
 
-				RaisePropertyChanging( () => ErrorReportText );
 				_ErrorReportText = value;
 				RaisePropertyChanged( () => ErrorReportText );
 			}

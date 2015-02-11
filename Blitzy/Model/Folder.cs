@@ -287,7 +287,6 @@ namespace Blitzy.Model
 					return;
 				}
 
-				RaisePropertyChanging( () => IsRecursive );
 				_IsRecursive = value;
 				RaisePropertyChanged( () => IsRecursive );
 			}
@@ -307,7 +306,6 @@ namespace Blitzy.Model
 					return;
 				}
 
-				RaisePropertyChanging( () => Path );
 				_Path = value;
 				RaisePropertyChanged( () => Path );
 			}

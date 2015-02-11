@@ -1,4 +1,4 @@
-﻿using GalaSoft.MvvmLight.Command;
+﻿using GalaSoft.MvvmLight.CommandWpf;
 
 namespace Blitzy.ViewModel.Dialogs
 {
@@ -52,7 +52,6 @@ namespace Blitzy.ViewModel.Dialogs
 					return;
 				}
 
-				RaisePropertyChanging( () => Caption );
 				_Caption = value;
 				RaisePropertyChanged( () => Caption );
 			}
@@ -72,7 +71,6 @@ namespace Blitzy.ViewModel.Dialogs
 					return;
 				}
 
-				RaisePropertyChanging( () => Input );
 				_Input = value;
 				RaisePropertyChanged( () => Input );
 			}
@@ -92,7 +90,6 @@ namespace Blitzy.ViewModel.Dialogs
 					return;
 				}
 
-				RaisePropertyChanging( () => LabelText );
 				_LabelText = value;
 				RaisePropertyChanged( () => LabelText );
 			}

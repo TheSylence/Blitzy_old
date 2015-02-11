@@ -3,7 +3,7 @@ using Blitzy.Plugin;
 using Blitzy.Plugin.SystemPlugins;
 using Blitzy.Utility;
 using Blitzy.ViewServices;
-using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.CommandWpf;
 
 namespace Blitzy.ViewModel
 {
@@ -67,7 +67,6 @@ namespace Blitzy.ViewModel
 					return;
 				}
 
-				RaisePropertyChanging( () => ImportSessions );
 				_ImportSessions = value;
 				RaisePropertyChanged( () => ImportSessions );
 			}
@@ -87,7 +86,6 @@ namespace Blitzy.ViewModel
 					return;
 				}
 
-				RaisePropertyChanging( () => PuttyPath );
 				_PuttyPath = value;
 				RaisePropertyChanged( () => PuttyPath );
 			}

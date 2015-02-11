@@ -184,7 +184,6 @@ namespace Blitzy.Model
 					return;
 				}
 
-				RaisePropertyChanging( () => CurrentItem );
 				_CurrentItem = value;
 				RaisePropertyChanged( () => CurrentItem );
 			}

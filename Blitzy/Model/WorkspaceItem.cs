@@ -78,7 +78,6 @@ namespace Blitzy.Model
 					return;
 				}
 
-				RaisePropertyChanging( () => ItemCommand );
 				_ItemCommand = value;
 				RaisePropertyChanged( () => ItemCommand );
 			}
@@ -98,7 +97,6 @@ namespace Blitzy.Model
 					return;
 				}
 
-				RaisePropertyChanging( () => ItemID );
 				_ItemID = value;
 				RaisePropertyChanged( () => ItemID );
 			}
@@ -118,7 +116,6 @@ namespace Blitzy.Model
 					return;
 				}
 
-				RaisePropertyChanging( () => ItemOrder );
 				_ItemOrder = value;
 				RaisePropertyChanged( () => ItemOrder );
 			}
@@ -138,7 +135,6 @@ namespace Blitzy.Model
 					return;
 				}
 
-				RaisePropertyChanging( () => WorkspaceID );
 				_WorkspaceID = value;
 				RaisePropertyChanged( () => WorkspaceID );
 			}

@@ -125,7 +125,6 @@ namespace Blitzy.Model
 					return;
 				}
 
-				RaisePropertyChanging( () => ID );
 				_ID = value;
 				RaisePropertyChanged( () => ID );
 			}
@@ -147,7 +146,6 @@ namespace Blitzy.Model
 					return;
 				}
 
-				RaisePropertyChanging( () => Name );
 				_Name = value;
 				RaisePropertyChanged( () => Name );
 			}

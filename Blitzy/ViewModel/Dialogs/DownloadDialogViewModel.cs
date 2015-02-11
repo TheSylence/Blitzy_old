@@ -9,7 +9,7 @@ using System.Windows.Input;
 using Blitzy.Messages;
 using Blitzy.Utility;
 using Blitzy.ViewServices;
-using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Threading;
 
@@ -188,7 +188,6 @@ namespace Blitzy.ViewModel.Dialogs
 					return;
 				}
 
-				RaisePropertyChanging( () => BytesDownloaded );
 				_BytesDownloaded = value;
 				RaisePropertyChanged( () => BytesDownloaded );
 			}
@@ -217,7 +216,6 @@ namespace Blitzy.ViewModel.Dialogs
 					return;
 				}
 
-				RaisePropertyChanging( () => DownloadLink );
 				_DownloadLink = value;
 				RaisePropertyChanged( () => DownloadLink );
 			}
@@ -237,7 +235,6 @@ namespace Blitzy.ViewModel.Dialogs
 					return;
 				}
 
-				RaisePropertyChanging( () => DownloadSize );
 				_DownloadSize = value;
 				RaisePropertyChanged( () => DownloadSize );
 			}
@@ -257,7 +254,6 @@ namespace Blitzy.ViewModel.Dialogs
 					return;
 				}
 
-				RaisePropertyChanging( () => DownloadSuccessfull );
 				_DownloadSuccessfull = value;
 				RaisePropertyChanged( () => DownloadSuccessfull );
 			}
@@ -277,7 +273,6 @@ namespace Blitzy.ViewModel.Dialogs
 					return;
 				}
 
-				RaisePropertyChanging( () => MD5 );
 				_MD5 = value;
 				RaisePropertyChanged( () => MD5 );
 			}
@@ -297,7 +292,6 @@ namespace Blitzy.ViewModel.Dialogs
 					return;
 				}
 
-				RaisePropertyChanging( () => TargetPath );
 				_TargetPath = value;
 				RaisePropertyChanged( () => TargetPath );
 			}
@@ -317,7 +311,6 @@ namespace Blitzy.ViewModel.Dialogs
 					return;
 				}
 
-				RaisePropertyChanging( () => TimeLeft );
 				_TimeLeft = value;
 				RaisePropertyChanged( () => TimeLeft );
 			}

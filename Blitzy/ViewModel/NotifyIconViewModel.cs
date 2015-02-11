@@ -4,7 +4,7 @@ using System.Windows;
 using Blitzy.Messages;
 using Blitzy.Model;
 using Blitzy.Utility;
-using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight.Messaging;
 using Hardcodet.Wpf.TaskbarNotification;
 
@@ -144,7 +144,6 @@ namespace Blitzy.ViewModel
 					return;
 				}
 
-				RaisePropertyChanging( () => IconSource );
 				_IconSource = value;
 				RaisePropertyChanged( () => IconSource );
 			}

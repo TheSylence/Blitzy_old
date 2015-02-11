@@ -12,7 +12,7 @@ using Blitzy.Plugin.SystemPlugins;
 using Blitzy.Utility;
 using Blitzy.ViewServices;
 using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.CommandWpf;
 
 namespace Blitzy.ViewModel.Dialogs
 {
@@ -32,7 +32,6 @@ namespace Blitzy.ViewModel.Dialogs
 					return;
 				}
 
-				RaisePropertyChanging( () => Enabled );
 				_Enabled = value;
 				RaisePropertyChanged( () => Enabled );
 			}
@@ -182,7 +181,6 @@ namespace Blitzy.ViewModel.Dialogs
 					return;
 				}
 
-				RaisePropertyChanging( () => Plugins );
 				_Plugins = value;
 				RaisePropertyChanged( () => Plugins );
 			}
@@ -202,7 +200,6 @@ namespace Blitzy.ViewModel.Dialogs
 					return;
 				}
 
-				RaisePropertyChanging( () => SelectedPlugin );
 				_SelectedPlugin = value;
 				RaisePropertyChanged( () => SelectedPlugin );
 			}

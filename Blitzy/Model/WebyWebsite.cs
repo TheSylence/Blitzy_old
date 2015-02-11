@@ -83,7 +83,6 @@ namespace Blitzy.Model
 					return;
 				}
 
-				RaisePropertyChanging( () => Description );
 				_Description = value;
 				RaisePropertyChanged( () => Description );
 			}
@@ -103,7 +102,6 @@ namespace Blitzy.Model
 					return;
 				}
 
-				RaisePropertyChanging( () => Icon );
 				_Icon = value;
 				RaisePropertyChanged( () => Icon );
 			}
@@ -123,7 +121,6 @@ namespace Blitzy.Model
 					return;
 				}
 
-				RaisePropertyChanging( () => ID );
 				_ID = value;
 				RaisePropertyChanged( () => ID );
 			}
@@ -143,7 +140,6 @@ namespace Blitzy.Model
 					return;
 				}
 
-				RaisePropertyChanging( () => Name );
 				_Name = value;
 				RaisePropertyChanged( () => Name );
 			}
@@ -163,7 +159,6 @@ namespace Blitzy.Model
 					return;
 				}
 
-				RaisePropertyChanging( () => URL );
 				_URL = value;
 				RaisePropertyChanged( () => URL );
 			}
