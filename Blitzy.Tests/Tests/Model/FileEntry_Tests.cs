@@ -1,6 +1,4 @@
-﻿
-
-using Blitzy.Model;
+﻿using Blitzy.Model;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Blitzy.Tests.Model

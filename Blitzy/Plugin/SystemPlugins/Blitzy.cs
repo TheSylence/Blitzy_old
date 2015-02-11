@@ -5,7 +5,6 @@ using System.Reflection;
 using Blitzy.Messages;
 using Blitzy.Model;
 using Blitzy.Utility;
-using GalaSoft.MvvmLight.Messaging;
 
 namespace Blitzy.Plugin.SystemPlugins
 {
@@ -18,7 +17,7 @@ namespace Blitzy.Plugin.SystemPlugins
 
 		public bool ExecuteCommand( CommandItem command, CommandExecutionMode mode, IList<string> input, out string message )
 		{
-			Messenger.Default.Send( new InternalCommandMessage( command.Name ) );
+			Host.Messenger.Send( new InternalCommandMessage( command.Name ) );
 
 			message = null;
 			return true;
@@ -62,7 +61,8 @@ namespace Blitzy.Plugin.SystemPlugins
 
 		public bool Load( IPluginHost host, string oldVersion = null )
 		{
-			// Nothing to do
+			Host = host;
+
 			return true;
 		}
 
@@ -117,5 +117,7 @@ namespace Blitzy.Plugin.SystemPlugins
 		{
 			get { return new Uri( "http://btbsoft.org" ); }
 		}
+
+		private IPluginHost Host;
 	}
 }

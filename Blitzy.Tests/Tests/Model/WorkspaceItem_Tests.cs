@@ -11,29 +11,24 @@ namespace Blitzy.Tests.Model
 		[TestMethod, TestCategory( "Model" )]
 		public void DeleteTest()
 		{
+			int id = TestHelper.NextID();
+
 			using( WorkspaceItem w = new WorkspaceItem() )
 			{
-				w.ItemID = 1;
+				w.ItemID = id;
 				w.ItemCommand = "test";
 				w.Save( Connection );
 			}
 			using( WorkspaceItem w = new WorkspaceItem() )
 			{
-				w.ItemID = 1;
-				try
-				{
-					w.Load( Connection );
-				}
-				catch( TypeLoadException )
-				{
-					Assert.Fail();
-				}
+				w.ItemID = id;
+				w.Load( Connection );
 
 				w.Delete( Connection );
 			}
 			using( WorkspaceItem w = new WorkspaceItem() )
 			{
-				w.ItemID = 1;
+				w.ItemID = id;
 				ExceptionAssert.Throws<TypeLoadException>( () => w.Load( Connection ) );
 			}
 		}

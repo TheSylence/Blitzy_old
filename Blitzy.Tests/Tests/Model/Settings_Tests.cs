@@ -49,54 +49,6 @@ namespace Blitzy.Tests.Model
 			cfg.GetPluginSetting<string>( null, null );
 		}
 
-		[TestMethod, TestCategory( "Plugins" ), ExpectedException( typeof( ArgumentNullException ) )]
-		public void ISettings_InvalidGetKeyTest()
-		{
-			MockPlugin plug = new MockPlugin();
-
-			ISettings cfg = new Settings( ConnectionFactory );
-			cfg.GetValue<string>( plug, null );
-		}
-
-		[TestMethod, TestCategory( "Plugins" ), ExpectedException( typeof( ArgumentNullException ) )]
-		public void ISettings_InvalidGetPluginTest()
-		{
-			ISettings cfg = new Settings( ConnectionFactory );
-			cfg.GetValue<string>( null, "test" );
-		}
-
-		[TestMethod, TestCategory( "Plugins" ), ExpectedException( typeof( ArgumentNullException ) )]
-		public void ISettings_InvalidRemoveKeyTest()
-		{
-			MockPlugin plug = new MockPlugin();
-
-			ISettings cfg = new Settings( ConnectionFactory );
-			cfg.RemoveValue( plug, null );
-		}
-
-		[TestMethod, TestCategory( "Plugins" ), ExpectedException( typeof( ArgumentNullException ) )]
-		public void ISettings_InvalidRemovePluginTest()
-		{
-			ISettings cfg = new Settings( ConnectionFactory );
-			cfg.RemoveValue( null, "test" );
-		}
-
-		[TestMethod, TestCategory( "Plugins" ), ExpectedException( typeof( ArgumentNullException ) )]
-		public void ISettings_InvalidSetKeyTest()
-		{
-			MockPlugin plug = new MockPlugin();
-
-			ISettings cfg = new Settings( ConnectionFactory );
-			cfg.SetValue( plug, null, null );
-		}
-
-		[TestMethod, TestCategory( "Plugins" ), ExpectedException( typeof( ArgumentNullException ) )]
-		public void ISettings_InvalidSetPluginTest()
-		{
-			ISettings cfg = new Settings( ConnectionFactory );
-			cfg.SetValue( null, "test", null );
-		}
-
 		[TestMethod, TestCategory( "Plugins" )]
 		public void ISettings_RemovePluginTest()
 		{
@@ -123,6 +75,20 @@ namespace Blitzy.Tests.Model
 			ISettings cfg = new Settings( ConnectionFactory );
 
 			Assert.AreEqual( ( (Settings)cfg ).GetValue<int>( SystemSetting.MaxMatchingItems ), cfg.GetSystemSetting<int>( SystemSetting.MaxMatchingItems ) );
+		}
+
+		[TestMethod, TestCategory( "Model" )]
+		public void ISettingsTest()
+		{
+			MockPlugin plug = new MockPlugin();
+
+			ISettings cfg = new Settings( ConnectionFactory );
+			ExceptionAssert.Throws<ArgumentNullException>( () => cfg.GetValue<string>( plug, null ) );
+
+			ExceptionAssert.Throws<ArgumentNullException>( () => cfg.GetValue<string>( null, "test" ) );
+			ExceptionAssert.Throws<ArgumentNullException>( () => cfg.RemoveValue( plug, null ) );
+			ExceptionAssert.Throws<ArgumentNullException>( () => cfg.SetValue( plug, null, null ) );
+			ExceptionAssert.Throws<ArgumentNullException>( () => cfg.SetValue( null, "test", null ) );
 		}
 
 		[TestMethod, TestCategory( "Model" )]

@@ -2,13 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Data.Common;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using System.Windows.Interop;
 using System.Windows.Threading;
 using Blitzy.Messages;
 using Blitzy.Model;
@@ -692,6 +690,11 @@ namespace Blitzy.ViewModel
 		DbConnectionFactory IPluginHost.ConnectionFactory
 		{
 			get { return ConnectionFactory; }
+		}
+
+		IMessenger IPluginHost.Messenger
+		{
+			get { return MessengerInstance; }
 		}
 	}
 }

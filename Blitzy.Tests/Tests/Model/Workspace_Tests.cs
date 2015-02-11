@@ -12,22 +12,24 @@ namespace Blitzy.Tests.Model
 		[TestMethod, TestCategory( "Model" )]
 		public void DeleteTest()
 		{
+			int id = TestHelper.NextID();
+
 			using( Workspace w = new Workspace() )
 			{
-				w.ID = 1;
+				w.ID = id;
 				w.Name = "test";
 				w.Save( Connection );
 			}
 
 			using( Workspace w = new Workspace() )
 			{
-				w.ID = 1;
+				w.ID = id;
 				w.Delete( Connection );
 			}
 
 			using( Workspace w = new Workspace() )
 			{
-				w.ID = 1;
+				w.ID = id;
 				ExceptionAssert.Throws<TypeLoadException>( () => w.Load( Connection ) );
 			}
 		}
@@ -35,10 +37,14 @@ namespace Blitzy.Tests.Model
 		[TestMethod, TestCategory( "Model" )]
 		public void ItemsTest()
 		{
+			int id1 = TestHelper.NextID();
+			int id2 = TestHelper.NextID();
+			int wsid = TestHelper.NextID();
+
 			using( WorkspaceItem item = new WorkspaceItem() )
 			{
-				item.ItemID = 2;
-				item.WorkspaceID = 1;
+				item.ItemID = id1;
+				item.WorkspaceID = wsid;
 				item.ItemCommand = "test";
 
 				item.Save( Connection );
@@ -46,8 +52,8 @@ namespace Blitzy.Tests.Model
 
 			using( WorkspaceItem item = new WorkspaceItem() )
 			{
-				item.ItemID = 1;
-				item.WorkspaceID = 1;
+				item.ItemID = id2;
+				item.WorkspaceID = wsid;
 				item.ItemCommand = "test";
 
 				item.Save( Connection );
@@ -55,18 +61,18 @@ namespace Blitzy.Tests.Model
 
 			using( Workspace w = new Workspace() )
 			{
-				w.ID = 1;
+				w.ID = wsid;
 				w.Name = "test";
 				w.Save( Connection );
 			}
 			using( Workspace w = new Workspace() )
 			{
-				w.ID = 1;
+				w.ID = wsid;
 				w.Load( Connection );
 
 				Assert.AreEqual( 2, w.Items.Count );
-				Assert.AreEqual( 1, w.Items.Count( i => i.ItemID == 1 ) );
-				Assert.AreEqual( 1, w.Items.Count( i => i.ItemID == 2 ) );
+				Assert.AreEqual( 1, w.Items.Count( i => i.ItemID == id1 ) );
+				Assert.AreEqual( 1, w.Items.Count( i => i.ItemID == id2 ) );
 			}
 		}
 

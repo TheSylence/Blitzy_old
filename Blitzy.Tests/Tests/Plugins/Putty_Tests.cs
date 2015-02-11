@@ -1,6 +1,4 @@
-﻿
-
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Blitzy.Model;
 using Blitzy.Plugin;
@@ -19,7 +17,7 @@ namespace Blitzy.Tests.Plugins
 		{
 			Putty plug = new Putty();
 			( (IPluginHost)this ).Settings.SetValue( plug, Putty.PathKey, "putty.exe" );
-			Assert.IsTrue( plug.Load( this ) );
+			Assert.IsTrue( plug.Load( this, "" ) );
 
 			CommandItem command = plug.GetCommands( new List<string>() ).FirstOrDefault();
 			Assert.IsNotNull( command );
