@@ -691,5 +691,10 @@ namespace Blitzy.ViewModel
 		{
 			get { return ConnectionFactory; }
 		}
+
+		IMessenger IPluginHost.Messenger
+		{
+			get { return MessengerInstance; }
+		}
 	}
 }

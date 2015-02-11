@@ -37,14 +37,14 @@ namespace Blitzy.Tests.Model
 		[TestMethod, TestCategory( "Model" )]
 		public void ItemsTest()
 		{
-			int wsId = TestHelper.NextID();
 			int id1 = TestHelper.NextID();
 			int id2 = TestHelper.NextID();
+			int wsid = TestHelper.NextID();
 
 			using( WorkspaceItem item = new WorkspaceItem() )
 			{
-				item.ItemID = id2;
-				item.WorkspaceID = wsId;
+				item.ItemID = id1;
+				item.WorkspaceID = wsid;
 				item.ItemCommand = "test";
 
 				item.Save( Connection );
@@ -52,8 +52,8 @@ namespace Blitzy.Tests.Model
 
 			using( WorkspaceItem item = new WorkspaceItem() )
 			{
-				item.ItemID = id1;
-				item.WorkspaceID = wsId;
+				item.ItemID = id2;
+				item.WorkspaceID = wsid;
 				item.ItemCommand = "test";
 
 				item.Save( Connection );
@@ -61,13 +61,13 @@ namespace Blitzy.Tests.Model
 
 			using( Workspace w = new Workspace() )
 			{
-				w.ID = wsId;
+				w.ID = wsid;
 				w.Name = "test";
 				w.Save( Connection );
 			}
 			using( Workspace w = new Workspace() )
 			{
-				w.ID = wsId;
+				w.ID = wsid;
 				w.Load( Connection );
 
 				Assert.AreEqual( 2, w.Items.Count );
@@ -105,19 +105,19 @@ namespace Blitzy.Tests.Model
 					{
 						w.Items.Add( item2 );
 
-						w.Save( Connection );
+				w.Save( Connection );
 
-						Assert.IsTrue( w.ExistsInDatabase );
+				Assert.IsTrue( w.ExistsInDatabase );
 
 						using( Workspace w2 = new Workspace() )
 						{
-							w2.ID = id;
-							w2.Load( Connection );
+				w2.ID = id;
+				w2.Load( Connection );
 
-							Assert.IsTrue( w2.ExistsInDatabase );
-							Assert.AreEqual( w.Name, w2.Name );
-							Assert.AreEqual( 2, w2.Items.Count );
-						}
+				Assert.IsTrue( w2.ExistsInDatabase );
+				Assert.AreEqual( w.Name, w2.Name );
+				Assert.AreEqual( 2, w2.Items.Count );
+			}
 					}
 				}
 			}

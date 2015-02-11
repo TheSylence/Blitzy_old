@@ -64,14 +64,6 @@ namespace Blitzy.Tests.ViewModel
 
 		private class DialogVM : DialogViewModelBase<MockModel>
 		{
-			public override void Reset()
-			{
-				if( Model != null )
-				{
-					Model.Dispose();
-				}
-				base.Reset();
-			}
 		}
 	}
 }

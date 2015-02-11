@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data.Common;
 using System.Windows.Input;
 using Blitzy.Messages;
 using Blitzy.Model;
@@ -203,10 +204,10 @@ namespace Blitzy.Tests.ViewModel
 		{
 			using( MainViewModel vm = new MainViewModel( ConnectionFactory ) )
 			{
-				vm.CommandInput = "google";
+				vm.CommandInput = "subtest";
 				Assert.IsTrue( vm.OnKeyTab() );
 				Assert.IsTrue( vm.OnKeyTab() );
-				Assert.AreEqual( "google" + vm.CmdManager.Separator, vm.CommandInput );
+				Assert.AreEqual( "subtest" + vm.CmdManager.Separator, vm.CommandInput );
 			}
 		}
 

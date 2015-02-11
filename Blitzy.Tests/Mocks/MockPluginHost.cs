@@ -1,6 +1,7 @@
 ﻿using System;
 using Blitzy.Model;
 using Blitzy.Plugin;
+using GalaSoft.MvvmLight.Messaging;
 
 namespace Blitzy.Tests.Mocks
 {
@@ -21,6 +22,8 @@ namespace Blitzy.Tests.Mocks
 		{
 			get { return new TestConnectionFactory(); }
 		}
+
+		public IMessenger Messenger { get; set; }
 
 		public ISettings Settings
 		{

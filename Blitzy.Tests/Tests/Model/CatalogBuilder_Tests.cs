@@ -13,6 +13,11 @@ namespace Blitzy.Tests.Model
 		[TestMethod, TestCategory( "Model" )]
 		public void BuildTest()
 		{
+			if( File.Exists( "builder_test/Blitzy.exe.lnk" ) )
+			{
+				File.Delete( "builder_test/Blitzy.exe.lnk" );
+			}
+
 			using( Settings settings = new Settings( ConnectionFactory ) )
 			{
 				using( Folder folder = new Folder() )

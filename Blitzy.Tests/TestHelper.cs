@@ -39,7 +39,7 @@ namespace Blitzy.Tests
 			Connection = CreateConnection();
 
 			DatabaseCreator.CreateDatabase( Connection );
-			//CreatePluginTables();
+			CreatePluginTables();
 		}
 
 		public static void CreateTestFolder( string folder )

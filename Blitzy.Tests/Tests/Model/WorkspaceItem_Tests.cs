@@ -22,14 +22,7 @@ namespace Blitzy.Tests.Model
 			using( WorkspaceItem w = new WorkspaceItem() )
 			{
 				w.ItemID = id;
-				try
-				{
 					w.Load( Connection );
-				}
-				catch( TypeLoadException )
-				{
-					Assert.Fail();
-				}
 
 				w.Delete( Connection );
 			}
@@ -68,12 +61,12 @@ namespace Blitzy.Tests.Model
 
 				using( WorkspaceItem w2 = new WorkspaceItem() )
 				{
-					w2.ItemID = id;
-					w2.Load( Connection );
+				w2.ItemID = id;
+				w2.Load( Connection );
 
-					Assert.IsTrue( w2.ExistsInDatabase );
-					Assert.AreEqual( w.ItemCommand, w2.ItemCommand );
-				}
+				Assert.IsTrue( w2.ExistsInDatabase );
+				Assert.AreEqual( w.ItemCommand, w2.ItemCommand );
+			}
 			}
 
 			using( WorkspaceItem w = new WorkspaceItem() )

@@ -16,7 +16,12 @@ namespace Blitzy.ViewModel.Dialogs
 		public override void Reset()
 		{
 			base.Reset();
-			Model = (TModel)Activator.CreateInstance( typeof( TModel ) );
+			if( Model != null )
+			{
+				DisposeObject( Model );
+			}
+
+			Model = ToDispose( (TModel)Activator.CreateInstance( typeof( TModel ) ) );
 		}
 
 		protected virtual bool CanExecuteOkCommand()

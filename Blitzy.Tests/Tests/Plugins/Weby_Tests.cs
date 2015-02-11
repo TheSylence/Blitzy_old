@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using Blitzy.Model;
 using Blitzy.Plugin.SystemPlugins;
@@ -14,6 +15,12 @@ namespace Blitzy.Tests.Plugins
 		[TestMethod, TestCategory( "Plugins" )]
 		public void ExecuteCommandTest()
 		{
+			using( DbCommand cmd = Connection.CreateCommand() )
+			{
+				cmd.CommandText = "DROP TABLE weby_websites;";
+				cmd.ExecuteNonQuery();
+			}
+
 			using( Weby plug = new Weby() )
 			{
 				Assert.IsTrue( plug.Load( this ) );
@@ -80,10 +87,15 @@ namespace Blitzy.Tests.Plugins
 		[TestMethod, TestCategory( "Plugins" )]
 		public void LoadTest()
 		{
+			using( DbCommand cmd = Connection.CreateCommand() )
+			{
+				cmd.CommandText = "DROP TABLE weby_websites;";
+				cmd.ExecuteNonQuery();
+			}
+
 			using( Weby plug = new Weby() )
 			{
 				Assert.IsTrue( plug.Load( this ) );
-
 				IEnumerable<CommandItem> commands = plug.GetCommands( new List<string>() );
 				Assert.AreEqual( 7, commands.Count() );
 			}

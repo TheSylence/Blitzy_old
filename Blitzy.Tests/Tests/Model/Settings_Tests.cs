@@ -108,6 +108,23 @@ namespace Blitzy.Tests.Model
 		}
 
 		[TestMethod, TestCategory( "Model" )]
+		public void ISettingsTest()
+		{
+			MockPlugin plug = new MockPlugin();
+
+			using( Settings settings = new Settings( ConnectionFactory ) )
+			{
+				ISettings cfg = settings;
+				ExceptionAssert.Throws<ArgumentNullException>( () => cfg.GetValue<string>( plug, null ) );
+
+				ExceptionAssert.Throws<ArgumentNullException>( () => cfg.GetValue<string>( null, "test" ) );
+				ExceptionAssert.Throws<ArgumentNullException>( () => cfg.RemoveValue( plug, null ) );
+				ExceptionAssert.Throws<ArgumentNullException>( () => cfg.SetValue( plug, null, null ) );
+				ExceptionAssert.Throws<ArgumentNullException>( () => cfg.SetValue( null, "test", null ) );
+			}
+		}
+
+		[TestMethod, TestCategory( "Model" )]
 		public void SaveLoadTest()
 		{
 			int id1 = TestHelper.NextID();

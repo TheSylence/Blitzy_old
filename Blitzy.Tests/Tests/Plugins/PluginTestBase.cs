@@ -1,6 +1,7 @@
 ﻿using System;
 using Blitzy.Model;
 using Blitzy.Plugin;
+using GalaSoft.MvvmLight.Messaging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Blitzy.Tests.Plugins
@@ -39,6 +40,8 @@ namespace Blitzy.Tests.Plugins
 		{
 			get { return Settings; }
 		}
+
+		public IMessenger Messenger { get; protected set; }
 
 		private Settings Settings;
 	}

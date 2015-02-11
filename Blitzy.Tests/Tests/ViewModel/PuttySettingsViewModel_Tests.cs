@@ -20,25 +20,27 @@ namespace Blitzy.Tests.ViewModel
 
 			using( SettingsViewModel baseVM = new SettingsViewModel( ConnectionFactory, serviceManager ) )
 			{
-				baseVM.Settings = new Blitzy.Model.Settings( ConnectionFactory );
-				MockPluginHost host = new MockPluginHost( baseVM.Settings );
-				using( baseVM.PluginManager = new Plugin.PluginManager( host, ConnectionFactory ) )
+				using( baseVM.Settings = new Blitzy.Model.Settings( ConnectionFactory ) )
 				{
-					baseVM.PluginManager.LoadPlugins();
-					baseVM.Reset();
+					MockPluginHost host = new MockPluginHost( baseVM.Settings );
+					using( baseVM.PluginManager = new Plugin.PluginManager( host, ConnectionFactory ) )
+					{
+						baseVM.PluginManager.LoadPlugins();
+						baseVM.Reset();
 
-					PuttySettingsViewModel vm = baseVM.GetPluginContext<PuttySettingsViewModel>( "Putty" );
+						PuttySettingsViewModel vm = baseVM.GetPluginContext<PuttySettingsViewModel>( "Putty" );
 
-					Assert.IsTrue( vm.BrowsePuttyCommand.CanExecute( null ) );
+						Assert.IsTrue( vm.BrowsePuttyCommand.CanExecute( null ) );
 
-					mock.Value = null;
+						mock.Value = null;
 
-					vm.BrowsePuttyCommand.Execute( null );
-					Assert.AreEqual( baseVM.Settings.GetPluginSetting<string>( Putty.GuidString, Putty.PathKey ), vm.PuttyPath );
+						vm.BrowsePuttyCommand.Execute( null );
+						Assert.AreEqual( baseVM.Settings.GetPluginSetting<string>( Putty.GuidString, Putty.PathKey ), vm.PuttyPath );
 
-					mock.Value = "test.exe";
-					vm.BrowsePuttyCommand.Execute( null );
-					Assert.AreEqual( "test.exe", vm.PuttyPath );
+						mock.Value = "test.exe";
+						vm.BrowsePuttyCommand.Execute( null );
+						Assert.AreEqual( "test.exe", vm.PuttyPath );
+					}
 				}
 			}
 		}
@@ -48,18 +50,20 @@ namespace Blitzy.Tests.ViewModel
 		{
 			using( SettingsViewModel baseVM = new SettingsViewModel( ConnectionFactory ) )
 			{
-				baseVM.Settings = new Blitzy.Model.Settings( ConnectionFactory );
-				MockPluginHost host = new MockPluginHost( baseVM.Settings );
-				using( baseVM.PluginManager = new Plugin.PluginManager( host, ConnectionFactory ) )
+				using( baseVM.Settings = new Blitzy.Model.Settings( ConnectionFactory ) )
 				{
-					baseVM.PluginManager.LoadPlugins();
-					baseVM.Reset();
+					MockPluginHost host = new MockPluginHost( baseVM.Settings );
+					using( baseVM.PluginManager = new Plugin.PluginManager( host, ConnectionFactory ) )
+					{
+						baseVM.PluginManager.LoadPlugins();
+						baseVM.Reset();
 
-					PuttySettingsViewModel vm = baseVM.GetPluginContext<PuttySettingsViewModel>( "Putty" );
-					vm.PuttyPath = null;
+						PuttySettingsViewModel vm = baseVM.GetPluginContext<PuttySettingsViewModel>( "Putty" );
+						vm.PuttyPath = null;
 
-					PropertyChangedListener listener = new PropertyChangedListener( vm );
-					Assert.IsTrue( listener.TestProperties() );
+						PropertyChangedListener listener = new PropertyChangedListener( vm );
+						Assert.IsTrue( listener.TestProperties() );
+					}
 				}
 			}
 		}
@@ -69,22 +73,24 @@ namespace Blitzy.Tests.ViewModel
 		{
 			using( SettingsViewModel baseVM = new SettingsViewModel( ConnectionFactory ) )
 			{
-				baseVM.Settings = new Blitzy.Model.Settings( ConnectionFactory );
-				MockPluginHost host = new MockPluginHost( baseVM.Settings );
-				using( baseVM.PluginManager = new Plugin.PluginManager( host, ConnectionFactory ) )
+				using( baseVM.Settings = new Blitzy.Model.Settings( ConnectionFactory ) )
 				{
-					baseVM.PluginManager.LoadPlugins();
-					baseVM.Reset();
+					MockPluginHost host = new MockPluginHost( baseVM.Settings );
+					using( baseVM.PluginManager = new Plugin.PluginManager( host, ConnectionFactory ) )
+					{
+						baseVM.PluginManager.LoadPlugins();
+						baseVM.Reset();
 
-					PuttySettingsViewModel vm = baseVM.GetPluginContext<PuttySettingsViewModel>( "Putty" );
+						PuttySettingsViewModel vm = baseVM.GetPluginContext<PuttySettingsViewModel>( "Putty" );
 
-					vm.PuttyPath = "testpath";
-					vm.ImportSessions = !vm.ImportSessions;
+						vm.PuttyPath = "testpath";
+						vm.ImportSessions = !vm.ImportSessions;
 
-					vm.Save();
+						vm.Save();
 
-					Assert.AreEqual( vm.PuttyPath, baseVM.Settings.GetPluginSetting<string>( Putty.GuidString, Putty.PathKey ) );
-					Assert.AreEqual( vm.ImportSessions, baseVM.Settings.GetPluginSetting<bool>( Putty.GuidString, Putty.ImportKey ) );
+						Assert.AreEqual( vm.PuttyPath, baseVM.Settings.GetPluginSetting<string>( Putty.GuidString, Putty.PathKey ) );
+						Assert.AreEqual( vm.ImportSessions, baseVM.Settings.GetPluginSetting<bool>( Putty.GuidString, Putty.ImportKey ) );
+					}
 				}
 			}
 		}

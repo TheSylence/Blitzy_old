@@ -27,7 +27,7 @@ namespace Blitzy.ViewModel
 					{
 						while( reader.Read() )
 						{
-							WebyWebsite site = new WebyWebsite { ID = reader.GetInt32( 0 ) };
+							WebyWebsite site = ToDispose( new WebyWebsite { ID = reader.GetInt32( 0 ) } );
 
 							site.Load( connection );
 							Websites.Add( site );
