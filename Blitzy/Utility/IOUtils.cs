@@ -1,13 +1,9 @@
-﻿
-
-using System.IO;
+﻿using System.IO;
 
 namespace Blitzy.Utility
 {
 	internal static class IOUtils
 	{
-		#region Methods
-
 		public static string GetTempFileName( string extension )
 		{
 			string fileName;
@@ -34,7 +30,5 @@ namespace Blitzy.Utility
 
 			return fileName;
 		}
-
-		#endregion Methods
 	}
 }

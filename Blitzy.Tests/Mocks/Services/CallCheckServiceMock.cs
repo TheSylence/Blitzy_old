@@ -1,15 +1,10 @@
-﻿
-
-using Blitzy.ViewServices;
+﻿using Blitzy.ViewServices;
 
 namespace Blitzy.Tests.Mocks.Services
 {
 	[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	internal class CallCheckServiceMock : IViewService
 	{
-		public object Parameter;
-		public bool WasCalled;
-
 		public object Show( System.Windows.Window parent, object parameter = null )
 		{
 			WasCalled = true;
@@ -17,5 +12,8 @@ namespace Blitzy.Tests.Mocks.Services
 
 			return null;
 		}
+
+		public object Parameter;
+		public bool WasCalled;
 	}
 }

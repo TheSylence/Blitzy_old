@@ -1,6 +1,4 @@
-﻿
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -12,17 +10,11 @@ namespace Blitzy.Utility
 {
 	internal static class SingleInstance
 	{
-		#region Constructor
-
 		[SuppressMessage( "Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline" )]
 		static SingleInstance()
 		{
 			WM_SHOWFIRSTINSTANCE = INativeMethods.Instance.RegisterWindowMessage_Wrapper( "WM_SHOWFIRSTINSTANCE|{0}", AssemblyGuid );
 		}
-
-		#endregion Constructor
-
-		#region Methods
 
 		internal static void ShowFirstInstance()
 		{
@@ -52,10 +44,6 @@ namespace Blitzy.Utility
 			AppMutex.Dispose();
 		}
 
-		#endregion Methods
-
-		#region Properties
-
 		private static string AssemblyGuid
 		{
 			get
@@ -70,13 +58,7 @@ namespace Blitzy.Utility
 			}
 		}
 
-		#endregion Properties
-
-		#region Attributes
-
 		internal static readonly int WM_SHOWFIRSTINSTANCE;
 		private static Mutex AppMutex;
-
-		#endregion Attributes
 	}
 }

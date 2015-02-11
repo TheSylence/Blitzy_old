@@ -1,6 +1,4 @@
-﻿
-
-using Blitzy.Plugin.SystemPlugins;
+﻿using Blitzy.Plugin.SystemPlugins;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Blitzy.Tests.Plugins

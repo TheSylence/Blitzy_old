@@ -4,9 +4,6 @@ namespace Blitzy.ViewModel
 {
 	public class CloseViewEventArgs : EventArgs
 	{
-		public readonly bool? Result;
-		private static CloseViewEventArgs _Default;
-
 		public CloseViewEventArgs( bool? result = null )
 		{
 			Result = result;
@@ -16,5 +13,8 @@ namespace Blitzy.ViewModel
 		{
 			get { return _Default ?? ( _Default = new CloseViewEventArgs() ); }
 		}
+
+		public readonly bool? Result;
+		private static CloseViewEventArgs _Default;
 	}
 }

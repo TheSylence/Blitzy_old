@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Data.Common;
-using System.Data.SQLite;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Blitzy.Model
@@ -52,7 +51,7 @@ namespace Blitzy.Model
 			}
 		}
 
-		internal const int DatabaseVersion = 0;
+		internal const int DatabaseVersion = 1;
 		private readonly List<string[]> Queries = new List<string[]>();
 	}
 }

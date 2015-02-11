@@ -1,6 +1,4 @@
-﻿
-
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Interactivity;
@@ -10,9 +8,6 @@ namespace Blitzy.Behaviors
 	[ExcludeFromCodeCoverage]
 	public class HtmlBehavior : Behavior<WebBrowser>
 	{
-		public static readonly DependencyProperty HtmlProperty = DependencyProperty.RegisterAttached( "Html", typeof( string ),
-			typeof( HtmlBehavior ), new FrameworkPropertyMetadata( OnHtmlChanged ) );
-
 		[AttachedPropertyBrowsableForType( typeof( WebBrowser ) )]
 		public static string GetHtml( WebBrowser d )
 		{
@@ -30,5 +25,8 @@ namespace Blitzy.Behaviors
 			if( wb != null )
 				wb.NavigateToString( e.NewValue as string );
 		}
+
+		public static readonly DependencyProperty HtmlProperty = DependencyProperty.RegisterAttached( "Html", typeof( string ),
+			typeof( HtmlBehavior ), new FrameworkPropertyMetadata( OnHtmlChanged ) );
 	}
 }

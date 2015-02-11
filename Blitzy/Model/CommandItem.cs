@@ -1,6 +1,4 @@
-﻿
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Blitzy.Plugin;
@@ -9,16 +7,10 @@ namespace Blitzy.Model
 {
 	public class CommandItem
 	{
-		#region Constructor
-
 		private CommandItem()
 		{
 			CmdNames = new List<CommandName>();
 		}
-
-		#endregion Constructor
-
-		#region Methods
 
 		public static CommandItem Create( string name, string description, IPlugin plugin, string image = "",
 			object userdata = null, CommandItem parent = null, IEnumerable<string> aliases = null, bool acceptsData = false )
@@ -67,10 +59,6 @@ namespace Blitzy.Model
 			return HashCode;
 		}
 
-		#endregion Methods
-
-		#region Properties
-
 		public bool AcceptsData { get; set; }
 
 		public string Description { get; set; }
@@ -87,12 +75,6 @@ namespace Blitzy.Model
 
 		internal List<CommandName> CmdNames { get; private set; }
 
-		#endregion Properties
-
-		#region Attributes
-
 		private int HashCode;
-
-		#endregion Attributes
 	}
 }

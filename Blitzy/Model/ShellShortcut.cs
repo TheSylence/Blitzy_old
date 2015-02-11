@@ -1,6 +1,4 @@
-﻿
-
-/**************************************************************************
+﻿/**************************************************************************
 *
 * Filename:     ShellShortcut.cs
 * Author:       Mattias Sjögren (mattias@mvps.org)
@@ -22,22 +20,12 @@
 **************************************************************************/
 #define UNICODE
 
-using System;
-using System.Diagnostics;
-using System.Drawing;
 using System.IO;
-using System.Runtime.ExceptionServices;
-using System.Runtime.InteropServices;
-using System.Runtime.InteropServices.ComTypes;
-using System.Text;
-using System.Windows.Forms;
 
 namespace Blitzy.Model
 {
 	public class ShellShortcut
 	{
-		#region Constructor
-
 		public ShellShortcut( string linkPath )
 		{
 			if( !System.IO.Path.IsPathRooted( linkPath ) )
@@ -57,10 +45,6 @@ namespace Blitzy.Model
 				Link.Resolve( 1 );
 			}
 		}
-
-		#endregion Constructor
-
-		#region Properties
 
 		public string Arguments
 		{
@@ -128,12 +112,6 @@ namespace Blitzy.Model
 			}
 		}
 
-		#endregion Properties
-
-		#region Attributes
-
 		private Shell32.ShellLinkObject Link;
-
-		#endregion Attributes
 	}
 }

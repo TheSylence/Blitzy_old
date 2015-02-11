@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.Common;
 using System.Data.SQLite;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Blitzy.Model;
 
 namespace Blitzy
@@ -28,6 +24,7 @@ namespace Blitzy
 		internal virtual DbConnection OpenConnection()
 		{
 			DbConnection connection = new SQLiteConnection( ConnectionString );
+			connection.Open();
 
 			using( DbCommand cmd = connection.CreateCommand() )
 			{

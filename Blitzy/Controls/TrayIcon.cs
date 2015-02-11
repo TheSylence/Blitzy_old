@@ -1,6 +1,4 @@
-﻿
-
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Windows;
 using Blitzy.Messages;
 using Blitzy.Utility;
@@ -12,8 +10,6 @@ namespace Blitzy.Controls
 	[ExcludeFromCodeCoverage]
 	internal class TrayIcon : TaskbarIcon
 	{
-		#region Constructor
-
 		public TrayIcon()
 		{
 			Messenger.Default.Register<CommandMessage>( this, OnCommand );
@@ -21,10 +17,6 @@ namespace Blitzy.Controls
 
 			TrayBalloonTipClicked += TrayIcon_TrayBalloonTipClicked;
 		}
-
-		#endregion Constructor
-
-		#region Methods
 
 		private void OnBallon( BalloonTipMessage msg )
 		{
@@ -45,14 +37,6 @@ namespace Blitzy.Controls
 			Messenger.Default.Send( new BalloonActivatedMessage( BallonToken ) );
 		}
 
-		#endregion Methods
-
-
-
-		#region Attributes
-
 		private object BallonToken;
-
-		#endregion Attributes
 	}
 }

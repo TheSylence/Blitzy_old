@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data.Common;
-using System.Data.SQLite;
 using System.Globalization;
 using System.IO;
 using System.Linq;

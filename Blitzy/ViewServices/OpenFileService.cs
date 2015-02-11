@@ -1,6 +1,4 @@
-﻿
-
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Windows;
 using Microsoft.Win32;
 
@@ -9,8 +7,6 @@ namespace Blitzy.ViewServices
 	[ExcludeFromCodeCoverage]
 	internal class OpenFileService : IViewService
 	{
-		#region Methods
-
 		public object Show( Window parent, object parameter = null )
 		{
 			OpenFileDialog dlg = new OpenFileDialog();
@@ -28,7 +24,5 @@ namespace Blitzy.ViewServices
 
 			return null;
 		}
-
-		#endregion Methods
 	}
 }

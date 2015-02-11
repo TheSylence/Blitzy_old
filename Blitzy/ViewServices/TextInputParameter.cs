@@ -1,14 +1,10 @@
-﻿
-
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 
 namespace Blitzy.ViewServices
 {
 	[ExcludeFromCodeCoverage]
 	public class TextInputParameter
 	{
-		#region Constructor
-
 		public TextInputParameter( string label, string caption, string value = null, object token = null )
 		{
 			LabelText = label;
@@ -17,10 +13,6 @@ namespace Blitzy.ViewServices
 			Token = token;
 		}
 
-		#endregion Constructor
-
-		#region Properties
-
 		public readonly string Caption;
 
 		public readonly string LabelText;
@@ -28,7 +20,5 @@ namespace Blitzy.ViewServices
 		public readonly object Token;
 
 		public string Input;
-
-		#endregion Properties
 	}
 }

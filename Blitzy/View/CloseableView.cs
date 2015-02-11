@@ -6,15 +6,15 @@ namespace Blitzy.View
 {
 	public class CloseableView : Window
 	{
-		#region Constructor
-
-		private IRequestCloseViewModel Model;
-
 		public CloseableView()
 		{
 			DataContextChanged += CloseableView_DataContextChanged;
 			Closed += CloseableView_Closed;
 		}
+
+		public event EventHandler Hidden;
+
+		public event EventHandler Shown;
 
 		private void CloseableView_Closed( object sender, EventArgs e )
 		{
@@ -69,14 +69,6 @@ namespace Blitzy.View
 			}
 		}
 
-		#endregion Constructor
-
-		#region Events
-
-		public event EventHandler Hidden;
-
-		public event EventHandler Shown;
-
-		#endregion Events
+		private IRequestCloseViewModel Model;
 	}
 }

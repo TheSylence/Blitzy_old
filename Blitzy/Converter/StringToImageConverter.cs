@@ -1,6 +1,4 @@
-﻿
-
-using System;
+﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Globalization;
@@ -18,8 +16,6 @@ namespace Blitzy.Converter
 	[SuppressMessage( "Microsoft.Performance", "CA1812", Justification = "Used in XAML" )]
 	internal class StringToImageConverter : IValueConverter
 	{
-		private readonly Regex Pattern = new Regex( "^.*,[0-9-]+$", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.CultureInvariant );
-
 		public object Convert( object value, Type targetType, object parameter, CultureInfo culture )
 		{
 			string str = value as string;
@@ -119,5 +115,7 @@ namespace Blitzy.Converter
 		{
 			throw new NotSupportedException();
 		}
+
+		private readonly Regex Pattern = new Regex( "^.*,[0-9-]+$", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.CultureInvariant );
 	}
 }

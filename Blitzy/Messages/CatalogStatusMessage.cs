@@ -1,6 +1,4 @@
-﻿
-
-using GalaSoft.MvvmLight.Messaging;
+﻿using GalaSoft.MvvmLight.Messaging;
 
 namespace Blitzy.Messages
 {
@@ -14,11 +12,11 @@ namespace Blitzy.Messages
 	[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	internal class CatalogStatusMessage : MessageBase
 	{
-		public readonly CatalogStatus Status;
-
 		public CatalogStatusMessage( CatalogStatus status )
 		{
 			Status = status;
 		}
+
+		public readonly CatalogStatus Status;
 	}
 }

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows.Documents;
 using Blitzy.btbapi;
 using Blitzy.Messages;
 using Blitzy.Model;

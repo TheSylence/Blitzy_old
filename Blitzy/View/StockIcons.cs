@@ -1,11 +1,5 @@
-﻿
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Markup;
 using System.Windows.Media;
@@ -127,6 +121,11 @@ namespace Blitzy.View
 	[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	public static class StockIcons
 	{
+		public static BitmapSource GetBitmapSource( StockIconIdentifier identifier )
+		{
+			return StockIcon.GetBitmapSource( identifier, 0 );
+		}
+
 		public static BitmapSource Application { get { return GetBitmapSource( StockIconIdentifier.Application ); } }
 
 		public static BitmapSource AudioFiles { get { return GetBitmapSource( StockIconIdentifier.AudioFiles ); } }
@@ -294,20 +293,11 @@ namespace Blitzy.View
 		public static BitmapSource World { get { return GetBitmapSource( StockIconIdentifier.World ); } }
 
 		public static BitmapSource ZipFile { get { return GetBitmapSource( StockIconIdentifier.ZipFile ); } }
-
-		public static BitmapSource GetBitmapSource( StockIconIdentifier identifier )
-		{
-			return StockIcon.GetBitmapSource( identifier, 0 );
-		}
 	}
 
 	[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	public class StockIcon : MarkupExtension
 	{
-		private BitmapSource _bitmapSource = null;
-		private StockIconOptions _flags;
-		private StockIconIdentifier _identifier;
-
 		public StockIcon()
 		{
 		}
@@ -324,6 +314,24 @@ namespace Blitzy.View
 			LinkOverlay = ( flags & StockIconOptions.LinkOverlay ) == StockIconOptions.LinkOverlay;
 			ShellSize = ( flags & StockIconOptions.ShellSize ) == StockIconOptions.ShellSize;
 			Small = ( flags & StockIconOptions.Small ) == StockIconOptions.Small;
+		}
+
+		public override Object ProvideValue( IServiceProvider serviceProvider )
+		{
+			return Bitmap;
+		}
+
+		protected internal static BitmapSource GetBitmapSource( StockIconIdentifier identifier, StockIconOptions flags )
+		{
+			BitmapSource bitmapSource = (BitmapSource)InteropHelper.MakeImage( identifier, StockIconOptions.Handle | flags );
+			bitmapSource.Freeze();
+			return bitmapSource;
+		}
+
+		protected void Check()
+		{
+			if( _bitmapSource != null )
+				throw new InvalidOperationException( "The BitmapSource has already been created" );
 		}
 
 		public BitmapSource Bitmap
@@ -400,23 +408,9 @@ namespace Blitzy.View
 			}
 		}
 
-		public override Object ProvideValue( IServiceProvider serviceProvider )
-		{
-			return Bitmap;
-		}
-
-		protected internal static BitmapSource GetBitmapSource( StockIconIdentifier identifier, StockIconOptions flags )
-		{
-			BitmapSource bitmapSource = (BitmapSource)InteropHelper.MakeImage( identifier, StockIconOptions.Handle | flags );
-			bitmapSource.Freeze();
-			return bitmapSource;
-		}
-
-		protected void Check()
-		{
-			if( _bitmapSource != null )
-				throw new InvalidOperationException( "The BitmapSource has already been created" );
-		}
+		private BitmapSource _bitmapSource = null;
+		private StockIconOptions _flags;
+		private StockIconIdentifier _identifier;
 	}
 
 	[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]

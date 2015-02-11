@@ -1,6 +1,4 @@
-﻿
-
-using System;
+﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using Blitzy.btbapi;
 using GalaSoft.MvvmLight.Messaging;

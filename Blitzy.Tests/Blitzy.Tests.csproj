@@ -204,7 +204,7 @@
     <Fakes Include="Fakes\System.Net.Http.fakes" />
     <Fakes Include="Fakes\Blitzy.fakes" />
     <Fakes Include="Fakes\System.fakes" />
-    <None Include="Fakes\mscorlib.fakes" />
+    <Fakes Include="Fakes\mscorlib.fakes" />
     <None Include="packages.config" />
     <None Include="TestData\Blitzy.exe.lnk">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -249,8 +249,8 @@
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>taskkill /F /IM vstest.executionengine.x86.exe /FI "MEMUSAGE gt 1"
-taskkill /F /IM vstest.executionengine.exe /FI "MEMUSAGE gt 1"</PreBuildEvent>
+    <PreBuildEvent>
+    </PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -1,6 +1,4 @@
-﻿
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq.Expressions;
@@ -13,17 +11,11 @@ namespace Blitzy.Tests
 	[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	public class PropertyChangedListener
 	{
-		#region Constructor
-
 		public PropertyChangedListener( INotifyPropertyChanged obj )
 		{
 			Obj = obj;
 			Obj.PropertyChanged += Obj_PropertyChanged;
 		}
-
-		#endregion Constructor
-
-		#region Methods
 
 		public void Exclude<T>( Expression<Func<T, object>> exp )
 		{
@@ -95,15 +87,9 @@ namespace Blitzy.Tests
 			return ChangedProperties.Contains( propName );
 		}
 
-		#endregion Methods
-
-		#region Attributes
-
 		private HashSet<string> ChangedProperties = new HashSet<string>();
 		private HashSet<string> Excludes = new HashSet<string>();
 		private INotifyPropertyChanged Obj;
 		private Dictionary<string, object> ValueMap = new Dictionary<string, object>();
-
-		#endregion Attributes
 	}
 }

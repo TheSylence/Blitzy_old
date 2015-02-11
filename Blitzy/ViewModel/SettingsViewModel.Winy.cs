@@ -1,7 +1,6 @@
 ﻿using Blitzy.Model;
 using Blitzy.Plugin;
 using Blitzy.Plugin.SystemPlugins;
-using Blitzy.ViewServices;
 
 namespace Blitzy.ViewModel
 {

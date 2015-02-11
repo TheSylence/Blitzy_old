@@ -1,16 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net.Http;
-using System.Net.Http.Fakes;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Blitzy.Messages;
 using Blitzy.Tests.Mocks.Services;
-using Blitzy.Utility;
 using Blitzy.ViewModel.Dialogs;
 using Blitzy.ViewServices;
 using GalaSoft.MvvmLight.Messaging;

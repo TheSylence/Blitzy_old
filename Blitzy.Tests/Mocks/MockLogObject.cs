@@ -1,6 +1,4 @@
-﻿
-
-namespace Blitzy.Tests.Mocks
+﻿namespace Blitzy.Tests.Mocks
 {
 	[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	internal class MockLogObject : BaseObject
