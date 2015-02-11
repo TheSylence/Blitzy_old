@@ -6,14 +6,14 @@ using Blitzy.Utility;
 
 namespace Blitzy.Plugin.SystemPlugins
 {
-	internal class Medy : IPlugin
+	internal class Medy : InternalPlugin
 	{
-		public void ClearCache()
+		public override void ClearCache()
 		{
-			RootItem = CommandItem.Create( "medy", "ControlMediaPlayer".Localize(), this, "Medy.png" );
+			CreateCommands();
 		}
 
-		public bool ExecuteCommand( CommandItem command, CommandExecutionMode mode, IList<string> input, out string message )
+		public override bool ExecuteCommand( CommandItem command, CommandExecutionMode mode, IList<string> input, out string message )
 		{
 			int lp;
 			switch( command.Name )
@@ -52,27 +52,32 @@ namespace Blitzy.Plugin.SystemPlugins
 			return true;
 		}
 
-		public IEnumerable<CommandItem> GetCommands( IList<string> input )
+		public override IEnumerable<CommandItem> GetCommands( IList<string> input )
 		{
+			if( RootItem == null )
+			{
+				CreateCommands();
+			}
+
 			yield return RootItem;
 		}
 
-		public string GetInfo( IList<string> data, CommandItem item )
+		public override string GetInfo( IList<string> data, CommandItem item )
 		{
 			return null;
 		}
 
-		public IPluginViewModel GetSettingsDataContext( IViewServiceManager viewServices )
+		public override IPluginViewModel GetSettingsDataContext( IViewServiceManager viewServices )
 		{
 			return null;
 		}
 
-		public System.Windows.Controls.Control GetSettingsUI()
+		public override System.Windows.Controls.Control GetSettingsUI()
 		{
 			return null;
 		}
 
-		public IEnumerable<CommandItem> GetSubCommands( CommandItem parent, IList<string> input )
+		public override IEnumerable<CommandItem> GetSubCommands( CommandItem parent, IList<string> input )
 		{
 			if( parent == RootItem )
 			{
@@ -85,40 +90,44 @@ namespace Blitzy.Plugin.SystemPlugins
 			}
 		}
 
-		public bool Load( IPluginHost host, string oldVersion = null )
+		public override bool Load( IPluginHost host, string oldVersion = null )
 		{
-			ClearCache();
 			return true;
 		}
 
-		public void Unload( PluginUnloadReason reason )
+		public override void Unload( PluginUnloadReason reason )
 		{
 			// Do nothing
 		}
 
-		public int ApiVersion
+		private void CreateCommands()
+		{
+			RootItem = CommandItem.Create( "medy", "ControlMediaPlayer".Localize(), this, "Medy.png" );
+		}
+
+		public override int ApiVersion
 		{
 			get { return Constants.ApiVersion; }
 		}
 
-		public string Author
+		public override string Author
 		{
 			get { return "Matthias Specht"; }
 		}
 
-		public string Description
+		public override string Description
 		{
 			get { return "Control Media Players with with Blitzy"; }
 		}
 
-		public bool HasSettings { get { return false; } }
+		public override bool HasSettings { get { return false; } }
 
-		public string Name
+		public override string Name
 		{
 			get { return "Medy"; }
 		}
 
-		public Guid PluginID
+		public override Guid PluginID
 		{
 			get
 			{
@@ -131,12 +140,12 @@ namespace Blitzy.Plugin.SystemPlugins
 			}
 		}
 
-		public string Version
+		public override string Version
 		{
 			get { return Assembly.GetExecutingAssembly().GetName().Version.ToString(); }
 		}
 
-		public Uri Website
+		public override Uri Website
 		{
 			get { return new Uri( "http://btbsoft.org" ); }
 		}

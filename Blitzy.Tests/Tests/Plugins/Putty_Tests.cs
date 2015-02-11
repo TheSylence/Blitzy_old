@@ -15,32 +15,34 @@ namespace Blitzy.Tests.Plugins
 		[TestMethod, TestCategory( "Plugins" )]
 		public void ExecuteCommandTest()
 		{
-			Putty plug = new Putty();
-			( (IPluginHost)this ).Settings.SetValue( plug, Putty.PathKey, "putty.exe" );
-			Assert.IsTrue( plug.Load( this ) );
-
-			CommandItem command = plug.GetCommands( new List<string>() ).FirstOrDefault();
-			Assert.IsNotNull( command );
-
-			bool result;
-			string proc = null;
-			string args = null;
-			using( ShimsContext.Create() )
+			using( Putty plug = new Putty() )
 			{
-				System.Diagnostics.Fakes.ShimProcess.StartStringString = ( s, a ) =>
+				( (IPluginHost)this ).Settings.SetValue( plug, Putty.PathKey, "putty.exe" );
+				Assert.IsTrue( plug.Load( this, "" ) );
+
+				CommandItem command = plug.GetCommands( new List<string>() ).FirstOrDefault();
+				Assert.IsNotNull( command );
+
+				bool result;
+				string proc = null;
+				string args = null;
+				using( ShimsContext.Create() )
 				{
-					proc = s;
-					args = a;
-					return new System.Diagnostics.Fakes.StubProcess();
-				};
+					System.Diagnostics.Fakes.ShimProcess.StartStringString = ( s, a ) =>
+					{
+						proc = s;
+						args = a;
+						return new System.Diagnostics.Fakes.StubProcess();
+					};
 
-				string message;
-				result = plug.ExecuteCommand( command, CommandExecutionMode.Default, new[] { "test@localhost" }, out message );
+					string message;
+					result = plug.ExecuteCommand( command, CommandExecutionMode.Default, new[] { "test@localhost" }, out message );
+				}
+
+				Assert.IsTrue( result );
+				Assert.AreEqual( "putty.exe", proc );
+				Assert.AreEqual( "test@localhost", args );
 			}
-
-			Assert.IsTrue( result );
-			Assert.AreEqual( "putty.exe", proc );
-			Assert.AreEqual( "test@localhost", args );
 		}
 
 		[TestMethod, TestCategory( "Plugins" )]
@@ -53,11 +55,13 @@ namespace Blitzy.Tests.Plugins
 		[TestMethod, TestCategory( "Plugins" )]
 		public void LoadTest()
 		{
-			Putty plug = new Putty();
-			Assert.IsTrue( plug.Load( this ) );
+			using( Putty plug = new Putty() )
+			{
+				Assert.IsTrue( plug.Load( this ) );
 
-			IEnumerable<CommandItem> commands = plug.GetCommands( new List<string>() );
-			Assert.AreEqual( 1, commands.Count() );
+				IEnumerable<CommandItem> commands = plug.GetCommands( new List<string>() );
+				Assert.AreEqual( 1, commands.Count() );
+			}
 		}
 	}
 }

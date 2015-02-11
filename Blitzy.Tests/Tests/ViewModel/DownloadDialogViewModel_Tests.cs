@@ -29,14 +29,15 @@ namespace Blitzy.Tests.ViewModel
 				vm.DownloadSize = 124;
 				vm.DownloadLink = "file:///" + Directory.GetCurrentDirectory().Replace( '\\', '/' ) + '/' + "test.txt";
 				vm.TargetPath = Path.GetTempFileName();
+				ManualResetEvent started = new ManualResetEvent( false );
 
 				using( ShimsContext.Create() )
 				{
 					System.Net.Http.Fakes.ShimHttpClient.AllInstances.GetAsyncStringHttpCompletionOption = ( client, link, options ) =>
 						{
+							started.Set();
 							return Task.Run<HttpResponseMessage>( () =>
 							{
-								Thread.Sleep( 500 );
 								return new System.Net.Http.Fakes.StubHttpResponseMessage( System.Net.HttpStatusCode.OK )
 								{
 									Content = new ByteArrayContent( Encoding.ASCII.GetBytes( "Hello World" ) )
@@ -48,7 +49,7 @@ namespace Blitzy.Tests.ViewModel
 					System.IO.Fakes.ShimFile.DeleteString = ( s ) => deleted = true;
 
 					Task t = vm.StartDownload();
-					Thread.Sleep( 250 );
+					started.WaitOne();
 					Assert.IsTrue( vm.CancelCommand.CanExecute( null ) );
 					vm.CancelCommand.Execute( null );
 					t.Wait();

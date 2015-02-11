@@ -40,7 +40,7 @@ namespace Blitzy.Plugin
 	/// <summary>
 	/// Interface for a plugin. Implement this to build your plugin
 	/// </summary>
-	public interface IPlugin
+	public interface IPlugin : IDisposable
 	{
 		/// <summary>
 		/// Called when the plugin's cache (if there is any) should be cleared. This happens when the catalog is being rebuild for example.

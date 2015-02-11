@@ -12,6 +12,10 @@ namespace Blitzy
 	{
 		public BaseObject()
 		{
+#if DEBUG
+			CreationStack = new StackTrace( true );
+#endif
+
 			Log = LogManager.GetLogger( GetType() );
 		}
 
@@ -140,5 +144,6 @@ namespace Blitzy
 		public bool IsDisposed { get; private set; }
 
 		internal Stack<IDisposable> ObjectsToDispose = new Stack<IDisposable>();
+		private StackTrace CreationStack;
 	}
 }

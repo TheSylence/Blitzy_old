@@ -12,22 +12,24 @@ namespace Blitzy.Tests.Model
 		[TestMethod, TestCategory( "Model" )]
 		public void DeleteTest()
 		{
+			int id = TestHelper.NextID();
+
 			using( Workspace w = new Workspace() )
 			{
-				w.ID = 1;
+				w.ID = id;
 				w.Name = "test";
 				w.Save( Connection );
 			}
 
 			using( Workspace w = new Workspace() )
 			{
-				w.ID = 1;
+				w.ID = id;
 				w.Delete( Connection );
 			}
 
 			using( Workspace w = new Workspace() )
 			{
-				w.ID = 1;
+				w.ID = id;
 				ExceptionAssert.Throws<TypeLoadException>( () => w.Load( Connection ) );
 			}
 		}
@@ -35,10 +37,14 @@ namespace Blitzy.Tests.Model
 		[TestMethod, TestCategory( "Model" )]
 		public void ItemsTest()
 		{
+			int wsId = TestHelper.NextID();
+			int id1 = TestHelper.NextID();
+			int id2 = TestHelper.NextID();
+
 			using( WorkspaceItem item = new WorkspaceItem() )
 			{
-				item.ItemID = 2;
-				item.WorkspaceID = 1;
+				item.ItemID = id2;
+				item.WorkspaceID = wsId;
 				item.ItemCommand = "test";
 
 				item.Save( Connection );
@@ -46,8 +52,8 @@ namespace Blitzy.Tests.Model
 
 			using( WorkspaceItem item = new WorkspaceItem() )
 			{
-				item.ItemID = 1;
-				item.WorkspaceID = 1;
+				item.ItemID = id1;
+				item.WorkspaceID = wsId;
 				item.ItemCommand = "test";
 
 				item.Save( Connection );
@@ -55,18 +61,18 @@ namespace Blitzy.Tests.Model
 
 			using( Workspace w = new Workspace() )
 			{
-				w.ID = 1;
+				w.ID = wsId;
 				w.Name = "test";
 				w.Save( Connection );
 			}
 			using( Workspace w = new Workspace() )
 			{
-				w.ID = 1;
+				w.ID = wsId;
 				w.Load( Connection );
 
 				Assert.AreEqual( 2, w.Items.Count );
-				Assert.AreEqual( 1, w.Items.Count( i => i.ItemID == 1 ) );
-				Assert.AreEqual( 1, w.Items.Count( i => i.ItemID == 2 ) );
+				Assert.AreEqual( 1, w.Items.Count( i => i.ItemID == id1 ) );
+				Assert.AreEqual( 1, w.Items.Count( i => i.ItemID == id2 ) );
 			}
 		}
 
@@ -92,20 +98,28 @@ namespace Blitzy.Tests.Model
 				w.Name = "google";
 				w.ID = id;
 
-				w.Items.Add( new WorkspaceItem() { ItemID = TestHelper.NextID(), ItemCommand = "test", WorkspaceID = id } );
-				w.Items.Add( new WorkspaceItem() { ItemID = TestHelper.NextID(), ItemCommand = "test2", WorkspaceID = id } );
+				using( WorkspaceItem item1 = new WorkspaceItem() { ItemID = TestHelper.NextID(), ItemCommand = "test", WorkspaceID = id } )
+				{
+					w.Items.Add( item1 );
+					using( WorkspaceItem item2 = new WorkspaceItem() { ItemID = TestHelper.NextID(), ItemCommand = "test2", WorkspaceID = id } )
+					{
+						w.Items.Add( item2 );
 
-				w.Save( Connection );
+						w.Save( Connection );
 
-				Assert.IsTrue( w.ExistsInDatabase );
+						Assert.IsTrue( w.ExistsInDatabase );
 
-				Workspace w2 = new Workspace();
-				w2.ID = id;
-				w2.Load( Connection );
+						using( Workspace w2 = new Workspace() )
+						{
+							w2.ID = id;
+							w2.Load( Connection );
 
-				Assert.IsTrue( w2.ExistsInDatabase );
-				Assert.AreEqual( w.Name, w2.Name );
-				Assert.AreEqual( 2, w2.Items.Count );
+							Assert.IsTrue( w2.ExistsInDatabase );
+							Assert.AreEqual( w.Name, w2.Name );
+							Assert.AreEqual( 2, w2.Items.Count );
+						}
+					}
+				}
 			}
 
 			using( Workspace w = new Workspace() )

@@ -11,15 +11,17 @@ namespace Blitzy.Tests.Model
 		[TestMethod, TestCategory( "Model" )]
 		public void DeleteTest()
 		{
+			int id = TestHelper.NextID();
+
 			using( WorkspaceItem w = new WorkspaceItem() )
 			{
-				w.ItemID = 1;
+				w.ItemID = id;
 				w.ItemCommand = "test";
 				w.Save( Connection );
 			}
 			using( WorkspaceItem w = new WorkspaceItem() )
 			{
-				w.ItemID = 1;
+				w.ItemID = id;
 				try
 				{
 					w.Load( Connection );
@@ -33,7 +35,7 @@ namespace Blitzy.Tests.Model
 			}
 			using( WorkspaceItem w = new WorkspaceItem() )
 			{
-				w.ItemID = 1;
+				w.ItemID = id;
 				ExceptionAssert.Throws<TypeLoadException>( () => w.Load( Connection ) );
 			}
 		}
@@ -64,12 +66,14 @@ namespace Blitzy.Tests.Model
 
 				Assert.IsTrue( w.ExistsInDatabase );
 
-				WorkspaceItem w2 = new WorkspaceItem();
-				w2.ItemID = id;
-				w2.Load( Connection );
+				using( WorkspaceItem w2 = new WorkspaceItem() )
+				{
+					w2.ItemID = id;
+					w2.Load( Connection );
 
-				Assert.IsTrue( w2.ExistsInDatabase );
-				Assert.AreEqual( w.ItemCommand, w2.ItemCommand );
+					Assert.IsTrue( w2.ExistsInDatabase );
+					Assert.AreEqual( w.ItemCommand, w2.ItemCommand );
+				}
 			}
 
 			using( WorkspaceItem w = new WorkspaceItem() )

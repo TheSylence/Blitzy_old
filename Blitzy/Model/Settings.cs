@@ -60,7 +60,7 @@ namespace Blitzy.Model
 		LastCatalogBuild
 	}
 
-	internal class Settings : ObservableObject, ISettings
+	internal class Settings : BaseObject, ISettings
 	{
 		public Settings( DbConnectionFactory factory )
 		{
@@ -196,7 +196,7 @@ namespace Blitzy.Model
 					{
 						while( reader.Read() )
 						{
-							Folder f = new Folder { ID = reader.GetInt32( 0 ) };
+							Folder f = ToDispose( new Folder { ID = reader.GetInt32( 0 ) } );
 							f.Load( connection );
 
 							Folders.Add( f );

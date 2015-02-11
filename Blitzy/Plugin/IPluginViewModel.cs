@@ -1,6 +1,8 @@
-﻿namespace Blitzy.Plugin
+﻿using System;
+
+namespace Blitzy.Plugin
 {
-	public interface IPluginViewModel
+	public interface IPluginViewModel : IDisposable
 	{
 		void RestoreDefaults();
 

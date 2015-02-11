@@ -66,6 +66,12 @@ namespace Blitzy.Tests
 
 					value = info.PropertyType.GetNonDefaultValue();
 					info.SetValue( Obj, value );
+
+					IDisposable disp = value as IDisposable;
+					if( disp != null )
+					{
+						disp.Dispose();
+					}
 				}
 				Assert.IsTrue( WasChanged( info.Name ), info.Name );
 			}

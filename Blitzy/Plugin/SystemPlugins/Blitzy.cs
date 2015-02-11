@@ -16,6 +16,19 @@ namespace Blitzy.Plugin.SystemPlugins
 			// Nothing to do
 		}
 
+		public void Dispose()
+		{
+			Dispose( true );
+			GC.SuppressFinalize( this );
+		}
+
+		protected void Dispose( bool disposing )
+		{
+			if( disposing )
+			{
+			}
+		}
+
 		public bool ExecuteCommand( CommandItem command, CommandExecutionMode mode, IList<string> input, out string message )
 		{
 			Messenger.Default.Send( new InternalCommandMessage( command.Name ) );

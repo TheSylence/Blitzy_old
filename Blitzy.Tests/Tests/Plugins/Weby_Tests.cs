@@ -14,46 +14,48 @@ namespace Blitzy.Tests.Plugins
 		[TestMethod, TestCategory( "Plugins" )]
 		public void ExecuteCommandTest()
 		{
-			Weby plug = new Weby();
-			Assert.IsTrue( plug.Load( this, "" ) );
-
-			Dictionary<string, string> expectedUrls = new Dictionary<string, string>();
-			expectedUrls.Add( "google", "google.com" );
-			expectedUrls.Add( "wiki", "wikipedia.org" );
-			expectedUrls.Add( "youtube", "youtube.com" );
-			expectedUrls.Add( "bing", "bing.com" );
-			expectedUrls.Add( "facebook", "facebook.com" );
-			expectedUrls.Add( "wolfram", "wolframalpha.com" );
-			expectedUrls.Add( "weby", "http://test" );
-
-			IEnumerable<CommandItem> commands = plug.GetCommands( new List<string>() );
-			Assert.AreEqual( expectedUrls.Count, commands.Count() );
-
-			string message;
-			bool result;
-			string url = null;
-
-			int startedProcesses = 0;
-			foreach( CommandItem command in commands )
+			using( Weby plug = new Weby() )
 			{
-				using( ShimsContext.Create() )
-				{
-					System.Diagnostics.Fakes.ShimProcess.StartString = s =>
-					{
-						++startedProcesses;
-						url = s;
-						return new System.Diagnostics.Fakes.StubProcess();
-					};
+				Assert.IsTrue( plug.Load( this ) );
 
-					result = plug.ExecuteCommand( command, Plugin.CommandExecutionMode.Default, new[] { command.Name, "test" }, out message );
+				Dictionary<string, string> expectedUrls = new Dictionary<string, string>();
+				expectedUrls.Add( "google", "google.com" );
+				expectedUrls.Add( "wiki", "wikipedia.org" );
+				expectedUrls.Add( "youtube", "youtube.com" );
+				expectedUrls.Add( "bing", "bing.com" );
+				expectedUrls.Add( "facebook", "facebook.com" );
+				expectedUrls.Add( "wolfram", "wolframalpha.com" );
+				expectedUrls.Add( "weby", "http://test" );
+
+				IEnumerable<CommandItem> commands = plug.GetCommands( new List<string>() );
+				Assert.AreEqual( expectedUrls.Count, commands.Count() );
+
+				string message;
+				bool result;
+				string url = null;
+
+				int startedProcesses = 0;
+				foreach( CommandItem command in commands )
+				{
+					using( ShimsContext.Create() )
+					{
+						System.Diagnostics.Fakes.ShimProcess.StartString = s =>
+						{
+							++startedProcesses;
+							url = s;
+							return new System.Diagnostics.Fakes.StubProcess();
+						};
+
+						result = plug.ExecuteCommand( command, Plugin.CommandExecutionMode.Default, new[] { command.Name, "test" }, out message );
+					}
+
+					Assert.IsTrue( result );
+					Assert.IsTrue( url.Contains( "test" ) );
+					Assert.IsTrue( url.Contains( expectedUrls[command.Name] ) );
 				}
 
-				Assert.IsTrue( result );
-				Assert.IsTrue( url.Contains( "test" ) );
-				Assert.IsTrue( url.Contains( expectedUrls[command.Name] ) );
+				Assert.AreEqual( commands.Count(), startedProcesses );
 			}
-
-			Assert.AreEqual( commands.Count(), startedProcesses );
 		}
 
 		[TestMethod, TestCategory( "Plugins" )]
@@ -78,11 +80,13 @@ namespace Blitzy.Tests.Plugins
 		[TestMethod, TestCategory( "Plugins" )]
 		public void LoadTest()
 		{
-			Weby plug = new Weby();
-			Assert.IsTrue( plug.Load( this, "" ) );
+			using( Weby plug = new Weby() )
+			{
+				Assert.IsTrue( plug.Load( this ) );
 
-			IEnumerable<CommandItem> commands = plug.GetCommands( new List<string>() );
-			Assert.AreEqual( 7, commands.Count() );
+				IEnumerable<CommandItem> commands = plug.GetCommands( new List<string>() );
+				Assert.AreEqual( 7, commands.Count() );
+			}
 		}
 	}
 }

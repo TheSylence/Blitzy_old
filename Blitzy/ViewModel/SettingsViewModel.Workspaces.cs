@@ -27,7 +27,7 @@ namespace Blitzy.ViewModel
 					{
 						while( reader.Read() )
 						{
-							Workspace workspace = new Workspace { ID = reader.GetInt32( 0 ) };
+							Workspace workspace = ToDispose( new Workspace { ID = reader.GetInt32( 0 ) } );
 
 							workspace.Load( connection );
 							Workspaces.Add( workspace );
@@ -87,12 +87,12 @@ namespace Blitzy.ViewModel
 
 			if( !string.IsNullOrWhiteSpace( command ) )
 			{
-				WorkspaceItem item = new WorkspaceItem
+				WorkspaceItem item = ToDispose( new WorkspaceItem
 				{
 					WorkspaceID = SelectedWorkspace.ID,
 					ItemCommand = command,
 					ItemOrder = 1
-				};
+				} );
 				if( SelectedWorkspace.Items.Count > 0 )
 				{
 					item.ItemOrder = SelectedWorkspace.Items.Max( i => i.ItemOrder ) + 1;
@@ -116,7 +116,7 @@ namespace Blitzy.ViewModel
 
 			if( !string.IsNullOrWhiteSpace( name ) )
 			{
-				Workspace ws = new Workspace { Name = name, ID = 1 };
+				Workspace ws = ToDispose( new Workspace { Name = name, ID = 1 } );
 				if( Workspaces.Count > 0 )
 				{
 					ws.ID = Workspaces.Max( w => w.ID ) + 1;

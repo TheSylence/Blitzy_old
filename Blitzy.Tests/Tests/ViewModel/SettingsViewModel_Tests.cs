@@ -25,19 +25,29 @@ namespace Blitzy.Tests.ViewModel
 			ViewServiceManager serviceManager = new ViewServiceManager();
 			serviceManager.RegisterService( typeof( TextInputService ), mock );
 
-			using( SettingsViewModel vm = GenerateViewModel( serviceManager ) )
+			using( SettingsViewModel vm = new SettingsViewModel( ConnectionFactory, serviceManager ) )
 			{
-				Assert.IsFalse( vm.AddExcludeCommand.CanExecute( null ) );
-				vm.SelectedFolder = new Folder();
-				Assert.IsTrue( vm.AddExcludeCommand.CanExecute( null ) );
+				using( vm.Settings = new Blitzy.Model.Settings( ConnectionFactory ) )
+				{
+					MockPluginHost host = new MockPluginHost( vm.Settings );
 
-				mock.Value = null;
-				vm.AddExcludeCommand.Execute( null );
-				Assert.AreEqual( 0, vm.SelectedFolder.Excludes.Count );
+					using( vm.PluginManager = new Plugin.PluginManager( host, ConnectionFactory ) )
+					{
+						Assert.IsFalse( vm.AddExcludeCommand.CanExecute( null ) );
+						using( vm.SelectedFolder = new Folder() )
+						{
+							Assert.IsTrue( vm.AddExcludeCommand.CanExecute( null ) );
 
-				mock.Value = "test";
-				vm.AddExcludeCommand.Execute( null );
-				CollectionAssert.Contains( vm.SelectedFolder.Excludes, "test" );
+							mock.Value = null;
+							vm.AddExcludeCommand.Execute( null );
+							Assert.AreEqual( 0, vm.SelectedFolder.Excludes.Count );
+
+							mock.Value = "test";
+							vm.AddExcludeCommand.Execute( null );
+							CollectionAssert.Contains( vm.SelectedFolder.Excludes, "test" );
+						}
+					}
+				}
 			}
 		}
 
@@ -48,25 +58,33 @@ namespace Blitzy.Tests.ViewModel
 			ViewServiceManager serviceManager = new ViewServiceManager();
 			serviceManager.RegisterService( typeof( SelectFolderService ), mock );
 
-			using( SettingsViewModel vm = GenerateViewModel( serviceManager ) )
+			using( SettingsViewModel vm = new SettingsViewModel( ConnectionFactory, serviceManager ) )
 			{
-				mock.Value = "C:\\temp";
+				using( vm.Settings = new Blitzy.Model.Settings( ConnectionFactory ) )
+				{
+					MockPluginHost host = new MockPluginHost( vm.Settings );
 
-				Assert.AreEqual( 0, vm.Settings.Folders.Count() );
-				vm.AddFolderCommand.Execute( null );
-				Assert.AreEqual( 1, vm.Settings.Folders.Where( f => f.Path == "C:\\temp" ).Count() );
+					using( vm.PluginManager = new Plugin.PluginManager( host, ConnectionFactory ) )
+					{
+						mock.Value = "C:\\temp";
 
-				Assert.AreEqual( 1, vm.Settings.Folders.Count() );
-				mock.Value = null;
-				vm.AddFolderCommand.Execute( null );
-				Assert.AreEqual( 1, vm.Settings.Folders.Count() );
+						Assert.AreEqual( 0, vm.Settings.Folders.Count() );
+						vm.AddFolderCommand.Execute( null );
+						Assert.AreEqual( 1, vm.Settings.Folders.Where( f => f.Path == "C:\\temp" ).Count() );
 
-				mock.Value = "C:\\temp2";
-				vm.AddFolderCommand.Execute( null );
-				Assert.AreEqual( 1, vm.Settings.Folders.Where( f => f.Path == "C:\\temp2" ).Count() );
+						Assert.AreEqual( 1, vm.Settings.Folders.Count() );
+						mock.Value = null;
+						vm.AddFolderCommand.Execute( null );
+						Assert.AreEqual( 1, vm.Settings.Folders.Count() );
 
-				Assert.AreEqual( 1, vm.Settings.Folders.Where( f => f.ID == 1 ).Count() );
-				Assert.AreEqual( 1, vm.Settings.Folders.Where( f => f.ID == 2 ).Count() );
+						mock.Value = "C:\\temp2";
+						vm.AddFolderCommand.Execute( null );
+						Assert.AreEqual( 1, vm.Settings.Folders.Where( f => f.Path == "C:\\temp2" ).Count() );
+
+						Assert.AreEqual( 1, vm.Settings.Folders.Where( f => f.ID == 1 ).Count() );
+						Assert.AreEqual( 1, vm.Settings.Folders.Where( f => f.ID == 2 ).Count() );
+					}
+				}
 			}
 		}
 
@@ -77,33 +95,51 @@ namespace Blitzy.Tests.ViewModel
 			ViewServiceManager serviceManager = new ViewServiceManager();
 			serviceManager.RegisterService( typeof( TextInputService ), mock );
 
-			using( SettingsViewModel vm = GenerateViewModel( serviceManager ) )
+			using( SettingsViewModel vm = new SettingsViewModel( ConnectionFactory, serviceManager ) )
 			{
-				Assert.IsFalse( vm.AddRuleCommand.CanExecute( null ) );
-				vm.SelectedFolder = new Folder();
-				Assert.IsTrue( vm.AddRuleCommand.CanExecute( null ) );
+				using( vm.Settings = new Blitzy.Model.Settings( ConnectionFactory ) )
+				{
+					MockPluginHost host = new MockPluginHost( vm.Settings );
 
-				mock.Value = null;
-				vm.AddRuleCommand.Execute( null );
-				Assert.AreEqual( 0, vm.SelectedFolder.Rules.Count );
+					using( vm.PluginManager = new Plugin.PluginManager( host, ConnectionFactory ) )
+					{
+						Assert.IsFalse( vm.AddRuleCommand.CanExecute( null ) );
+						using( vm.SelectedFolder = new Folder() )
+						{
+							Assert.IsTrue( vm.AddRuleCommand.CanExecute( null ) );
 
-				mock.Value = "test";
-				vm.AddRuleCommand.Execute( null );
-				CollectionAssert.Contains( vm.SelectedFolder.Rules, "test" );
+							mock.Value = null;
+							vm.AddRuleCommand.Execute( null );
+							Assert.AreEqual( 0, vm.SelectedFolder.Rules.Count );
+
+							mock.Value = "test";
+							vm.AddRuleCommand.Execute( null );
+							CollectionAssert.Contains( vm.SelectedFolder.Rules, "test" );
+						}
+					}
+				}
 			}
 		}
 
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void CancelTest()
 		{
-			using( SettingsViewModel vm = GenerateViewModel() )
+			using( SettingsViewModel vm = new SettingsViewModel( ConnectionFactory, null ) )
 			{
-				bool closed = false;
-				vm.RequestClose += ( s, e ) => closed = true;
+				using( vm.Settings = new Blitzy.Model.Settings( ConnectionFactory ) )
+				{
+					MockPluginHost host = new MockPluginHost( vm.Settings );
 
-				vm.CancelCommand.Execute( null );
+					using( vm.PluginManager = new Plugin.PluginManager( host, ConnectionFactory ) )
+					{
+						bool closed = false;
+						vm.RequestClose += ( s, e ) => closed = true;
 
-				Assert.IsTrue( closed );
+						vm.CancelCommand.Execute( null );
+
+						Assert.IsTrue( closed );
+					}
+				}
 			}
 		}
 
@@ -111,16 +147,27 @@ namespace Blitzy.Tests.ViewModel
 		public void CatalogBuildTest()
 		{
 			Messenger messenger = new Messenger();
-			using( SettingsViewModel vm = GenerateViewModel( null, messenger ) )
+			using( SettingsViewModel vm = new SettingsViewModel( ConnectionFactory, null, messenger ) )
 			{
-				vm.Settings.Folders.Add( new Folder() );
-				using( vm.CatalogBuilder = new CatalogBuilder( ConnectionFactory, new Settings( ConnectionFactory ) ) )
+				using( vm.Settings = new Blitzy.Model.Settings( ConnectionFactory ) )
 				{
-					bool received = false;
-					messenger.Register<InternalCommandMessage>( this, ( msg ) => received = true );
+					MockPluginHost host = new MockPluginHost( vm.Settings );
 
-					vm.UpdateCatalogCommand.Execute( null );
-					Assert.IsTrue( received );
+					using( vm.PluginManager = new Plugin.PluginManager( host, ConnectionFactory ) )
+					{
+						using( Folder folder = new Folder() )
+						{
+							vm.Settings.Folders.Add( folder );
+							using( vm.CatalogBuilder = new CatalogBuilder( ConnectionFactory, vm.Settings ) )
+							{
+								bool received = false;
+								messenger.Register<InternalCommandMessage>( this, ( msg ) => received = true );
+
+								vm.UpdateCatalogCommand.Execute( null );
+								Assert.IsTrue( received );
+							}
+						}
+					}
 				}
 			}
 		}
@@ -130,28 +177,36 @@ namespace Blitzy.Tests.ViewModel
 		{
 			Messenger messenger = new Messenger();
 
-			using( SettingsViewModel vm = GenerateViewModel( null, messenger ) )
+			using( SettingsViewModel vm = new SettingsViewModel( ConnectionFactory, null, messenger ) )
 			{
-				vm.Reset();
-				using( vm.CatalogBuilder = new CatalogBuilder( ConnectionFactory, vm.Settings ) )
+				using( vm.Settings = new Blitzy.Model.Settings( ConnectionFactory ) )
 				{
-					vm.CatalogBuilder.ItemsProcessed = 123;
-					vm.CatalogBuilder.ItemsSaved = 456;
-					vm.CatalogBuilder.ProgressStep = CatalogProgressStep.Parsing;
-					DateTime oldDate = vm.LastCatalogBuild;
-					messenger.Send( new CatalogStatusMessage( CatalogStatus.BuildStarted ) );
-					Assert.IsTrue( vm.IsCatalogBuilding );
+					MockPluginHost host = new MockPluginHost( vm.Settings );
 
-					messenger.Send( new CatalogStatusMessage( CatalogStatus.ProgressUpdated ) );
-					Assert.AreEqual( vm.CatalogBuilder.ItemsProcessed, vm.CatalogItemsProcessed );
+					using( vm.PluginManager = new Plugin.PluginManager( host, ConnectionFactory ) )
+					{
+						vm.Reset();
+						using( vm.CatalogBuilder = new CatalogBuilder( ConnectionFactory, vm.Settings ) )
+						{
+							vm.CatalogBuilder.ItemsProcessed = 123;
+							vm.CatalogBuilder.ItemsSaved = 456;
+							vm.CatalogBuilder.ProgressStep = CatalogProgressStep.Parsing;
+							DateTime oldDate = vm.LastCatalogBuild;
+							messenger.Send( new CatalogStatusMessage( CatalogStatus.BuildStarted ) );
+							Assert.IsTrue( vm.IsCatalogBuilding );
 
-					vm.CatalogBuilder.ProgressStep = CatalogProgressStep.Saving;
-					messenger.Send( new CatalogStatusMessage( CatalogStatus.ProgressUpdated ) );
-					Assert.AreEqual( vm.CatalogBuilder.ItemsSaved, vm.CatalogItemsProcessed );
+							messenger.Send( new CatalogStatusMessage( CatalogStatus.ProgressUpdated ) );
+							Assert.AreEqual( vm.CatalogBuilder.ItemsProcessed, vm.CatalogItemsProcessed );
 
-					messenger.Send( new CatalogStatusMessage( CatalogStatus.BuildFinished ) );
-					Assert.IsFalse( vm.IsCatalogBuilding );
-					Assert.AreNotEqual( oldDate, vm.LastCatalogBuild );
+							vm.CatalogBuilder.ProgressStep = CatalogProgressStep.Saving;
+							messenger.Send( new CatalogStatusMessage( CatalogStatus.ProgressUpdated ) );
+							Assert.AreEqual( vm.CatalogBuilder.ItemsSaved, vm.CatalogItemsProcessed );
+
+							messenger.Send( new CatalogStatusMessage( CatalogStatus.BuildFinished ) );
+							Assert.IsFalse( vm.IsCatalogBuilding );
+							Assert.AreNotEqual( oldDate, vm.LastCatalogBuild );
+						}
+					}
 				}
 			}
 		}
@@ -163,16 +218,24 @@ namespace Blitzy.Tests.ViewModel
 			ViewServiceManager serviceManager = new ViewServiceManager();
 			serviceManager.RegisterService( typeof( MessageBoxService ), mock );
 
-			using( SettingsViewModel vm = GenerateViewModel( serviceManager ) )
+			using( SettingsViewModel vm = new SettingsViewModel( ConnectionFactory, serviceManager ) )
 			{
-				vm.Settings.SetValue( SystemSetting.MaxMatchingItems, 123 );
+				using( vm.Settings = new Blitzy.Model.Settings( ConnectionFactory ) )
+				{
+					MockPluginHost host = new MockPluginHost( vm.Settings );
 
-				vm.DefaultsCommand.Execute( null );
-				Assert.AreEqual( 123, vm.Settings.GetValue<int>( SystemSetting.MaxMatchingItems ) );
+					using( vm.PluginManager = new Plugin.PluginManager( host, ConnectionFactory ) )
+					{
+						vm.Settings.SetValue( SystemSetting.MaxMatchingItems, 123 );
 
-				mock.Result = System.Windows.MessageBoxResult.Yes;
-				vm.DefaultsCommand.Execute( null );
-				Assert.AreEqual( 20, vm.Settings.GetValue<int>( SystemSetting.MaxMatchingItems ) );
+						vm.DefaultsCommand.Execute( null );
+						Assert.AreEqual( 123, vm.Settings.GetValue<int>( SystemSetting.MaxMatchingItems ) );
+
+						mock.Result = System.Windows.MessageBoxResult.Yes;
+						vm.DefaultsCommand.Execute( null );
+						Assert.AreEqual( 20, vm.Settings.GetValue<int>( SystemSetting.MaxMatchingItems ) );
+					}
+				}
 			}
 		}
 
@@ -183,22 +246,30 @@ namespace Blitzy.Tests.ViewModel
 			ViewServiceManager serviceManager = new ViewServiceManager();
 			serviceManager.RegisterService( typeof( DownloadService ), mock );
 
-			using( SettingsViewModel vm = GenerateViewModel( serviceManager ) )
+			using( SettingsViewModel vm = new SettingsViewModel( ConnectionFactory, serviceManager ) )
 			{
-				Assert.IsFalse( vm.DownloadUpdateCommand.CanExecute( null ) );
+				using( vm.Settings = new Blitzy.Model.Settings( ConnectionFactory ) )
+				{
+					MockPluginHost host = new MockPluginHost( vm.Settings );
 
-				Uri downloadLink = null;
-				vm.LatestVersionInfo = new btbapi.VersionInfo( System.Net.HttpStatusCode.OK, new Version( 1, 2 ), downloadLink, "123", 123, new System.Collections.Generic.Dictionary<Version, string>(), null );
-				Assert.IsFalse( vm.DownloadUpdateCommand.CanExecute( null ) );
+					using( vm.PluginManager = new Plugin.PluginManager( host, ConnectionFactory ) )
+					{
+						Assert.IsFalse( vm.DownloadUpdateCommand.CanExecute( null ) );
 
-				downloadLink = new Uri( "http://localhost/file.exe" );
-				vm.LatestVersionInfo = new btbapi.VersionInfo( System.Net.HttpStatusCode.OK, new Version( 1, 2 ), downloadLink, "123", 123, new System.Collections.Generic.Dictionary<Version, string>(), null );
-				Assert.IsTrue( vm.DownloadUpdateCommand.CanExecute( null ) );
+						Uri downloadLink = null;
+						vm.LatestVersionInfo = new btbapi.VersionInfo( System.Net.HttpStatusCode.OK, new Version( 1, 2 ), downloadLink, "123", 123, new System.Collections.Generic.Dictionary<Version, string>(), null );
+						Assert.IsFalse( vm.DownloadUpdateCommand.CanExecute( null ) );
 
-				vm.DownloadUpdateCommand.Execute( null );
+						downloadLink = new Uri( "http://localhost/file.exe" );
+						vm.LatestVersionInfo = new btbapi.VersionInfo( System.Net.HttpStatusCode.OK, new Version( 1, 2 ), downloadLink, "123", 123, new System.Collections.Generic.Dictionary<Version, string>(), null );
+						Assert.IsTrue( vm.DownloadUpdateCommand.CanExecute( null ) );
 
-				Assert.IsTrue( mock.WasCalled );
-				Assert.IsInstanceOfType( mock.Parameter, typeof( DownloadServiceParameters ) );
+						vm.DownloadUpdateCommand.Execute( null );
+
+						Assert.IsTrue( mock.WasCalled );
+						Assert.IsInstanceOfType( mock.Parameter, typeof( DownloadServiceParameters ) );
+					}
+				}
 			}
 		}
 
@@ -209,10 +280,18 @@ namespace Blitzy.Tests.ViewModel
 			ViewServiceManager serviceManager = new ViewServiceManager();
 			serviceManager.RegisterService( typeof( PluginSettingsService ), mock );
 
-			using( SettingsViewModel vm = GenerateViewModel( serviceManager ) )
+			using( SettingsViewModel vm = new SettingsViewModel( ConnectionFactory, serviceManager ) )
 			{
-				vm.PluginsDialogCommand.Execute( null );
-				Assert.IsTrue( mock.WasCalled );
+				using( vm.Settings = new Blitzy.Model.Settings( ConnectionFactory ) )
+				{
+					MockPluginHost host = new MockPluginHost( vm.Settings );
+
+					using( vm.PluginManager = new Plugin.PluginManager( host, ConnectionFactory ) )
+					{
+						vm.PluginsDialogCommand.Execute( null );
+						Assert.IsTrue( mock.WasCalled );
+					}
+				}
 			}
 		}
 
@@ -221,32 +300,48 @@ namespace Blitzy.Tests.ViewModel
 		{
 			Messenger messenger = new Messenger();
 
-			using( SettingsViewModel vm = GenerateViewModel( null, messenger ) )
+			using( SettingsViewModel vm = new SettingsViewModel( ConnectionFactory, null, messenger ) )
 			{
-				vm.Reset();
-				MockPlugin plugin = new MockPlugin();
+				using( vm.Settings = new Blitzy.Model.Settings( ConnectionFactory ) )
+				{
+					MockPluginHost host = new MockPluginHost( vm.Settings );
 
-				messenger.Send<PluginMessage>( new PluginMessage( plugin, PluginAction.Enabled ) );
-				Assert.IsNotNull( vm.PluginPages.FirstOrDefault( x => x.Plugin == plugin ) );
+					using( vm.PluginManager = new Plugin.PluginManager( host, ConnectionFactory ) )
+					{
+						vm.Reset();
+						MockPlugin plugin = new MockPlugin();
 
-				messenger.Send<PluginMessage>( new PluginMessage( plugin, PluginAction.Disabled ) );
-				Assert.IsNull( vm.PluginPages.FirstOrDefault( x => x.Plugin == plugin ) );
+						messenger.Send<PluginMessage>( new PluginMessage( plugin, PluginAction.Enabled ) );
+						Assert.IsNotNull( vm.PluginPages.FirstOrDefault( x => x.Plugin == plugin ) );
+
+						messenger.Send<PluginMessage>( new PluginMessage( plugin, PluginAction.Disabled ) );
+						Assert.IsNull( vm.PluginPages.FirstOrDefault( x => x.Plugin == plugin ) );
+					}
+				}
 			}
 		}
 
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void PropertyChangedTest()
 		{
-			using( SettingsViewModel vm = GenerateViewModel() )
+			using( SettingsViewModel vm = new SettingsViewModel( ConnectionFactory, null ) )
 			{
-				PropertyChangedListener listener = new PropertyChangedListener( vm );
-				listener.Exclude<SettingsViewModel>( v => v.BlitzyLicense );
-				listener.Exclude<SettingsViewModel>( v => v.Changelog );
-				listener.Exclude<SettingsViewModel>( v => v.CatalogBuilder );
-				listener.Exclude<SettingsViewModel>( v => v.CurrentVersion );
-				listener.Exclude<SettingsViewModel>( v => v.Settings );
-				listener.Exclude<SettingsViewModel>( v => v.PluginManager );
-				Assert.IsTrue( listener.TestProperties() );
+				using( vm.Settings = new Blitzy.Model.Settings( ConnectionFactory ) )
+				{
+					MockPluginHost host = new MockPluginHost( vm.Settings );
+
+					using( vm.PluginManager = new Plugin.PluginManager( host, ConnectionFactory ) )
+					{
+						PropertyChangedListener listener = new PropertyChangedListener( vm );
+						listener.Exclude<SettingsViewModel>( v => v.BlitzyLicense );
+						listener.Exclude<SettingsViewModel>( v => v.Changelog );
+						listener.Exclude<SettingsViewModel>( v => v.CatalogBuilder );
+						listener.Exclude<SettingsViewModel>( v => v.CurrentVersion );
+						listener.Exclude<SettingsViewModel>( v => v.Settings );
+						listener.Exclude<SettingsViewModel>( v => v.PluginManager );
+						Assert.IsTrue( listener.TestProperties() );
+					}
+				}
 			}
 		}
 
@@ -257,21 +352,34 @@ namespace Blitzy.Tests.ViewModel
 			ViewServiceManager serviceManager = new ViewServiceManager();
 			serviceManager.RegisterService( typeof( MessageBoxService ), mock );
 
-			using( SettingsViewModel vm = GenerateViewModel( serviceManager ) )
+			using( SettingsViewModel vm = new SettingsViewModel( ConnectionFactory, serviceManager ) )
 			{
-				Assert.IsFalse( vm.RemoveExcludeCommand.CanExecute( null ) );
-				vm.SelectedFolder = new Folder();
-				Assert.IsFalse( vm.RemoveExcludeCommand.CanExecute( null ) );
-				vm.SelectedFolder.Excludes.Add( "test" );
-				vm.SelectedExclude = "test";
-				Assert.IsTrue( vm.RemoveExcludeCommand.CanExecute( null ) );
+				using( vm.Settings = new Blitzy.Model.Settings( ConnectionFactory ) )
+				{
+					using( vm.Settings = new Blitzy.Model.Settings( ConnectionFactory ) )
+					{
+						MockPluginHost host = new MockPluginHost( vm.Settings );
 
-				vm.RemoveExcludeCommand.Execute( null );
-				CollectionAssert.Contains( vm.SelectedFolder.Excludes, "test" );
+						using( vm.PluginManager = new Plugin.PluginManager( host, ConnectionFactory ) )
+						{
+							Assert.IsFalse( vm.RemoveExcludeCommand.CanExecute( null ) );
+							using( vm.SelectedFolder = new Folder() )
+							{
+								Assert.IsFalse( vm.RemoveExcludeCommand.CanExecute( null ) );
+								vm.SelectedFolder.Excludes.Add( "test" );
+								vm.SelectedExclude = "test";
+								Assert.IsTrue( vm.RemoveExcludeCommand.CanExecute( null ) );
 
-				mock.Result = System.Windows.MessageBoxResult.Yes;
-				vm.RemoveExcludeCommand.Execute( null );
-				CollectionAssert.DoesNotContain( vm.SelectedFolder.Excludes, "test" );
+								vm.RemoveExcludeCommand.Execute( null );
+								CollectionAssert.Contains( vm.SelectedFolder.Excludes, "test" );
+
+								mock.Result = System.Windows.MessageBoxResult.Yes;
+								vm.RemoveExcludeCommand.Execute( null );
+								CollectionAssert.DoesNotContain( vm.SelectedFolder.Excludes, "test" );
+							}
+						}
+					}
+				}
 			}
 		}
 
@@ -287,33 +395,42 @@ namespace Blitzy.Tests.ViewModel
 				folder.ID = 123;
 				folder.Path = "C:\\temp";
 
-				using( SettingsViewModel vm = GenerateViewModel( serviceManager ) )
+				using( SettingsViewModel vm = new SettingsViewModel( ConnectionFactory, serviceManager ) )
 				{
-					vm.Settings.Folders.Add( folder );
+					using( vm.Settings = new Blitzy.Model.Settings( ConnectionFactory ) )
+					{
+						MockPluginHost host = new MockPluginHost( vm.Settings );
 
-					Assert.IsFalse( vm.RemoveFolderCommand.CanExecute( null ) );
-					vm.SelectedFolder = folder;
-					Assert.IsTrue( vm.RemoveFolderCommand.CanExecute( null ) );
+						using( vm.PluginManager = new Plugin.PluginManager( host, ConnectionFactory ) )
+						{
+							vm.Settings.Folders.Add( folder );
 
-					vm.RemoveFolderCommand.Execute( null );
+							Assert.IsFalse( vm.RemoveFolderCommand.CanExecute( null ) );
+							vm.SelectedFolder = folder;
+							Assert.IsTrue( vm.RemoveFolderCommand.CanExecute( null ) );
 
-					Assert.AreSame( folder, vm.SelectedFolder );
-					CollectionAssert.Contains( vm.Settings.Folders, folder );
+							vm.RemoveFolderCommand.Execute( null );
 
-					mock.Result = System.Windows.MessageBoxResult.Yes;
-					vm.RemoveFolderCommand.Execute( null );
-					Assert.IsNull( vm.SelectedFolder );
-					CollectionAssert.DoesNotContain( vm.Settings.Folders, folder );
+							Assert.AreSame( folder, vm.SelectedFolder );
+							CollectionAssert.Contains( vm.Settings.Folders, folder );
 
-					vm.Reset();
-					vm.SaveCommand.Execute( null );
+							mock.Result = System.Windows.MessageBoxResult.Yes;
+							vm.RemoveFolderCommand.Execute( null );
+							Assert.IsNull( vm.SelectedFolder );
+							CollectionAssert.DoesNotContain( vm.Settings.Folders, folder );
+
+							vm.Reset();
+							vm.SaveCommand.Execute( null );
+						}
+					}
 				}
 
 				using( SettingsViewModel vm = new SettingsViewModel( ConnectionFactory ) )
 				{
-					vm.Settings = new Settings( ConnectionFactory );
-
-					CollectionAssert.DoesNotContain( vm.Settings.Folders, folder );
+					using( vm.Settings = new Settings( ConnectionFactory ) )
+					{
+						CollectionAssert.DoesNotContain( vm.Settings.Folders, folder );
+					}
 				}
 			}
 		}
@@ -325,40 +442,61 @@ namespace Blitzy.Tests.ViewModel
 			ViewServiceManager serviceManager = new ViewServiceManager();
 			serviceManager.RegisterService( typeof( MessageBoxService ), mock );
 
-			using( SettingsViewModel vm = GenerateViewModel( serviceManager ) )
+			using( SettingsViewModel vm = new SettingsViewModel( null, serviceManager ) )
 			{
-				Assert.IsFalse( vm.RemoveRuleCommand.CanExecute( null ) );
-				vm.SelectedFolder = new Folder();
-				Assert.IsFalse( vm.RemoveRuleCommand.CanExecute( null ) );
-				vm.SelectedFolder.Rules.Add( "test" );
-				vm.SelectedRule = "test";
-				Assert.IsTrue( vm.RemoveRuleCommand.CanExecute( null ) );
+				using( vm.Settings = new Blitzy.Model.Settings( ConnectionFactory ) )
+				{
+					MockPluginHost host = new MockPluginHost( vm.Settings );
 
-				vm.RemoveRuleCommand.Execute( null );
-				CollectionAssert.Contains( vm.SelectedFolder.Rules, "test" );
+					using( vm.PluginManager = new Plugin.PluginManager( host, ConnectionFactory ) )
+					{
+						Assert.IsFalse( vm.RemoveRuleCommand.CanExecute( null ) );
+						using( vm.SelectedFolder = new Folder() )
+						{
+							Assert.IsFalse( vm.RemoveRuleCommand.CanExecute( null ) );
+							vm.SelectedFolder.Rules.Add( "test" );
+							vm.SelectedRule = "test";
+							Assert.IsTrue( vm.RemoveRuleCommand.CanExecute( null ) );
 
-				mock.Result = System.Windows.MessageBoxResult.Yes;
-				vm.RemoveRuleCommand.Execute( null );
-				CollectionAssert.DoesNotContain( vm.SelectedFolder.Rules, "test" );
+							vm.RemoveRuleCommand.Execute( null );
+							CollectionAssert.Contains( vm.SelectedFolder.Rules, "test" );
+
+							mock.Result = System.Windows.MessageBoxResult.Yes;
+							vm.RemoveRuleCommand.Execute( null );
+							CollectionAssert.DoesNotContain( vm.SelectedFolder.Rules, "test" );
+						}
+					}
+				}
 			}
 		}
 
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void StandardCommandsTest()
 		{
-			using( SettingsViewModel vm = GenerateViewModel() )
+			using( SettingsViewModel vm = new SettingsViewModel( null ) )
 			{
-				Assert.IsTrue( vm.CancelCommand.CanExecute( null ) );
-				Assert.IsTrue( vm.DefaultsCommand.CanExecute( null ) );
-				Assert.IsTrue( vm.UpdateCheckCommand.CanExecute( null ) );
-				Assert.IsTrue( vm.ViewChangelogCommand.CanExecute( null ) );
-				Assert.IsTrue( vm.PluginsDialogCommand.CanExecute( null ) );
-
-				Assert.IsFalse( vm.UpdateCatalogCommand.CanExecute( null ) );
-				vm.Settings.Folders.Add( new Folder() );
-				using( vm.CatalogBuilder = new CatalogBuilder( ConnectionFactory, new Settings( ConnectionFactory ) ) )
+				using( vm.Settings = new Blitzy.Model.Settings( ConnectionFactory ) )
 				{
-					Assert.IsTrue( vm.UpdateCatalogCommand.CanExecute( null ) );
+					MockPluginHost host = new MockPluginHost( vm.Settings );
+
+					using( vm.PluginManager = new Plugin.PluginManager( host, ConnectionFactory ) )
+					{
+						Assert.IsTrue( vm.CancelCommand.CanExecute( null ) );
+						Assert.IsTrue( vm.DefaultsCommand.CanExecute( null ) );
+						Assert.IsTrue( vm.UpdateCheckCommand.CanExecute( null ) );
+						Assert.IsTrue( vm.ViewChangelogCommand.CanExecute( null ) );
+						Assert.IsTrue( vm.PluginsDialogCommand.CanExecute( null ) );
+
+						Assert.IsFalse( vm.UpdateCatalogCommand.CanExecute( null ) );
+						using( Folder folder = new Folder() )
+						{
+							vm.Settings.Folders.Add( folder );
+							using( vm.CatalogBuilder = new CatalogBuilder( ConnectionFactory, vm.Settings ) )
+							{
+								Assert.IsTrue( vm.UpdateCatalogCommand.CanExecute( null ) );
+							}
+						}
+					}
 				}
 			}
 		}
@@ -366,30 +504,38 @@ namespace Blitzy.Tests.ViewModel
 		[TestMethod, TestCategory( "ViewModel" )]
 		public void UpdateCheckTest()
 		{
-			using( SettingsViewModel vm = GenerateViewModel() )
+			using( SettingsViewModel vm = new SettingsViewModel( null, null ) )
 			{
-				using( ShimsContext.Create() )
+				using( vm.Settings = new Blitzy.Model.Settings( ConnectionFactory ) )
 				{
-					Blitzy.Model.Fakes.ShimUpdateChecker.AllInstances.CheckVersionBoolean = ( checker, b ) =>
-						{
-							return Task.Run<VersionInfo>( () =>
-								{
-									return new VersionInfo( System.Net.HttpStatusCode.BadRequest, null, null, null, 0, null, null );
-								} );
-						};
-					vm.UpdateCheckAsync().Wait();
-					Assert.IsTrue( vm.VersionCheckError );
+					MockPluginHost host = new MockPluginHost( vm.Settings );
 
-					Blitzy.Model.Fakes.ShimUpdateChecker.AllInstances.CheckVersionBoolean = ( checker, b ) =>
+					using( vm.PluginManager = new Plugin.PluginManager( host, ConnectionFactory ) )
 					{
-						return Task.Run<VersionInfo>( () =>
+						using( ShimsContext.Create() )
 						{
-							return new VersionInfo( System.Net.HttpStatusCode.OK, new Version( 1, 2 ), new Uri( "http://localhost/file.name" ), "123", 123, new System.Collections.Generic.Dictionary<Version, string>(), null );
-						} );
-					};
+							Blitzy.Model.Fakes.ShimUpdateChecker.AllInstances.CheckVersionBoolean = ( checker, b ) =>
+								{
+									return Task.Run<VersionInfo>( () =>
+										{
+											return new VersionInfo( System.Net.HttpStatusCode.BadRequest, null, null, null, 0, null, null );
+										} );
+								};
+							vm.UpdateCheckAsync().Wait();
+							Assert.IsTrue( vm.VersionCheckError );
 
-					vm.UpdateCheckAsync().Wait();
-					Assert.IsFalse( vm.VersionCheckError );
+							Blitzy.Model.Fakes.ShimUpdateChecker.AllInstances.CheckVersionBoolean = ( checker, b ) =>
+							{
+								return Task.Run<VersionInfo>( () =>
+								{
+									return new VersionInfo( System.Net.HttpStatusCode.OK, new Version( 1, 2 ), new Uri( "http://localhost/file.name" ), "123", 123, new System.Collections.Generic.Dictionary<Version, string>(), null );
+								} );
+							};
+
+							vm.UpdateCheckAsync().Wait();
+							Assert.IsFalse( vm.VersionCheckError );
+						}
+					}
 				}
 			}
 		}
@@ -400,27 +546,23 @@ namespace Blitzy.Tests.ViewModel
 			CallCheckServiceMock mock = new CallCheckServiceMock();
 			ViewServiceManager serviceManager = new ViewServiceManager();
 			serviceManager.RegisterService( typeof( ViewChangelogService ), mock );
-			using( SettingsViewModel vm = GenerateViewModel( serviceManager ) )
+			using( SettingsViewModel vm = new SettingsViewModel( ConnectionFactory, serviceManager ) )
 			{
-				vm.LatestVersionInfo = new btbapi.VersionInfo( System.Net.HttpStatusCode.OK, null, null, null, 0, null, null );
-				vm.ViewChangelogCommand.Execute( null );
+				using( vm.Settings = new Blitzy.Model.Settings( ConnectionFactory ) )
+				{
+					MockPluginHost host = new MockPluginHost( vm.Settings );
 
-				Assert.IsTrue( mock.WasCalled );
-				Assert.IsInstanceOfType( mock.Parameter, typeof( btbapi.VersionInfo ) );
+					using( vm.PluginManager = new Plugin.PluginManager( host, ConnectionFactory ) )
+					{
+						vm.PluginManager.LoadPlugins();
+						vm.LatestVersionInfo = new btbapi.VersionInfo( System.Net.HttpStatusCode.OK, null, null, null, 0, null, null );
+						vm.ViewChangelogCommand.Execute( null );
+
+						Assert.IsTrue( mock.WasCalled );
+						Assert.IsInstanceOfType( mock.Parameter, typeof( btbapi.VersionInfo ) );
+					}
+				}
 			}
-		}
-
-		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Reliability", "CA2000:Dispose objects before losing scope" )]
-		private SettingsViewModel GenerateViewModel( ViewServiceManager serviceManager = null, IMessenger messenger = null )
-		{
-			SettingsViewModel vm = new SettingsViewModel( ConnectionFactory, serviceManager, messenger );
-
-			vm.Settings = new Blitzy.Model.Settings( ConnectionFactory );
-			MockPluginHost host = new MockPluginHost( vm.Settings );
-			vm.PluginManager = new Plugin.PluginManager( host, ConnectionFactory );
-			vm.PluginManager.LoadPlugins();
-
-			return vm;
 		}
 	}
 }

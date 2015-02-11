@@ -209,6 +209,7 @@
     <Compile Include="Model\UpdateChecker.cs" />
     <Compile Include="Plugin\IPluginViewModel.cs" />
     <Compile Include="Plugin\IViewServiceManager.cs" />
+    <Compile Include="Plugin\SystemPlugins\InternalPlugin.cs" />
     <Compile Include="Plugin\SystemPlugins\ISystemPlugin.cs" />
     <Compile Include="Plugin\SystemPlugins\PuttyUI.xaml.cs">
       <DependentUpon>PuttyUI.xaml</DependentUpon>

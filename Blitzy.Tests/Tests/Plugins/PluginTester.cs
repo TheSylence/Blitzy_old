@@ -7,7 +7,7 @@ namespace Blitzy.Tests.Plugins
 	[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	internal class PluginTester
 	{
-		public PluginTester( IPlugin plug )
+		public PluginTester( IPlugin plug, bool dispose = true )
 		{
 			Assert.IsNotNull( plug, "Plugin null" );
 
@@ -20,6 +20,11 @@ namespace Blitzy.Tests.Plugins
 			Assert.IsNotNull( plug.Name, "Plugin Name" );
 
 			TestRunComplete = true;
+
+			if( dispose )
+			{
+				plug.Dispose();
+			}
 		}
 
 		public readonly bool TestRunComplete;

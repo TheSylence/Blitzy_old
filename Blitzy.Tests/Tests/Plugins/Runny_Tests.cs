@@ -13,8 +13,7 @@ namespace Blitzy.Tests.Plugins
 		[TestMethod, TestCategory( "Plugins" )]
 		public void ExecuteTest()
 		{
-			Runny plug = new Runny();
-
+			using( Runny plug = new Runny() )
 			using( ShimsContext.Create() )
 			{
 				ProcessStartInfo receivedInfo = null;

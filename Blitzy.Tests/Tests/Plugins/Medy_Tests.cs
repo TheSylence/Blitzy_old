@@ -33,22 +33,24 @@ namespace Blitzy.Tests.Plugins
 			expectedLparams.Add( "voldn", Medy.APPCOMMAND_VOLUME_DOWN );
 			expectedLparams.Add( "volup", Medy.APPCOMMAND_VOLUME_UP );
 
-			Medy plug = new Medy();
-			plug.Load( this );
-
-			CommandItem command = plug.GetCommands( new List<string>() ).FirstOrDefault();
-			Assert.IsNotNull( command );
-			IEnumerable<CommandItem> commands = plug.GetSubCommands( command, new List<string>() );
-			Assert.AreNotEqual( 0, commands.Count() );
-
-			foreach( CommandItem cmd in commands )
+			using( Medy plug = new Medy() )
 			{
-				string message;
-				plug.ExecuteCommand( cmd, Plugin.CommandExecutionMode.Default, new List<string>(), out message );
+				plug.Load( this );
 
-				Assert.IsNull( message );
-				Assert.AreEqual( Medy.WM_APPCOMMAND, received_message );
-				Assert.AreEqual( expectedLparams[cmd.Name] * 65536L, received_lparam );
+				CommandItem command = plug.GetCommands( new List<string>() ).FirstOrDefault();
+				Assert.IsNotNull( command );
+				IEnumerable<CommandItem> commands = plug.GetSubCommands( command, new List<string>() );
+				Assert.AreNotEqual( 0, commands.Count() );
+
+				foreach( CommandItem cmd in commands )
+				{
+					string message;
+					plug.ExecuteCommand( cmd, Plugin.CommandExecutionMode.Default, new List<string>(), out message );
+
+					Assert.IsNull( message );
+					Assert.AreEqual( Medy.WM_APPCOMMAND, received_message );
+					Assert.AreEqual( expectedLparams[cmd.Name] * 65536L, received_lparam );
+				}
 			}
 		}
 
@@ -62,9 +64,11 @@ namespace Blitzy.Tests.Plugins
 		[TestMethod, TestCategory( "Plugins" )]
 		public void LoadUnloadTest()
 		{
-			Medy plug = new Medy();
-			Assert.IsTrue( plug.Load( this ) );
-			plug.Unload( Plugin.PluginUnloadReason.Unload );
+			using( Medy plug = new Medy() )
+			{
+				Assert.IsTrue( plug.Load( this ) );
+				plug.Unload( Plugin.PluginUnloadReason.Unload );
+			}
 		}
 	}
 }

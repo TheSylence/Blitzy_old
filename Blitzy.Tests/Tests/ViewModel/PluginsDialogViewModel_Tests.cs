@@ -41,24 +41,26 @@ namespace Blitzy.Tests.ViewModel
 
 			using( PluginsDialogViewModel vm = new PluginsDialogViewModel( ConnectionFactory ) )
 			{
-				vm.PluginManager = new Plugin.PluginManager( host, ConnectionFactory );
-				vm.PluginManager.LoadPlugins();
-				vm.Reset();
+				using( vm.PluginManager = new Plugin.PluginManager( host, ConnectionFactory ) )
+				{
+					vm.PluginManager.LoadPlugins();
+					vm.Reset();
 
-				vm.SelectedPlugin = vm.Plugins.First();
+					vm.SelectedPlugin = vm.Plugins.First();
 
-				Assert.IsTrue( vm.DisableCommand.CanExecute( null ) );
-				vm.DisableCommand.Execute( null );
+					Assert.IsTrue( vm.DisableCommand.CanExecute( null ) );
+					vm.DisableCommand.Execute( null );
 
-				Assert.IsFalse( vm.SelectedPlugin.Enabled );
-				Assert.IsTrue( vm.PluginManager.DisabledPlugins.Contains( vm.SelectedPlugin.Instance ) );
-				Assert.IsFalse( vm.PluginManager.Plugins.Contains( vm.SelectedPlugin.Instance ) );
+					Assert.IsFalse( vm.SelectedPlugin.Enabled );
+					Assert.IsTrue( vm.PluginManager.DisabledPlugins.Contains( vm.SelectedPlugin.Instance ) );
+					Assert.IsFalse( vm.PluginManager.Plugins.Contains( vm.SelectedPlugin.Instance ) );
 
-				Assert.IsTrue( vm.EnableCommand.CanExecute( null ) );
-				vm.EnableCommand.Execute( null );
-				Assert.IsTrue( vm.SelectedPlugin.Enabled );
-				Assert.IsFalse( vm.PluginManager.DisabledPlugins.Contains( vm.SelectedPlugin.Instance ) );
-				Assert.IsTrue( vm.PluginManager.Plugins.Contains( vm.SelectedPlugin.Instance ) );
+					Assert.IsTrue( vm.EnableCommand.CanExecute( null ) );
+					vm.EnableCommand.Execute( null );
+					Assert.IsTrue( vm.SelectedPlugin.Enabled );
+					Assert.IsFalse( vm.PluginManager.DisabledPlugins.Contains( vm.SelectedPlugin.Instance ) );
+					Assert.IsTrue( vm.PluginManager.Plugins.Contains( vm.SelectedPlugin.Instance ) );
+				}
 			}
 		}
 

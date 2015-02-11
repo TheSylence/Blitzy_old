@@ -12,6 +12,11 @@ namespace Blitzy.Tests.Mocks
 			throw new NotImplementedException();
 		}
 
+		public void Dispose()
+		{
+			throw new NotImplementedException();
+		}
+
 		public bool ExecuteCommand( Blitzy.Model.CommandItem command, CommandExecutionMode mode, IList<string> input, out string message )
 		{
 			throw new NotImplementedException();

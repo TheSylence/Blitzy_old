@@ -9,14 +9,23 @@ using Blitzy.Model;
 
 namespace Blitzy.Plugin.SystemPlugins
 {
-	internal class Runny : ISystemPlugin
+	internal class Runny : InternalPlugin, ISystemPlugin
 	{
-		public void ClearCache()
+		public override void ClearCache()
 		{
+			foreach( CommandItem item in ItemCache )
+			{
+				IDisposable disp = item.UserData as IDisposable;
+				if( disp != null )
+				{
+					DisposeObject( disp );
+				}
+			}
+
 			ItemCache.Clear();
 		}
 
-		public bool ExecuteCommand( CommandItem command, CommandExecutionMode mode, IList<string> input, out string message )
+		public override bool ExecuteCommand( CommandItem command, CommandExecutionMode mode, IList<string> input, out string message )
 		{
 			string args;
 			string workingDirectory;
@@ -45,7 +54,7 @@ namespace Blitzy.Plugin.SystemPlugins
 			return true;
 		}
 
-		public IEnumerable<CommandItem> GetCommands( IList<string> input )
+		public override IEnumerable<CommandItem> GetCommands( IList<string> input )
 		{
 			if( ItemCache.Count == 0 )
 			{
@@ -58,33 +67,33 @@ namespace Blitzy.Plugin.SystemPlugins
 			return ItemCache;
 		}
 
-		public string GetInfo( IList<string> data, CommandItem item )
+		public override string GetInfo( IList<string> data, CommandItem item )
 		{
 			return null;
 		}
 
-		public IPluginViewModel GetSettingsDataContext( IViewServiceManager viewServices )
+		public override IPluginViewModel GetSettingsDataContext( IViewServiceManager viewServices )
 		{
 			return null;
 		}
 
-		public System.Windows.Controls.Control GetSettingsUI()
+		public override System.Windows.Controls.Control GetSettingsUI()
 		{
 			return null;
 		}
 
-		public IEnumerable<CommandItem> GetSubCommands( CommandItem parent, IList<string> input )
+		public override IEnumerable<CommandItem> GetSubCommands( CommandItem parent, IList<string> input )
 		{
 			yield break;
 		}
 
-		public bool Load( IPluginHost host, string oldVersion = null )
+		public override bool Load( IPluginHost host, string oldVersion = null )
 		{
 			Host = host;
 			return true;
 		}
 
-		public void Unload( PluginUnloadReason reason )
+		public override void Unload( PluginUnloadReason reason )
 		{
 			ItemCache.Clear();
 		}
@@ -117,10 +126,10 @@ namespace Blitzy.Plugin.SystemPlugins
 				{
 					while( reader.Read() )
 					{
-						Workspace workspace = new Workspace
+						Workspace workspace = ToDispose( new Workspace
 						{
 							ID = reader.GetInt32( 0 )
-						};
+						} );
 
 						workspace.Load( connection );
 
@@ -154,29 +163,29 @@ namespace Blitzy.Plugin.SystemPlugins
 			Process.Start( procInf );
 		}
 
-		public int ApiVersion
+		public override int ApiVersion
 		{
 			get { return Constants.ApiVersion; }
 		}
 
-		public string Author
+		public override string Author
 		{
 			get { return "Matthias Specht"; }
 		}
 
-		public string Description
+		public override string Description
 		{
 			get { return "Execution of files"; }
 		}
 
-		public bool HasSettings { get { return false; } }
+		public override bool HasSettings { get { return false; } }
 
-		public string Name
+		public override string Name
 		{
 			get { return "Runny"; }
 		}
 
-		public Guid PluginID
+		public override Guid PluginID
 		{
 			get
 			{
@@ -189,12 +198,12 @@ namespace Blitzy.Plugin.SystemPlugins
 			}
 		}
 
-		public string Version
+		public override string Version
 		{
 			get { return Assembly.GetExecutingAssembly().GetName().Version.ToString(); }
 		}
 
-		public Uri Website
+		public override Uri Website
 		{
 			get { return new Uri( "http://btbsoft.org" ); }
 		}

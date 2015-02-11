@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using Blitzy.ViewServices;
@@ -13,6 +14,9 @@ namespace Blitzy.ViewModel
 	{
 		public ViewModelBaseEx( DbConnectionFactory connectionFactory, ViewServiceManager serviceManager = null, IMessenger messenger = null )
 		{
+#if DEBUG
+			CreationStack = new StackTrace( true );
+#endif
 			if( messenger != null )
 			{
 				MessengerInstance = messenger;
@@ -183,6 +187,11 @@ namespace Blitzy.ViewModel
 		/// <returns>The added objects</returns>
 		protected T ToDispose<T>( T obj ) where T : IDisposable
 		{
+			if( obj == null )
+			{
+				throw new ArgumentNullException( "obj" );
+			}
+
 			ObjectsToDispose.Push( obj );
 			return obj;
 		}
@@ -204,5 +213,7 @@ namespace Blitzy.ViewModel
 		public event EventHandler<EventArgs> RequestHide;
 
 		public event EventHandler<EventArgs> RequestShow;
+
+		private StackTrace CreationStack;
 	}
 }

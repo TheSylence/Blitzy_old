@@ -65,7 +65,7 @@ namespace Blitzy.Model
 				{
 					while( reader.Read() )
 					{
-						WorkspaceItem item = new WorkspaceItem { ItemID = reader.GetInt32( 0 ) };
+						WorkspaceItem item = ToDispose( new WorkspaceItem { ItemID = reader.GetInt32( 0 ) } );
 
 						item.Load( connection );
 						Items.Add( item );

@@ -21,36 +21,45 @@ namespace Blitzy.Tests.ViewModel
 
 			using( SettingsViewModel baseVM = new SettingsViewModel( ConnectionFactory, serviceManager ) )
 			{
-				baseVM.Settings = new Blitzy.Model.Settings( ConnectionFactory );
-				MockPluginHost host = new MockPluginHost( baseVM.Settings );
-				baseVM.PluginManager = new Plugin.PluginManager( host, ConnectionFactory );
-				baseVM.PluginManager.LoadPlugins();
-				baseVM.Reset();
-
-				WebySettingsViewModel vm = baseVM.GetPluginContext<WebySettingsViewModel>( "Weby" );
-
-				mock.CreateFunc = () => { return null; };
-
-				Assert.IsTrue( vm.AddWebsiteCommand.CanExecute( null ) );
-
-				int oldCount = vm.Websites.Count;
-				vm.AddWebsiteCommand.Execute( null );
-				Assert.AreEqual( oldCount, vm.Websites.Count );
-
-				mock.CreateFunc = () =>
+				using( baseVM.Settings = new Blitzy.Model.Settings( ConnectionFactory ) )
 				{
-					return new WebyWebsite()
+					MockPluginHost host = new MockPluginHost( baseVM.Settings );
+					using( baseVM.PluginManager = new Plugin.PluginManager( host, ConnectionFactory ) )
 					{
-						ID = TestHelper.NextID(),
-						Name = "test",
-						URL = "http://example.invalid",
-						Description = "This is a test",
-						Icon = ""
-					};
-				};
+						baseVM.PluginManager.LoadPlugins();
+						baseVM.Reset();
 
-				vm.AddWebsiteCommand.Execute( null );
-				Assert.AreEqual( oldCount + 1, vm.Websites.Count );
+						WebySettingsViewModel vm = baseVM.GetPluginContext<WebySettingsViewModel>( "Weby" );
+
+						mock.CreateFunc = () => { return null; };
+
+						Assert.IsTrue( vm.AddWebsiteCommand.CanExecute( null ) );
+
+						int oldCount = vm.Websites.Count;
+						vm.AddWebsiteCommand.Execute( null );
+						Assert.AreEqual( oldCount, vm.Websites.Count );
+
+						WebyWebsite website = null;
+						mock.CreateFunc = () =>
+						{
+							website = new WebyWebsite()
+							{
+								ID = TestHelper.NextID(),
+								Name = "test",
+								URL = "http://example.invalid",
+								Description = "This is a test",
+								Icon = ""
+							};
+
+							return website;
+						};
+
+						vm.AddWebsiteCommand.Execute( null );
+						Assert.AreEqual( oldCount + 1, vm.Websites.Count );
+
+						website.Dispose();
+					}
+				}
 			}
 		}
 
@@ -59,34 +68,41 @@ namespace Blitzy.Tests.ViewModel
 		{
 			using( SettingsViewModel baseVM = new SettingsViewModel( ConnectionFactory ) )
 			{
-				baseVM.Settings = new Blitzy.Model.Settings( ConnectionFactory );
-				MockPluginHost host = new MockPluginHost( baseVM.Settings );
-				baseVM.PluginManager = new Plugin.PluginManager( host, ConnectionFactory );
-				baseVM.PluginManager.LoadPlugins();
-				baseVM.Reset();
-
-				WebySettingsViewModel vm = baseVM.GetPluginContext<WebySettingsViewModel>( "Weby" );
-
-				vm.Websites.Add( new WebyWebsite()
+				using( baseVM.Settings = new Blitzy.Model.Settings( ConnectionFactory ) )
 				{
-					ID = TestHelper.NextID(),
-					Name = "test",
-					URL = "http://example.invalid",
-					Description = "This is a test",
-					Icon = ""
-				} );
+					MockPluginHost host = new MockPluginHost( baseVM.Settings );
+					using( baseVM.PluginManager = new Plugin.PluginManager( host, ConnectionFactory ) )
+					{
+						baseVM.PluginManager.LoadPlugins();
+						baseVM.Reset();
 
-				int count = vm.Websites.Count;
+						WebySettingsViewModel vm = baseVM.GetPluginContext<WebySettingsViewModel>( "Weby" );
 
-				vm.Save();
-				vm.Websites.First().Name = "example";
-				vm.Save();
+						using( WebyWebsite website = new WebyWebsite()
+						{
+							ID = TestHelper.NextID(),
+							Name = "test",
+							URL = "http://example.invalid",
+							Description = "This is a test",
+							Icon = ""
+						} )
+						{
+							vm.Websites.Add( website );
 
-				baseVM.Reset();
-				vm = baseVM.GetPluginContext<WebySettingsViewModel>( "Weby" );
+							int count = vm.Websites.Count;
 
-				Assert.AreEqual( count, vm.Websites.Count );
-				Assert.AreEqual( "example", vm.Websites.First().Name );
+							vm.Save();
+							vm.Websites.First().Name = "example";
+							vm.Save();
+
+							baseVM.Reset();
+							vm = baseVM.GetPluginContext<WebySettingsViewModel>( "Weby" );
+
+							Assert.AreEqual( count, vm.Websites.Count );
+							Assert.AreEqual( "example", vm.Websites.First().Name );
+						}
+					}
+				}
 			}
 		}
 
@@ -99,43 +115,51 @@ namespace Blitzy.Tests.ViewModel
 
 			using( SettingsViewModel baseVM = new SettingsViewModel( ConnectionFactory, serviceManager ) )
 			{
-				baseVM.Settings = new Blitzy.Model.Settings( ConnectionFactory );
-				MockPluginHost host = new MockPluginHost( baseVM.Settings );
-				baseVM.PluginManager = new Plugin.PluginManager( host, ConnectionFactory );
-				baseVM.PluginManager.LoadPlugins();
-				baseVM.Reset();
-
-				WebySettingsViewModel vm = baseVM.GetPluginContext<WebySettingsViewModel>( "Weby" );
-
-				vm.Websites.Add( new WebyWebsite()
+				using( baseVM.Settings = new Blitzy.Model.Settings( ConnectionFactory ) )
+				{
+					MockPluginHost host = new MockPluginHost( baseVM.Settings );
+					using( baseVM.PluginManager = new Plugin.PluginManager( host, ConnectionFactory ) )
 					{
-						ID = TestHelper.NextID(),
-						Name = "test",
-						URL = "http://example.invalid",
-						Description = "This is a test",
-						Icon = ""
-					} );
+						baseVM.PluginManager.LoadPlugins();
+						baseVM.Reset();
 
-				Assert.IsFalse( vm.RemoveWebsiteCommand.CanExecute( null ) );
-				vm.SelectedWebsite = vm.Websites.First();
-				Assert.IsTrue( vm.RemoveWebsiteCommand.CanExecute( null ) );
+						WebySettingsViewModel vm = baseVM.GetPluginContext<WebySettingsViewModel>( "Weby" );
 
-				int oldCount = vm.Websites.Count;
-				vm.RemoveWebsiteCommand.Execute( null );
-				Assert.AreEqual( oldCount, vm.Websites.Count );
+						using( WebyWebsite website =
+						new WebyWebsite()
+							{
+								ID = TestHelper.NextID(),
+								Name = "test",
+								URL = "http://example.invalid",
+								Description = "This is a test",
+								Icon = ""
+							} )
+						{
+							vm.Websites.Add( website );
 
-				mock.Result = System.Windows.MessageBoxResult.Yes;
+							Assert.IsFalse( vm.RemoveWebsiteCommand.CanExecute( null ) );
+							vm.SelectedWebsite = vm.Websites.First();
+							Assert.IsTrue( vm.RemoveWebsiteCommand.CanExecute( null ) );
 
-				vm.RemoveWebsiteCommand.Execute( null );
-				Assert.AreEqual( oldCount - 1, vm.Websites.Count );
-				Assert.IsNull( vm.SelectedWebsite );
+							int oldCount = vm.Websites.Count;
+							vm.RemoveWebsiteCommand.Execute( null );
+							Assert.AreEqual( oldCount, vm.Websites.Count );
 
-				vm.Save();
+							mock.Result = System.Windows.MessageBoxResult.Yes;
 
-				baseVM.Reset();
-				vm = baseVM.GetPluginContext<WebySettingsViewModel>( "Weby" );
+							vm.RemoveWebsiteCommand.Execute( null );
+							Assert.AreEqual( oldCount - 1, vm.Websites.Count );
+							Assert.IsNull( vm.SelectedWebsite );
 
-				Assert.AreEqual( oldCount - 1, vm.Websites.Count );
+							vm.Save();
+
+							baseVM.Reset();
+							vm = baseVM.GetPluginContext<WebySettingsViewModel>( "Weby" );
+
+							Assert.AreEqual( oldCount - 1, vm.Websites.Count );
+						}
+					}
+				}
 			}
 		}
 	}

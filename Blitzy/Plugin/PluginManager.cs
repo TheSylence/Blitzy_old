@@ -226,9 +226,11 @@ namespace Blitzy.Plugin
 				if( plugin.ApiVersion != Constants.ApiVersion )
 				{
 					LogError( "Failed to load plugin because API Versions do not match. Current Version: {0}, Plugin Version: {1}", Constants.ApiVersion, plugin.ApiVersion );
+					plugin.Dispose();
 					return;
 				}
 
+				plugin = ToDispose( plugin );
 				string version = GetLastInstalledPluginVersion( plugin );
 				if( plugin.Load( Host, version ) )
 				{

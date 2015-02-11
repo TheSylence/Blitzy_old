@@ -16,7 +16,7 @@ namespace Blitzy.Tests.Model
 		[TestMethod, TestCategory( "Model" )]
 		public void ExecutionCountTest()
 		{
-			Settings settings = new Settings( ConnectionFactory );
+			using( Settings settings = new Settings( ConnectionFactory ) )
 			using( PluginManager plugins = new PluginManager( this, ConnectionFactory ) )
 			{
 				Mocks.MockPlugin plug = new Mocks.MockPlugin();
@@ -38,7 +38,7 @@ namespace Blitzy.Tests.Model
 		[TestMethod, TestCategory( "Model" )]
 		public void PerformanceTest()
 		{
-			Settings settings = new Settings( ConnectionFactory );
+			using( Settings settings = new Settings( ConnectionFactory ) )
 			using( PluginManager plugins = new PluginManager( this, ConnectionFactory ) )
 			{
 				Mocks.MockPlugin plug = new Mocks.MockPlugin();
@@ -80,7 +80,7 @@ namespace Blitzy.Tests.Model
 		[TestMethod, TestCategory( "Model" )]
 		public void SearchTest()
 		{
-			Settings settings = new Settings( ConnectionFactory );
+			using( Settings settings = new Settings( ConnectionFactory ) )
 			using( PluginManager plugins = new PluginManager( this, ConnectionFactory ) )
 			{
 				Mocks.MockPlugin plug = new Mocks.MockPlugin();

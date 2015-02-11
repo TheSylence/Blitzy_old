@@ -9,6 +9,14 @@ namespace Blitzy.Tests.Plugins
 	[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	public class PluginTestBase : TestBase, IPluginHost
 	{
+		[TestCleanup]
+		public override void AfterTestRun()
+		{
+			base.AfterTestRun();
+
+			Settings.Dispose();
+		}
+
 		[TestInitialize]
 		public override void BeforeTestRun()
 		{

@@ -31,7 +31,7 @@ namespace Blitzy.ViewModel
 			: base( factory, serviceManager, messenger )
 		{
 			Factory = factory;
-			Settings = new Settings( Factory );
+			Settings = ToDispose( new Settings( Factory ) );
 
 			if( !Factory.Existed )
 			{

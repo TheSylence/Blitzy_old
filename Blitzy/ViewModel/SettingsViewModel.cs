@@ -87,6 +87,11 @@ namespace Blitzy.ViewModel
 		{
 			base.Reset();
 
+			foreach( IDisposable disp in PluginPages.Select( p => p.DataContext ).OfType<IDisposable>() )
+			{
+				DisposeObject( disp );
+			}
+
 			PluginPages.Clear();
 			foreach( IPlugin plugin in PluginManager.Plugins.Where( p => p.HasSettings ) )
 			{
@@ -95,7 +100,11 @@ namespace Blitzy.ViewModel
 			}
 			RaisePropertyChanged( () => PluginPages );
 
-			WorkspaceSettings = new WorkspaceSettingsViewModel( ConnectionFactory, Settings, ServiceManagerInstance );
+			if( WorkspaceSettings != null )
+			{
+				DisposeObject( WorkspaceSettings );
+			}
+			WorkspaceSettings = ToDispose( new WorkspaceSettingsViewModel( ConnectionFactory, Settings, ServiceManagerInstance ) );
 			RaisePropertyChanged( () => WorkspaceSettings );
 
 			UpdateCheck = Settings.GetValue<bool>( SystemSetting.AutoUpdate );
@@ -232,7 +241,13 @@ namespace Blitzy.ViewModel
 			PluginPage page = new PluginPage();
 			page.Title = plugin.Name;
 			page.Plugin = plugin;
-			page.DataContext = plugin.GetSettingsDataContext( ServiceManagerInstance );
+
+			IPluginViewModel pluginVM = plugin.GetSettingsDataContext( ServiceManagerInstance );
+			if( pluginVM != null )
+			{
+				pluginVM = ToDispose( pluginVM );
+			}
+			page.DataContext = pluginVM;
 			page.Content = plugin.GetSettingsUI();
 
 			if( page.Content == null )
@@ -277,7 +292,7 @@ namespace Blitzy.ViewModel
 				id = Settings.Folders.Max( f => f.ID ) + 1;
 			}
 
-			Settings.Folders.Add( new Folder { Path = path, ID = id } );
+			Settings.Folders.Add( ToDispose( new Folder { Path = path, ID = id } ) );
 		}
 
 		private void ExecuteAddRuleCommand()
