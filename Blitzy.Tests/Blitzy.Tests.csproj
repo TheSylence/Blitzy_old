@@ -204,6 +204,7 @@
     <Compile Include="Tests\ViewModel\ViewModelBaseEx_Tests.cs" />
     <Compile Include="Tests\ViewModel\WebySettingsViewModel_Tests.cs" />
     <Compile Include="Tests\ViewModel\WinySettingsViewModel_Tests.cs" />
+    <Compile Include="TestTaskScheduler.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

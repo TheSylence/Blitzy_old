@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
@@ -22,8 +23,6 @@ namespace Blitzy.ViewModel
 {
 	public sealed class MainViewModel : ViewModelBaseEx, IPluginHost
 	{
-		private DbConnectionFactory Factory;
-
 		/// <summary>
 		/// Initializes a new instance of the MainViewModel class.
 		/// </summary>
@@ -61,15 +60,6 @@ namespace Blitzy.ViewModel
 			Reset();
 		}
 
-		protected override void RegisterMessages()
-		{
-			base.RegisterMessages();
-
-			MessengerInstance.Register<InternalCommandMessage>( this, msg => OnInternalCommand( msg.Command ) );
-			MessengerInstance.Register<CommandMessage>( this, OnCommand );
-			MessengerInstance.Register<SettingsChangedMessage>( this, OnSettingsChanged );
-		}
-
 		public override void Cleanup()
 		{
 			History.Save();
@@ -77,219 +67,9 @@ namespace Blitzy.ViewModel
 			base.Cleanup();
 		}
 
-		internal void RaiseShow()
+		bool IPluginHost.IsPluginLoaded( Guid id )
 		{
-			Show();
-		}
-
-		internal void RegisterHotKey()
-		{
-			// Augen (17.04.2012)
-			//  _     _
-			// ].[   ].[
-			// 	   x
-			//   /===\
-
-			string[] str = Settings.GetValue<string>( SystemSetting.Shortcut ).Split( ',' );
-			Key key = (Key)Enum.Parse( typeof( Key ), str[1] );
-			ModifierKeys modifiers = ModifierKeys.None;
-			if( str[0].Contains( "Win" ) )
-				modifiers |= ModifierKeys.Windows;
-			if( str[0].Contains( "Alt" ) )
-				modifiers |= ModifierKeys.Alt;
-			if( str[0].Contains( "Shift" ) )
-				modifiers |= ModifierKeys.Shift;
-			if( str[0].Contains( "Ctrl" ) )
-				modifiers |= ModifierKeys.Control;
-
-			//KeyHost = new HotKeyHost( (HwndSource)HwndSource.FromVisual( this ) );
-
-			try
-			{
-				MessengerInstance.Send( new HotKeyMessage( modifiers, key ) );
-			}
-			catch( HotKeyAlreadyRegisteredException )
-			{
-				string text = "HotkeyAlreadyRegistered".Localize();
-				string caption = "Error".Localize();
-				MessageBoxParameter args = new MessageBoxParameter( text, caption, System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error );
-				ServiceManagerInstance.Show<MessageBoxService>( args );
-			}
-		}
-
-		private void BuildCatalog()
-		{
-			if( Builder.IsBuilding )
-			{
-				Builder.Stop();
-			}
-
-			if( RebuildTimer != null )
-			{
-				RebuildTimer.Stop();
-				RebuildTimer.Start();
-			}
-
-			Builder.Build();
-		}
-
-		private void OnCommand( CommandMessage msg )
-		{
-			if( msg.TaskID.HasValue )
-			{
-				if( msg.Status != CommandStatus.Executing )
-				{
-					lock( TaskListLock )
-					{
-						TaskList.RemoveWhere( id => id == msg.TaskID.Value );
-					}
-				}
-				else
-				{
-					lock( TaskListLock )
-					{
-						TaskList.Add( msg.TaskID.Value );
-					}
-				}
-			}
-		}
-
-		private void OnInternalCommand( string command )
-		{
-			switch( command )
-			{
-				case "quit":
-					ShouldClose = true;
-					DispatcherHelper.CheckBeginInvokeOnUI( () => Close( true ) );
-					break;
-
-				case "catalog":
-					BuildCatalog();
-					break;
-
-				case "version":
-					Task.Run( async () => await UpdateChecker.Instance.CheckVersion( true ) );
-					break;
-
-				case "reset":
-					CmdManager.ResetExecutionCount();
-					break;
-
-				case "history":
-					History.Clear();
-					break;
-
-				default:
-					LogInfo( "Unhandled internal command: {0}", command );
-					break;
-			}
-		}
-
-		private void OnSettingsChanged( SettingsChangedMessage msg )
-		{
-			RegisterHotKey();
-			Plugins.ClearCache();
-			CmdManager.LoadPluginCommands();
-		}
-
-		private void RebuildTimer_Tick( object sender, EventArgs e )
-		{
-			BuildCatalog();
-		}
-
-		private void UpdateCommandInput()
-		{
-			// When the command string is empty we can stop here
-			if( string.IsNullOrWhiteSpace( CommandInput ) )
-			{
-				CmdManager.Clear();
-				return;
-			}
-
-			CmdManager.Clear( false );
-
-			CmdManager.SearchItems( CommandInput );
-			// Otherwise the tests won't work because the CommandListView is updating this value
-			CmdManager.CurrentItem = CmdManager.Items.FirstOrDefault();
-			SelectedCommandIndex = 0;
-
-			// Check if the command does provide any info
-			if( CmdManager.CurrentItem != null )
-			{
-				Collection<string> data = new Collection<string>( CmdManager.GetCommandParts( CommandInput ) );
-				CommandInfo = CmdManager.CurrentItem.Plugin.GetInfo( data, CmdManager.CurrentItem );
-			}
-		}
-
-		private RelayCommand _ExecuteCommand;
-		private RelayCommand<KeyEventArgs> _KeyPreviewCommand;
-		private RelayCommand<KeyEventArgs> _KeyUpCommand;
-		private RelayCommand<MouseButtonEventArgs> _MouseExecuteCommand;
-		private RelayCommand<CancelEventArgs> _OnClosingCommand;
-		private RelayCommand _OnDeactivatedCommand;
-		private RelayCommand _SettingsCommand;
-
-		public RelayCommand ExecuteCommand
-		{
-			get
-			{
-				return _ExecuteCommand ??
-					( _ExecuteCommand = new RelayCommand( () => ExecuteExecuteCommand(), CanExecuteExecuteCommand ) );
-			}
-		}
-
-		public RelayCommand<KeyEventArgs> KeyPreviewCommand
-		{
-			get
-			{
-				return _KeyPreviewCommand ??
-					( _KeyPreviewCommand = new RelayCommand<KeyEventArgs>( ExecuteKeyPreviewCommand, CanExecuteKeyPreviewCommand ) );
-			}
-		}
-
-		public RelayCommand<KeyEventArgs> KeyUpCommand
-		{
-			get
-			{
-				return _KeyUpCommand ??
-					( _KeyUpCommand = new RelayCommand<KeyEventArgs>( ExecuteKeyUpCommand, CanExecuteKeyUpCommand ) );
-			}
-		}
-
-		public RelayCommand<MouseButtonEventArgs> MouseExecuteCommand
-		{
-			get
-			{
-				return _MouseExecuteCommand ??
-					( _MouseExecuteCommand = new RelayCommand<MouseButtonEventArgs>( ExecuteMouseExecuteCommand, CanExecuteMouseExecuteCommand ) );
-			}
-		}
-
-		public RelayCommand<CancelEventArgs> OnClosingCommand
-		{
-			get
-			{
-				return _OnClosingCommand ??
-					( _OnClosingCommand = new RelayCommand<CancelEventArgs>( ExecuteOnClosingCommand ) );
-			}
-		}
-
-		public RelayCommand OnDeactivatedCommand
-		{
-			get
-			{
-				return _OnDeactivatedCommand ??
-					( _OnDeactivatedCommand = new RelayCommand( ExecuteOnDeactivatedCommand, CanExecuteOnDeactivatedCommand ) );
-			}
-		}
-
-		public RelayCommand SettingsCommand
-		{
-			get
-			{
-				return _SettingsCommand ??
-					( _SettingsCommand = new RelayCommand( ExecuteSettingsCommand, CanExecuteSettingsCommand ) );
-			}
+			return Plugins.IsLoaded( id );
 		}
 
 		internal bool OnKeyBack()
@@ -431,6 +211,71 @@ namespace Blitzy.ViewModel
 			return true;
 		}
 
+		internal void RaiseShow()
+		{
+			Show();
+		}
+
+		internal void RegisterHotKey()
+		{
+			// Augen (17.04.2012)
+			//  _     _
+			// ].[   ].[
+			// 	   x
+			//   /===\
+
+			string[] str = Settings.GetValue<string>( SystemSetting.Shortcut ).Split( ',' );
+			Key key = (Key)Enum.Parse( typeof( Key ), str[1] );
+			ModifierKeys modifiers = ModifierKeys.None;
+			if( str[0].Contains( "Win" ) )
+				modifiers |= ModifierKeys.Windows;
+			if( str[0].Contains( "Alt" ) )
+				modifiers |= ModifierKeys.Alt;
+			if( str[0].Contains( "Shift" ) )
+				modifiers |= ModifierKeys.Shift;
+			if( str[0].Contains( "Ctrl" ) )
+				modifiers |= ModifierKeys.Control;
+
+			//KeyHost = new HotKeyHost( (HwndSource)HwndSource.FromVisual( this ) );
+
+			try
+			{
+				MessengerInstance.Send( new HotKeyMessage( modifiers, key ) );
+			}
+			catch( HotKeyAlreadyRegisteredException )
+			{
+				string text = "HotkeyAlreadyRegistered".Localize();
+				string caption = "Error".Localize();
+				MessageBoxParameter args = new MessageBoxParameter( text, caption, System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error );
+				ServiceManagerInstance.Show<MessageBoxService>( args );
+			}
+		}
+
+		protected override void RegisterMessages()
+		{
+			base.RegisterMessages();
+
+			MessengerInstance.Register<InternalCommandMessage>( this, msg => OnInternalCommand( msg.Command ) );
+			MessengerInstance.Register<CommandMessage>( this, OnCommand );
+			MessengerInstance.Register<SettingsChangedMessage>( this, OnSettingsChanged );
+		}
+
+		private void BuildCatalog()
+		{
+			if( Builder.IsBuilding )
+			{
+				Builder.Stop();
+			}
+
+			if( RebuildTimer != null )
+			{
+				RebuildTimer.Stop();
+				RebuildTimer.Start();
+			}
+
+			Builder.Build();
+		}
+
 		private bool CanExecuteExecuteCommand()
 		{
 			return CmdManager.CurrentItem != null;
@@ -466,12 +311,7 @@ namespace Blitzy.ViewModel
 			Collection<string> commandData = new Collection<string>( CmdManager.GetCommandParts( CommandInput ) );
 			CommandItem item = CmdManager.CurrentItem;
 
-#if DEBUG
-			if( item.Name.Equals( "exception" ) )
-			{
-				throw new ArgumentException( "This is a test exception" );
-			}
-#endif
+			TestExceptionHandler( item.Name );
 
 			Action taskAction = () =>
 			{
@@ -495,14 +335,8 @@ namespace Blitzy.ViewModel
 				}
 			};
 
-			if( RuntimeConfig.Tests )
-			{
-				taskAction.Invoke();
-			}
-			else
-			{
-				Task.Run( taskAction );
-			}
+			var taskFactory = new TaskFactory( TaskScheduler );
+			taskFactory.StartNew( taskAction );
 
 			// We want the top command's name for the execution count, so walk up to the top
 			CommandItem tmp = item;
@@ -595,9 +429,105 @@ namespace Blitzy.ViewModel
 			ServiceManagerInstance.Show<SettingsService>( args );
 		}
 
-		private string _CommandInfo;
-		private string _CommandInput;
-		private int _SelectedCommandIndex;
+		private void OnCommand( CommandMessage msg )
+		{
+			if( msg.TaskID.HasValue )
+			{
+				if( msg.Status != CommandStatus.Executing )
+				{
+					lock( TaskListLock )
+					{
+						TaskList.RemoveWhere( id => id == msg.TaskID.Value );
+					}
+				}
+				else
+				{
+					lock( TaskListLock )
+					{
+						TaskList.Add( msg.TaskID.Value );
+					}
+				}
+			}
+		}
+
+		private void OnInternalCommand( string command )
+		{
+			switch( command )
+			{
+				case "quit":
+					ShouldClose = true;
+					DispatcherHelper.CheckBeginInvokeOnUI( () => Close( true ) );
+					break;
+
+				case "catalog":
+					BuildCatalog();
+					break;
+
+				case "version":
+					{
+						var taskFactory = new TaskFactory( TaskScheduler );
+						taskFactory.StartNew( async () => await UpdateChecker.Instance.CheckVersion( true ) );
+					}
+					break;
+
+				case "reset":
+					CmdManager.ResetExecutionCount();
+					break;
+
+				case "history":
+					History.Clear();
+					break;
+
+				default:
+					LogInfo( "Unhandled internal command: {0}", command );
+					break;
+			}
+		}
+
+		private void OnSettingsChanged( SettingsChangedMessage msg )
+		{
+			RegisterHotKey();
+			Plugins.ClearCache();
+			CmdManager.LoadPluginCommands();
+		}
+
+		private void RebuildTimer_Tick( object sender, EventArgs e )
+		{
+			BuildCatalog();
+		}
+
+		[Conditional( "DEBUG" )]
+		private void TestExceptionHandler( string itemName )
+		{
+			if( itemName.Equals( "exception" ) )
+			{
+				throw new ArgumentException( "This is a test exception" );
+			}
+		}
+
+		private void UpdateCommandInput()
+		{
+			// When the command string is empty we can stop here
+			if( string.IsNullOrWhiteSpace( CommandInput ) )
+			{
+				CmdManager.Clear();
+				return;
+			}
+
+			CmdManager.Clear( false );
+
+			CmdManager.SearchItems( CommandInput );
+			// Otherwise the tests won't work because the CommandListView is updating this value
+			CmdManager.CurrentItem = CmdManager.Items.FirstOrDefault();
+			SelectedCommandIndex = 0;
+
+			// Check if the command does provide any info
+			if( CmdManager.CurrentItem != null )
+			{
+				Collection<string> data = new Collection<string>( CmdManager.GetCommandParts( CommandInput ) );
+				CommandInfo = CmdManager.CurrentItem.Plugin.GetInfo( data, CmdManager.CurrentItem );
+			}
+		}
 
 		public CommandManager CmdManager { get; private set; }
 
@@ -641,7 +571,76 @@ namespace Blitzy.ViewModel
 			}
 		}
 
+		public RelayCommand ExecuteCommand
+		{
+			get
+			{
+				return _ExecuteCommand ??
+					( _ExecuteCommand = new RelayCommand( () => ExecuteExecuteCommand(), CanExecuteExecuteCommand ) );
+			}
+		}
+
 		public HistoryManager History { get; private set; }
+
+		DbConnectionFactory IPluginHost.ConnectionFactory
+		{
+			get { return ConnectionFactory; }
+		}
+
+		IMessenger IPluginHost.Messenger
+		{
+			get { return MessengerInstance; }
+		}
+
+		ISettings IPluginHost.Settings
+		{
+			get { return Settings; }
+		}
+
+		public RelayCommand<KeyEventArgs> KeyPreviewCommand
+		{
+			get
+			{
+				return _KeyPreviewCommand ??
+					( _KeyPreviewCommand = new RelayCommand<KeyEventArgs>( ExecuteKeyPreviewCommand, CanExecuteKeyPreviewCommand ) );
+			}
+		}
+
+		public RelayCommand<KeyEventArgs> KeyUpCommand
+		{
+			get
+			{
+				return _KeyUpCommand ??
+					( _KeyUpCommand = new RelayCommand<KeyEventArgs>( ExecuteKeyUpCommand, CanExecuteKeyUpCommand ) );
+			}
+		}
+
+		public RelayCommand<MouseButtonEventArgs> MouseExecuteCommand
+		{
+			get
+			{
+				return _MouseExecuteCommand ??
+					( _MouseExecuteCommand = new RelayCommand<MouseButtonEventArgs>( ExecuteMouseExecuteCommand, CanExecuteMouseExecuteCommand ) );
+			}
+		}
+
+		public RelayCommand<CancelEventArgs> OnClosingCommand
+		{
+			get
+			{
+				return _OnClosingCommand ??
+					( _OnClosingCommand = new RelayCommand<CancelEventArgs>( ExecuteOnClosingCommand ) );
+			}
+		}
+
+		public RelayCommand OnDeactivatedCommand
+		{
+			get
+			{
+				return _OnDeactivatedCommand ??
+					( _OnDeactivatedCommand = new RelayCommand( ExecuteOnDeactivatedCommand, CanExecuteOnDeactivatedCommand ) );
+			}
+		}
 
 		public int SelectedCommandIndex
 		{
@@ -662,6 +661,15 @@ namespace Blitzy.ViewModel
 			}
 		}
 
+		public RelayCommand SettingsCommand
+		{
+			get
+			{
+				return _SettingsCommand ??
+					( _SettingsCommand = new RelayCommand( ExecuteSettingsCommand, CanExecuteSettingsCommand ) );
+			}
+		}
+
 		public bool ShouldClose { get; internal set; }
 
 		internal CatalogBuilder Builder { get; private set; }
@@ -673,25 +681,16 @@ namespace Blitzy.ViewModel
 		internal HashSet<int> TaskList = new HashSet<int>();
 		private readonly DispatcherTimer RebuildTimer;
 		private readonly object TaskListLock = new object();
-
-		ISettings IPluginHost.Settings
-		{
-			get { return Settings; }
-		}
-
-		bool IPluginHost.IsPluginLoaded( Guid id )
-		{
-			return Plugins.IsLoaded( id );
-		}
-
-		DbConnectionFactory IPluginHost.ConnectionFactory
-		{
-			get { return ConnectionFactory; }
-		}
-
-		IMessenger IPluginHost.Messenger
-		{
-			get { return MessengerInstance; }
-		}
+		private string _CommandInfo;
+		private string _CommandInput;
+		private RelayCommand _ExecuteCommand;
+		private RelayCommand<KeyEventArgs> _KeyPreviewCommand;
+		private RelayCommand<KeyEventArgs> _KeyUpCommand;
+		private RelayCommand<MouseButtonEventArgs> _MouseExecuteCommand;
+		private RelayCommand<CancelEventArgs> _OnClosingCommand;
+		private RelayCommand _OnDeactivatedCommand;
+		private int _SelectedCommandIndex;
+		private RelayCommand _SettingsCommand;
+		private DbConnectionFactory Factory;
 	}
 }

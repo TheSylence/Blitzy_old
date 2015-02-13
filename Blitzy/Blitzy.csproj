@@ -515,7 +515,34 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-  <Target Name="BeforeBuild">
+  <Target Name="AfterBuild">
+	<ItemGroup>
+		<FilesToDelete Include="$(OutDir)*.dll" />
+		<FilesToDelete Include="$(OutDir)de\*.dll" Exclude="$(OutDir)de\Blitzy.resources.dll" />
+		<FilesToDelete Include="$(OutDir)en\*.dll" Exclude="$(OutDir)en\Blitzy.resources.dll" />
+		<FilesToDelete Include="$(OutDir)es\*.dll" />
+		<FilesToDelete Include="$(OutDir)fr\*.dll" />
+		<FilesToDelete Include="$(OutDir)hu\*.dll" />
+		<FilesToDelete Include="$(OutDir)it\*.dll" />
+		<FilesToDelete Include="$(OutDir)pt-BR\*.dll" />
+		<FilesToDelete Include="$(OutDir)ro\*.dll" />
+		<FilesToDelete Include="$(OutDir)ru\*.dll" />
+		<FilesToDelete Include="$(OutDir)sv\*.dll" />
+		<FilesToDelete Include="$(OutDir)zh-Hans\*.dll" />
+		
+		<FoldersToDelete Include="$(OutDir)es" />
+		<FoldersToDelete Include="$(OutDir)fr" />
+		<FoldersToDelete Include="$(OutDir)hu" />
+		<FoldersToDelete Include="$(OutDir)it" />
+		<FoldersToDelete Include="$(OutDir)pt-BR" />
+		<FoldersToDelete Include="$(OutDir)ro" />
+		<FoldersToDelete Include="$(OutDir)ru" />
+		<FoldersToDelete Include="$(OutDir)sv" />
+		<FoldersToDelete Include="$(OutDir)zh-Hans" />
+	</ItemGroup>
+		
+	<Delete Files="@(FilesToDelete)" />
+	<RemoveDir Directories="@(FoldersToDelete)" />
   </Target>
   <PropertyGroup>
     <PreBuildEvent>set textTemplatingPath="%25CommonProgramFiles(x86)%25\Microsoft Shared\TextTemplating\$(VisualStudioVersion)\texttransform.exe"
@@ -531,4 +558,41 @@ if %25textTemplatingPath%25=="\Microsoft Shared\TextTemplating\$(VisualStudioVer
     <Error Condition="!Exists('..\packages\Fody.1.26.1\build\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Fody.1.26.1\build\Fody.targets'))" />
   </Target>
   <Import Project="..\packages\Fody.1.26.1\build\Fody.targets" Condition="Exists('..\packages\Fody.1.26.1\build\Fody.targets')" />
+  <UsingTask TaskName="CosturaCleanup" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll" TaskFactory="CodeTaskFactory">
+    <ParameterGroup>
+      <Config Output="false" Required="true" ParameterType="Microsoft.Build.Framework.ITaskItem" />
+      <Files Output="false" Required="true" ParameterType="Microsoft.Build.Framework.ITaskItem[]" />
+    </ParameterGroup>
+    <Task Evaluate="true">
+      <Reference xmlns="http://schemas.microsoft.com/developer/msbuild/2003" Include="System.Xml" />
+      <Reference xmlns="http://schemas.microsoft.com/developer/msbuild/2003" Include="System.Xml.Linq" />
+      <Using xmlns="http://schemas.microsoft.com/developer/msbuild/2003" Namespace="System" />
+      <Using xmlns="http://schemas.microsoft.com/developer/msbuild/2003" Namespace="System.IO" />
+      <Using xmlns="http://schemas.microsoft.com/developer/msbuild/2003" Namespace="System.Xml.Linq" />
+      <Code xmlns="http://schemas.microsoft.com/developer/msbuild/2003" Type="Fragment" Language="cs">
+<![CDATA[
+var config = XElement.Load(Config.ItemSpec).Elements("Costura").FirstOrDefault();
+
+if (config == null) return true;
+
+var excludedAssemblies = new List<string>();
+var attribute = config.Attribute("ExcludeAssemblies");
+if (attribute != null)
+    foreach (var item in attribute.Value.Split('|').Select(x => x.Trim()).Where(x => x != string.Empty))
+        excludedAssemblies.Add(item);
+var element = config.Element("ExcludeAssemblies");
+if (element != null)
+    foreach (var item in element.Value.Split(new[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim()).Where(x => x != string.Empty))
+        excludedAssemblies.Add(item);
+
+var filesToCleanup = Files.Select(f => f.ItemSpec).Where(f => !excludedAssemblies.Contains(Path.GetFileNameWithoutExtension(f), StringComparer.InvariantCultureIgnoreCase));
+
+foreach (var item in filesToCleanup)
+  File.Delete(item);
+]]>
+      </Code></Task>
+  </UsingTask>
+  <Target Name="CleanReferenceCopyLocalPaths" AfterTargets="AfterBuild;NonWinFodyTarget">
+    <CosturaCleanup Config="FodyWeavers.xml" Files="@(ReferenceCopyLocalPaths->'$(OutDir)%(DestinationSubDirectory)%(Filename)%(Extension)')" />
+  </Target>
 </Project>

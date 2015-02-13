@@ -3,6 +3,7 @@ using System.Data.Common;
 
 namespace Blitzy.Tests
 {
+	[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	internal class ConnectionWrapper : DbConnection
 	{
 		public ConnectionWrapper( DbConnection internalConnection )

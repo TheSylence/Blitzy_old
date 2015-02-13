@@ -231,6 +231,8 @@ namespace Blitzy.Tests.ViewModel
 
 			using( MainViewModel vm = new MainViewModel( ConnectionFactory, null, messenger ) )
 			{
+				vm.TaskScheduler = new TestTaskScheduler();
+
 				vm.Reset();
 				Assert.IsFalse( vm.ExecuteCommand.CanExecute( null ) );
 
@@ -275,6 +277,7 @@ namespace Blitzy.Tests.ViewModel
 
 			using( MainViewModel vm = new MainViewModel( ConnectionFactory, null, messenger ) )
 			{
+				vm.TaskScheduler = new TestTaskScheduler();
 				vm.History.SelectedItem = "historytest";
 				bool receivedHistoryClose = false;
 				bool receivedNewCaret = false;
@@ -313,6 +316,7 @@ namespace Blitzy.Tests.ViewModel
 		{
 			using( MainViewModel vm = new MainViewModel( ConnectionFactory ) )
 			{
+				vm.TaskScheduler = new TestTaskScheduler();
 				MockPlugin plug = new MockPlugin();
 				CommandItem item = CommandItem.Create( "test", "test", plug );
 
@@ -346,6 +350,7 @@ namespace Blitzy.Tests.ViewModel
 
 			using( MainViewModel vm = new MainViewModel( ConnectionFactory, null, messenger ) )
 			{
+				vm.TaskScheduler = new TestTaskScheduler();
 				Assert.IsFalse( vm.OnKeyReturn() );
 
 				vm.CommandInput = "quit";
