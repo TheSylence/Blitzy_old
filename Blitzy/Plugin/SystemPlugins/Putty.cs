@@ -1,6 +1,4 @@
-﻿// $Id$
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -12,16 +10,14 @@ using Microsoft.Win32;
 
 namespace Blitzy.Plugin.SystemPlugins
 {
-	internal class Putty : IPlugin
+	internal class Putty : InternalPlugin
 	{
-		#region Methods
-
-		public void ClearCache()
+		public override void ClearCache()
 		{
-			RootItem = CommandItem.Create( "ssh", "PuttyDescription".Localize(), this, PuttyPath, false, null, new[] { "putty" } );
+			CreateCommands();
 		}
 
-		public bool ExecuteCommand( CommandItem command, CommandExecutionMode mode, IList<string> input, out string message )
+		public override bool ExecuteCommand( CommandItem command, CommandExecutionMode mode, IList<string> input, out string message )
 		{
 			// Session loading: putty -load "session name"
 			// Connection: putty [user@]host
@@ -47,27 +43,32 @@ namespace Blitzy.Plugin.SystemPlugins
 			return true;
 		}
 
-		public IEnumerable<CommandItem> GetCommands( IList<string> input )
+		public override IEnumerable<CommandItem> GetCommands( IList<string> input )
 		{
+			if( RootItem == null )
+			{
+				CreateCommands();
+			}
+
 			yield return RootItem;
 		}
 
-		public string GetInfo( IList<string> data, CommandItem item )
+		public override string GetInfo( IList<string> data, CommandItem item )
 		{
 			return null;
 		}
 
-		public IPluginViewModel GetSettingsDataContext()
+		public override IPluginViewModel GetSettingsDataContext( IViewServiceManager viewServices )
 		{
-			return new ViewModel.PuttySettingsViewModel( (Settings)Host.Settings );
+			return new ViewModel.PuttySettingsViewModel( Host.ConnectionFactory, (Settings)Host.Settings, viewServices );
 		}
 
-		public System.Windows.Controls.Control GetSettingsUI()
+		public override System.Windows.Controls.Control GetSettingsUI()
 		{
 			return new PuttyUI();
 		}
 
-		public IEnumerable<CommandItem> GetSubCommands( CommandItem parent, IList<string> input )
+		public override IEnumerable<CommandItem> GetSubCommands( CommandItem parent, IList<string> input )
 		{
 			if( parent == RootItem )
 			{
@@ -87,19 +88,18 @@ namespace Blitzy.Plugin.SystemPlugins
 			}
 		}
 
-		public bool Load( IPluginHost host, string oldVersion = null )
+		public override bool Load( IPluginHost host, string oldVersion = null )
 		{
 			Host = host;
-			if( oldVersion == null && !RuntimeConfig.Tests )
+			if( oldVersion == null )
 			{
 				SetDefaultValues( host.Settings );
 			}
 
-			ClearCache();
 			return true;
 		}
 
-		public void Unload( PluginUnloadReason reason )
+		public override void Unload( PluginUnloadReason reason )
 		{
 		}
 
@@ -109,45 +109,34 @@ namespace Blitzy.Plugin.SystemPlugins
 			settings.SetValue( this, PathKey, string.Empty );
 		}
 
-		#endregion Methods
+		private void CreateCommands()
+		{
+			RootItem = CommandItem.Create( "ssh", "PuttyDescription".Localize(), this, PuttyPath, false, null, new[] { "putty" } );
+		}
 
-		#region Constants
-
-		internal const string GuidString = "9FF8854A-68AB-4586-BB1A-03061A270C84";
-		internal const string ImportKey = "ImportPuttySessions";
-		internal const string PathKey = "PuttyPath";
-
-		#endregion Constants
-
-		#region Properties
-
-		private Guid? Guid;
-		private IPluginHost Host;
-		private CommandItem RootItem;
-
-		public int ApiVersion
+		public override int ApiVersion
 		{
 			get { return Constants.ApiVersion; }
 		}
 
-		public string Author
+		public override string Author
 		{
 			get { return "Matthias Specht"; }
 		}
 
-		public string Description
+		public override string Description
 		{
 			get { return "Open putty or directly connect to remote hosts"; }
 		}
 
-		public bool HasSettings { get { return true; } }
+		public override bool HasSettings { get { return true; } }
 
-		public string Name
+		public override string Name
 		{
 			get { return "Putty"; }
 		}
 
-		public Guid PluginID
+		public override Guid PluginID
 		{
 			get
 			{
@@ -160,12 +149,12 @@ namespace Blitzy.Plugin.SystemPlugins
 			}
 		}
 
-		public string Version
+		public override string Version
 		{
 			get { return Assembly.GetExecutingAssembly().GetName().Version.ToString(); }
 		}
 
-		public Uri Website
+		public override Uri Website
 		{
 			get { return new Uri( "http://btbsoft.org" ); }
 		}
@@ -178,6 +167,12 @@ namespace Blitzy.Plugin.SystemPlugins
 			}
 		}
 
-		#endregion Properties
+		internal const string GuidString = "9FF8854A-68AB-4586-BB1A-03061A270C84";
+		internal const string ImportKey = "ImportPuttySessions";
+		internal const string PathKey = "PuttyPath";
+
+		private Guid? Guid;
+		private IPluginHost Host;
+		private CommandItem RootItem;
 	}
 }

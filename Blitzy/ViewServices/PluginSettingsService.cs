@@ -1,11 +1,5 @@
-﻿// $Id$
-
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using Blitzy.View.Dialogs;
 using Blitzy.ViewModel.Dialogs;
@@ -13,7 +7,7 @@ using Blitzy.ViewModel.Dialogs;
 namespace Blitzy.ViewServices
 {
 	[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-	internal class PluginSettingsService : IDialogService
+	internal class PluginSettingsService : IViewService
 	{
 		public object Show( Window parent, object parameter = null )
 		{

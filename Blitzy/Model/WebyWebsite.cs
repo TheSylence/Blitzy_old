@@ -1,22 +1,16 @@
-﻿// $Id$
-
-using System;
-using System.Data.SQLite;
+﻿using System;
+using System.Data.Common;
+using Blitzy.Plugin;
 
 namespace Blitzy.Model
 {
 	internal class WebyWebsite : ModelBase
 	{
-		#region Methods
-
-		public override void Delete( SQLiteConnection connection )
+		public override void Delete( DbConnection connection )
 		{
-			using( SQLiteCommand cmd = connection.CreateCommand() )
+			using( DbCommand cmd = connection.CreateCommand() )
 			{
-				SQLiteParameter param = cmd.CreateParameter();
-				param.ParameterName = "webyID";
-				param.Value = ID;
-				cmd.Parameters.Add( param );
+				cmd.AddParameter( "webyID", ID );
 
 				cmd.CommandText = "DELETE FROM weby_websites WHERE WebyID = @webyID;";
 				cmd.Prepare();
@@ -25,19 +19,16 @@ namespace Blitzy.Model
 			}
 		}
 
-		public override void Load( SQLiteConnection connection )
+		public override void Load( DbConnection connection )
 		{
-			using( SQLiteCommand cmd = connection.CreateCommand() )
+			using( DbCommand cmd = connection.CreateCommand() )
 			{
-				SQLiteParameter param = cmd.CreateParameter();
-				param.ParameterName = "webyID";
-				param.Value = ID;
-				cmd.Parameters.Add( param );
+				cmd.AddParameter( "webyID", ID );
 
 				cmd.CommandText = "SELECT Name, Description, URL, Icon FROM weby_websites WHERE WebyID = @webyID;";
 				cmd.Prepare();
 
-				using( SQLiteDataReader reader = cmd.ExecuteReader() )
+				using( DbDataReader reader = cmd.ExecuteReader() )
 				{
 					if( !reader.Read() )
 					{
@@ -57,34 +48,15 @@ namespace Blitzy.Model
 			ExistsInDatabase = true;
 		}
 
-		public override void Save( SQLiteConnection connection )
+		public override void Save( DbConnection connection )
 		{
-			using( SQLiteCommand cmd = connection.CreateCommand() )
+			using( DbCommand cmd = connection.CreateCommand() )
 			{
-				SQLiteParameter param = cmd.CreateParameter();
-				param.ParameterName = "webyID";
-				param.Value = ID;
-				cmd.Parameters.Add( param );
-
-				param = cmd.CreateParameter();
-				param.ParameterName = "Name";
-				param.Value = Name;
-				cmd.Parameters.Add( param );
-
-				param = cmd.CreateParameter();
-				param.ParameterName = "Description";
-				param.Value = Description;
-				cmd.Parameters.Add( param );
-
-				param = cmd.CreateParameter();
-				param.ParameterName = "URL";
-				param.Value = URL;
-				cmd.Parameters.Add( param );
-
-				param = cmd.CreateParameter();
-				param.ParameterName = "icon";
-				param.Value = Icon;
-				cmd.Parameters.Add( param );
+				cmd.AddParameter( "webyID", ID );
+				cmd.AddParameter( "Name", Name );
+				cmd.AddParameter( "Description", Description );
+				cmd.AddParameter( "URL", URL );
+				cmd.AddParameter( "icon", Icon );
 
 				cmd.CommandText = ExistsInDatabase ?
 					"UPDATE weby_websites SET Name = @Name, Description = @Description, URL = @URL, Icon = @icon WHERE WebyID = @webyID" :
@@ -96,16 +68,6 @@ namespace Blitzy.Model
 
 			ExistsInDatabase = true;
 		}
-
-		#endregion Methods
-
-		#region Properties
-
-		private string _Description;
-		private string _Icon;
-		private int _ID;
-		private string _Name;
-		private string _URL;
 
 		public string Description
 		{
@@ -121,7 +83,6 @@ namespace Blitzy.Model
 					return;
 				}
 
-				RaisePropertyChanging( () => Description );
 				_Description = value;
 				RaisePropertyChanged( () => Description );
 			}
@@ -141,7 +102,6 @@ namespace Blitzy.Model
 					return;
 				}
 
-				RaisePropertyChanging( () => Icon );
 				_Icon = value;
 				RaisePropertyChanged( () => Icon );
 			}
@@ -161,7 +121,6 @@ namespace Blitzy.Model
 					return;
 				}
 
-				RaisePropertyChanging( () => ID );
 				_ID = value;
 				RaisePropertyChanged( () => ID );
 			}
@@ -181,7 +140,6 @@ namespace Blitzy.Model
 					return;
 				}
 
-				RaisePropertyChanging( () => Name );
 				_Name = value;
 				RaisePropertyChanged( () => Name );
 			}
@@ -201,12 +159,15 @@ namespace Blitzy.Model
 					return;
 				}
 
-				RaisePropertyChanging( () => URL );
 				_URL = value;
 				RaisePropertyChanged( () => URL );
 			}
 		}
 
-		#endregion Properties
+		private string _Description;
+		private string _Icon;
+		private int _ID;
+		private string _Name;
+		private string _URL;
 	}
 }

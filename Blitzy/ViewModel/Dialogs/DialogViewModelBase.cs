@@ -1,124 +1,27 @@
-﻿// $Id$
-
-using System;
+﻿using System;
 using Blitzy.Model;
 using Blitzy.Utility;
-using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.CommandWpf;
 
 namespace Blitzy.ViewModel.Dialogs
 {
 	internal abstract class DialogViewModelBase<TModel> : ViewModelBaseEx
 		where TModel : ModelBase
 	{
-		#region Constructor
-
-		#endregion Constructor
-
-		#region Methods
+		public DialogViewModelBase( DbConnectionFactory factory = null )
+			: base( factory )
+		{
+		}
 
 		public override void Reset()
 		{
 			base.Reset();
-			Model = (TModel)Activator.CreateInstance( typeof( TModel ) );
-		}
-
-		#endregion Methods
-
-		#region Properties
-
-		private TModel _Model;
-		private bool _New;
-		private string _Title;
-
-		public TModel Model
-		{
-			get
+			if( Model != null )
 			{
-				return _Model;
+				DisposeObject( Model );
 			}
 
-			set
-			{
-				if( _Model == value )
-				{
-					return;
-				}
-
-				RaisePropertyChanging( () => Model );
-				_Model = value;
-				RaisePropertyChanged( () => Model );
-			}
-		}
-
-		public bool New
-		{
-			get
-			{
-				return _New;
-			}
-
-			set
-			{
-				if( _New == value )
-				{
-					return;
-				}
-
-				RaisePropertyChanging( () => New );
-				_New = value;
-				RaisePropertyChanged( () => New );
-
-				string key = _New ?
-					"Add" :
-					"Edit";
-
-				Title = key.Localize();
-			}
-		}
-
-		public string Title
-		{
-			get
-			{
-				return _Title;
-			}
-
-			set
-			{
-				if( _Title == value )
-				{
-					return;
-				}
-
-				RaisePropertyChanging( () => Title );
-				_Title = value;
-				RaisePropertyChanged( () => Title );
-			}
-		}
-
-		#endregion Properties
-
-		#region Commands
-
-		private RelayCommand _CancelCommand;
-		private RelayCommand _OkCommand;
-
-		public RelayCommand CancelCommand
-		{
-			get
-			{
-				return _CancelCommand ??
-					( _CancelCommand = new RelayCommand( ExecuteCancelCommand, CanExecuteCancelCommand ) );
-			}
-		}
-
-		public RelayCommand OkCommand
-		{
-			get
-			{
-				return _OkCommand ??
-					( _OkCommand = new RelayCommand( ExecuteOkCommand, CanExecuteOkCommand ) );
-			}
+			Model = ToDispose( (TModel)Activator.CreateInstance( typeof( TModel ) ) );
 		}
 
 		protected virtual bool CanExecuteOkCommand()
@@ -141,6 +44,91 @@ namespace Blitzy.ViewModel.Dialogs
 			Close( true );
 		}
 
-		#endregion Commands
+		public RelayCommand CancelCommand
+		{
+			get
+			{
+				return _CancelCommand ??
+					( _CancelCommand = new RelayCommand( ExecuteCancelCommand, CanExecuteCancelCommand ) );
+			}
+		}
+
+		public TModel Model
+		{
+			get
+			{
+				return _Model;
+			}
+
+			set
+			{
+				if( _Model == value )
+				{
+					return;
+				}
+
+				_Model = value;
+				RaisePropertyChanged( () => Model );
+			}
+		}
+
+		public bool New
+		{
+			get
+			{
+				return _New;
+			}
+
+			set
+			{
+				if( _New == value )
+				{
+					return;
+				}
+
+				_New = value;
+				RaisePropertyChanged( () => New );
+
+				string key = _New ?
+					"Add" :
+					"Edit";
+
+				Title = key.Localize();
+			}
+		}
+
+		public RelayCommand OkCommand
+		{
+			get
+			{
+				return _OkCommand ??
+					( _OkCommand = new RelayCommand( ExecuteOkCommand, CanExecuteOkCommand ) );
+			}
+		}
+
+		public string Title
+		{
+			get
+			{
+				return _Title;
+			}
+
+			set
+			{
+				if( _Title == value )
+				{
+					return;
+				}
+
+				_Title = value;
+				RaisePropertyChanged( () => Title );
+			}
+		}
+
+		private RelayCommand _CancelCommand;
+		private TModel _Model;
+		private bool _New;
+		private RelayCommand _OkCommand;
+		private string _Title;
 	}
 }

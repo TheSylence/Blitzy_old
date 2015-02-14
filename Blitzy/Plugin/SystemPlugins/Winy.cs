@@ -1,6 +1,4 @@
-﻿// $Id$
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
@@ -12,11 +10,9 @@ using GalaSoft.MvvmLight.Threading;
 
 namespace Blitzy.Plugin.SystemPlugins
 {
-	internal class Winy : IPlugin
+	internal class Winy : InternalPlugin
 	{
-		#region Methods
-
-		public void ClearCache()
+		public override void ClearCache()
 		{
 			Confirmations = new Dictionary<string, bool>
 			{
@@ -26,7 +22,7 @@ namespace Blitzy.Plugin.SystemPlugins
 			};
 		}
 
-		public bool ExecuteCommand( CommandItem command, CommandExecutionMode mode, IList<string> input, out string message )
+		public override bool ExecuteCommand( CommandItem command, CommandExecutionMode mode, IList<string> input, out string message )
 		{
 			message = null;
 			if( Confirmations[command.Name] )
@@ -34,7 +30,7 @@ namespace Blitzy.Plugin.SystemPlugins
 				MessageBoxParameter mbArgs = new MessageBoxParameter( "ConfirmOperation".Localize(), "ConfirmationRequired".Localize() );
 				MessageBoxResult result = MessageBoxResult.No;
 
-				DispatcherHelper.RunAsync( () => result = DialogServiceManager.Show<MessageBoxService, MessageBoxResult>( mbArgs ) ).Wait();
+				DispatcherHelper.RunAsync( () => result = ViewServiceManager.Default.Show<MessageBoxService, MessageBoxResult>( mbArgs ) ).Wait();
 				if( result == MessageBoxResult.No )
 				{
 					return true;
@@ -65,35 +61,36 @@ namespace Blitzy.Plugin.SystemPlugins
 			return true;
 		}
 
-		public IEnumerable<CommandItem> GetCommands( IList<string> input )
+		public override IEnumerable<CommandItem> GetCommands( IList<string> input )
 		{
 			yield return CommandItem.Create( "shutdown", "Shutdown".Localize(), this );
 			yield return CommandItem.Create( "restart", "Restart".Localize(), this );
 			yield return CommandItem.Create( "logoff", "Logoff".Localize(), this );
 		}
 
-		public string GetInfo( IList<string> data, CommandItem item )
+		public override string GetInfo( IList<string> data, CommandItem item )
 		{
 			return null;
 		}
 
-		public IPluginViewModel GetSettingsDataContext()
+		public override IPluginViewModel GetSettingsDataContext( IViewServiceManager viewServices )
 		{
-			return new ViewModel.WinySettingsViewModel( (Settings)Settings );
+			return new ViewModel.WinySettingsViewModel( Host.ConnectionFactory, (Settings)Settings, viewServices );
 		}
 
-		public System.Windows.Controls.Control GetSettingsUI()
+		public override System.Windows.Controls.Control GetSettingsUI()
 		{
 			return new WinyUI();
 		}
 
-		public IEnumerable<CommandItem> GetSubCommands( CommandItem parent, IList<string> input )
+		public override IEnumerable<CommandItem> GetSubCommands( CommandItem parent, IList<string> input )
 		{
 			yield break;
 		}
 
-		public bool Load( IPluginHost host, string oldVersion = null )
+		public override bool Load( IPluginHost host, string oldVersion = null )
 		{
+			Host = host;
 			Settings = host.Settings;
 			if( oldVersion == null )
 			{
@@ -104,7 +101,7 @@ namespace Blitzy.Plugin.SystemPlugins
 			return true;
 		}
 
-		public void Unload( PluginUnloadReason reason )
+		public override void Unload( PluginUnloadReason reason )
 		{
 		}
 
@@ -115,44 +112,29 @@ namespace Blitzy.Plugin.SystemPlugins
 			settings.SetValue( this, RestartKey, true );
 		}
 
-		#endregion Methods
-
-		#region Constants
-
-		internal const string GuidString = "26F7306C-AF81-4979-9F5B-1857EB9387BF";
-		internal const string LogoffKey = "ConfirmLogoff";
-		internal const string RestartKey = "ConfirmRestart";
-		internal const string ShutdownKey = "ConfirmShutdown";
-
-		#endregion Constants
-
-		#region Properties
-
-		private Guid? Guid;
-
-		public int ApiVersion
+		public override int ApiVersion
 		{
 			get { return Constants.ApiVersion; }
 		}
 
-		public string Author
+		public override string Author
 		{
 			get { return "Matthias Specht"; }
 		}
 
-		public string Description
+		public override string Description
 		{
 			get { return "Provides a set of functions to control Windows"; }
 		}
 
-		public bool HasSettings { get { return true; } }
+		public override bool HasSettings { get { return true; } }
 
-		public string Name
+		public override string Name
 		{
 			get { return "Winy"; }
 		}
 
-		public Guid PluginID
+		public override Guid PluginID
 		{
 			get
 			{
@@ -165,23 +147,23 @@ namespace Blitzy.Plugin.SystemPlugins
 			}
 		}
 
-		public string Version
+		public override string Version
 		{
 			get { return Assembly.GetExecutingAssembly().GetName().Version.ToString(); }
 		}
 
-		public Uri Website
+		public override Uri Website
 		{
 			get { return new Uri( "http://btbsoft.org" ); }
 		}
 
-		#endregion Properties
-
-		#region Attributes
-
+		internal const string GuidString = "26F7306C-AF81-4979-9F5B-1857EB9387BF";
+		internal const string LogoffKey = "ConfirmLogoff";
+		internal const string RestartKey = "ConfirmRestart";
+		internal const string ShutdownKey = "ConfirmShutdown";
 		private Dictionary<string, bool> Confirmations;
+		private Guid? Guid;
+		private IPluginHost Host;
 		private ISettings Settings;
-
-		#endregion Attributes
 	}
 }

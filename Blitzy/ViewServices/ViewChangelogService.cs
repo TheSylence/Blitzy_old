@@ -1,17 +1,15 @@
-﻿// $Id$
-
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows;
+using Blitzy.btbapi;
 using Blitzy.View.Dialogs;
 using Blitzy.ViewModel.Dialogs;
-using btbapi;
 
 namespace Blitzy.ViewServices
 {
 	[ExcludeFromCodeCoverage]
-	internal class ViewChangelogService : IDialogService
+	internal class ViewChangelogService : IViewService
 	{
 		public object Show( Window parent, object parameter = null )
 		{

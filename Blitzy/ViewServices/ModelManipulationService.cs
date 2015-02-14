@@ -1,6 +1,4 @@
-﻿// $Id$
-
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows;
@@ -14,11 +12,6 @@ namespace Blitzy.ViewServices
 		where TModel : ModelBase
 		where TDialog : Window
 	{
-		public Type ModelType
-		{
-			get { return typeof( TModel ); }
-		}
-
 		public object Create( Window parent )
 		{
 			TDialog wnd = (TDialog)Activator.CreateInstance( typeof( TDialog ) );
@@ -49,6 +42,11 @@ namespace Blitzy.ViewServices
 			vm.New = false;
 
 			return wnd.ShowDialog() == true;
+		}
+
+		public Type ModelType
+		{
+			get { return typeof( TModel ); }
 		}
 	}
 }

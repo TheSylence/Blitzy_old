@@ -1,46 +1,41 @@
-﻿// $Id$
-
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Data.SQLite;
+using System.Data.Common;
 using System.Windows;
 using Blitzy.Model;
 using Blitzy.Plugin;
 using Blitzy.Utility;
 using Blitzy.ViewServices;
-using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.CommandWpf;
 
 namespace Blitzy.ViewModel
 {
 	internal class WebySettingsViewModel : SettingsViewModelBase, IPluginViewModel
 	{
-		#region Constructor
-
-		public WebySettingsViewModel( Settings settings )
-			: base( settings )
+		public WebySettingsViewModel( DbConnectionFactory factory, Settings settings, IViewServiceManager serviceManager = null )
+			: base( settings, factory, serviceManager )
 		{
 			Websites = new ObservableCollection<WebyWebsite>();
 
-			using( SQLiteCommand cmd = Settings.Connection.CreateCommand() )
+			using( DbConnection connection = ConnectionFactory.OpenConnection() )
 			{
-				cmd.CommandText = "SELECT WebyID FROM weby_websites";
-
-				using( SQLiteDataReader reader = cmd.ExecuteReader() )
+				using( DbCommand cmd = connection.CreateCommand() )
 				{
-					while( reader.Read() )
-					{
-						WebyWebsite site = new WebyWebsite { ID = reader.GetInt32( 0 ) };
+					cmd.CommandText = "SELECT WebyID FROM weby_websites";
 
-						site.Load( Settings.Connection );
-						Websites.Add( site );
+					using( DbDataReader reader = cmd.ExecuteReader() )
+					{
+						while( reader.Read() )
+						{
+							WebyWebsite site = ToDispose( new WebyWebsite { ID = reader.GetInt32( 0 ) } );
+
+							site.Load( connection );
+							Websites.Add( site );
+						}
 					}
 				}
 			}
 		}
-
-		#endregion Constructor
-
-		#region Methods
 
 		public void RestoreDefaults()
 		{
@@ -49,23 +44,53 @@ namespace Blitzy.ViewModel
 
 		public override void Save()
 		{
-			foreach( WebyWebsite site in WebsitesToRemove )
+			using( DbConnection connection = ConnectionFactory.OpenConnection() )
 			{
-				site.Delete( Settings.Connection );
-			}
+				foreach( WebyWebsite site in WebsitesToRemove )
+				{
+					site.Delete( connection );
+				}
 
-			foreach( WebyWebsite site in Websites )
-			{
-				site.Save( Settings.Connection );
+				foreach( WebyWebsite site in Websites )
+				{
+					site.Save( connection );
+				}
 			}
 		}
 
-		#endregion Methods
+		private bool CanExecuteAddWebsiteCommand()
+		{
+			return true;
+		}
 
-		#region Commands
+		private bool CanExecuteRemoveWebsiteCommand()
+		{
+			return SelectedWebsite != null;
+		}
 
-		private RelayCommand _AddWebsiteCommand;
-		private RelayCommand _RemoveWebsiteCommand;
+		private void ExecuteAddWebsiteCommand()
+		{
+			WebyWebsite site = ServiceManagerInstance.Create<WebyWebsite>();
+			if( site != null )
+			{
+				Websites.Add( site );
+			}
+		}
+
+		private void ExecuteRemoveWebsiteCommand()
+		{
+			string text = "ConfirmDeleteItem".Localize();
+			string caption = "Question".Localize();
+			MessageBoxParameter args = new MessageBoxParameter( text, caption );
+
+			MessageBoxResult result = ServiceManagerInstance.Show<MessageBoxService, MessageBoxResult>( args );
+			if( result == MessageBoxResult.Yes )
+			{
+				WebsitesToRemove.Add( SelectedWebsite );
+				Websites.Remove( SelectedWebsite );
+				SelectedWebsite = null;
+			}
+		}
 
 		public RelayCommand AddWebsiteCommand
 		{
@@ -85,46 +110,6 @@ namespace Blitzy.ViewModel
 			}
 		}
 
-		private bool CanExecuteAddWebsiteCommand()
-		{
-			return true;
-		}
-
-		private bool CanExecuteRemoveWebsiteCommand()
-		{
-			return SelectedWebsite != null;
-		}
-
-		private void ExecuteAddWebsiteCommand()
-		{
-			WebyWebsite site = DialogServiceManager.Create<WebyWebsite>();
-			if( site != null )
-			{
-				Websites.Add( site );
-			}
-		}
-
-		private void ExecuteRemoveWebsiteCommand()
-		{
-			string text = "ConfirmDeleteItem".Localize();
-			string caption = "Question".Localize();
-			MessageBoxParameter args = new MessageBoxParameter( text, caption );
-
-			MessageBoxResult result = DialogServiceManager.Show<MessageBoxService, MessageBoxResult>( args );
-			if( result == MessageBoxResult.Yes )
-			{
-				WebsitesToRemove.Add( SelectedWebsite );
-				Websites.Remove( SelectedWebsite );
-				SelectedWebsite = null;
-			}
-		}
-
-		#endregion Commands
-
-		#region Properties
-
-		private WebyWebsite _SelectedWebsite;
-
 		public WebyWebsite SelectedWebsite
 		{
 			get
@@ -139,7 +124,6 @@ namespace Blitzy.ViewModel
 					return;
 				}
 
-				RaisePropertyChanging( () => SelectedWebsite );
 				_SelectedWebsite = value;
 				RaisePropertyChanged( () => SelectedWebsite );
 			}
@@ -147,12 +131,9 @@ namespace Blitzy.ViewModel
 
 		public ObservableCollection<WebyWebsite> Websites { get; private set; }
 
-		#endregion Properties
-
-		#region Attributes
-
 		private readonly List<WebyWebsite> WebsitesToRemove = new List<WebyWebsite>();
-
-		#endregion Attributes
+		private RelayCommand _AddWebsiteCommand;
+		private RelayCommand _RemoveWebsiteCommand;
+		private WebyWebsite _SelectedWebsite;
 	}
 }

@@ -1,8 +1,6 @@
-﻿// $Id$
-
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Data.SQLite;
+using System.Data.Common;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -11,16 +9,23 @@ using Blitzy.Model;
 
 namespace Blitzy.Plugin.SystemPlugins
 {
-	internal class Runny : ISystemPlugin
+	internal class Runny : InternalPlugin, ISystemPlugin
 	{
-		#region Methods
-
-		public void ClearCache()
+		public override void ClearCache()
 		{
+			foreach( CommandItem item in ItemCache )
+			{
+				IDisposable disp = item.UserData as IDisposable;
+				if( disp != null )
+				{
+					DisposeObject( disp );
+				}
+			}
+
 			ItemCache.Clear();
 		}
 
-		public bool ExecuteCommand( CommandItem command, CommandExecutionMode mode, IList<string> input, out string message )
+		public override bool ExecuteCommand( CommandItem command, CommandExecutionMode mode, IList<string> input, out string message )
 		{
 			string args;
 			string workingDirectory;
@@ -49,56 +54,57 @@ namespace Blitzy.Plugin.SystemPlugins
 			return true;
 		}
 
-		public IEnumerable<CommandItem> GetCommands( IList<string> input )
+		public override IEnumerable<CommandItem> GetCommands( IList<string> input )
 		{
 			if( ItemCache.Count == 0 )
 			{
-				SQLiteConnection connection = ( (Settings)Host.Settings ).Connection;
-
-				ItemCache = new List<CommandItem>( ReadAllCommands( connection ) );
+				using( DbConnection connection = Host.ConnectionFactory.OpenConnection() )
+				{
+					ItemCache = new List<CommandItem>( ReadAllCommands( connection ) );
+				}
 			}
 
 			return ItemCache;
 		}
 
-		public string GetInfo( IList<string> data, CommandItem item )
+		public override string GetInfo( IList<string> data, CommandItem item )
 		{
 			return null;
 		}
 
-		public IPluginViewModel GetSettingsDataContext()
+		public override IPluginViewModel GetSettingsDataContext( IViewServiceManager viewServices )
 		{
 			return null;
 		}
 
-		public System.Windows.Controls.Control GetSettingsUI()
+		public override System.Windows.Controls.Control GetSettingsUI()
 		{
 			return null;
 		}
 
-		public IEnumerable<CommandItem> GetSubCommands( CommandItem parent, IList<string> input )
+		public override IEnumerable<CommandItem> GetSubCommands( CommandItem parent, IList<string> input )
 		{
 			yield break;
 		}
 
-		public bool Load( IPluginHost host, string oldVersion = null )
+		public override bool Load( IPluginHost host, string oldVersion = null )
 		{
 			Host = host;
 			return true;
 		}
 
-		public void Unload( PluginUnloadReason reason )
+		public override void Unload( PluginUnloadReason reason )
 		{
 			ItemCache.Clear();
 		}
 
-		internal IEnumerable<CommandItem> ReadAllCommands( SQLiteConnection connection )
+		internal IEnumerable<CommandItem> ReadAllCommands( DbConnection connection )
 		{
-			using( SQLiteCommand cmd = connection.CreateCommand() )
+			using( DbCommand cmd = connection.CreateCommand() )
 			{
 				cmd.CommandText = "SELECT Command, Name, Icon, Arguments FROM files";
 
-				using( SQLiteDataReader reader = cmd.ExecuteReader() )
+				using( DbDataReader reader = cmd.ExecuteReader() )
 				{
 					while( reader.Read() )
 					{
@@ -112,18 +118,18 @@ namespace Blitzy.Plugin.SystemPlugins
 				}
 			}
 
-			using( SQLiteCommand cmd = connection.CreateCommand() )
+			using( DbCommand cmd = connection.CreateCommand() )
 			{
 				cmd.CommandText = "SELECT WorkspaceID FROM workspaces";
 
-				using( SQLiteDataReader reader = cmd.ExecuteReader() )
+				using( DbDataReader reader = cmd.ExecuteReader() )
 				{
 					while( reader.Read() )
 					{
-						Workspace workspace = new Workspace
+						Workspace workspace = ToDispose( new Workspace
 						{
 							ID = reader.GetInt32( 0 )
-						};
+						} );
 
 						workspace.Load( connection );
 
@@ -157,35 +163,29 @@ namespace Blitzy.Plugin.SystemPlugins
 			Process.Start( procInf );
 		}
 
-		#endregion Methods
-
-		#region Properties
-
-		private Guid? Guid;
-
-		public int ApiVersion
+		public override int ApiVersion
 		{
 			get { return Constants.ApiVersion; }
 		}
 
-		public string Author
+		public override string Author
 		{
 			get { return "Matthias Specht"; }
 		}
 
-		public string Description
+		public override string Description
 		{
 			get { return "Execution of files"; }
 		}
 
-		public bool HasSettings { get { return false; } }
+		public override bool HasSettings { get { return false; } }
 
-		public string Name
+		public override string Name
 		{
 			get { return "Runny"; }
 		}
 
-		public Guid PluginID
+		public override Guid PluginID
 		{
 			get
 			{
@@ -198,23 +198,18 @@ namespace Blitzy.Plugin.SystemPlugins
 			}
 		}
 
-		public string Version
+		public override string Version
 		{
 			get { return Assembly.GetExecutingAssembly().GetName().Version.ToString(); }
 		}
 
-		public Uri Website
+		public override Uri Website
 		{
 			get { return new Uri( "http://btbsoft.org" ); }
 		}
 
-		#endregion Properties
-
-		#region Attributes
-
+		private Guid? Guid;
 		private IPluginHost Host;
 		private List<CommandItem> ItemCache = new List<CommandItem>();
-
-		#endregion Attributes
 	}
 }

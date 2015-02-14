@@ -1,9 +1,7 @@
-﻿// $Id$
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data.SQLite;
+using System.Data.Common;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
@@ -15,7 +13,7 @@ namespace Blitzy.Model
 	{
 		[SuppressMessage( "Microsoft.Security",
 			"CA2100:Review SQL queries for security vulnerabilities", Justification = "String is not affacted by user input" )]
-		internal static void CreateDatabase( SQLiteConnection connection )
+		internal static void CreateDatabase( DbConnection connection )
 		{
 			StringBuilder sb = new StringBuilder();
 			sb.Append( "BEGIN TRANSACTION;" );
@@ -132,7 +130,7 @@ namespace Blitzy.Model
 			sb.AppendFormat( "PRAGMA user_version = {0};", DatabaseUpgrader.DatabaseVersion );
 			sb.Append( "COMMIT;" );
 
-			using( SQLiteCommand cmd = connection.CreateCommand() )
+			using( DbCommand cmd = connection.CreateCommand() )
 			{
 				cmd.CommandText = sb.ToString();
 				cmd.ExecuteNonQuery();

@@ -1,6 +1,4 @@
-﻿// $Id$
-
-using System;
+﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Globalization;
@@ -18,13 +16,11 @@ namespace Blitzy.Converter
 	[SuppressMessage( "Microsoft.Performance", "CA1812", Justification = "Used in XAML" )]
 	internal class StringToImageConverter : IValueConverter
 	{
-		private readonly Regex Pattern = new Regex( "^.*,[0-9-]+$", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.CultureInvariant );
-
 		public object Convert( object value, Type targetType, object parameter, CultureInfo culture )
 		{
 			string str = value as string;
 			if( str == null )
-				return null;
+				return DependencyProperty.UnsetValue;
 
 			if( str.Contains( ":" ) && !Uri.IsWellFormedUriString( str, UriKind.Absolute ) )
 			{
@@ -46,23 +42,31 @@ namespace Blitzy.Converter
 
 					IntPtr large = IntPtr.Zero;
 					IntPtr small = IntPtr.Zero;
-					int icons = INativeMethods.Instance.ExtractIconEx_Wrapper( file, icoIdx, ref large, ref small, 1 );
-					if( icons == 0 )
+					try
 					{
-						LogHelper.LogWarning( MethodBase.GetCurrentMethod().DeclaringType, "No icons extracted from {0}", file );
-					}
+						int icons = INativeMethods.Instance.ExtractIconEx_Wrapper( file, icoIdx, ref large, ref small, 1 );
+						if( icons == 0 )
+						{
+							LogHelper.LogWarning( MethodBase.GetCurrentMethod().DeclaringType, "No icons extracted from {0}", file );
+						}
 
-					IntPtr ico = large;
-					if( ico.Equals( IntPtr.Zero ) )
-					{
-						ico = small;
+						IntPtr ico = large;
 						if( ico.Equals( IntPtr.Zero ) )
-							return null;
-					}
+						{
+							ico = small;
+							if( ico.Equals( IntPtr.Zero ) )
+								return DependencyProperty.UnsetValue;
+						}
 
-					using( Icon i = Icon.FromHandle( ico ) )
+						using( Icon i = Icon.FromHandle( ico ) )
+						{
+							return Imaging.CreateBitmapSourceFromHIcon( i.Handle, new Int32Rect( 0, 0, i.Width, i.Height ), BitmapSizeOptions.FromEmptyOptions() );
+						}
+					}
+					finally
 					{
-						return Imaging.CreateBitmapSourceFromHIcon( i.Handle, new Int32Rect( 0, 0, i.Width, i.Height ), BitmapSizeOptions.FromEmptyOptions() );
+						INativeMethods.Instance.DestroyIcon_Wrapper( large );
+						INativeMethods.Instance.DestroyIcon_Wrapper( small );
 					}
 				}
 
@@ -78,7 +82,7 @@ namespace Blitzy.Converter
 					}
 				}
 
-				return null;
+				return DependencyProperty.UnsetValue;
 			}
 
 			string uri = Path.Combine( Path.GetDirectoryName( Assembly.GetExecutingAssembly().Location ), "icons", str );
@@ -105,7 +109,7 @@ namespace Blitzy.Converter
 					return img;
 				}
 
-				return null;
+				return DependencyProperty.UnsetValue;
 			}
 
 			img = new BitmapImage();
@@ -119,5 +123,7 @@ namespace Blitzy.Converter
 		{
 			throw new NotSupportedException();
 		}
+
+		private readonly Regex Pattern = new Regex( "^.*,[0-9-]+$", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.CultureInvariant );
 	}
 }

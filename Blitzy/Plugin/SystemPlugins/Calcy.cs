@@ -1,6 +1,4 @@
-﻿// $Id$
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Windows.Forms;
@@ -9,16 +7,14 @@ using Blitzy.Utility;
 
 namespace Blitzy.Plugin.SystemPlugins
 {
-	internal class Calcy : IPlugin
+	internal class Calcy : InternalPlugin
 	{
-		#region Methods
-
-		public void ClearCache()
+		public override void ClearCache()
 		{
 			// Nothing to do
 		}
 
-		public bool ExecuteCommand( CommandItem command, CommandExecutionMode mode, IList<string> input, out string message )
+		public override bool ExecuteCommand( CommandItem command, CommandExecutionMode mode, IList<string> input, out string message )
 		{
 			message = null;
 			if( input.Count >= 2 )
@@ -29,12 +25,12 @@ namespace Blitzy.Plugin.SystemPlugins
 			return true;
 		}
 
-		public IEnumerable<CommandItem> GetCommands( IList<string> input )
+		public override IEnumerable<CommandItem> GetCommands( IList<string> input )
 		{
 			yield return CommandItem.Create( "calcy", "CalcyDescription".Localize(), this, "Calcy.png", null, null, null, true );
 		}
 
-		public string GetInfo( IList<string> data, CommandItem item )
+		public override string GetInfo( IList<string> data, CommandItem item )
 		{
 			if( data.Count <= 1 )
 			{
@@ -44,61 +40,55 @@ namespace Blitzy.Plugin.SystemPlugins
 			return Calculator.Calculate( data[1] );
 		}
 
-		public IPluginViewModel GetSettingsDataContext()
+		public override IPluginViewModel GetSettingsDataContext( IViewServiceManager viewServices )
 		{
 			return null;
 		}
 
-		public System.Windows.Controls.Control GetSettingsUI()
+		public override System.Windows.Controls.Control GetSettingsUI()
 		{
 			return null;
 		}
 
-		public IEnumerable<CommandItem> GetSubCommands( CommandItem parent, IList<string> input )
+		public override IEnumerable<CommandItem> GetSubCommands( CommandItem parent, IList<string> input )
 		{
 			yield break;
 		}
 
-		public bool Load( IPluginHost host, string oldVersion = null )
+		public override bool Load( IPluginHost host, string oldVersion = null )
 		{
 			Calculator = new ShuntingYard();
 			return true;
 		}
 
-		public void Unload( PluginUnloadReason reason )
+		public override void Unload( PluginUnloadReason reason )
 		{
 			// Nothing to do
 		}
 
-		#endregion Methods
-
-		#region Properties
-
-		private Guid? Guid;
-
-		public int ApiVersion
+		public override int ApiVersion
 		{
 			get { return Constants.ApiVersion; }
 		}
 
-		public string Author
+		public override string Author
 		{
 			get { return "Matthias Specht"; }
 		}
 
-		public string Description
+		public override string Description
 		{
 			get { return "Math calculator plugin for Blitzy"; }
 		}
 
-		public bool HasSettings { get { return false; } }
+		public override bool HasSettings { get { return false; } }
 
-		public string Name
+		public override string Name
 		{
 			get { return "Calcy"; }
 		}
 
-		public Guid PluginID
+		public override Guid PluginID
 		{
 			get
 			{
@@ -111,22 +101,17 @@ namespace Blitzy.Plugin.SystemPlugins
 			}
 		}
 
-		public string Version
+		public override string Version
 		{
 			get { return Assembly.GetExecutingAssembly().GetName().Version.ToString(); }
 		}
 
-		public Uri Website
+		public override Uri Website
 		{
 			get { return new Uri( "http://btbsoft.org" ); }
 		}
 
-		#endregion Properties
-
-		#region Attributes
-
 		private ShuntingYard Calculator;
-
-		#endregion Attributes
+		private Guid? Guid;
 	}
 }

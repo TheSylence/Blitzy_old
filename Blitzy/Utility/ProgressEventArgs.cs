@@ -1,6 +1,4 @@
-﻿// $Id$
-
-using System;
+﻿using System;
 
 namespace Blitzy.Utility
 {

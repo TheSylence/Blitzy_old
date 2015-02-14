@@ -1,16 +1,13 @@
-﻿// $Id$
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SQLite;
+using System.Data.Common;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using Blitzy.Messages;
-using Blitzy.Model;
 using Blitzy.Utility;
 using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Threading;
@@ -27,12 +24,10 @@ namespace Blitzy.Model
 
 	internal class CatalogBuilder : BaseObject
 	{
-		#region Constructor
-
-		private StackTrace Trace;
-
-		public CatalogBuilder( Settings settings )
+		public CatalogBuilder( DbConnectionFactory factory, Settings settings, IMessenger messenger = null )
 		{
+			Factory = factory;
+			MessengerInstance = messenger ?? Messenger.Default;
 			CanProcess = ToDispose( new AutoResetEvent( false ) );
 			Settings = settings;
 			_ItemsToProcess = int.MaxValue;
@@ -47,31 +42,6 @@ namespace Blitzy.Model
 
 			Trace = new StackTrace( true );
 		}
-
-		#endregion Constructor
-
-		#region Disposable
-
-		protected override void Dispose( bool managed )
-		{
-			if( managed )
-			{
-				ShouldStop = true;
-				IsRunning = false;
-				CanProcess.Set();
-				ThreadObject.Join();
-			}
-			else
-			{
-				Debugger.Break();
-			}
-
-			base.Dispose( managed );
-		}
-
-		#endregion Disposable
-
-		#region Methods
 
 		public void Build()
 		{
@@ -93,7 +63,7 @@ namespace Blitzy.Model
 		internal void ProcessFiles()
 		{
 			IsBuilding = true;
-			DispatcherHelper.CheckBeginInvokeOnUI( () => Messenger.Default.Send( new CatalogStatusMessage( CatalogStatus.BuildStarted ) ) );
+			DispatcherHelper.CheckBeginInvokeOnUI( () => MessengerInstance.Send( new CatalogStatusMessage( CatalogStatus.BuildStarted ) ) );
 
 			ItemsScanned = 0;
 			ProgressStep = CatalogProgressStep.Scanning;
@@ -104,7 +74,7 @@ namespace Blitzy.Model
 				FilesToProcess.AddRange( folder.GetFiles() );
 
 				++ItemsScanned;
-				DispatcherHelper.CheckBeginInvokeOnUI( () => Messenger.Default.Send( new CatalogStatusMessage( CatalogStatus.ProgressUpdated ) ) );
+				DispatcherHelper.CheckBeginInvokeOnUI( () => MessengerInstance.Send( new CatalogStatusMessage( CatalogStatus.ProgressUpdated ) ) );
 			}
 
 			ShouldStop = false;
@@ -207,7 +177,7 @@ namespace Blitzy.Model
 					entries.Add( new FileEntry( filePath, fileName, icon, ext, arguments ) );
 
 					ItemsProcessed++;
-					DispatcherHelper.CheckBeginInvokeOnUI( () => Messenger.Default.Send( new CatalogStatusMessage( CatalogStatus.ProgressUpdated ) ) );
+					DispatcherHelper.CheckBeginInvokeOnUI( () => MessengerInstance.Send( new CatalogStatusMessage( CatalogStatus.ProgressUpdated ) ) );
 				}
 
 				ProgressStep = CatalogProgressStep.Saving;
@@ -217,7 +187,20 @@ namespace Blitzy.Model
 			}
 
 			IsBuilding = false;
-			DispatcherHelper.CheckBeginInvokeOnUI( () => Messenger.Default.Send( new CatalogStatusMessage( CatalogStatus.BuildFinished ) ) );
+			DispatcherHelper.CheckBeginInvokeOnUI( () => MessengerInstance.Send( new CatalogStatusMessage( CatalogStatus.BuildFinished ) ) );
+		}
+
+		protected override void Dispose( bool managed )
+		{
+			if( managed )
+			{
+				ShouldStop = true;
+				IsRunning = false;
+				CanProcess.Set();
+				ThreadObject.Join();
+			}
+
+			base.Dispose( managed );
 		}
 
 		[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
@@ -238,77 +221,69 @@ namespace Blitzy.Model
 
 		private void SaveEntries( IEnumerable<FileEntry> list )
 		{
-			SQLiteTransaction transaction = Settings.Connection.BeginTransaction( IsolationLevel.ReadCommitted );
-			try
+			using( DbConnection connection = Factory.OpenConnection() )
 			{
-				using( SQLiteCommand cmd = Settings.Connection.CreateCommand() )
+				DbTransaction transaction = connection.BeginTransaction( IsolationLevel.ReadCommitted );
+				try
 				{
-					cmd.Transaction = transaction;
-					cmd.CommandText = "DELETE FROM files";
-					cmd.ExecuteNonQuery();
-				}
-
-				const int maxBatchSize = 500; // SQLite limit: SQLITE_MAX_COMPOUND_SELECT
-				const int maxParameters = 999; // SQLite limit: SQLITE_MAX_VARIABLE_NUMBER
-				const int columns = FileEntry.ParameterCount;
-				int batchSize = maxBatchSize;
-				int objectCount = list.Count();
-
-				int count = 0;
-				int runs;
-				if( objectCount * columns <= maxParameters )
-				{
-					runs = (int)Math.Ceiling( objectCount / (double)batchSize );
-				}
-				else
-				{
-					runs = (int)Math.Ceiling( objectCount * columns / (double)maxParameters );
-					batchSize = (int)Math.Floor( objectCount / (double)runs );
-
-					if( runs * batchSize < objectCount )
-					{
-						++runs;
-					}
-				}
-
-				while( count < runs && !ShouldStop )
-				{
-					using( SQLiteCommand cmd = Settings.Connection.CreateCommand() )
+					using( DbCommand cmd = connection.CreateCommand() )
 					{
 						cmd.Transaction = transaction;
-						FileEntry.CreateBatchStatement( cmd, list.Take( batchSize ) );
-						cmd.Prepare();
+						cmd.CommandText = "DELETE FROM files";
 						cmd.ExecuteNonQuery();
 					}
 
-					list = list.Skip( batchSize );
-					++count;
-					ItemsSaved += batchSize;
-					DispatcherHelper.CheckBeginInvokeOnUI( () => Messenger.Default.Send( new CatalogStatusMessage( CatalogStatus.ProgressUpdated ) ) );
-				}
+					const int maxBatchSize = 500; // SQLite limit: SQLITE_MAX_COMPOUND_SELECT
+					const int maxParameters = 999; // SQLite limit: SQLITE_MAX_VARIABLE_NUMBER
+					const int columns = FileEntry.ParameterCount;
+					int batchSize = maxBatchSize;
+					int objectCount = list.Count();
 
-				if( !ShouldStop )
-				{
-					transaction.Commit();
+					int count = 0;
+					int runs;
+					if( objectCount * columns <= maxParameters )
+					{
+						runs = (int)Math.Ceiling( objectCount / (double)batchSize );
+					}
+					else
+					{
+						runs = (int)Math.Ceiling( objectCount * columns / (double)maxParameters );
+						batchSize = (int)Math.Floor( objectCount / (double)runs );
+
+						if( runs * batchSize < objectCount )
+						{
+							++runs;
+						}
+					}
+
+					while( count < runs && !ShouldStop )
+					{
+						using( DbCommand cmd = connection.CreateCommand() )
+						{
+							cmd.Transaction = transaction;
+							FileEntry.CreateBatchStatement( cmd, list.Take( batchSize ) );
+							cmd.Prepare();
+							cmd.ExecuteNonQuery();
+						}
+
+						list = list.Skip( batchSize );
+						++count;
+						ItemsSaved += batchSize;
+						DispatcherHelper.CheckBeginInvokeOnUI( () => MessengerInstance.Send( new CatalogStatusMessage( CatalogStatus.ProgressUpdated ) ) );
+					}
+
+					if( !ShouldStop )
+					{
+						transaction.Commit();
+					}
 				}
-			}
-			catch( Exception ex )
-			{
-				LogError( "Failed updating the catalog: {0}", ex );
-				transaction.Rollback();
+				catch( Exception ex )
+				{
+					LogError( "Failed updating the catalog: {0}", ex );
+					transaction.Rollback();
+				}
 			}
 		}
-
-		#endregion Methods
-
-		#region Properties
-
-		private bool _IsBuilding;
-		private int _ItemsProcessed;
-		private int _ItemsSaved;
-		private int _ItemsScanned;
-		private int _ItemsToProcess;
-		private CatalogProgressStep _ProgressStep;
 
 		public bool IsBuilding
 		{
@@ -324,7 +299,6 @@ namespace Blitzy.Model
 					return;
 				}
 
-				RaisePropertyChanging( () => IsBuilding );
 				_IsBuilding = value;
 				RaisePropertyChanged( () => IsBuilding );
 			}
@@ -344,7 +318,6 @@ namespace Blitzy.Model
 					return;
 				}
 
-				RaisePropertyChanging( () => ItemsProcessed );
 				_ItemsProcessed = value;
 				RaisePropertyChanged( () => ItemsProcessed );
 			}
@@ -364,7 +337,6 @@ namespace Blitzy.Model
 					return;
 				}
 
-				RaisePropertyChanging( () => ItemsSaved );
 				_ItemsSaved = value;
 				RaisePropertyChanged( () => ItemsSaved );
 			}
@@ -384,7 +356,6 @@ namespace Blitzy.Model
 					return;
 				}
 
-				RaisePropertyChanging( () => ItemsScanned );
 				_ItemsScanned = value;
 				RaisePropertyChanged( () => ItemsScanned );
 			}
@@ -404,7 +375,6 @@ namespace Blitzy.Model
 					return;
 				}
 
-				RaisePropertyChanging( () => ItemsToProcess );
 				_ItemsToProcess = value;
 				RaisePropertyChanged( () => ItemsToProcess );
 			}
@@ -424,23 +394,25 @@ namespace Blitzy.Model
 					return;
 				}
 
-				RaisePropertyChanging( () => ProgressStep );
 				_ProgressStep = value;
 				RaisePropertyChanged( () => ProgressStep );
 			}
 		}
 
-		#endregion Properties
-
-		#region Attributes
-
 		private readonly AutoResetEvent CanProcess;
 		private readonly List<string> FilesToProcess = new List<string>( 16384 );
 		private readonly Settings Settings;
 		private readonly Thread ThreadObject;
+		private bool _IsBuilding;
+		private int _ItemsProcessed;
+		private int _ItemsSaved;
+		private int _ItemsScanned;
+		private int _ItemsToProcess;
+		private CatalogProgressStep _ProgressStep;
+		private DbConnectionFactory Factory;
 		private bool IsRunning;
+		private IMessenger MessengerInstance;
 		private volatile bool ShouldStop;
-
-		#endregion Attributes
+		private StackTrace Trace;
 	}
 }

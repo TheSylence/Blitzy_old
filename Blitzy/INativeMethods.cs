@@ -1,19 +1,10 @@
-﻿// $Id$
-
-using System;
+﻿using System;
 using System.Text;
 
 namespace Blitzy
 {
 	public abstract class INativeMethods
 	{
-		public const int HWND_BROADCAST = 0xffff;
-		public const int SW_SHOWNORMAL = 1;
-
-		public static INativeMethods Instance { get; internal set; }
-
-		#region Methods
-
 		public abstract bool DestroyIcon_Wrapper( IntPtr hIcon );
 
 		public abstract int DwmIsCompositionEnabled_Wrapper();
@@ -46,6 +37,9 @@ namespace Blitzy
 
 		public abstract int UnregisterHotKey_Wrapper( IntPtr hwnd, int id );
 
-		#endregion Methods
+		public static INativeMethods Instance { get; internal set; }
+
+		public const int HWND_BROADCAST = 0xffff;
+		public const int SW_SHOWNORMAL = 1;
 	}
 }

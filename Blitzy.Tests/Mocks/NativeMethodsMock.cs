@@ -1,6 +1,4 @@
-﻿// $Id$
-
-using System;
+﻿using System;
 using System.Text;
 
 namespace Blitzy.Tests.Mocks
@@ -8,8 +6,6 @@ namespace Blitzy.Tests.Mocks
 	[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	public class NativeMethodsMock : INativeMethods
 	{
-		#region Methods
-
 		public override bool DestroyIcon_Wrapper( IntPtr hIcon )
 		{
 			throw new NotImplementedException();
@@ -90,12 +86,6 @@ namespace Blitzy.Tests.Mocks
 			throw new NotImplementedException();
 		}
 
-		#endregion Methods
-
-		#region Delegates
-
 		internal Func<IntPtr, int, IntPtr, IntPtr, IntPtr> OnSendMessage;
-
-		#endregion Delegates
 	}
 }

@@ -1,23 +1,16 @@
-﻿// $Id$
-
-using System;
+﻿using System;
+using GalaSoft.MvvmLight.Messaging;
 
 namespace Blitzy.Plugin
 {
 	public interface IPluginHost
 	{
-		#region Methods
-
 		bool IsPluginLoaded( Guid id );
 
-		#endregion Methods
+		DbConnectionFactory ConnectionFactory { get; }
 
-		#region Properties
-
-		IDatabase Database { get; }
+		IMessenger Messenger { get; }
 
 		ISettings Settings { get; }
-
-		#endregion Properties
 	}
 }

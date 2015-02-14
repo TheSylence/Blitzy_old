@@ -1,6 +1,4 @@
-﻿// $Id$
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using log4net;
 using log4net.Appender;
@@ -12,12 +10,6 @@ namespace Blitzy.Tests
 	[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	internal class LogChecker : IDisposable
 	{
-		private readonly MemoryAppender Appender = new MemoryAppender();
-		private readonly DebugAppender DebugAppender = new DebugAppender();
-		private readonly IAppenderAttachable Logger;
-		private readonly Level PreviousLevel;
-		private readonly Logger Root;
-
 		public LogChecker( Level levelToCheck )
 		{
 			Root = ( (log4net.Repository.Hierarchy.Hierarchy)LogManager.GetRepository() ).Root;
@@ -32,14 +24,6 @@ namespace Blitzy.Tests
 			Root.Level = levelToCheck;
 		}
 
-		public List<string> Messages
-		{
-			get
-			{
-				return new List<LoggingEvent>( Appender.GetEvents() ).ConvertAll( x => x.RenderedMessage );
-			}
-		}
-
 		public void Dispose()
 		{
 			Root.Level = PreviousLevel;
@@ -48,5 +32,19 @@ namespace Blitzy.Tests
 				Logger.RemoveAppender( Appender );
 			}
 		}
+
+		public List<string> Messages
+		{
+			get
+			{
+				return new List<LoggingEvent>( Appender.GetEvents() ).ConvertAll( x => x.RenderedMessage );
+			}
+		}
+
+		private readonly MemoryAppender Appender = new MemoryAppender();
+		private readonly DebugAppender DebugAppender = new DebugAppender();
+		private readonly IAppenderAttachable Logger;
+		private readonly Level PreviousLevel;
+		private readonly Logger Root;
 	}
 }

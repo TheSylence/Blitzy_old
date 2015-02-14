@@ -1,26 +1,16 @@
-﻿// $Id$
-
-using System;
-using System.Data.SQLite;
+﻿using System;
+using System.Data.Common;
+using Blitzy.Plugin;
 
 namespace Blitzy.Model
 {
 	internal class WorkspaceItem : ModelBase
 	{
-		#region Constructor
-
-		#endregion Constructor
-
-		#region Methods
-
-		public override void Delete( SQLiteConnection connection )
+		public override void Delete( DbConnection connection )
 		{
-			using( SQLiteCommand cmd = connection.CreateCommand() )
+			using( DbCommand cmd = connection.CreateCommand() )
 			{
-				SQLiteParameter param = cmd.CreateParameter();
-				param.ParameterName = "ItemID";
-				param.Value = ItemID;
-				cmd.Parameters.Add( param );
+				cmd.AddParameter( "ItemID", ItemID );
 
 				cmd.CommandText = "DELETE FROM workspace_items WHERE ItemID = @ItemID;";
 				cmd.Prepare();
@@ -29,19 +19,16 @@ namespace Blitzy.Model
 			}
 		}
 
-		public override void Load( SQLiteConnection connection )
+		public override void Load( DbConnection connection )
 		{
-			using( SQLiteCommand cmd = connection.CreateCommand() )
+			using( DbCommand cmd = connection.CreateCommand() )
 			{
-				SQLiteParameter param = cmd.CreateParameter();
-				param.ParameterName = "ItemID";
-				param.Value = ItemID;
-				cmd.Parameters.Add( param );
+				cmd.AddParameter( "ItemID", ItemID );
 
 				cmd.CommandText = "SELECT ItemOrder, WorkspaceID, ItemCommand FROM workspace_items WHERE ItemID = @ItemID;";
 				cmd.Prepare();
 
-				using( SQLiteDataReader reader = cmd.ExecuteReader() )
+				using( DbDataReader reader = cmd.ExecuteReader() )
 				{
 					if( !reader.Read() )
 					{
@@ -57,29 +44,14 @@ namespace Blitzy.Model
 			ExistsInDatabase = true;
 		}
 
-		public override void Save( SQLiteConnection connection )
+		public override void Save( DbConnection connection )
 		{
-			using( SQLiteCommand cmd = connection.CreateCommand() )
+			using( DbCommand cmd = connection.CreateCommand() )
 			{
-				SQLiteParameter param = cmd.CreateParameter();
-				param.ParameterName = "ItemID";
-				param.Value = ItemID;
-				cmd.Parameters.Add( param );
-
-				param = cmd.CreateParameter();
-				param.ParameterName = "ItemCommand";
-				param.Value = ItemCommand;
-				cmd.Parameters.Add( param );
-
-				param = cmd.CreateParameter();
-				param.ParameterName = "ItemOrder";
-				param.Value = ItemOrder;
-				cmd.Parameters.Add( param );
-
-				param = cmd.CreateParameter();
-				param.ParameterName = "WorkspaceID";
-				param.Value = WorkspaceID;
-				cmd.Parameters.Add( param );
+				cmd.AddParameter( "ItemID", ItemID );
+				cmd.AddParameter( "ItemCommand", ItemCommand );
+				cmd.AddParameter( "ItemOrder", ItemOrder );
+				cmd.AddParameter( "WorkspaceID", WorkspaceID );
 
 				cmd.CommandText = ExistsInDatabase ?
 					"UPDATE workspace_items SET ItemCommand = @ItemCommand, ItemOrder = @ItemOrder, WorkspaceID = @WorkspaceID WHERE ItemID = @ItemID" :
@@ -91,15 +63,6 @@ namespace Blitzy.Model
 
 			ExistsInDatabase = true;
 		}
-
-		#endregion Methods
-
-		#region Properties
-
-		private string _ItemCommand;
-		private int _ItemID;
-		private int _ItemOrder;
-		private int _WorkspaceID;
 
 		public string ItemCommand
 		{
@@ -115,7 +78,6 @@ namespace Blitzy.Model
 					return;
 				}
 
-				RaisePropertyChanging( () => ItemCommand );
 				_ItemCommand = value;
 				RaisePropertyChanged( () => ItemCommand );
 			}
@@ -135,7 +97,6 @@ namespace Blitzy.Model
 					return;
 				}
 
-				RaisePropertyChanging( () => ItemID );
 				_ItemID = value;
 				RaisePropertyChanged( () => ItemID );
 			}
@@ -155,7 +116,6 @@ namespace Blitzy.Model
 					return;
 				}
 
-				RaisePropertyChanging( () => ItemOrder );
 				_ItemOrder = value;
 				RaisePropertyChanged( () => ItemOrder );
 			}
@@ -175,16 +135,14 @@ namespace Blitzy.Model
 					return;
 				}
 
-				RaisePropertyChanging( () => WorkspaceID );
 				_WorkspaceID = value;
 				RaisePropertyChanged( () => WorkspaceID );
 			}
 		}
 
-		#endregion Properties
-
-		#region Attributes
-
-		#endregion Attributes
+		private string _ItemCommand;
+		private int _ItemID;
+		private int _ItemOrder;
+		private int _WorkspaceID;
 	}
 }

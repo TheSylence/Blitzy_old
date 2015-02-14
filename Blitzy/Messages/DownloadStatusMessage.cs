@@ -1,6 +1,4 @@
-﻿// $Id$
-
-using GalaSoft.MvvmLight.Messaging;
+﻿using GalaSoft.MvvmLight.Messaging;
 
 namespace Blitzy.Messages
 {
@@ -10,11 +8,6 @@ namespace Blitzy.Messages
 	/// </summary>
 	internal class DownloadStatusMessage : MessageBase
 	{
-		public readonly string DownloadLink;
-		public readonly long DownloadSize;
-		public readonly string MD5;
-		public readonly string TargetPath;
-
 		[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 		public DownloadStatusMessage( string targetPath, string downloadLink, long downloadSize, string md5 )
 		{
@@ -23,5 +16,10 @@ namespace Blitzy.Messages
 			MD5 = md5;
 			DownloadSize = downloadSize;
 		}
+
+		public readonly string DownloadLink;
+		public readonly long DownloadSize;
+		public readonly string MD5;
+		public readonly string TargetPath;
 	}
 }

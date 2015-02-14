@@ -1,13 +1,11 @@
-﻿// $Id$
-
-using System;
+﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows;
 
 namespace Blitzy.ViewServices
 {
 	[ExcludeFromCodeCoverage]
-	public class MessageBoxService : IDialogService
+	public class MessageBoxService : IViewService
 	{
 		public object Show( Window parent, object parameter = null )
 		{

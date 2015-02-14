@@ -1,9 +1,7 @@
-﻿// $Id$
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Data.SQLite;
+using System.Data.Common;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -12,13 +10,13 @@ using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using Blitzy.btbapi;
 using Blitzy.Messages;
 using Blitzy.Model;
 using Blitzy.Plugin;
 using Blitzy.Utility;
 using Blitzy.ViewServices;
-using btbapi;
-using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Threading;
 using CommandManager = System.Windows.Input.CommandManager;
@@ -38,9 +36,8 @@ namespace Blitzy.ViewModel
 
 	internal class SettingsViewModel : ViewModelBaseEx
 	{
-		#region Constructor
-
-		public SettingsViewModel()
+		public SettingsViewModel( DbConnectionFactory factory, ViewServiceManager serviceManager = null, IMessenger messenger = null )
+			: base( factory, serviceManager, messenger )
 		{
 			FoldersToRemove = new List<Folder>();
 			CurrentVersion = Assembly.GetExecutingAssembly().GetName().Version;
@@ -86,21 +83,14 @@ namespace Blitzy.ViewModel
 			}
 		}
 
-		protected override void RegisterMessages()
-		{
-			base.RegisterMessages();
-
-			MessengerInstance.Register<CatalogStatusMessage>( this, OnCatalogStatusUpdate );
-			MessengerInstance.Register<PluginMessage>( this, HandlePluginActions );
-		}
-
-		#endregion Constructor
-
-		#region Methods
-
 		public override void Reset()
 		{
 			base.Reset();
+
+			foreach( IDisposable disp in PluginPages.Select( p => p.DataContext ).OfType<IDisposable>() )
+			{
+				DisposeObject( disp );
+			}
 
 			PluginPages.Clear();
 			foreach( IPlugin plugin in PluginManager.Plugins.Where( p => p.HasSettings ) )
@@ -110,7 +100,11 @@ namespace Blitzy.ViewModel
 			}
 			RaisePropertyChanged( () => PluginPages );
 
-			WorkspaceSettings = new WorkspaceSettingsViewModel( Settings );
+			if( WorkspaceSettings != null )
+			{
+				DisposeObject( WorkspaceSettings );
+			}
+			WorkspaceSettings = ToDispose( new WorkspaceSettingsViewModel( ConnectionFactory, Settings, ServiceManagerInstance ) );
 			RaisePropertyChanged( () => WorkspaceSettings );
 
 			UpdateCheck = Settings.GetValue<bool>( SystemSetting.AutoUpdate );
@@ -146,12 +140,114 @@ namespace Blitzy.ViewModel
 			return page.DataContext as TContext;
 		}
 
+		internal async Task UpdateCheckAsync()
+		{
+			VersionCheckError = false;
+			LatestVersionInfo = await UpdateChecker.Instance.CheckVersion();
+			if( LatestVersionInfo.Status != HttpStatusCode.OK )
+			{
+				LatestVersionInfo = null;
+				VersionCheckError = true;
+			}
+			else if( LatestVersionInfo.LatestVersion.Major == 0 && LatestVersionInfo.LatestVersion.Minor == 0 )
+			{
+				LatestVersionInfo = new VersionInfo( HttpStatusCode.OK, Assembly.GetExecutingAssembly().GetName().Version, null, null, 0, null, null );
+			}
+
+			VersionCheckInProgress = false;
+			DispatcherHelper.CheckBeginInvokeOnUI( CommandManager.InvalidateRequerySuggested );
+		}
+
+		protected override void RegisterMessages()
+		{
+			base.RegisterMessages();
+
+			MessengerInstance.Register<CatalogStatusMessage>( this, OnCatalogStatusUpdate );
+			MessengerInstance.Register<PluginMessage>( this, HandlePluginActions );
+		}
+
+		private bool CanExecuteAddExcludeCommand()
+		{
+			return SelectedFolder != null;
+		}
+
+		private bool CanExecuteAddFolderCommand()
+		{
+			return true;
+		}
+
+		private bool CanExecuteAddRuleCommand()
+		{
+			return SelectedFolder != null;
+		}
+
+		private bool CanExecuteCancelCommand()
+		{
+			return true;
+		}
+
+		private bool CanExecuteDefaultsCommand()
+		{
+			return true;
+		}
+
+		private bool CanExecuteDownloadUpdateCommand()
+		{
+			return LatestVersionInfo != null && LatestVersionInfo.DownloadLink != null;
+		}
+
+		private bool CanExecutePluginsDialogCommand()
+		{
+			return true;
+		}
+
+		private bool CanExecuteRemoveExcludeCommand()
+		{
+			return SelectedFolder != null && SelectedExclude != null;
+		}
+
+		private bool CanExecuteRemoveFolderCommand()
+		{
+			return SelectedFolder != null;
+		}
+
+		private bool CanExecuteRemoveRuleCommand()
+		{
+			return SelectedFolder != null && SelectedRule != null;
+		}
+
+		private bool CanExecuteSaveCommand()
+		{
+			return true;
+		}
+
+		private bool CanExecuteUpdateCatalogCommand()
+		{
+			return Settings != null && Settings.Folders.Count > 0 && CatalogBuilder != null && !CatalogBuilder.IsBuilding;
+		}
+
+		private bool CanExecuteUpdateCheckCommand()
+		{
+			return !VersionCheckInProgress;
+		}
+
+		private bool CanExecuteViewChangelogCommand()
+		{
+			return true;
+		}
+
 		private PluginPage CreatePluginPage( IPlugin plugin )
 		{
 			PluginPage page = new PluginPage();
 			page.Title = plugin.Name;
 			page.Plugin = plugin;
-			page.DataContext = plugin.GetSettingsDataContext();
+
+			IPluginViewModel pluginVM = plugin.GetSettingsDataContext( ServiceManagerInstance );
+			if( pluginVM != null )
+			{
+				pluginVM = ToDispose( pluginVM );
+			}
+			page.DataContext = pluginVM;
 			page.Content = plugin.GetSettingsUI();
 
 			if( page.Content == null )
@@ -171,13 +267,191 @@ namespace Blitzy.ViewModel
 			return page;
 		}
 
+		private void ExecuteAddExcludeCommand()
+		{
+			TextInputParameter args = new TextInputParameter( "Enter the exlude that should be added. Wildcards (*) are supported", "Add exclude" );
+			string exclude = ServiceManagerInstance.Show<TextInputService, string>( args );
+
+			if( exclude != null )
+			{
+				SelectedFolder.Excludes.Add( exclude );
+			}
+		}
+
+		private void ExecuteAddFolderCommand()
+		{
+			string path = ServiceManagerInstance.Show<SelectFolderService, string>();
+			if( path == null )
+			{
+				return;
+			}
+
+			int id = 1;
+			if( Settings.Folders.Count > 0 )
+			{
+				id = Settings.Folders.Max( f => f.ID ) + 1;
+			}
+
+			Settings.Folders.Add( ToDispose( new Folder { Path = path, ID = id } ) );
+		}
+
+		private void ExecuteAddRuleCommand()
+		{
+			TextInputParameter args = new TextInputParameter( "Enter the rule that should be added. Wildcards (*) are supported", "Add rule" );
+			string rule = ServiceManagerInstance.Show<TextInputService, string>( args );
+
+			if( rule != null )
+			{
+				SelectedFolder.Rules.Add( rule );
+			}
+		}
+
+		private void ExecuteCancelCommand()
+		{
+			Close();
+		}
+
+		private void ExecuteDefaultsCommand()
+		{
+			MessageBoxParameter args = new MessageBoxParameter( "Do you really want to revert to the default settings?", "Restore defaults" );
+			MessageBoxResult result = ServiceManagerInstance.Show<MessageBoxService, MessageBoxResult>( args );
+
+			if( result == MessageBoxResult.Yes )
+			{
+				Settings.SetDefaults();
+				foreach( PluginPage page in PluginPages )
+				{
+					if( page.DataContext != null )
+					{
+						page.DataContext.RestoreDefaults();
+					}
+				}
+			}
+		}
+
+		private void ExecuteDownloadUpdateCommand()
+		{
+			string ext = System.IO.Path.GetExtension( LatestVersionInfo.DownloadLink.AbsolutePath ).Substring( 1 );
+			string targetPath = IOUtils.GetTempFileName( ext );
+
+			DownloadServiceParameters args = new DownloadServiceParameters( LatestVersionInfo.DownloadLink, targetPath, LatestVersionInfo.Size, LatestVersionInfo.MD5 );
+			ServiceManagerInstance.Show<DownloadService>( args );
+		}
+
+		private void ExecutePluginsDialogCommand()
+		{
+			ServiceManagerInstance.Show<PluginSettingsService>( PluginManager );
+		}
+
+		private void ExecuteRemoveExcludeCommand()
+		{
+			MessageBoxParameter args = new MessageBoxParameter( "Do you really want to remove the selected exlude?", "Remove exlude" );
+			MessageBoxResult result = ServiceManagerInstance.Show<MessageBoxService, MessageBoxResult>( args );
+
+			if( result == MessageBoxResult.Yes )
+			{
+				SelectedFolder.Excludes.Remove( SelectedExclude );
+				SelectedExclude = null;
+			}
+		}
+
+		private void ExecuteRemoveFolderCommand()
+		{
+			MessageBoxParameter args = new MessageBoxParameter( "Do you really want to remove the selected folder?", "Remove folder" );
+			MessageBoxResult result = ServiceManagerInstance.Show<MessageBoxService, MessageBoxResult>( args );
+
+			if( result == MessageBoxResult.Yes )
+			{
+				FoldersToRemove.Add( SelectedFolder );
+				Settings.Folders.Remove( SelectedFolder );
+				SelectedFolder = null;
+			}
+		}
+
+		private void ExecuteRemoveRuleCommand()
+		{
+			MessageBoxParameter args = new MessageBoxParameter( "Do you really want to remove the selected rule?", "Remove rule" );
+			MessageBoxResult result = ServiceManagerInstance.Show<MessageBoxService, MessageBoxResult>( args );
+
+			if( result == MessageBoxResult.Yes )
+			{
+				SelectedFolder.Rules.Remove( SelectedRule );
+				SelectedRule = null;
+			}
+		}
+
+		private void ExecuteSaveCommand()
+		{
+			using( DbConnection connection = ConnectionFactory.OpenConnection() )
+			{
+				foreach( Folder folder in FoldersToRemove )
+				{
+					folder.Delete( connection );
+				}
+			}
+
+			Settings.SetValue( SystemSetting.AutoUpdate, UpdateCheck );
+			Settings.SetValue( SystemSetting.StayOnTop, StayOnTop );
+			Settings.SetValue( SystemSetting.TrayIcon, TrayIcon );
+			Settings.SetValue( SystemSetting.CloseAfterCommand, CloseOnCommand );
+			Settings.SetValue( SystemSetting.CloseOnEscape, CloseOnEscape );
+			Settings.SetValue( SystemSetting.CloseOnFocusLost, CloseOnFocusLost );
+			Settings.SetValue( SystemSetting.KeepCommand, KeepInput );
+			Settings.SetValue( SystemSetting.AutoCatalogRebuild, RebuildTime );
+			Settings.SetValue( SystemSetting.RebuildCatalogOnChanges, RebuildOnChange );
+			Settings.SetValue( SystemSetting.BackupShortcuts, BackupShortcuts );
+			Settings.SetValue( SystemSetting.HistoryCount, HistoryCount );
+			Settings.SetValue( SystemSetting.Language, SelectedLanguage.IetfLanguageTag );
+			Settings.SetValue( SystemSetting.Shortcut, GetShortcutValue() );
+
+			Settings.Save();
+			foreach( PluginPage page in PluginPages )
+			{
+				try
+				{
+					page.DataContext.Save();
+				}
+				catch( Exception ex )
+				{
+					LogWarning( "Failed to save settings for {0}: {1}", page.Title, ex );
+				}
+			}
+
+			WorkspaceSettings.Save();
+
+			MessengerInstance.Send( new SettingsChangedMessage() );
+		}
+
+		private void ExecuteUpdateCatalogCommand()
+		{
+			MessengerInstance.Send( new InternalCommandMessage( "catalog" ) );
+		}
+
+		[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+		private void ExecuteUpdateCheckCommand()
+		{
+			VersionCheckInProgress = true;
+			Task.Run( async () =>
+			{
+				await UpdateCheckAsync();
+			} );
+		}
+
+		private void ExecuteViewChangelogCommand()
+		{
+			ServiceManagerInstance.Show<ViewChangelogService>( LatestVersionInfo );
+		}
+
 		private int GetItemCount()
 		{
-			using( SQLiteCommand cmd = Settings.Connection.CreateCommand() )
+			using( DbConnection conncetion = ConnectionFactory.OpenConnection() )
 			{
-				cmd.CommandText = "SELECT COUNT(*) FROM files";
+				using( DbCommand cmd = conncetion.CreateCommand() )
+				{
+					cmd.CommandText = "SELECT COUNT(*) FROM files";
 
-				return Convert.ToInt32( cmd.ExecuteScalar() );
+					return Convert.ToInt32( cmd.ExecuteScalar() );
+				}
 			}
 		}
 
@@ -265,25 +539,6 @@ namespace Blitzy.ViewModel
 			RaisePropertyChanged( string.Empty );
 		}
 
-		#endregion Methods
-
-		#region Commands
-
-		private RelayCommand _AddExcludeCommand;
-		private RelayCommand _AddFolderCommand;
-		private RelayCommand _AddRuleCommand;
-		private RelayCommand _CancelCommand;
-		private RelayCommand _DefaultsCommand;
-		private RelayCommand _DownloadUpdateCommand;
-		private RelayCommand _PluginsDialogCommand;
-		private RelayCommand _RemoveExcludeCommand;
-		private RelayCommand _RemoveFolderCommand;
-		private RelayCommand _RemoveRuleCommand;
-		private RelayCommand _SaveCommand;
-		private RelayCommand _UpdateCatalogCommand;
-		private RelayCommand _UpdateCheckCommand;
-		private RelayCommand _ViewChangelogCommand;
-
 		public RelayCommand AddExcludeCommand
 		{
 			get
@@ -311,6 +566,50 @@ namespace Blitzy.ViewModel
 			}
 		}
 
+		public API API { get; private set; }
+
+		public ObservableCollection<CultureInfo> AvailableLanguages { get; private set; }
+
+		public bool BackupShortcuts
+		{
+			get
+			{
+				return _BackupShortcuts;
+			}
+
+			set
+			{
+				if( _BackupShortcuts == value )
+				{
+					return;
+				}
+
+				_BackupShortcuts = value;
+				RaisePropertyChanged( () => BackupShortcuts );
+			}
+		}
+
+		public string BlitzyLicense { get; set; }
+
+		public DateTime BuildDate
+		{
+			get
+			{
+				return _BuildDate;
+			}
+
+			set
+			{
+				if( _BuildDate == value )
+				{
+					return;
+				}
+
+				_BuildDate = value;
+				RaisePropertyChanged( () => BuildDate );
+			}
+		}
+
 		public RelayCommand CancelCommand
 		{
 			get
@@ -319,6 +618,105 @@ namespace Blitzy.ViewModel
 					( _CancelCommand = new RelayCommand( ExecuteCancelCommand, CanExecuteCancelCommand ) );
 			}
 		}
+
+		public CatalogBuilder CatalogBuilder
+		{
+			get
+			{
+				return _CatalogBuilder;
+			}
+
+			set
+			{
+				if( _CatalogBuilder == value )
+				{
+					return;
+				}
+
+				_CatalogBuilder = value;
+				RaisePropertyChanged( () => CatalogBuilder );
+			}
+		}
+
+		public int CatalogItemsProcessed
+		{
+			get
+			{
+				return _CatalogItemsProcessed;
+			}
+
+			set
+			{
+				if( _CatalogItemsProcessed == value )
+				{
+					return;
+				}
+
+				_CatalogItemsProcessed = value;
+				RaisePropertyChanged( () => CatalogItemsProcessed );
+			}
+		}
+
+		public string Changelog { get; set; }
+
+		public bool CloseOnCommand
+		{
+			get
+			{
+				return _CloseOnCommand;
+			}
+
+			set
+			{
+				if( _CloseOnCommand == value )
+				{
+					return;
+				}
+
+				_CloseOnCommand = value;
+				RaisePropertyChanged( () => CloseOnCommand );
+			}
+		}
+
+		public bool CloseOnEscape
+		{
+			get
+			{
+				return _CloseOnEscape;
+			}
+
+			set
+			{
+				if( _CloseOnEscape == value )
+				{
+					return;
+				}
+
+				_CloseOnEscape = value;
+				RaisePropertyChanged( () => CloseOnEscape );
+			}
+		}
+
+		public bool CloseOnFocusLost
+		{
+			get
+			{
+				return _CloseOnFocusLost;
+			}
+
+			set
+			{
+				if( _CloseOnFocusLost == value )
+				{
+					return;
+				}
+
+				_CloseOnFocusLost = value;
+				RaisePropertyChanged( () => CloseOnFocusLost );
+			}
+		}
+
+		public Version CurrentVersion { get; set; }
 
 		public RelayCommand DefaultsCommand
 		{
@@ -338,12 +736,238 @@ namespace Blitzy.ViewModel
 			}
 		}
 
+		public string FilesProcessed
+		{
+			get
+			{
+				return _FilesProcessed;
+			}
+
+			set
+			{
+				if( _FilesProcessed == value )
+				{
+					return;
+				}
+
+				_FilesProcessed = value;
+				RaisePropertyChanged( () => FilesProcessed );
+			}
+		}
+
+		public int HistoryCount
+		{
+			get
+			{
+				return _HistoryCount;
+			}
+
+			set
+			{
+				if( _HistoryCount == value )
+				{
+					return;
+				}
+
+				_HistoryCount = value;
+				RaisePropertyChanged( () => HistoryCount );
+			}
+		}
+
+		public bool IsCatalogBuilding
+		{
+			get
+			{
+				return _IsCatalogBuilding;
+			}
+
+			set
+			{
+				if( _IsCatalogBuilding == value )
+				{
+					return;
+				}
+
+				_IsCatalogBuilding = value;
+				RaisePropertyChanged( () => IsCatalogBuilding );
+			}
+		}
+
+		public bool IsNewerVersionAvailable
+		{
+			get
+			{
+				return _IsNewerVersionAvailable;
+			}
+
+			set
+			{
+				if( _IsNewerVersionAvailable == value )
+				{
+					return;
+				}
+
+				_IsNewerVersionAvailable = value;
+				RaisePropertyChanged( () => IsNewerVersionAvailable );
+			}
+		}
+
+		public int ItemsInCatalog
+		{
+			get
+			{
+				return _ItemsInCatalog;
+			}
+
+			set
+			{
+				if( _ItemsInCatalog == value )
+				{
+					return;
+				}
+
+				_ItemsInCatalog = value;
+				RaisePropertyChanged( () => ItemsInCatalog );
+			}
+		}
+
+		public bool KeepInput
+		{
+			get
+			{
+				return _KeepInput;
+			}
+
+			set
+			{
+				if( _KeepInput == value )
+				{
+					return;
+				}
+
+				_KeepInput = value;
+				RaisePropertyChanged( () => KeepInput );
+			}
+		}
+
+		public List<Key> Keys { get; private set; }
+
+		public DateTime LastCatalogBuild
+		{
+			get
+			{
+				return _LastCatalogBuild;
+			}
+
+			set
+			{
+				if( _LastCatalogBuild == value )
+				{
+					return;
+				}
+
+				_LastCatalogBuild = value;
+				RaisePropertyChanged( () => LastCatalogBuild );
+			}
+		}
+
+		public VersionInfo LatestVersionInfo
+		{
+			get
+			{
+				return _LatestVersionInfo;
+			}
+
+			set
+			{
+				if( _LatestVersionInfo == value )
+				{
+					return;
+				}
+
+				_LatestVersionInfo = value;
+				RaisePropertyChanged( () => LatestVersionInfo );
+
+				if( value != null )
+				{
+					IsNewerVersionAvailable = CurrentVersion < LatestVersionInfo.LatestVersion;
+				}
+				else
+				{
+					IsNewerVersionAvailable = false;
+				}
+			}
+		}
+
+		public string[] Modifiers { get; private set; }
+
+		public bool PeriodicallyRebuild
+		{
+			get
+			{
+				return _PeriodicallyRebuild;
+			}
+
+			set
+			{
+				if( _PeriodicallyRebuild == value )
+				{
+					return;
+				}
+
+				_PeriodicallyRebuild = value;
+				RaisePropertyChanged( () => PeriodicallyRebuild );
+			}
+		}
+
+		public PluginManager PluginManager { get; set; }
+
+		public ObservableCollection<PluginPage> PluginPages { get; private set; }
+
 		public RelayCommand PluginsDialogCommand
 		{
 			get
 			{
 				return _PluginsDialogCommand ??
 					( _PluginsDialogCommand = new RelayCommand( ExecutePluginsDialogCommand, CanExecutePluginsDialogCommand ) );
+			}
+		}
+
+		public bool RebuildOnChange
+		{
+			get
+			{
+				return _RebuildOnChange;
+			}
+
+			set
+			{
+				if( _RebuildOnChange == value )
+				{
+					return;
+				}
+
+				_RebuildOnChange = value;
+				RaisePropertyChanged( () => RebuildOnChange );
+			}
+		}
+
+		public int RebuildTime
+		{
+			get
+			{
+				return _RebuildTime;
+			}
+
+			set
+			{
+				if( _RebuildTime == value )
+				{
+					return;
+				}
+
+				_RebuildTime = value;
+				RaisePropertyChanged( () => RebuildTime );
 			}
 		}
 
@@ -383,780 +1007,6 @@ namespace Blitzy.ViewModel
 			}
 		}
 
-		public RelayCommand UpdateCatalogCommand
-		{
-			get
-			{
-				return _UpdateCatalogCommand ??
-					( _UpdateCatalogCommand = new RelayCommand( ExecuteUpdateCatalogCommand, CanExecuteUpdateCatalogCommand ) );
-			}
-		}
-
-		public RelayCommand UpdateCheckCommand
-		{
-			get
-			{
-				return _UpdateCheckCommand ??
-					( _UpdateCheckCommand = new RelayCommand( ExecuteUpdateCheckCommand, CanExecuteUpdateCheckCommand ) );
-			}
-		}
-
-		public RelayCommand ViewChangelogCommand
-		{
-			get
-			{
-				return _ViewChangelogCommand ??
-					( _ViewChangelogCommand = new RelayCommand( ExecuteViewChangelogCommand, CanExecuteViewChangelogCommand ) );
-			}
-		}
-
-		internal async Task UpdateCheckAsync()
-		{
-			VersionCheckError = false;
-			LatestVersionInfo = await UpdateChecker.Instance.CheckVersion();
-			if( LatestVersionInfo.Status != HttpStatusCode.OK )
-			{
-				LatestVersionInfo = null;
-				VersionCheckError = true;
-			}
-			else if( LatestVersionInfo.LatestVersion.Major == 0 && LatestVersionInfo.LatestVersion.Minor == 0 )
-			{
-				LatestVersionInfo = new VersionInfo( HttpStatusCode.OK, Assembly.GetExecutingAssembly().GetName().Version, null, null, 0, null );
-			}
-
-			VersionCheckInProgress = false;
-			DispatcherHelper.CheckBeginInvokeOnUI( CommandManager.InvalidateRequerySuggested );
-		}
-
-		private bool CanExecuteAddExcludeCommand()
-		{
-			return SelectedFolder != null;
-		}
-
-		private bool CanExecuteAddFolderCommand()
-		{
-			return true;
-		}
-
-		private bool CanExecuteAddRuleCommand()
-		{
-			return SelectedFolder != null;
-		}
-
-		private bool CanExecuteCancelCommand()
-		{
-			return true;
-		}
-
-		private bool CanExecuteDefaultsCommand()
-		{
-			return true;
-		}
-
-		private bool CanExecuteDownloadUpdateCommand()
-		{
-			return LatestVersionInfo != null && LatestVersionInfo.DownloadLink != null;
-		}
-
-		private bool CanExecutePluginsDialogCommand()
-		{
-			return true;
-		}
-
-		private bool CanExecuteRemoveExcludeCommand()
-		{
-			return SelectedFolder != null && SelectedExclude != null;
-		}
-
-		private bool CanExecuteRemoveFolderCommand()
-		{
-			return SelectedFolder != null;
-		}
-
-		private bool CanExecuteRemoveRuleCommand()
-		{
-			return SelectedFolder != null && SelectedRule != null;
-		}
-
-		private bool CanExecuteSaveCommand()
-		{
-			return true;
-		}
-
-		private bool CanExecuteUpdateCatalogCommand()
-		{
-			return Settings != null && Settings.Folders.Count > 0 && CatalogBuilder != null && !CatalogBuilder.IsBuilding;
-		}
-
-		private bool CanExecuteUpdateCheckCommand()
-		{
-			return !VersionCheckInProgress;
-		}
-
-		private bool CanExecuteViewChangelogCommand()
-		{
-			return true;
-		}
-
-		private void ExecuteAddExcludeCommand()
-		{
-			TextInputParameter args = new TextInputParameter( "Enter the exlude that should be added. Wildcards (*) are supported", "Add exclude" );
-			string exclude = DialogServiceManager.Show<TextInputService, string>( args );
-
-			if( exclude != null )
-			{
-				SelectedFolder.Excludes.Add( exclude );
-			}
-		}
-
-		private void ExecuteAddFolderCommand()
-		{
-			string path = DialogServiceManager.Show<SelectFolderService, string>();
-			if( path == null )
-			{
-				return;
-			}
-
-			int id = 1;
-			if( Settings.Folders.Count > 0 )
-			{
-				id = Settings.Folders.Max( f => f.ID ) + 1;
-			}
-
-			Settings.Folders.Add( new Folder { Path = path, ID = id } );
-		}
-
-		private void ExecuteAddRuleCommand()
-		{
-			TextInputParameter args = new TextInputParameter( "Enter the rule that should be added. Wildcards (*) are supported", "Add rule" );
-			string rule = DialogServiceManager.Show<TextInputService, string>( args );
-
-			if( rule != null )
-			{
-				SelectedFolder.Rules.Add( rule );
-			}
-		}
-
-		private void ExecuteCancelCommand()
-		{
-			Close();
-		}
-
-		private void ExecuteDefaultsCommand()
-		{
-			MessageBoxParameter args = new MessageBoxParameter( "Do you really want to revert to the default settings?", "Restore defaults" );
-			MessageBoxResult result = DialogServiceManager.Show<MessageBoxService, MessageBoxResult>( args );
-
-			if( result == MessageBoxResult.Yes )
-			{
-				Settings.SetDefaults();
-				foreach( PluginPage page in PluginPages )
-				{
-					if( page.DataContext != null )
-					{
-						page.DataContext.RestoreDefaults();
-					}
-				}
-			}
-		}
-
-		private void ExecuteDownloadUpdateCommand()
-		{
-			DownloadServiceParameters args = new DownloadServiceParameters( LatestVersionInfo.DownloadLink, "test.exe", 0, "234" );
-			DialogServiceManager.Show<DownloadService>( args );
-		}
-
-		private void ExecutePluginsDialogCommand()
-		{
-			DialogServiceManager.Show<PluginSettingsService>( PluginManager );
-		}
-
-		private void ExecuteRemoveExcludeCommand()
-		{
-			MessageBoxParameter args = new MessageBoxParameter( "Do you really want to remove the selected exlude?", "Remove exlude" );
-			MessageBoxResult result = DialogServiceManager.Show<MessageBoxService, MessageBoxResult>( args );
-
-			if( result == MessageBoxResult.Yes )
-			{
-				SelectedFolder.Excludes.Remove( SelectedExclude );
-				SelectedExclude = null;
-			}
-		}
-
-		private void ExecuteRemoveFolderCommand()
-		{
-			MessageBoxParameter args = new MessageBoxParameter( "Do you really want to remove the selected folder?", "Remove folder" );
-			MessageBoxResult result = DialogServiceManager.Show<MessageBoxService, MessageBoxResult>( args );
-
-			if( result == MessageBoxResult.Yes )
-			{
-				FoldersToRemove.Add( SelectedFolder );
-				Settings.Folders.Remove( SelectedFolder );
-				SelectedFolder = null;
-			}
-		}
-
-		private void ExecuteRemoveRuleCommand()
-		{
-			MessageBoxParameter args = new MessageBoxParameter( "Do you really want to remove the selected rule?", "Remove rule" );
-			MessageBoxResult result = DialogServiceManager.Show<MessageBoxService, MessageBoxResult>( args );
-
-			if( result == MessageBoxResult.Yes )
-			{
-				SelectedFolder.Rules.Remove( SelectedRule );
-				SelectedRule = null;
-			}
-		}
-
-		private void ExecuteSaveCommand()
-		{
-			foreach( Folder folder in FoldersToRemove )
-			{
-				folder.Delete( Settings.Connection );
-			}
-
-			Settings.SetValue( SystemSetting.AutoUpdate, UpdateCheck );
-			Settings.SetValue( SystemSetting.StayOnTop, StayOnTop );
-			Settings.SetValue( SystemSetting.TrayIcon, TrayIcon );
-			Settings.SetValue( SystemSetting.CloseAfterCommand, CloseOnCommand );
-			Settings.SetValue( SystemSetting.CloseOnEscape, CloseOnEscape );
-			Settings.SetValue( SystemSetting.CloseOnFocusLost, CloseOnFocusLost );
-			Settings.SetValue( SystemSetting.KeepCommand, KeepInput );
-			Settings.SetValue( SystemSetting.AutoCatalogRebuild, RebuildTime );
-			Settings.SetValue( SystemSetting.RebuildCatalogOnChanges, RebuildOnChange );
-			Settings.SetValue( SystemSetting.BackupShortcuts, BackupShortcuts );
-			Settings.SetValue( SystemSetting.HistoryCount, HistoryCount );
-			Settings.SetValue( SystemSetting.Language, SelectedLanguage.IetfLanguageTag );
-			Settings.SetValue( SystemSetting.Shortcut, GetShortcutValue() );
-
-			Settings.Save();
-			foreach( PluginPage page in PluginPages )
-			{
-				try
-				{
-					page.DataContext.Save();
-				}
-				catch( Exception ex )
-				{
-					LogWarning( "Failed to save settings for {0}: {1}", page.Title, ex );
-				}
-			}
-
-			WorkspaceSettings.Save();
-
-			MessengerInstance.Send( new SettingsChangedMessage() );
-		}
-
-		private void ExecuteUpdateCatalogCommand()
-		{
-			MessengerInstance.Send( new InternalCommandMessage( "catalog" ) );
-		}
-
-		[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-		private void ExecuteUpdateCheckCommand()
-		{
-			VersionCheckInProgress = true;
-			Task.Run( async () =>
-			{
-				await UpdateCheckAsync();
-			} );
-		}
-
-		private void ExecuteViewChangelogCommand()
-		{
-			DialogServiceManager.Show<ViewChangelogService>( LatestVersionInfo );
-		}
-
-		#endregion Commands
-
-		#region Properties
-
-		#region SettingItems
-
-		private bool _BackupShortcuts;
-		private DateTime _BuildDate;
-		private bool _CloseOnCommand;
-		private bool _CloseOnEscape;
-		private bool _CloseOnFocusLost;
-		private int _HistoryCount;
-		private bool _KeepInput;
-		private bool _PeriodicallyRebuild;
-		private bool _RebuildOnChange;
-		private int _RebuildTime;
-		private bool _StayOnTop;
-		private bool _TrayIcon;
-		private bool _UpdateCheck;
-
-		public bool BackupShortcuts
-		{
-			get
-			{
-				return _BackupShortcuts;
-			}
-
-			set
-			{
-				if( _BackupShortcuts == value )
-				{
-					return;
-				}
-
-				RaisePropertyChanging( () => BackupShortcuts );
-				_BackupShortcuts = value;
-				RaisePropertyChanged( () => BackupShortcuts );
-			}
-		}
-
-		public DateTime BuildDate
-		{
-			get
-			{
-				return _BuildDate;
-			}
-
-			set
-			{
-				if( _BuildDate == value )
-				{
-					return;
-				}
-
-				RaisePropertyChanging( () => BuildDate );
-				_BuildDate = value;
-				RaisePropertyChanged( () => BuildDate );
-			}
-		}
-
-		public bool CloseOnCommand
-		{
-			get
-			{
-				return _CloseOnCommand;
-			}
-
-			set
-			{
-				if( _CloseOnCommand == value )
-				{
-					return;
-				}
-
-				RaisePropertyChanging( () => CloseOnCommand );
-				_CloseOnCommand = value;
-				RaisePropertyChanged( () => CloseOnCommand );
-			}
-		}
-
-		public bool CloseOnEscape
-		{
-			get
-			{
-				return _CloseOnEscape;
-			}
-
-			set
-			{
-				if( _CloseOnEscape == value )
-				{
-					return;
-				}
-
-				RaisePropertyChanging( () => CloseOnEscape );
-				_CloseOnEscape = value;
-				RaisePropertyChanged( () => CloseOnEscape );
-			}
-		}
-
-		public bool CloseOnFocusLost
-		{
-			get
-			{
-				return _CloseOnFocusLost;
-			}
-
-			set
-			{
-				if( _CloseOnFocusLost == value )
-				{
-					return;
-				}
-
-				RaisePropertyChanging( () => CloseOnFocusLost );
-				_CloseOnFocusLost = value;
-				RaisePropertyChanged( () => CloseOnFocusLost );
-			}
-		}
-
-		public int HistoryCount
-		{
-			get
-			{
-				return _HistoryCount;
-			}
-
-			set
-			{
-				if( _HistoryCount == value )
-				{
-					return;
-				}
-
-				RaisePropertyChanging( () => HistoryCount );
-				_HistoryCount = value;
-				RaisePropertyChanged( () => HistoryCount );
-			}
-		}
-
-		public bool KeepInput
-		{
-			get
-			{
-				return _KeepInput;
-			}
-
-			set
-			{
-				if( _KeepInput == value )
-				{
-					return;
-				}
-
-				RaisePropertyChanging( () => KeepInput );
-				_KeepInput = value;
-				RaisePropertyChanged( () => KeepInput );
-			}
-		}
-
-		public bool PeriodicallyRebuild
-		{
-			get
-			{
-				return _PeriodicallyRebuild;
-			}
-
-			set
-			{
-				if( _PeriodicallyRebuild == value )
-				{
-					return;
-				}
-
-				RaisePropertyChanging( () => PeriodicallyRebuild );
-				_PeriodicallyRebuild = value;
-				RaisePropertyChanged( () => PeriodicallyRebuild );
-			}
-		}
-
-		public bool RebuildOnChange
-		{
-			get
-			{
-				return _RebuildOnChange;
-			}
-
-			set
-			{
-				if( _RebuildOnChange == value )
-				{
-					return;
-				}
-
-				RaisePropertyChanging( () => RebuildOnChange );
-				_RebuildOnChange = value;
-				RaisePropertyChanged( () => RebuildOnChange );
-			}
-		}
-
-		public int RebuildTime
-		{
-			get
-			{
-				return _RebuildTime;
-			}
-
-			set
-			{
-				if( _RebuildTime == value )
-				{
-					return;
-				}
-
-				RaisePropertyChanging( () => RebuildTime );
-				_RebuildTime = value;
-				RaisePropertyChanged( () => RebuildTime );
-			}
-		}
-
-		public bool StayOnTop
-		{
-			get
-			{
-				return _StayOnTop;
-			}
-
-			set
-			{
-				if( _StayOnTop == value )
-				{
-					return;
-				}
-
-				RaisePropertyChanging( () => StayOnTop );
-				_StayOnTop = value;
-				RaisePropertyChanged( () => StayOnTop );
-			}
-		}
-
-		public bool TrayIcon
-		{
-			get
-			{
-				return _TrayIcon;
-			}
-
-			set
-			{
-				if( _TrayIcon == value )
-				{
-					return;
-				}
-
-				RaisePropertyChanging( () => TrayIcon );
-				_TrayIcon = value;
-				RaisePropertyChanged( () => TrayIcon );
-			}
-		}
-
-		public bool UpdateCheck
-		{
-			get
-			{
-				return _UpdateCheck;
-			}
-
-			set
-			{
-				if( _UpdateCheck == value )
-				{
-					return;
-				}
-
-				RaisePropertyChanging( () => UpdateCheck );
-				_UpdateCheck = value;
-				RaisePropertyChanged( () => UpdateCheck );
-			}
-		}
-
-		#endregion SettingItems
-
-		private CatalogBuilder _CatalogBuilder;
-		private int _CatalogItemsProcessed;
-		private string _FilesProcessed;
-		private bool _IsCatalogBuilding;
-		private bool _IsNewerVersionAvailable;
-		private int _ItemsInCatalog;
-		private DateTime _LastCatalogBuild;
-		private VersionInfo _LatestVersionInfo;
-		private string _SelectedExclude;
-		private Folder _SelectedFolder;
-		private Key _SelectedKey;
-		private CultureInfo _SelectedLanguage;
-		private string _SelectedModifierKey;
-		private PluginPage _SelectedPluginPage;
-		private string _SelectedRule;
-		private Settings _Settings;
-		private bool _VersionCheckError;
-		private bool _VersionCheckInProgress;
-
-		public API API { get; private set; }
-
-		public PluginDatabase ApiDatabase { get; set; }
-
-		public ObservableCollection<CultureInfo> AvailableLanguages { get; private set; }
-
-		public string BlitzyLicense { get; set; }
-
-		public CatalogBuilder CatalogBuilder
-		{
-			get
-			{
-				return _CatalogBuilder;
-			}
-
-			set
-			{
-				if( _CatalogBuilder == value )
-				{
-					return;
-				}
-
-				RaisePropertyChanging( () => CatalogBuilder );
-				_CatalogBuilder = value;
-				RaisePropertyChanged( () => CatalogBuilder );
-			}
-		}
-
-		public int CatalogItemsProcessed
-		{
-			get
-			{
-				return _CatalogItemsProcessed;
-			}
-
-			set
-			{
-				if( _CatalogItemsProcessed == value )
-				{
-					return;
-				}
-
-				RaisePropertyChanging( () => CatalogItemsProcessed );
-				_CatalogItemsProcessed = value;
-				RaisePropertyChanged( () => CatalogItemsProcessed );
-			}
-		}
-
-		public string Changelog { get; set; }
-
-		public Version CurrentVersion { get; set; }
-
-		public string FilesProcessed
-		{
-			get
-			{
-				return _FilesProcessed;
-			}
-
-			set
-			{
-				if( _FilesProcessed == value )
-				{
-					return;
-				}
-
-				RaisePropertyChanging( () => FilesProcessed );
-				_FilesProcessed = value;
-				RaisePropertyChanged( () => FilesProcessed );
-			}
-		}
-
-		public bool IsCatalogBuilding
-		{
-			get
-			{
-				return _IsCatalogBuilding;
-			}
-
-			set
-			{
-				if( _IsCatalogBuilding == value )
-				{
-					return;
-				}
-
-				RaisePropertyChanging( () => IsCatalogBuilding );
-				_IsCatalogBuilding = value;
-				RaisePropertyChanged( () => IsCatalogBuilding );
-			}
-		}
-
-		public bool IsNewerVersionAvailable
-		{
-			get
-			{
-				return _IsNewerVersionAvailable;
-			}
-
-			set
-			{
-				if( _IsNewerVersionAvailable == value )
-				{
-					return;
-				}
-
-				RaisePropertyChanging( () => IsNewerVersionAvailable );
-				_IsNewerVersionAvailable = value;
-				RaisePropertyChanged( () => IsNewerVersionAvailable );
-			}
-		}
-
-		public int ItemsInCatalog
-		{
-			get
-			{
-				return _ItemsInCatalog;
-			}
-
-			set
-			{
-				if( _ItemsInCatalog == value )
-				{
-					return;
-				}
-
-				RaisePropertyChanging( () => ItemsInCatalog );
-				_ItemsInCatalog = value;
-				RaisePropertyChanged( () => ItemsInCatalog );
-			}
-		}
-
-		public List<Key> Keys { get; private set; }
-
-		public DateTime LastCatalogBuild
-		{
-			get
-			{
-				return _LastCatalogBuild;
-			}
-
-			set
-			{
-				if( _LastCatalogBuild == value )
-				{
-					return;
-				}
-
-				RaisePropertyChanging( () => LastCatalogBuild );
-				_LastCatalogBuild = value;
-				RaisePropertyChanged( () => LastCatalogBuild );
-			}
-		}
-
-		public VersionInfo LatestVersionInfo
-		{
-			get
-			{
-				return _LatestVersionInfo;
-			}
-
-			set
-			{
-				if( _LatestVersionInfo == value )
-				{
-					return;
-				}
-
-				RaisePropertyChanging( () => LatestVersionInfo );
-				_LatestVersionInfo = value;
-				RaisePropertyChanged( () => LatestVersionInfo );
-
-				if( value != null )
-				{
-					IsNewerVersionAvailable = CurrentVersion < LatestVersionInfo.LatestVersion;
-				}
-				else
-				{
-					IsNewerVersionAvailable = false;
-				}
-			}
-		}
-
-		public string[] Modifiers { get; private set; }
-
-		public PluginManager PluginManager { get; set; }
-
-		public ObservableCollection<PluginPage> PluginPages { get; private set; }
-
 		public string SelectedExclude
 		{
 			get
@@ -1171,7 +1021,6 @@ namespace Blitzy.ViewModel
 					return;
 				}
 
-				RaisePropertyChanging( () => SelectedExclude );
 				_SelectedExclude = value;
 				RaisePropertyChanged( () => SelectedExclude );
 			}
@@ -1191,7 +1040,6 @@ namespace Blitzy.ViewModel
 					return;
 				}
 
-				RaisePropertyChanging( () => SelectedFolder );
 				_SelectedFolder = value;
 				RaisePropertyChanged( () => SelectedFolder );
 			}
@@ -1211,7 +1059,6 @@ namespace Blitzy.ViewModel
 					return;
 				}
 
-				RaisePropertyChanging( () => SelectedKey );
 				_SelectedKey = value;
 				RaisePropertyChanged( () => SelectedKey );
 			}
@@ -1231,7 +1078,6 @@ namespace Blitzy.ViewModel
 					return;
 				}
 
-				RaisePropertyChanging( () => SelectedLanguage );
 				_SelectedLanguage = value;
 				SetLanguage( value );
 				RaisePropertyChanged( () => SelectedLanguage );
@@ -1252,7 +1098,6 @@ namespace Blitzy.ViewModel
 					return;
 				}
 
-				RaisePropertyChanging( () => SelectedModifierKey );
 				_SelectedModifierKey = value;
 				RaisePropertyChanged( () => SelectedModifierKey );
 			}
@@ -1272,7 +1117,6 @@ namespace Blitzy.ViewModel
 					return;
 				}
 
-				RaisePropertyChanging( () => SelectedPluginPage );
 				_SelectedPluginPage = value;
 				RaisePropertyChanged( () => SelectedPluginPage );
 			}
@@ -1292,7 +1136,6 @@ namespace Blitzy.ViewModel
 					return;
 				}
 
-				RaisePropertyChanging( () => SelectedRule );
 				_SelectedRule = value;
 				RaisePropertyChanged( () => SelectedRule );
 			}
@@ -1312,9 +1155,83 @@ namespace Blitzy.ViewModel
 					return;
 				}
 
-				RaisePropertyChanging( () => Settings );
 				_Settings = value;
 				RaisePropertyChanged( () => Settings );
+			}
+		}
+
+		public bool StayOnTop
+		{
+			get
+			{
+				return _StayOnTop;
+			}
+
+			set
+			{
+				if( _StayOnTop == value )
+				{
+					return;
+				}
+
+				_StayOnTop = value;
+				RaisePropertyChanged( () => StayOnTop );
+			}
+		}
+
+		public bool TrayIcon
+		{
+			get
+			{
+				return _TrayIcon;
+			}
+
+			set
+			{
+				if( _TrayIcon == value )
+				{
+					return;
+				}
+
+				_TrayIcon = value;
+				RaisePropertyChanged( () => TrayIcon );
+			}
+		}
+
+		public RelayCommand UpdateCatalogCommand
+		{
+			get
+			{
+				return _UpdateCatalogCommand ??
+					( _UpdateCatalogCommand = new RelayCommand( ExecuteUpdateCatalogCommand, CanExecuteUpdateCatalogCommand ) );
+			}
+		}
+
+		public bool UpdateCheck
+		{
+			get
+			{
+				return _UpdateCheck;
+			}
+
+			set
+			{
+				if( _UpdateCheck == value )
+				{
+					return;
+				}
+
+				_UpdateCheck = value;
+				RaisePropertyChanged( () => UpdateCheck );
+			}
+		}
+
+		public RelayCommand UpdateCheckCommand
+		{
+			get
+			{
+				return _UpdateCheckCommand ??
+					( _UpdateCheckCommand = new RelayCommand( ExecuteUpdateCheckCommand, CanExecuteUpdateCheckCommand ) );
 			}
 		}
 
@@ -1332,7 +1249,6 @@ namespace Blitzy.ViewModel
 					return;
 				}
 
-				RaisePropertyChanging( () => VersionCheckError );
 				_VersionCheckError = value;
 				RaisePropertyChanged( () => VersionCheckError );
 			}
@@ -1352,20 +1268,67 @@ namespace Blitzy.ViewModel
 					return;
 				}
 
-				RaisePropertyChanging( () => VersionCheckInProgress );
 				_VersionCheckInProgress = value;
 				RaisePropertyChanged( () => VersionCheckInProgress );
 			}
 		}
 
+		public RelayCommand ViewChangelogCommand
+		{
+			get
+			{
+				return _ViewChangelogCommand ??
+					( _ViewChangelogCommand = new RelayCommand( ExecuteViewChangelogCommand, CanExecuteViewChangelogCommand ) );
+			}
+		}
+
 		public WorkspaceSettingsViewModel WorkspaceSettings { get; private set; }
 
-		#endregion Properties
-
-		#region Attributes
-
 		private readonly List<Folder> FoldersToRemove;
-
-		#endregion Attributes
+		private RelayCommand _AddExcludeCommand;
+		private RelayCommand _AddFolderCommand;
+		private RelayCommand _AddRuleCommand;
+		private bool _BackupShortcuts;
+		private DateTime _BuildDate;
+		private RelayCommand _CancelCommand;
+		private CatalogBuilder _CatalogBuilder;
+		private int _CatalogItemsProcessed;
+		private bool _CloseOnCommand;
+		private bool _CloseOnEscape;
+		private bool _CloseOnFocusLost;
+		private RelayCommand _DefaultsCommand;
+		private RelayCommand _DownloadUpdateCommand;
+		private string _FilesProcessed;
+		private int _HistoryCount;
+		private bool _IsCatalogBuilding;
+		private bool _IsNewerVersionAvailable;
+		private int _ItemsInCatalog;
+		private bool _KeepInput;
+		private DateTime _LastCatalogBuild;
+		private VersionInfo _LatestVersionInfo;
+		private bool _PeriodicallyRebuild;
+		private RelayCommand _PluginsDialogCommand;
+		private bool _RebuildOnChange;
+		private int _RebuildTime;
+		private RelayCommand _RemoveExcludeCommand;
+		private RelayCommand _RemoveFolderCommand;
+		private RelayCommand _RemoveRuleCommand;
+		private RelayCommand _SaveCommand;
+		private string _SelectedExclude;
+		private Folder _SelectedFolder;
+		private Key _SelectedKey;
+		private CultureInfo _SelectedLanguage;
+		private string _SelectedModifierKey;
+		private PluginPage _SelectedPluginPage;
+		private string _SelectedRule;
+		private Settings _Settings;
+		private bool _StayOnTop;
+		private bool _TrayIcon;
+		private RelayCommand _UpdateCatalogCommand;
+		private bool _UpdateCheck;
+		private RelayCommand _UpdateCheckCommand;
+		private bool _VersionCheckError;
+		private bool _VersionCheckInProgress;
+		private RelayCommand _ViewChangelogCommand;
 	}
 }

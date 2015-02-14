@@ -1,15 +1,11 @@
-﻿// $Id$
-
-using System.Windows;
+﻿using System.Windows;
 using Blitzy.ViewServices;
 
 namespace Blitzy.Tests.Mocks.Services
 {
 	[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-	internal class MessageBoxServiceMock : IDialogService
+	internal class MessageBoxServiceMock : IViewService
 	{
-		internal MessageBoxResult Result;
-
 		public MessageBoxServiceMock( MessageBoxResult result )
 		{
 			Result = result;
@@ -19,5 +15,7 @@ namespace Blitzy.Tests.Mocks.Services
 		{
 			return Result;
 		}
+
+		internal MessageBoxResult Result;
 	}
 }

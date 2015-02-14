@@ -1,28 +1,19 @@
 ﻿using Blitzy.Model;
+using Blitzy.Plugin;
+using Blitzy.ViewServices;
 
 namespace Blitzy.ViewModel
 {
 	internal abstract class SettingsViewModelBase : ViewModelBaseEx
 	{
-		#region Constructor
-
-		protected SettingsViewModelBase( Settings settings )
+		protected SettingsViewModelBase( Settings settings, DbConnectionFactory connectionFactory, IViewServiceManager serviceManager = null )
+			: base( connectionFactory, serviceManager as ViewServiceManager )
 		{
 			Settings = settings;
 		}
 
-		#endregion Constructor
-
-		#region Methods
-
 		public abstract void Save();
 
-		#endregion Methods
-
-		#region Properties
-
 		protected Settings Settings { get; private set; }
-
-		#endregion Properties
 	}
 }

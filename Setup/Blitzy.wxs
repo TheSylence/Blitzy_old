@@ -45,9 +45,6 @@
 						<File Id="Blitzy.exe" Name="Blitzy.exe" DiskId="1" Source="$(var.Blitzy.TargetDir)" Checksum="yes" />
 						<RemoveFile On="uninstall" Id="Blitzy.exe" Name="Blitzy.exe" />
 
-						<File Id="btbapi.dll" Name="btbapi.dll" DiskId="1" Source="$(var.Blitzy.TargetDir)" Checksum="yes" />
-						<RemoveFile On="uninstall" Id="btbapi.dll" Name="btbapi.dll" />
-
 						<File Id="Blitzy.exe.config" Name="Blitzy.exe.config" DiskId="1" Source="$(var.Blitzy.TargetDir)" Checksum="yes" />
 						<RemoveFile On="uninstall" Id="Blitzy.exe.config" Name="Blitzy.exe.config" />
 

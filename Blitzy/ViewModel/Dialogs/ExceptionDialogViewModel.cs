@@ -1,50 +1,22 @@
-﻿// $Id$
-
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
+using Blitzy.btbapi;
 using Blitzy.Utility;
 using Blitzy.ViewServices;
-using btbapi;
-using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.CommandWpf;
 
 namespace Blitzy.ViewModel.Dialogs
 {
 	internal class ExceptionDialogViewModel : ViewModelBaseEx
 	{
-		#region Constructor
-
 		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors" )]
-		public ExceptionDialogViewModel( Exception ex, StackTrace trace )
+		public ExceptionDialogViewModel( Exception ex, StackTrace trace, ViewServiceManager serviceManager = null )
+			: base( null, serviceManager )
 		{
 			ErrorReport = new ErrorReport( ex, trace );
-		}
-
-		#endregion Constructor
-
-		#region Commands
-
-		private RelayCommand _ExitCommand;
-		private RelayCommand _SendCommand;
-
-		public RelayCommand ExitCommand
-		{
-			get
-			{
-				return _ExitCommand ??
-					( _ExitCommand = new RelayCommand( ExecuteExitCommand, CanExecuteExitCommand ) );
-			}
-		}
-
-		public RelayCommand SendCommand
-		{
-			get
-			{
-				return _SendCommand ??
-					( _SendCommand = new RelayCommand( ExecuteSendCommand, CanExecuteSendCommand ) );
-			}
 		}
 
 		private bool CanExecuteExitCommand()
@@ -83,24 +55,19 @@ namespace Blitzy.ViewModel.Dialogs
 			} ).Wait();
 			if( result.Status != System.Net.HttpStatusCode.OK )
 			{
-				DialogServiceManager.Show<MessageBoxService>( new MessageBoxParameter( "ErrorReportError".Localize(),
+				LogWarning( "Failed to send error report: {0}", result.RawResponse );
+
+				ServiceManagerInstance.Show<MessageBoxService>( new MessageBoxParameter( "ErrorReportError".Localize(),
 					"Error".Localize(), MessageBoxButton.OK, MessageBoxImage.Error ) );
 			}
 			else
 			{
-				DialogServiceManager.Show<MessageBoxService>( new MessageBoxParameter( "ErrorReportSend".Localize(),
-					"Error".Localize(), MessageBoxButton.OK, MessageBoxImage.Information ) );
+				ServiceManagerInstance.Show<MessageBoxService>( new MessageBoxParameter( "ErrorReportSend".Localize(),
+					"Success".Localize(), MessageBoxButton.OK, MessageBoxImage.Information ) );
 			}
 
 			CloseDialog();
 		}
-
-		#endregion Commands
-
-		#region Properties
-
-		private ErrorReport _ErrorReport;
-		private string _ErrorReportText;
 
 		public ErrorReport ErrorReport
 		{
@@ -116,7 +83,6 @@ namespace Blitzy.ViewModel.Dialogs
 					return;
 				}
 
-				RaisePropertyChanging( () => ErrorReport );
 				_ErrorReport = value;
 				RaisePropertyChanged( () => ErrorReport );
 
@@ -141,9 +107,26 @@ namespace Blitzy.ViewModel.Dialogs
 					return;
 				}
 
-				RaisePropertyChanging( () => ErrorReportText );
 				_ErrorReportText = value;
 				RaisePropertyChanged( () => ErrorReportText );
+			}
+		}
+
+		public RelayCommand ExitCommand
+		{
+			get
+			{
+				return _ExitCommand ??
+					( _ExitCommand = new RelayCommand( ExecuteExitCommand, CanExecuteExitCommand ) );
+			}
+		}
+
+		public RelayCommand SendCommand
+		{
+			get
+			{
+				return _SendCommand ??
+					( _SendCommand = new RelayCommand( ExecuteSendCommand, CanExecuteSendCommand ) );
 			}
 		}
 
@@ -153,17 +136,16 @@ namespace Blitzy.ViewModel.Dialogs
 			{
 				if( !RuntimeConfig.Tests )
 				{
-#if DEBUG
-					return new API( APIEndPoint.Localhost );
-#else
-					return new btbapi.API( APIEndPoint.Default );
-#endif
+					return new API( APIEndPoint.Default );
 				}
 
 				return new API( APIEndPoint.Localhost );
 			}
 		}
 
-		#endregion Properties
+		private ErrorReport _ErrorReport;
+		private string _ErrorReportText;
+		private RelayCommand _ExitCommand;
+		private RelayCommand _SendCommand;
 	}
 }

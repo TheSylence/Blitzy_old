@@ -1,32 +1,22 @@
-﻿// $Id$
-
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
-using System.Data.SQLite;
+using System.Data.Common;
+using Blitzy.Plugin;
 
 namespace Blitzy.Model
 {
 	internal class Workspace : ModelBase
 	{
-		#region Constructor
-
 		public Workspace()
 		{
 			Items = new ObservableCollection<WorkspaceItem>();
 		}
 
-		#endregion Constructor
-
-		#region Methods
-
-		public override void Delete( SQLiteConnection connection )
+		public override void Delete( DbConnection connection )
 		{
-			using( SQLiteCommand cmd = connection.CreateCommand() )
+			using( DbCommand cmd = connection.CreateCommand() )
 			{
-				SQLiteParameter param = cmd.CreateParameter();
-				param.ParameterName = "WorkspaceID";
-				param.Value = ID;
-				cmd.Parameters.Add( param );
+				cmd.AddParameter( "WorkspaceID", ID );
 
 				cmd.CommandText = "DELETE FROM workspaces WHERE WorkspaceID = @WorkspaceID;";
 				cmd.Prepare();
@@ -34,33 +24,27 @@ namespace Blitzy.Model
 				cmd.ExecuteNonQuery();
 			}
 
-			using( SQLiteCommand cmd = connection.CreateCommand() )
+			using( DbCommand cmd = connection.CreateCommand() )
 			{
-				SQLiteParameter param = cmd.CreateParameter();
-				param.ParameterName = "WorkspaceID";
-				param.Value = ID;
-				cmd.Parameters.Add( param );
+				cmd.AddParameter( "WorkspaceID", ID );
 
 				cmd.CommandText = "DELETE FROM workspace_items WHERE WorkspaceID = @WorkspaceID";
 				cmd.ExecuteNonQuery();
 			}
 		}
 
-		public override void Load( SQLiteConnection connection )
+		public override void Load( DbConnection connection )
 		{
 			Items.Clear();
 
-			using( SQLiteCommand cmd = connection.CreateCommand() )
+			using( DbCommand cmd = connection.CreateCommand() )
 			{
-				SQLiteParameter param = cmd.CreateParameter();
-				param.ParameterName = "WorkspaceID";
-				param.Value = ID;
-				cmd.Parameters.Add( param );
+				cmd.AddParameter( "WorkspaceID", ID );
 
 				cmd.CommandText = "SELECT Name FROM workspaces WHERE WorkspaceID = @WorkspaceID;";
 				cmd.Prepare();
 
-				using( SQLiteDataReader reader = cmd.ExecuteReader() )
+				using( DbDataReader reader = cmd.ExecuteReader() )
 				{
 					if( !reader.Read() )
 					{
@@ -71,20 +55,17 @@ namespace Blitzy.Model
 				}
 			}
 
-			using( SQLiteCommand cmd = connection.CreateCommand() )
+			using( DbCommand cmd = connection.CreateCommand() )
 			{
-				SQLiteParameter param = cmd.CreateParameter();
-				param.ParameterName = "WorkspaceID";
-				param.Value = ID;
-				cmd.Parameters.Add( param );
+				cmd.AddParameter( "WorkspaceID", ID );
 				cmd.CommandText = "SELECT ItemID FROM workspace_items WHERE WorkspaceID = @WorkspaceID ORDER BY ItemOrder";
 				cmd.Prepare();
 
-				using( SQLiteDataReader reader = cmd.ExecuteReader() )
+				using( DbDataReader reader = cmd.ExecuteReader() )
 				{
 					while( reader.Read() )
 					{
-						WorkspaceItem item = new WorkspaceItem { ItemID = reader.GetInt32( 0 ) };
+						WorkspaceItem item = ToDispose( new WorkspaceItem { ItemID = reader.GetInt32( 0 ) } );
 
 						item.Load( connection );
 						Items.Add( item );
@@ -95,19 +76,12 @@ namespace Blitzy.Model
 			ExistsInDatabase = true;
 		}
 
-		public override void Save( SQLiteConnection connection )
+		public override void Save( DbConnection connection )
 		{
-			using( SQLiteCommand cmd = connection.CreateCommand() )
+			using( DbCommand cmd = connection.CreateCommand() )
 			{
-				SQLiteParameter param = cmd.CreateParameter();
-				param.ParameterName = "WorkspaceID";
-				param.Value = ID;
-				cmd.Parameters.Add( param );
-
-				param = cmd.CreateParameter();
-				param.ParameterName = "Name";
-				param.Value = Name;
-				cmd.Parameters.Add( param );
+				cmd.AddParameter( "WorkspaceID", ID );
+				cmd.AddParameter( "Name", Name );
 
 				cmd.CommandText = ExistsInDatabase ?
 					"UPDATE workspaces SET Name = @Name WHERE WorkspaceID = @WorkspaceID" :
@@ -119,12 +93,9 @@ namespace Blitzy.Model
 
 			if( ExistsInDatabase )
 			{
-				using( SQLiteCommand cmd = connection.CreateCommand() )
+				using( DbCommand cmd = connection.CreateCommand() )
 				{
-					SQLiteParameter param = cmd.CreateParameter();
-					param.ParameterName = "WorkspaceID";
-					param.Value = ID;
-					cmd.Parameters.Add( param );
+					cmd.AddParameter( "WorkspaceID", ID );
 
 					cmd.CommandText = "DELETE FROM workspace_items WHERE WorkspaceID = @WorkspaceID";
 					cmd.ExecuteNonQuery();
@@ -140,14 +111,6 @@ namespace Blitzy.Model
 			ExistsInDatabase = true;
 		}
 
-		#endregion Methods
-
-		#region Properties
-
-		private int _ID;
-
-		private string _Name;
-
 		public int ID
 		{
 			get
@@ -162,7 +125,6 @@ namespace Blitzy.Model
 					return;
 				}
 
-				RaisePropertyChanging( () => ID );
 				_ID = value;
 				RaisePropertyChanged( () => ID );
 			}
@@ -184,12 +146,13 @@ namespace Blitzy.Model
 					return;
 				}
 
-				RaisePropertyChanging( () => Name );
 				_Name = value;
 				RaisePropertyChanged( () => Name );
 			}
 		}
 
-		#endregion Properties
+		private int _ID;
+
+		private string _Name;
 	}
 }

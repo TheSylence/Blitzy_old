@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Weavers>
+	<Costura>
+		<Unmanaged32Assemblies>
+			x86/SQLite.Interop
+		</Unmanaged32Assemblies>
+		<Unmanaged64Assemblies>
+			x64/SQLite.Interop
+		</Unmanaged64Assemblies>
+		<ExcludeAssemblies>
+			Xceed.Wpf.AvalonDock
+			Xceed.Wpf.AvalonDock.Themes.Aero
+			Xceed.Wpf.AvalonDock.Themes.Metro
+			Xceed.Wpf.AvalonDock.Themes.VS2010
+			Xceed.Wpf.DataGrid
+			Xceed.Wpf.AvalonDock.resources
+		</ExcludeAssemblies>
+	</Costura>
+	<AsyncErrorHandler />
+	<Stamp />
+</Weavers>

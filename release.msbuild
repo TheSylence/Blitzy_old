@@ -80,8 +80,6 @@ File.WriteAllText(Path, content);
 	<Target Name="Package">
 		<CallTarget Targets="RunTests" />
 		<CallTarget Targets="DeleteTempFiles" />
-
-		<!--<CallTarget Targets="SmartAssembly" />-->
 	</Target>
 
 	<Target Name="Installer">

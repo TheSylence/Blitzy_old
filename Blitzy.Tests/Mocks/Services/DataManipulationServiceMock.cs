@@ -1,6 +1,4 @@
-﻿// $Id$
-
-using System;
+﻿using System;
 using Blitzy.Model;
 using Blitzy.ViewServices;
 
@@ -9,14 +7,6 @@ namespace Blitzy.Tests.Mocks.Services
 	[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	internal class DataManipulationServiceMock<T> : IDataManipulationService where T : ModelBase
 	{
-		public Func<T> CreateFunc;
-		public Func<T, bool> EditFunc;
-
-		public Type ModelType
-		{
-			get { return typeof( T ); }
-		}
-
 		public object Create( System.Windows.Window parent )
 		{
 			if( CreateFunc != null )
@@ -36,5 +26,13 @@ namespace Blitzy.Tests.Mocks.Services
 
 			return EditFunc( obj as T );
 		}
+
+		public Type ModelType
+		{
+			get { return typeof( T ); }
+		}
+
+		public Func<T> CreateFunc;
+		public Func<T, bool> EditFunc;
 	}
 }

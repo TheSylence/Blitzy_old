@@ -1,18 +1,10 @@
-﻿// $Id$
-
-using System;
+﻿using System;
 using System.IO;
 
 namespace Blitzy.Model
 {
 	internal static class ShellLinkHelper
 	{
-		private static string windir, sys32, sysNative;
-
-		private static string windirenv, sys32env, sysNativeenv;
-
-		private static string x86, x64;
-
 		public static string ResolveX64Path( string value )
 		{
 			if( Environment.Is64BitOperatingSystem )
@@ -76,5 +68,11 @@ namespace Blitzy.Model
 
 			return value;
 		}
+
+		private static string windir, sys32, sysNative;
+
+		private static string windirenv, sys32env, sysNativeenv;
+
+		private static string x86, x64;
 	}
 }

@@ -1,28 +1,34 @@
-﻿// $Id$
-
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Threading.Tasks;
+using Blitzy.ViewServices;
 using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Messaging;
 using log4net;
 
 namespace Blitzy.ViewModel
 {
 	public class ViewModelBaseEx : ViewModelBase, IRequestCloseViewModel, IDisposable
 	{
-		#region Constructor
-
-		public ViewModelBaseEx()
+		public ViewModelBaseEx( DbConnectionFactory connectionFactory, ViewServiceManager serviceManager = null, IMessenger messenger = null )
 		{
+			StoreCreationStack();
+
+			if( messenger != null )
+			{
+				MessengerInstance = messenger;
+			}
+
+			ServiceManagerInstance = serviceManager ?? ViewServiceManager.Default;
+			ConnectionFactory = connectionFactory;
+
 			Log = LogManager.GetLogger( GetType() );
 			IsDisposed = false;
 			ObjectsToDispose = new Stack<IDisposable>();
 		}
-
-		#endregion Constructor
-
-		#region Disposable
 
 		/// <summary>
 		/// Releases unmanaged resources and performs other cleanup operations before the
@@ -31,12 +37,16 @@ namespace Blitzy.ViewModel
 		[SuppressMessage( "Microsoft.Design", "CA1063:ImplementIDisposableCorrectly", Justification = "Only for debugging purposes" )]
 		~ViewModelBaseEx()
 		{
-#if DEBUG
-			LogDebug( "Finalizer called on object: {0}", this );
-#endif
+			LogFinalizer();
 
 			Dispose( false );
 		}
+
+		public event EventHandler<CloseViewEventArgs> RequestClose;
+
+		public event EventHandler<EventArgs> RequestHide;
+
+		public event EventHandler<EventArgs> RequestShow;
 
 		/// <summary>
 		/// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
@@ -45,6 +55,23 @@ namespace Blitzy.ViewModel
 		{
 			Dispose( true );
 			GC.SuppressFinalize( this );
+		}
+
+		public virtual void Reset()
+		{
+			if( !MessagesRegistered )
+			{
+				RegisterMessages();
+				MessagesRegistered = true;
+			}
+		}
+
+		protected void Close( bool? result = null )
+		{
+			if( RequestClose != null )
+			{
+				RequestClose( this, new CloseViewEventArgs( result ) );
+			}
 		}
 
 		/// <summary>
@@ -64,73 +91,6 @@ namespace Blitzy.ViewModel
 				}
 
 				IsDisposed = true;
-			}
-		}
-
-		#endregion Disposable
-
-		#region Methods
-
-		#region Logging
-
-		protected void LogDebug( string format, params object[] args )
-		{
-#if DEBUG
-			if( Log.IsDebugEnabled )
-			{
-				Log.DebugFormat( CultureInfo.InvariantCulture, format, args );
-			}
-#endif
-		}
-
-		protected void LogError( string format, params object[] args )
-		{
-			if( Log.IsErrorEnabled )
-			{
-				Log.ErrorFormat( CultureInfo.InvariantCulture, format, args );
-			}
-		}
-
-		protected void LogFatal( string format, params object[] args )
-		{
-			if( Log.IsFatalEnabled )
-			{
-				Log.FatalFormat( CultureInfo.InvariantCulture, format, args );
-			}
-		}
-
-		protected void LogInfo( string format, params object[] args )
-		{
-			if( Log.IsInfoEnabled )
-			{
-				Log.InfoFormat( CultureInfo.InvariantCulture, format, args );
-			}
-		}
-
-		protected void LogWarning( string format, params object[] args )
-		{
-			if( Log.IsWarnEnabled )
-			{
-				Log.WarnFormat( CultureInfo.InvariantCulture, format, args );
-			}
-		}
-
-		#endregion Logging
-
-		public virtual void Reset()
-		{
-			if( !MessagesRegistered )
-			{
-				RegisterMessages();
-				MessagesRegistered = true;
-			}
-		}
-
-		protected void Close( bool? result = null )
-		{
-			if( RequestClose != null )
-			{
-				RequestClose( this, new CloseViewEventArgs( result ) );
 			}
 		}
 
@@ -165,6 +125,47 @@ namespace Blitzy.ViewModel
 			}
 		}
 
+		[Conditional( "DEBUG" )]
+		protected void LogDebug( string format, params object[] args )
+		{
+			if( Log.IsDebugEnabled )
+			{
+				Log.DebugFormat( CultureInfo.InvariantCulture, format, args );
+			}
+		}
+
+		protected void LogError( string format, params object[] args )
+		{
+			if( Log.IsErrorEnabled )
+			{
+				Log.ErrorFormat( CultureInfo.InvariantCulture, format, args );
+			}
+		}
+
+		protected void LogFatal( string format, params object[] args )
+		{
+			if( Log.IsFatalEnabled )
+			{
+				Log.FatalFormat( CultureInfo.InvariantCulture, format, args );
+			}
+		}
+
+		protected void LogInfo( string format, params object[] args )
+		{
+			if( Log.IsInfoEnabled )
+			{
+				Log.InfoFormat( CultureInfo.InvariantCulture, format, args );
+			}
+		}
+
+		protected void LogWarning( string format, params object[] args )
+		{
+			if( Log.IsWarnEnabled )
+			{
+				Log.WarnFormat( CultureInfo.InvariantCulture, format, args );
+			}
+		}
+
 		protected virtual void RegisterMessages()
 		{
 		}
@@ -185,13 +186,26 @@ namespace Blitzy.ViewModel
 		/// <returns>The added objects</returns>
 		protected T ToDispose<T>( T obj ) where T : IDisposable
 		{
+			if( obj == null )
+			{
+				throw new ArgumentNullException( "obj" );
+			}
+
 			ObjectsToDispose.Push( obj );
 			return obj;
 		}
 
-		#endregion Methods
+		[Conditional( "DEBUG" )]
+		private void LogFinalizer()
+		{
+			LogDebug( "Finalizer called on object: {0}", this );
+		}
 
-		#region Properties
+		[Conditional( "DEBUG" )]
+		private void StoreCreationStack()
+		{
+			CreationStack = new StackTrace( true );
+		}
 
 		/// <summary>
 		/// Gets a value indicating whether this instance is disposed.
@@ -201,24 +215,24 @@ namespace Blitzy.ViewModel
 		/// </value>
 		public bool IsDisposed { get; protected set; }
 
-		#endregion Properties
+		public TaskScheduler TaskScheduler
+		{
+			get { return _TaskScheduler ?? TaskScheduler.Default; }
+			set { _TaskScheduler = value; }
+		}
 
-		#region Attributes
+		protected DbConnectionFactory ConnectionFactory { get; private set; }
+
+		protected ViewServiceManager ServiceManagerInstance { get; private set; }
 
 		internal Stack<IDisposable> ObjectsToDispose;
+
 		protected ILog Log;
+
+		// For testing purposes
+		private TaskScheduler _TaskScheduler;
+
+		private StackTrace CreationStack;
 		private bool MessagesRegistered;
-
-		#endregion Attributes
-
-		#region Events
-
-		public event EventHandler<CloseViewEventArgs> RequestClose;
-
-		public event EventHandler<EventArgs> RequestHide;
-
-		public event EventHandler<EventArgs> RequestShow;
-
-		#endregion Events
 	}
 }

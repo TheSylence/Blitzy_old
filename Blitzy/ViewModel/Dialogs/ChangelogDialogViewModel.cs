@@ -1,27 +1,18 @@
-﻿// $Id$
-
-using System;
+﻿using System;
 using System.Linq;
 using System.Text;
+using Blitzy.btbapi;
 using Blitzy.Model;
-using btbapi;
-using GalaSoft.MvvmLight.Command;
+using Blitzy.ViewServices;
+using GalaSoft.MvvmLight.CommandWpf;
 
 namespace Blitzy.ViewModel.Dialogs
 {
 	public class ChangelogDialogViewModel : ViewModelBaseEx
 	{
-		#region Commands
-
-		private RelayCommand _DownloadCommand;
-
-		public RelayCommand DownloadCommand
+		public ChangelogDialogViewModel( ViewServiceManager serviceManager = null )
+			: base( null, serviceManager )
 		{
-			get
-			{
-				return _DownloadCommand ??
-					( _DownloadCommand = new RelayCommand( ExecuteDownloadCommand, CanExecuteDownloadCommand ) );
-			}
 		}
 
 		private bool CanExecuteDownloadCommand()
@@ -32,15 +23,8 @@ namespace Blitzy.ViewModel.Dialogs
 		private void ExecuteDownloadCommand()
 		{
 			Close();
-			UpdateChecker.Instance.DownloadLatestVersion( LatestVersionInfo );
+			UpdateChecker.Instance.DownloadLatestVersion( LatestVersionInfo, ServiceManagerInstance );
 		}
-
-		#endregion Commands
-
-		#region Properties
-
-		private string _Changelog;
-		private VersionInfo _LatestVersionInfo;
 
 		public string Changelog
 		{
@@ -56,9 +40,17 @@ namespace Blitzy.ViewModel.Dialogs
 					return;
 				}
 
-				RaisePropertyChanging( () => Changelog );
 				_Changelog = value;
 				RaisePropertyChanged( () => Changelog );
+			}
+		}
+
+		public RelayCommand DownloadCommand
+		{
+			get
+			{
+				return _DownloadCommand ??
+					( _DownloadCommand = new RelayCommand( ExecuteDownloadCommand, CanExecuteDownloadCommand ) );
 			}
 		}
 
@@ -76,7 +68,6 @@ namespace Blitzy.ViewModel.Dialogs
 					return;
 				}
 
-				RaisePropertyChanging( () => LatestVersionInfo );
 				_LatestVersionInfo = value;
 				RaisePropertyChanged( () => LatestVersionInfo );
 
@@ -104,6 +95,8 @@ namespace Blitzy.ViewModel.Dialogs
 			}
 		}
 
-		#endregion Properties
+		private string _Changelog;
+		private RelayCommand _DownloadCommand;
+		private VersionInfo _LatestVersionInfo;
 	}
 }

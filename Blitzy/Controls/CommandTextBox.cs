@@ -37,24 +37,16 @@ namespace Blitzy.Controls
 	[ExcludeFromCodeCoverage]
 	public class CommandTextBox : TextBox
 	{
-		#region Constructor
-
 		public CommandTextBox()
 		{
 			AcceptsTab = true;
 			Messenger.Default.Register<InputCaretPositionMessage>( this, msg => OnCaretMessage( msg.Index ) );
 		}
 
-		#endregion Constructor
-
-		#region Methods
-
 		private void OnCaretMessage( int index )
 		{
 			CaretIndex = index;
 			SelectionStart = index;
 		}
-
-		#endregion Methods
 	}
 }

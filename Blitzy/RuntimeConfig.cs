@@ -1,6 +1,4 @@
-﻿// $Id$
-
-namespace Blitzy
+﻿namespace Blitzy
 {
 	internal static class RuntimeConfig
 	{

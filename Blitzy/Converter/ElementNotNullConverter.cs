@@ -1,12 +1,10 @@
-﻿// $Id$
-
-using System;
+﻿using System;
 using System.Globalization;
 using System.Windows.Data;
 
 namespace Blitzy.Converter
 {
-	internal class ElementNotNullConverter : IValueConverter
+	public class ElementNotNullConverter : IValueConverter
 	{
 		public object Convert( object value, Type targetType, object parameter, CultureInfo culture )
 		{

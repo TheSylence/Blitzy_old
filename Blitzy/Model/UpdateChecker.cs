@@ -1,31 +1,23 @@
-﻿// $Id$
-
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Net;
 using System.Reflection;
 using System.Threading.Tasks;
+using Blitzy.btbapi;
 using Blitzy.Messages;
 using Blitzy.Utility;
 using Blitzy.ViewServices;
-using btbapi;
 using GalaSoft.MvvmLight.Messaging;
 
 namespace Blitzy.Model
 {
 	internal class UpdateChecker
 	{
-		#region Constructor
-
 		private UpdateChecker()
 		{
 			Messenger.Default.Register<BalloonActivatedMessage>( this, OnBalloonActivated );
 			Messenger.Default.Register<DownloadStatusMessage>( this, MessageTokens.DownloadSucessful, OnSuccessfulDownload );
 		}
-
-		#endregion Constructor
-
-		#region Methods
 
 		internal async Task<VersionInfo> CheckVersion( bool showIfNewest = false )
 		{
@@ -55,12 +47,13 @@ namespace Blitzy.Model
 			return versionInfo;
 		}
 
-		internal void DownloadLatestVersion( VersionInfo info )
+		internal void DownloadLatestVersion( VersionInfo info, ViewServiceManager serviceManager )
 		{
-			TargetPath = IOUtils.GetTempFileName( "exe" );
+			string ext = System.IO.Path.GetExtension( info.DownloadLink.AbsolutePath ).Substring( 1 );
+			TargetPath = IOUtils.GetTempFileName( ext );
 
 			DownloadServiceParameters args = new DownloadServiceParameters( info.DownloadLink, TargetPath, info.Size, info.MD5 );
-			DialogServiceManager.Show<DownloadService>( args );
+			serviceManager.Show<DownloadService>( args );
 		}
 
 		private void OnBalloonActivated( BalloonActivatedMessage msg )
@@ -68,7 +61,7 @@ namespace Blitzy.Model
 			VersionCheckMessage versionCheck = msg.Token as VersionCheckMessage;
 			if( versionCheck != null )
 			{
-				DialogServiceManager.Show<ViewChangelogService>( versionCheck.VersionInfo );
+				ViewServiceManager.Default.Show<ViewChangelogService>( versionCheck.VersionInfo );
 			}
 		}
 
@@ -79,12 +72,6 @@ namespace Blitzy.Model
 				Process.Start( TargetPath );
 			}
 		}
-
-		#endregion Methods
-
-		#region Properties
-
-		private static UpdateChecker _Instance;
 
 		internal static UpdateChecker Instance
 		{
@@ -104,12 +91,8 @@ namespace Blitzy.Model
 			}
 		}
 
-		#endregion Properties
-
-		#region Attributes
+		private static UpdateChecker _Instance;
 
 		private static string TargetPath;
-
-		#endregion Attributes
 	}
 }

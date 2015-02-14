@@ -1,6 +1,4 @@
-﻿// $Id$
-
-using System;
+﻿using System;
 using System.Threading;
 
 namespace Blitzy.Utility
@@ -17,11 +15,6 @@ namespace Blitzy.Utility
 	/// </summary>
 	public sealed class CopyFromArguments
 	{
-		private int _BufferSize = 4096;
-
-		private long _TotalLength = -1;
-		private TimeSpan ProgressCallbackInterval = TimeSpan.FromSeconds( 0.2 );
-
 		/// <summary>
 		/// Creates the default arguments
 		/// </summary>
@@ -93,5 +86,10 @@ namespace Blitzy.Utility
 		/// If the stream is not seekable, the total length in the progress report will be stay -1.
 		/// </summary>
 		public long TotalLength { get { return _TotalLength; } set { _TotalLength = value; } }
+
+		private int _BufferSize = 4096;
+
+		private long _TotalLength = -1;
+		private TimeSpan ProgressCallbackInterval = TimeSpan.FromSeconds( 0.2 );
 	}
 }

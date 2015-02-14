@@ -1,6 +1,4 @@
-﻿// $Id$
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -12,16 +10,14 @@ namespace Blitzy
 {
 	public class BaseObject : ObservableObject, IDisposable
 	{
-		#region Constructor
-
 		public BaseObject()
 		{
+#if DEBUG
+			CreationStack = new StackTrace( true );
+#endif
+
 			Log = LogManager.GetLogger( GetType() );
 		}
-
-		#endregion Constructor
-
-		#region Disposable
 
 		/// <summary>
 		/// Releases unmanaged resources and performs other cleanup operations before the
@@ -65,10 +61,6 @@ namespace Blitzy
 				IsDisposed = true;
 			}
 		}
-
-		#endregion Disposable
-
-		#region Methods
 
 		protected ILog Log;
 
@@ -149,18 +141,9 @@ namespace Blitzy
 			return obj;
 		}
 
-		#endregion Methods
-
-		#region Properties
-
 		public bool IsDisposed { get; private set; }
 
-		#endregion Properties
-
-		#region Attributes
-
 		internal Stack<IDisposable> ObjectsToDispose = new Stack<IDisposable>();
-
-		#endregion Attributes
+		private StackTrace CreationStack;
 	}
 }

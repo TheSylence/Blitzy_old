@@ -1,8 +1,6 @@
-﻿// $Id$
-
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Data.SQLite;
+using System.Data.Common;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -14,19 +12,14 @@ namespace Blitzy.Plugin
 {
 	internal class PluginManager : BaseObject
 	{
-		#region Constructor
-
-		public PluginManager( IPluginHost host, SQLiteConnection connection )
+		public PluginManager( IPluginHost host, DbConnectionFactory factory, IMessenger messenger = null )
 		{
-			Connection = connection;
+			MessengerInstance = messenger ?? Messenger.Default;
+			Factory = factory;
 			Host = host;
 
-			Messenger.Default.Register<PluginMessage>( this, HandlePluginAction );
+			MessengerInstance.Register<PluginMessage>( this, HandlePluginAction );
 		}
-
-		#endregion Constructor
-
-		#region Methods
 
 		public bool IsLoaded( Guid id )
 		{
@@ -126,78 +119,64 @@ namespace Blitzy.Plugin
 			string version = null;
 			bool disabled = false;
 
-			using( SQLiteCommand cmd = Connection.CreateCommand() )
+			using( DbConnection connection = Factory.OpenConnection() )
 			{
-				SQLiteParameter param = cmd.CreateParameter();
-				param.ParameterName = "pluginID";
-				param.Value = plugin.PluginID;
-				cmd.Parameters.Add( param );
-
-				cmd.CommandText = "SELECT Version, Disabled FROM plugins WHERE PluginID = @pluginID;";
-				cmd.Prepare();
-
-				using( SQLiteDataReader reader = cmd.ExecuteReader() )
+				using( DbCommand cmd = connection.CreateCommand() )
 				{
-					if( reader.Read() )
+					cmd.AddParameter( "pluginID", plugin.PluginID );
+
+					cmd.CommandText = "SELECT Version, Disabled FROM plugins WHERE PluginID = @pluginID;";
+					cmd.Prepare();
+
+					using( DbDataReader reader = cmd.ExecuteReader() )
 					{
-						version = reader.GetString( 0 );
-						disabled = reader.GetInt32( 1 ) == 1;
+						if( reader.Read() )
+						{
+							version = reader.GetString( 0 );
+							disabled = reader.GetInt32( 1 ) == 1;
+						}
 					}
 				}
-			}
 
-			if( disabled )
-			{
-				LogInfo( "Plugin {0} was disabled by the user", plugin.Name );
-				DisabledPlugins.Add( plugin );
-				return null;
-			}
-
-			if( version == null )
-			{
-				LogInfo( "Plugin {0} is started for the first time", plugin.Name );
-				using( SQLiteCommand cmd = Connection.CreateCommand() )
+				if( disabled )
 				{
-					SQLiteParameter param = cmd.CreateParameter();
-					param.ParameterName = "pluginID";
-					param.Value = plugin.PluginID;
-					cmd.Parameters.Add( param );
-
-					param = cmd.CreateParameter();
-					param.ParameterName = "version";
-					param.Value = plugin.Version;
-					cmd.Parameters.Add( param );
-
-					cmd.CommandText = "INSERT INTO plugins (PluginID, Version) VALUES (@pluginID, @version);";
-					cmd.Prepare();
-
-					cmd.ExecuteNonQuery();
+					LogInfo( "Plugin {0} was disabled by the user", plugin.Name );
+					DisabledPlugins.Add( plugin );
+					return null;
 				}
-			}
-			else if( !version.Equals( plugin.Version ) )
-			{
-				LogInfo( "Plugin {0} is updated from version {1} to {2}", plugin.Name, version, plugin.Version );
 
-				using( SQLiteCommand cmd = Connection.CreateCommand() )
+				if( version == null )
 				{
-					SQLiteParameter param = cmd.CreateParameter();
-					param.ParameterName = "pluginID";
-					param.Value = plugin.PluginID;
-					cmd.Parameters.Add( param );
+					LogInfo( "Plugin {0} is started for the first time", plugin.Name );
+					using( DbCommand cmd = connection.CreateCommand() )
+					{
+						cmd.AddParameter( "pluginID", plugin.PluginID );
+						cmd.AddParameter( "version", plugin.Version );
 
-					param = cmd.CreateParameter();
-					param.ParameterName = "version";
-					param.Value = plugin.Version;
-					cmd.Parameters.Add( param );
+						cmd.CommandText = "INSERT INTO plugins (PluginID, Version) VALUES (@pluginID, @version);";
+						cmd.Prepare();
 
-					cmd.CommandText = "UPDATE plugins SET Version = @version WHERE PluginID = @pluginID;";
-					cmd.Prepare();
-
-					cmd.ExecuteNonQuery();
+						cmd.ExecuteNonQuery();
+					}
 				}
-			}
+				else if( !version.Equals( plugin.Version ) )
+				{
+					LogInfo( "Plugin {0} is updated from version {1} to {2}", plugin.Name, version, plugin.Version );
 
-			return version;
+					using( DbCommand cmd = connection.CreateCommand() )
+					{
+						cmd.AddParameter( "pluginID", plugin.PluginID );
+						cmd.AddParameter( "version", plugin.Version );
+
+						cmd.CommandText = "UPDATE plugins SET Version = @version WHERE PluginID = @pluginID;";
+						cmd.Prepare();
+
+						cmd.ExecuteNonQuery();
+					}
+				}
+
+				return version;
+			}
 		}
 
 		private void HandlePluginAction( PluginMessage msg )
@@ -247,9 +226,11 @@ namespace Blitzy.Plugin
 				if( plugin.ApiVersion != Constants.ApiVersion )
 				{
 					LogError( "Failed to load plugin because API Versions do not match. Current Version: {0}, Plugin Version: {1}", Constants.ApiVersion, plugin.ApiVersion );
+					plugin.Dispose();
 					return;
 				}
 
+				plugin = ToDispose( plugin );
 				string version = GetLastInstalledPluginVersion( plugin );
 				if( plugin.Load( Host, version ) )
 				{
@@ -274,27 +255,26 @@ namespace Blitzy.Plugin
 			LogDebug( "Loading plugins from {0}...", file );
 
 			Assembly asm = Assembly.LoadFrom( file );
-			foreach( Type type in asm.GetTypes().Where( t => !t.IsAbstract && interfaceFace.IsAssignableFrom( t ) ) )
+			IEnumerable<Type> types = Enumerable.Empty<Type>();
+			try
+			{
+				types = asm.GetTypes().Where( t => !t.IsAbstract && interfaceFace.IsAssignableFrom( t ) );
+			}
+			catch( Exception ex )
+			{
+				LogError( "Failed to load plugins from {0}: {1}", file, ex );
+			}
+
+			foreach( Type type in types )
 			{
 				LoadPlugin( asm, type );
 			}
 		}
 
-		#endregion Methods
-
-		#region Properties
-
-		internal SQLiteConnection Connection { get; private set; }
-
-		#endregion Properties
-
-		#region Attributes
-
 		internal List<IPlugin> DisabledPlugins = new List<IPlugin>();
 		internal List<IPlugin> Plugins = new List<IPlugin>();
-
 		private readonly IPluginHost Host;
-
-		#endregion Attributes
+		private DbConnectionFactory Factory;
+		private IMessenger MessengerInstance;
 	}
 }

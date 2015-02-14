@@ -1,31 +1,23 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data.Common;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using Blitzy.Messages;
 using Blitzy.Plugin;
 using Blitzy.Plugin.SystemPlugins;
 
-// $Id$
 using Blitzy.Utility;
 using Blitzy.ViewServices;
 using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.CommandWpf;
 
 namespace Blitzy.ViewModel.Dialogs
 {
 	public class PluginInformation : ObservableObject
 	{
-		#region Properties
-
-		private bool _Enabled;
-
 		public bool Enabled
 		{
 			get
@@ -40,7 +32,6 @@ namespace Blitzy.ViewModel.Dialogs
 					return;
 				}
 
-				RaisePropertyChanging( () => Enabled );
 				_Enabled = value;
 				RaisePropertyChanged( () => Enabled );
 			}
@@ -52,12 +43,15 @@ namespace Blitzy.ViewModel.Dialogs
 
 		public string Name { get; set; }
 
-		#endregion Properties
+		private bool _Enabled;
 	}
 
 	public class PluginsDialogViewModel : ViewModelBaseEx
 	{
-		#region Methods
+		public PluginsDialogViewModel( DbConnectionFactory factory, ViewServiceManager serviceManager = null )
+			: base( factory, serviceManager )
+		{
+		}
 
 		public override void Reset()
 		{
@@ -67,14 +61,84 @@ namespace Blitzy.ViewModel.Dialogs
 				.Select( p => new PluginInformation() { Id = p.PluginID, Name = p.Name, Instance = p, Enabled = !PluginManager.DisabledPlugins.Contains( p ) } ) );
 		}
 
-		#endregion Methods
+		private bool CanExecuteDisableCommand()
+		{
+			return SelectedPlugin != null && SelectedPlugin.Enabled;
+		}
 
-		#region Commands
+		private bool CanExecuteEnableCommand()
+		{
+			return SelectedPlugin != null && !SelectedPlugin.Enabled;
+		}
 
-		private RelayCommand _DisableCommand;
-		private RelayCommand _EnableCommand;
+		private bool CanExecuteInstallCommand()
+		{
+			return true;
+		}
 
-		private RelayCommand _InstallCommand;
+		private void ExecuteDisableCommand()
+		{
+			using( DbConnection connection = ConnectionFactory.OpenConnection() )
+			{
+				using( DbCommand cmd = connection.CreateCommand() )
+				{
+					cmd.CommandText = "UPDATE plugins SET disabled = 1 WHERE PluginID = @pluginID";
+
+					DbParameter param = cmd.CreateParameter();
+					param.ParameterName = "pluginID";
+					param.Value = SelectedPlugin.Id;
+					cmd.Parameters.Add( param );
+
+					cmd.Prepare();
+					cmd.ExecuteNonQuery();
+				}
+			}
+
+			SelectedPlugin.Enabled = false;
+			MessengerInstance.Send( new PluginMessage( SelectedPlugin.Instance, PluginAction.Disabled ) );
+		}
+
+		private void ExecuteEnableCommand()
+		{
+			using( DbConnection connection = ConnectionFactory.OpenConnection() )
+			{
+				using( DbCommand cmd = connection.CreateCommand() )
+				{
+					cmd.CommandText = "UPDATE plugins SET disabled = 0 WHERE PluginID = @pluginID";
+
+					DbParameter param = cmd.CreateParameter();
+					param.ParameterName = "pluginID";
+					param.Value = SelectedPlugin.Id;
+					cmd.Parameters.Add( param );
+
+					cmd.Prepare();
+					cmd.ExecuteNonQuery();
+				}
+			}
+
+			SelectedPlugin.Enabled = true;
+			MessengerInstance.Send( new PluginMessage( SelectedPlugin.Instance, PluginAction.Enabled ) );
+		}
+
+		private void ExecuteInstallCommand()
+		{
+			FileDialogParameters param = new FileDialogParameters( "ZipArchive".Localize( null, "|*.zip" ) + "|" + "DLLFiles".Localize( null, "|*.dll" ) );
+			string file = ServiceManagerInstance.Show<OpenFileService, string>( param );
+			if( File.Exists( file ) )
+			{
+				Process proc = new Process();
+				proc.StartInfo.UseShellExecute = true;
+				proc.StartInfo.Verb = "runas";
+				proc.StartInfo.Arguments = string.Format( "{0} \"{1}\"", Constants.CommandLine.InstallPlugin, file );
+				proc.StartInfo.FileName = Assembly.GetExecutingAssembly().Location;
+				proc.EnableRaisingEvents = true;
+
+				proc.Start();
+				proc.WaitForExit();
+
+				// TODO: Read new plugin from database
+			}
+		}
 
 		public RelayCommand DisableCommand
 		{
@@ -103,88 +167,6 @@ namespace Blitzy.ViewModel.Dialogs
 			}
 		}
 
-		private bool CanExecuteDisableCommand()
-		{
-			return SelectedPlugin != null && SelectedPlugin.Enabled;
-		}
-
-		private bool CanExecuteEnableCommand()
-		{
-			return SelectedPlugin != null && !SelectedPlugin.Enabled;
-		}
-
-		private bool CanExecuteInstallCommand()
-		{
-			return true;
-		}
-
-		private void ExecuteDisableCommand()
-		{
-			using( DbCommand cmd = PluginManager.Connection.CreateCommand() )
-			{
-				cmd.CommandText = "UPDATE plugins SET disabled = 1 WHERE PluginID = @pluginID";
-
-				DbParameter param = cmd.CreateParameter();
-				param.ParameterName = "pluginID";
-				param.Value = SelectedPlugin.Id;
-				cmd.Parameters.Add( param );
-
-				cmd.Prepare();
-				cmd.ExecuteNonQuery();
-
-				SelectedPlugin.Enabled = false;
-
-				MessengerInstance.Send( new PluginMessage( SelectedPlugin.Instance, PluginAction.Disabled ) );
-			}
-		}
-
-		private void ExecuteEnableCommand()
-		{
-			using( DbCommand cmd = PluginManager.Connection.CreateCommand() )
-			{
-				cmd.CommandText = "UPDATE plugins SET disabled = 0 WHERE PluginID = @pluginID";
-
-				DbParameter param = cmd.CreateParameter();
-				param.ParameterName = "pluginID";
-				param.Value = SelectedPlugin.Id;
-				cmd.Parameters.Add( param );
-
-				cmd.Prepare();
-				cmd.ExecuteNonQuery();
-
-				SelectedPlugin.Enabled = true;
-
-				MessengerInstance.Send( new PluginMessage( SelectedPlugin.Instance, PluginAction.Enabled ) );
-			}
-		}
-
-		private void ExecuteInstallCommand()
-		{
-			FileDialogParameters param = new FileDialogParameters( "ZipArchive".Localize( null, "|*.zip" ) + "|" + "DLLFiles".Localize( null, "|*.dll" ) );
-			string file = DialogServiceManager.Show<OpenFileService, string>( param );
-			if( File.Exists( file ) )
-			{
-				Process proc = new Process();
-				proc.StartInfo.UseShellExecute = true;
-				proc.StartInfo.Verb = "runas";
-				proc.StartInfo.Arguments = string.Format( "{0} \"{1}\"", Constants.CommandLine.InstallPlugin, file );
-				proc.StartInfo.FileName = Assembly.GetExecutingAssembly().Location;
-				proc.EnableRaisingEvents = true;
-
-				proc.Start();
-				proc.WaitForExit();
-
-				// TODO: Read new plugin from database
-			}
-		}
-
-		#endregion Commands
-
-		#region Properties
-
-		private ObservableCollection<PluginInformation> _Plugins;
-		private PluginInformation _SelectedPlugin;
-
 		public ObservableCollection<PluginInformation> Plugins
 		{
 			get
@@ -199,7 +181,6 @@ namespace Blitzy.ViewModel.Dialogs
 					return;
 				}
 
-				RaisePropertyChanging( () => Plugins );
 				_Plugins = value;
 				RaisePropertyChanged( () => Plugins );
 			}
@@ -219,7 +200,6 @@ namespace Blitzy.ViewModel.Dialogs
 					return;
 				}
 
-				RaisePropertyChanging( () => SelectedPlugin );
 				_SelectedPlugin = value;
 				RaisePropertyChanged( () => SelectedPlugin );
 			}
@@ -227,6 +207,11 @@ namespace Blitzy.ViewModel.Dialogs
 
 		internal Plugin.PluginManager PluginManager { get; set; }
 
-		#endregion Properties
+		private RelayCommand _DisableCommand;
+		private RelayCommand _EnableCommand;
+
+		private RelayCommand _InstallCommand;
+		private ObservableCollection<PluginInformation> _Plugins;
+		private PluginInformation _SelectedPlugin;
 	}
 }

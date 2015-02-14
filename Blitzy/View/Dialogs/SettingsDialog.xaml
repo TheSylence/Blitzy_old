@@ -1,4 +1,11 @@
-﻿<v:CloseableView x:Class="Blitzy.View.Dialogs.SettingsDialog" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:v="clr-namespace:Blitzy.View" xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit" DataContext="{Binding Source={StaticResource Locator}, Path=Settings}" WindowStartupLocation="CenterOwner" Icon="/Blitzy;component/Resources/Gears.png" xmlns:lex="http://wpflocalizeextension.codeplex.com" lex:LocalizeDictionary.DesignCulture="en" lex:ResxLocalizationProvider.DefaultAssembly="Blitzy" lex:ResxLocalizationProvider.DefaultDictionary="Resources" Title="{lex:Loc Settings}" Height="500" Width="700">
+﻿<v:CloseableView x:Class="Blitzy.View.Dialogs.SettingsDialog"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:v="clr-namespace:Blitzy.View"
+		xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+		DataContext="{Binding Source={StaticResource Locator}, Path=Settings}" WindowStartupLocation="CenterOwner"
+		Icon="/Blitzy;component/Resources/Gears.png" xmlns:lex="http://wpflocalizeextension.codeplex.com"
+		lex:LocalizeDictionary.DesignCulture="en" lex:ResxLocalizationProvider.DefaultAssembly="Blitzy"
+		lex:ResxLocalizationProvider.DefaultDictionary="Resources" Title="{lex:Loc Settings}" Height="500" Width="700">
 	<Window.Resources>
 		<Style TargetType="Button">
 			<Setter Property="Margin" Value="5" />
@@ -22,32 +29,47 @@
 					<StackPanel Orientation="Vertical">
 						<GroupBox Header="{lex:Loc Misc}">
 							<StackPanel Orientation="Vertical" Margin="5">
-								<CheckBox Content="{lex:Loc AutomaticallyCheckForUpdates}" IsChecked="{Binding UpdateCheck, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-								<CheckBox Content="{lex:Loc ShowTrayIcon}" IsChecked="{Binding TrayIcon, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+								<CheckBox Content="{lex:Loc AutomaticallyCheckForUpdates}"
+										IsChecked="{Binding UpdateCheck, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+								<CheckBox Content="{lex:Loc ShowTrayIcon}"
+										IsChecked="{Binding TrayIcon, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
 							</StackPanel>
 						</GroupBox>
 						<GroupBox Header="{lex:Loc Behavior}">
 							<StackPanel Orientation="Vertical" Margin="5">
-								<CheckBox Content="{lex:Loc CloseWhenFocusLost}" IsChecked="{Binding CloseOnFocusLost, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-								<CheckBox Content="{lex:Loc CloseOnEscape}" IsChecked="{Binding CloseOnEscape, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-								<CheckBox Content="{lex:Loc CloseAfterCommandExecution}" IsChecked="{Binding CloseOnCommand, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-								<CheckBox Content="{lex:Loc KeppInputContent}" IsChecked="{Binding KeepInput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-								<CheckBox Content="{lex:Loc AlawysStayOnTop}" IsChecked="{Binding StayOnTop, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+								<CheckBox Content="{lex:Loc CloseWhenFocusLost}"
+										IsChecked="{Binding CloseOnFocusLost, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+								<CheckBox Content="{lex:Loc CloseOnEscape}"
+										IsChecked="{Binding CloseOnEscape, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+								<CheckBox Content="{lex:Loc CloseAfterCommandExecution}"
+										IsChecked="{Binding CloseOnCommand, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+								<CheckBox Content="{lex:Loc KeppInputContent}"
+										IsChecked="{Binding KeepInput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+								<CheckBox Content="{lex:Loc AlawysStayOnTop}"
+										IsChecked="{Binding StayOnTop, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 								<TextBlock Text="{lex:Loc HotKey}" Margin="0,5,0,0" />
 								<StackPanel Orientation="Horizontal">
-									<ComboBox ItemsSource="{Binding Modifiers}" SelectedItem="{Binding SelectedModifierKey, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-									<ComboBox ItemsSource="{Binding Keys}" SelectedItem="{Binding SelectedKey, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="10,0" />
+									<ComboBox ItemsSource="{Binding Modifiers}"
+											SelectedItem="{Binding SelectedModifierKey, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+									<ComboBox ItemsSource="{Binding Keys}"
+											SelectedItem="{Binding SelectedKey, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+											Margin="10,0" />
 								</StackPanel>
 							</StackPanel>
 						</GroupBox>
 						<GroupBox Header="{lex:Loc Catalog}">
 							<StackPanel Orientation="Vertical" Margin="5">
-								<CheckBox Content="{lex:Loc RebuildCatalogOnChangedSettings}" IsChecked="{Binding RebuildOnChange, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
-								<CheckBox Content="{lex:Loc MakeBackupOfShortcuts}" IsChecked="{Binding BackupShortcuts, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-								<CheckBox Content="{lex:Loc PeriodicallyRebuildCatalog}" IsChecked="{Binding PeriodicallyRebuild, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+								<CheckBox Content="{lex:Loc RebuildCatalogOnChangedSettings}"
+										IsChecked="{Binding RebuildOnChange, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+								<CheckBox Content="{lex:Loc MakeBackupOfShortcuts}"
+										IsChecked="{Binding BackupShortcuts, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+								<CheckBox Content="{lex:Loc PeriodicallyRebuildCatalog}"
+										IsChecked="{Binding PeriodicallyRebuild, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 								<StackPanel Orientation="Horizontal">
 									<TextBlock Text="Rebuild every" VerticalAlignment="Center" />
-									<xctk:IntegerUpDown Margin="5,0" Minimum="1" Maximum="10080" Width="50" VerticalAlignment="Center" Value="{Binding RebuildTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+									<xctk:IntegerUpDown Margin="5,0" Minimum="1" Maximum="10080" Width="50"
+											VerticalAlignment="Center"
+											Value="{Binding RebuildTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 									<TextBlock Text="minutes" VerticalAlignment="Center" />
 								</StackPanel>
 							</StackPanel>
@@ -64,13 +86,17 @@
 								</Grid.RowDefinitions>
 
 								<TextBlock Text="{lex:Loc Language}" Grid.Row="0" />
-								<ComboBox Grid.Row="1" ItemsSource="{Binding AvailableLanguages}" DisplayMemberPath="NativeName" SelectedItem="{Binding SelectedLanguage, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+								<ComboBox Grid.Row="1" ItemsSource="{Binding AvailableLanguages}"
+										DisplayMemberPath="NativeName"
+										SelectedItem="{Binding SelectedLanguage, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 							</Grid>
 						</GroupBox>
 						<GroupBox Header="{lex:Loc History}">
 							<StackPanel Orientation="Horizontal">
 								<TextBlock Text="{lex:LocText HistorySize, Suffix=':'}" VerticalAlignment="Center" />
-								<xctk:IntegerUpDown Value="{Binding HistoryCount, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5,0" />
+								<xctk:IntegerUpDown
+										Value="{Binding HistoryCount, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+										Margin="5,0" />
 							</StackPanel>
 						</GroupBox>
 					</StackPanel>
@@ -97,7 +123,8 @@
 								<RowDefinition Height="Auto" />
 							</Grid.RowDefinitions>
 
-							<ListBox ItemsSource="{Binding Settings.Folders}" DisplayMemberPath="Path" SelectedItem="{Binding SelectedFolder, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+							<ListBox ItemsSource="{Binding Settings.Folders}" DisplayMemberPath="Path"
+									SelectedItem="{Binding SelectedFolder, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
 							<StackPanel Orientation="Horizontal" Grid.Row="1" HorizontalAlignment="Right">
 								<Button Content="{lex:Loc Add}" Command="{Binding AddFolderCommand}" />
@@ -114,8 +141,11 @@
 								<RowDefinition Height="Auto" />
 							</Grid.RowDefinitions>
 
-							<CheckBox IsChecked="{Binding SelectedFolder.IsRecursive}" Content="{lex:Loc Recursive}" Margin="5" Grid.Row="0" IsEnabled="{Binding SelectedFolder, Converter={StaticResource ElementNotNullConv}}" />
-							<ListBox Grid.Row="1" ItemsSource="{Binding SelectedFolder.Rules}" SelectedItem="{Binding SelectedRule, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+							<CheckBox IsChecked="{Binding SelectedFolder.IsRecursive}" Content="{lex:Loc Recursive}"
+									Margin="5" Grid.Row="0"
+									IsEnabled="{Binding SelectedFolder, Converter={StaticResource ElementNotNullConv}}" />
+							<ListBox Grid.Row="1" ItemsSource="{Binding SelectedFolder.Rules}"
+									SelectedItem="{Binding SelectedRule, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 							<StackPanel Orientation="Horizontal" Grid.Row="2" HorizontalAlignment="Center">
 								<Button Content="{lex:Loc Add}" Command="{Binding AddRuleCommand}" />
 								<Button Content="{lex:Loc Remove}" Command="{Binding RemoveRuleCommand}" />
@@ -129,7 +159,8 @@
 								<RowDefinition Height="Auto" />
 							</Grid.RowDefinitions>
 
-							<ListBox Grid.Row="0" ItemsSource="{Binding SelectedFolder.Excludes}" SelectedItem="{Binding SelectedExclude, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+							<ListBox Grid.Row="0" ItemsSource="{Binding SelectedFolder.Excludes}"
+									SelectedItem="{Binding SelectedExclude, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 							<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.Row="1">
 								<Button Content="{lex:Loc Add}" Command="{Binding AddExcludeCommand}" />
 								<Button Content="{lex:Loc Remove}" Command="{Binding RemoveExcludeCommand}" />
@@ -138,9 +169,13 @@
 					</GroupBox>
 
 					<DockPanel Grid.Row="2" LastChildFill="True" Grid.ColumnSpan="2" Grid.Column="0">
-						<Button Content="{lex:Loc UpdateCatalog}" DockPanel.Dock="Right" Command="{Binding UpdateCatalogCommand}" />
+						<Button Content="{lex:Loc UpdateCatalog}" DockPanel.Dock="Right"
+								Command="{Binding UpdateCatalogCommand}" />
 						<Grid>
-							<ProgressBar VerticalAlignment="Center" MinHeight="20" IsEnabled="{Binding CatalogBuilder.IsBuilding}" Maximum="{Binding CatalogBuilder.ItemsToProcess}" Value="{Binding CatalogItemsProcessed}" />
+							<ProgressBar VerticalAlignment="Center" MinHeight="20"
+									IsEnabled="{Binding CatalogBuilder.IsBuilding}"
+									Maximum="{Binding CatalogBuilder.ItemsToProcess}"
+									Value="{Binding CatalogItemsProcessed}" />
 							<StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
 								<TextBlock Text="{Binding FilesProcessed}" />
 							</StackPanel>
@@ -169,7 +204,8 @@
 								<RowDefinition Height="Auto" />
 							</Grid.RowDefinitions>
 
-							<ListBox Grid.Row="0" DisplayMemberPath="Name" ItemsSource="{Binding Workspaces}" SelectedItem="{Binding SelectedWorkspace, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+							<ListBox Grid.Row="0" DisplayMemberPath="Name" ItemsSource="{Binding Workspaces}"
+									SelectedItem="{Binding SelectedWorkspace, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
 							<StackPanel Orientation="Horizontal" Grid.Row="1" HorizontalAlignment="Right">
 								<Button Content="New" Command="{Binding AddWorkspaceCommand}" />
@@ -184,7 +220,8 @@
 								<ColumnDefinition Width="Auto" />
 							</Grid.ColumnDefinitions>
 
-							<ListBox ItemsSource="{Binding SelectedWorkspace.Items}" DisplayMemberPath="ItemCommand" SelectedItem="{Binding SelectedItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+							<ListBox ItemsSource="{Binding SelectedWorkspace.Items}" DisplayMemberPath="ItemCommand"
+									SelectedItem="{Binding SelectedItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
 							<StackPanel Orientation="Vertical" Grid.Column="1">
 								<Button Content="{lex:Loc Add}" Command="{Binding AddItemCommand}" />
@@ -222,7 +259,8 @@
 						</Hyperlink>
 					</ContentControl>
 
-					<TabControl Grid.Row="1" ItemsSource="{Binding PluginPages}" SelectedItem="{Binding SelectedPluginPage,Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}">
+					<TabControl Grid.Row="1" ItemsSource="{Binding PluginPages}"
+							SelectedItem="{Binding SelectedPluginPage,Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}">
 						<TabControl.ContentTemplate>
 							<DataTemplate>
 								<ContentPresenter Content="{Binding Content}" />
@@ -247,7 +285,8 @@
 
 							<GroupBox Header="{lex:Loc Version}">
 								<DockPanel LastChildFill="True">
-									<Button Content="{lex:Loc CheckForUpdates}" DockPanel.Dock="Right" Command="{Binding UpdateCheckCommand}" />
+									<Button Content="{lex:Loc CheckForUpdates}" DockPanel.Dock="Right"
+											Command="{Binding UpdateCheckCommand}" />
 									<StackPanel Orientation="Horizontal" Margin="5">
 										<StackPanel.Resources>
 											<Style TargetType="TextBlock">
@@ -259,34 +298,42 @@
 										<TextBlock Text="{lex:LocText LatestVersion,Suffix=':'}" Margin="25,0,0,0" />
 										<Grid Margin="5,0">
 											<StackPanel Orientation="Horizontal">
-												<TextBlock Text="{Binding LatestVersionInfo.LatestVersion}" Margin="10,0,0,0" />
-												<Label Visibility="{Binding IsNewerVersionAvailable, Converter={StaticResource BooleanToVisibilityConv}}">
+												<TextBlock Text="{Binding LatestVersionInfo.LatestVersion}"
+														Margin="10,0,0,0" />
+												<Label
+														Visibility="{Binding IsNewerVersionAvailable, Converter={StaticResource BooleanToVisibilityConv}}">
 													<Hyperlink Command="{Binding ViewChangelogCommand}">
 														<TextBlock Text="{lex:Loc ViewChangelog}" />
 													</Hyperlink>
 												</Label>
-												<Label Visibility="{Binding IsNewerVersionAvailable, Converter={StaticResource BooleanToVisibilityConv}}">
+												<Label
+														Visibility="{Binding IsNewerVersionAvailable, Converter={StaticResource BooleanToVisibilityConv}}">
 													<Hyperlink Command="{Binding DownloadUpdateCommand}">
 														<TextBlock Text="{lex:Loc Download}" />
 													</Hyperlink>
 												</Label>
 											</StackPanel>
-											<TextBlock Text="{lex:Loc ErrorRetrieveVersion}" Foreground="Red" Visibility="{Binding VersionCheckError, Converter={StaticResource BooleanToVisibilityConv}}" />
-											<TextBlock Text="{lex:Loc PleaseWait}" Visibility="{Binding VersionCheckInProgress, Converter={StaticResource BooleanToVisibilityConv}}" />
+											<TextBlock Text="{lex:Loc ErrorRetrieveVersion}" Foreground="Red"
+													Visibility="{Binding VersionCheckError, Converter={StaticResource BooleanToVisibilityConv}}" />
+											<TextBlock Text="{lex:Loc PleaseWait}"
+													Visibility="{Binding VersionCheckInProgress, Converter={StaticResource BooleanToVisibilityConv}}" />
 										</Grid>
 									</StackPanel>
 								</DockPanel>
 							</GroupBox>
 
 							<GroupBox Header="{lex:Loc Changelog}" Grid.Row="1">
-								<TextBox Margin="5" Text="{Binding Changelog}" IsReadOnly="True" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Hidden" />
+								<TextBox Margin="5" Text="{Binding Changelog}" IsReadOnly="True"
+										VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Hidden" />
 							</GroupBox>
 						</Grid>
 					</TabItem>
 					<TabItem Header="{lex:Loc Licenses}">
 						<TabControl>
 							<TabItem Header="{lex:Loc Blitzy}">
-								<TextBox IsReadOnly="True" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto" Text="{Binding BlitzyLicense}" TextWrapping="Wrap" />
+								<TextBox IsReadOnly="True" HorizontalScrollBarVisibility="Hidden"
+										VerticalScrollBarVisibility="Auto" Text="{Binding BlitzyLicense}"
+										TextWrapping="Wrap" />
 							</TabItem>
 						</TabControl>
 					</TabItem>
@@ -294,7 +341,8 @@
 						<ScrollViewer>
 							<StackPanel>
 								<TextBlock TextAlignment="Center" Name="txtInfo">
-										<Run>Blitzy Version</Run><Run Text=" " /><Run Text="{Binding CurrentVersion, Mode=OneTime}" /><LineBreak />
+										<Run>Blitzy Version</Run><Run Text=" " /><Run
+											Text="{Binding CurrentVersion, Mode=OneTime}" /><LineBreak />
 										<Run>Copyright © 2012-2014 btbsoft.org</Run><LineBreak />
 										<Run>Build on</Run><Run Text=" " /><Run Text="{Binding BuildDate}" /><LineBreak />
 								</TextBlock>
@@ -327,7 +375,8 @@
 				<ColumnDefinition Width="Auto" />
 			</Grid.ColumnDefinitions>
 
-			<Button Content="{lex:Loc Defaults}" Grid.Column="0" HorizontalAlignment="Left" Command="{Binding DefaultsCommand}" />
+			<Button Content="{lex:Loc Defaults}" Grid.Column="0" HorizontalAlignment="Left"
+					Command="{Binding DefaultsCommand}" />
 			<Button Content="{lex:Loc Save}" Grid.Column="1" Command="{Binding SaveCommand}" />
 			<Button Content="{lex:Loc Cancel}" Grid.Column="2" Command="{Binding CancelCommand}" />
 		</Grid>

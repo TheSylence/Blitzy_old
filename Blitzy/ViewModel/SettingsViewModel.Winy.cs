@@ -1,6 +1,4 @@
-﻿// $Id$
-
-using Blitzy.Model;
+﻿using Blitzy.Model;
 using Blitzy.Plugin;
 using Blitzy.Plugin.SystemPlugins;
 
@@ -8,17 +6,13 @@ namespace Blitzy.ViewModel
 {
 	internal class WinySettingsViewModel : SettingsViewModelBase, IPluginViewModel
 	{
-		#region Constructor
-
-		public WinySettingsViewModel( Settings settings )
-			: base( settings )
+		public WinySettingsViewModel( DbConnectionFactory connectionFactory, Settings settings, IViewServiceManager serviceManager )
+			: base( settings, connectionFactory, serviceManager )
 		{
 			_LogoffConfirmation = Settings.GetPluginSetting<bool>( Winy.GuidString, Winy.LogoffKey );
 			_ShutdownConfirmation = Settings.GetPluginSetting<bool>( Winy.GuidString, Winy.ShutdownKey );
 			_RestartConfirmation = Settings.GetPluginSetting<bool>( Winy.GuidString, Winy.RestartKey );
 		}
-
-		#endregion Constructor
 
 		public void RestoreDefaults()
 		{
@@ -31,16 +25,6 @@ namespace Blitzy.ViewModel
 			Settings.SetPluginSetting( Winy.GuidString, Winy.ShutdownKey, ShutdownConfirmation );
 			Settings.SetPluginSetting( Winy.GuidString, Winy.RestartKey, RestartConfirmation );
 		}
-
-		#region Methods
-
-		#endregion Methods
-
-		#region Properties
-
-		private bool _LogoffConfirmation;
-		private bool _RestartConfirmation;
-		private bool _ShutdownConfirmation;
 
 		public bool LogoffConfirmation
 		{
@@ -56,7 +40,6 @@ namespace Blitzy.ViewModel
 					return;
 				}
 
-				RaisePropertyChanging( () => LogoffConfirmation );
 				_LogoffConfirmation = value;
 				RaisePropertyChanged( () => LogoffConfirmation );
 			}
@@ -76,7 +59,6 @@ namespace Blitzy.ViewModel
 					return;
 				}
 
-				RaisePropertyChanging( () => RestartConfirmation );
 				_RestartConfirmation = value;
 				RaisePropertyChanged( () => RestartConfirmation );
 			}
@@ -96,16 +78,13 @@ namespace Blitzy.ViewModel
 					return;
 				}
 
-				RaisePropertyChanging( () => ShutdownConfirmation );
 				_ShutdownConfirmation = value;
 				RaisePropertyChanged( () => ShutdownConfirmation );
 			}
 		}
 
-		#endregion Properties
-
-		#region Attributes
-
-		#endregion Attributes
+		private bool _LogoffConfirmation;
+		private bool _RestartConfirmation;
+		private bool _ShutdownConfirmation;
 	}
 }

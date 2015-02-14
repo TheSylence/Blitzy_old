@@ -27,8 +27,6 @@ namespace Blitzy
 	[ExcludeFromCodeCoverage]
 	public partial class App
 	{
-		#region Constructor
-
 		public App()
 		{
 			INativeMethods.Instance = new NativeMethods();
@@ -57,9 +55,9 @@ namespace Blitzy
 
 			Thread.CurrentThread.Name = "Main";
 
-#if !DEBUG
-			//DispatcherUnhandledException += new DispatcherUnhandledExceptionEventHandler( Application_DispatcherUnhandledException );
-#endif
+			//#if !DEBUG
+			DispatcherUnhandledException += new DispatcherUnhandledExceptionEventHandler( Application_DispatcherUnhandledException );
+			//#endif
 
 			LocalizeDictionary.Instance.DefaultProvider.ProviderError += DefaultProvider_ProviderError;
 			LocalizeDictionary.Instance.MissingKeyEvent += Instance_MissingKeyEvent;
@@ -67,18 +65,9 @@ namespace Blitzy
 			LogEnvironmentInfo();
 
 			DispatcherHelper.Initialize();
-			DialogServiceManager.RegisterServices();
+			ViewServiceManager.Default.RegisterServices();
 			Messenger.Default.Register<LanguageMessage>( this, ChangeLanguage );
 		}
-
-		private void Instance_MissingKeyEvent( object sender, MissingKeyEventArgs e )
-		{
-			LogHelper.LogDebug( MethodBase.GetCurrentMethod().DeclaringType, "Missing resource key: {0}", e.Key );
-		}
-
-		#endregion Constructor
-
-		#region Methods
 
 		protected override void OnExit( ExitEventArgs e )
 		{
@@ -177,12 +166,11 @@ namespace Blitzy
 			LogHelper.LogWarning( MethodBase.GetCurrentMethod().DeclaringType, "{0} for key {1} on {2}", args.Message, args.Key, args.Object );
 		}
 
-		#endregion Methods
-
-		#region Attributes
+		private void Instance_MissingKeyEvent( object sender, MissingKeyEventArgs e )
+		{
+			LogHelper.LogDebug( MethodBase.GetCurrentMethod().DeclaringType, "Missing resource key: {0}", e.Key );
+		}
 
 		private TaskbarIcon NotifyIcon;
-
-		#endregion Attributes
 	}
 }

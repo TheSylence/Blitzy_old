@@ -1,6 +1,4 @@
-﻿// $Id$
-
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Threading;
 
@@ -8,8 +6,6 @@ namespace Blitzy.Utility
 {
 	internal class STAThread : BaseObject
 	{
-		#region Constructor
-
 		private STAThread()
 		{
 			CanProcess = ToDispose( new AutoResetEvent( false ) );
@@ -20,10 +16,6 @@ namespace Blitzy.Utility
 			IsRunning = true;
 			ThreadObject.Start();
 		}
-
-		#endregion Constructor
-
-		#region Methods
 
 		internal static void QueueAction( Action action )
 		{
@@ -66,20 +58,10 @@ namespace Blitzy.Utility
 			ThreadObject.Join();
 		}
 
-		#endregion Methods
-
-		#region Properties
-
-		#endregion Properties
-
-		#region Attributes
-
 		private static STAThread Instance;
 		private readonly ConcurrentQueue<Action> ActionQueue;
 		private readonly AutoResetEvent CanProcess;
 		private readonly Thread ThreadObject;
 		private bool IsRunning;
-
-		#endregion Attributes
 	}
 }

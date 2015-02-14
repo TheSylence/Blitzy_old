@@ -1,28 +1,20 @@
-﻿// $Id$
-
-using Blitzy.Model;
+﻿using Blitzy.Model;
 using Blitzy.Plugin;
 using Blitzy.Plugin.SystemPlugins;
 using Blitzy.Utility;
 using Blitzy.ViewServices;
-using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.CommandWpf;
 
 namespace Blitzy.ViewModel
 {
 	internal class PuttySettingsViewModel : SettingsViewModelBase, IPluginViewModel
 	{
-		#region Constructor
-
-		public PuttySettingsViewModel( Settings settings )
-			: base( settings )
+		public PuttySettingsViewModel( DbConnectionFactory factory, Settings settings, IViewServiceManager serviceManager = null )
+			: base( settings, factory, serviceManager )
 		{
 			_PuttyPath = Settings.GetPluginSetting<string>( Putty.GuidString, Putty.PathKey );
 			_ImportSessions = Settings.GetPluginSetting<bool>( Putty.GuidString, Putty.ImportKey );
 		}
-
-		#endregion Constructor
-
-		#region Methods
 
 		public void RestoreDefaults()
 		{
@@ -35,11 +27,22 @@ namespace Blitzy.ViewModel
 			Settings.SetPluginSetting( Putty.GuidString, Putty.ImportKey, ImportSessions );
 		}
 
-		#endregion Methods
+		private bool CanExecuteBrowsePuttyCommand()
+		{
+			return true;
+		}
 
-		#region Commands
+		private void ExecuteBrowsePuttyCommand()
+		{
+			FileDialogParameters args = new FileDialogParameters( "ExeFileFilter".Localize() );
+			string fileName = ServiceManagerInstance.Show<OpenFileService, string>( args );
+			if( string.IsNullOrWhiteSpace( fileName ) )
+			{
+				return;
+			}
 
-		private RelayCommand _BrowsePuttyCommand;
+			PuttyPath = fileName;
+		}
 
 		public RelayCommand BrowsePuttyCommand
 		{
@@ -49,30 +52,6 @@ namespace Blitzy.ViewModel
 					( _BrowsePuttyCommand = new RelayCommand( ExecuteBrowsePuttyCommand, CanExecuteBrowsePuttyCommand ) );
 			}
 		}
-
-		private bool CanExecuteBrowsePuttyCommand()
-		{
-			return true;
-		}
-
-		private void ExecuteBrowsePuttyCommand()
-		{
-			FileDialogParameters args = new FileDialogParameters( "ExeFileFilter".Localize() );
-			string fileName = DialogServiceManager.Show<OpenFileService, string>( args );
-			if( string.IsNullOrWhiteSpace( fileName ) )
-			{
-				return;
-			}
-
-			PuttyPath = fileName;
-		}
-
-		#endregion Commands
-
-		#region Properties
-
-		private bool _ImportSessions;
-		private string _PuttyPath;
 
 		public bool ImportSessions
 		{
@@ -88,7 +67,6 @@ namespace Blitzy.ViewModel
 					return;
 				}
 
-				RaisePropertyChanging( () => ImportSessions );
 				_ImportSessions = value;
 				RaisePropertyChanged( () => ImportSessions );
 			}
@@ -108,16 +86,13 @@ namespace Blitzy.ViewModel
 					return;
 				}
 
-				RaisePropertyChanging( () => PuttyPath );
 				_PuttyPath = value;
 				RaisePropertyChanged( () => PuttyPath );
 			}
 		}
 
-		#endregion Properties
-
-		#region Attributes
-
-		#endregion Attributes
+		private RelayCommand _BrowsePuttyCommand;
+		private bool _ImportSessions;
+		private string _PuttyPath;
 	}
 }

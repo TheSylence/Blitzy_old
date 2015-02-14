@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interop;
 using Blitzy.Messages;
 using Blitzy.Utility;
 using Blitzy.ViewModel;
+using Blitzy.ViewServices;
 using GalaSoft.MvvmLight.Messaging;
 
 namespace Blitzy.View
@@ -15,9 +17,6 @@ namespace Blitzy.View
 	[ExcludeFromCodeCoverage]
 	public partial class MainWindow : IDisposable
 	{
-		private HotKey CurrentHotKey;
-		private HotKeyHost KeyHost;
-
 		public MainWindow()
 		{
 			InitializeComponent();
@@ -55,7 +54,10 @@ namespace Blitzy.View
 				}
 				catch( HotKeyAlreadyRegisteredException )
 				{
-					// TODO: Inform the user about this?
+					string text = "HotKeyAlreadyRegistered".Localize();
+					string caption = "HotKeyError".Localize();
+					MessageBoxParameter args = new MessageBoxParameter( text, caption, MessageBoxButton.OK, MessageBoxImage.Warning );
+					ViewServiceManager.Default.Show<MessageBoxService>( args );
 				}
 			} );
 
@@ -78,6 +80,25 @@ namespace Blitzy.View
 			Hide();
 		}
 
+		~MainWindow()
+		{
+			Dispose( false );
+		}
+
+		public void Dispose()
+		{
+			Dispose( true );
+			GC.SuppressFinalize( this );
+		}
+
+		private void Dispose( bool disposing )
+		{
+			if( disposing )
+			{
+				KeyHost.Dispose();
+			}
+		}
+
 		private void FocusInput()
 		{
 			FocusManager.SetFocusedElement( this, txtInput );
@@ -95,23 +116,7 @@ namespace Blitzy.View
 			return IntPtr.Zero;
 		}
 
-		public void Dispose()
-		{
-			Dispose( true );
-			GC.SuppressFinalize( this );
-		}
-
-		private void Dispose( bool disposing )
-		{
-			if( disposing )
-			{
-				KeyHost.Dispose();
-			}
-		}
-
-		~MainWindow()
-		{
-			Dispose( false );
-		}
+		private HotKey CurrentHotKey;
+		private HotKeyHost KeyHost;
 	}
 }

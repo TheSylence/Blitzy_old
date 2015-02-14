@@ -593,6 +593,24 @@ namespace Blitzy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The HotKey that was specified in the settings could not be registered because it is already in use by another application. You will not be able to open Blitzy using the HotKey..
+        /// </summary>
+        public static string HotKeyAlreadyRegistered {
+            get {
+                return ResourceManager.GetString("HotKeyAlreadyRegistered", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error during HotKey registration.
+        /// </summary>
+        public static string HotKeyError {
+            get {
+                return ResourceManager.GetString("HotKeyError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Import saved sessions.
         /// </summary>
         public static string ImportSavedSessions {

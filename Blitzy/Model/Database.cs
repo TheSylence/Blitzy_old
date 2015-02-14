@@ -1,6 +1,5 @@
-﻿// $Id$
-
-using System;
+﻿using System;
+using System.Data.Common;
 using System.Data.SQLite;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
@@ -9,33 +8,33 @@ namespace Blitzy.Model
 {
 	internal class Database : BaseObject
 	{
-		#region Constructor
-
-		public Database()
+		public Database( DbConnection connection = null )
 		{
-			SQLiteConnectionStringBuilder connectionStringBuilder = new SQLiteConnectionStringBuilder
+			if( connection != null )
 			{
-				JournalMode = SQLiteJournalModeEnum.Wal
-			};
-
-			if( RuntimeConfig.Tests )
-			{
-				connectionStringBuilder.FullUri = ":memory:";
-				Existed = false;
+				Connection = connection;
+				Existed = true;
 			}
 			else
 			{
+				SQLiteConnectionStringBuilder connectionStringBuilder = new SQLiteConnectionStringBuilder
+				{
+					JournalMode = SQLiteJournalModeEnum.Wal,
+					Pooling = true
+				};
+
 				connectionStringBuilder.DataSource = Path.Combine( Constants.DataPath, Constants.DataFileName );
 				Existed = File.Exists( connectionStringBuilder.DataSource );
-			}
 
-			Connection = ToDispose( new SQLiteConnection( connectionStringBuilder.ToString() ) );
-			Connection.Open();
+				Connection = ToDispose( new SQLiteConnection( connectionStringBuilder.ToString() ) );
+				Connection.Open();
+			}
 		}
 
-		#endregion Constructor
-
-		#region Methods
+		public static implicit operator DbConnection( Database db )
+		{
+			return db.Connection;
+		}
 
 		[SuppressMessage( "Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities" )]
 		internal bool CheckExistance()
@@ -48,7 +47,7 @@ namespace Blitzy.Model
 			}
 			else
 			{
-				using( SQLiteCommand cmd = Connection.CreateCommand() )
+				using( DbCommand cmd = Connection.CreateCommand() )
 				{
 					cmd.CommandText = "PRAGMA user_version;";
 					object val = cmd.ExecuteScalar();
@@ -65,18 +64,8 @@ namespace Blitzy.Model
 			return Existed;
 		}
 
-		#endregion Methods
-
-		#region Properties
-
-		internal SQLiteConnection Connection { get; private set; }
-
-		#endregion Properties
-
-		#region Attributes
+		internal DbConnection Connection { get; private set; }
 
 		private readonly bool Existed;
-
-		#endregion Attributes
 	}
 }

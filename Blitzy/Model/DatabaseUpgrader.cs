@@ -1,24 +1,33 @@
-﻿// $Id$
-
-using System.Collections.Generic;
-using System.Data.SQLite;
+﻿using System.Collections.Generic;
+using System.Data.Common;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Blitzy.Model
 {
 	internal class DatabaseUpgrader : BaseObject
 	{
-		internal const int DatabaseVersion = 0;
-		private readonly List<string[]> Queries = new List<string[]>();
-
 		internal DatabaseUpgrader()
 		{
 			Queries.Add( new[] { string.Empty } );
+			Queries.Add( new[]
+			{
+				QueryBuilder.RenameTable( "weby_websites", "weby_websites_copy" ),
+				QueryBuilder.CreateTable( "weby_websites", new Dictionary<string, string>
+				{
+					{ "WebyID", "INTEGER PRIMARY KEY" },
+					{ "Name", "VARCHAR(50) NOT NULL " },
+					{ "Description", "VARCHAR(255) NOT NULL " },
+					{ "Url", "TEXT NOT NULL " },
+					{ "Icon", "TEXT" }
+				} ),
+				QueryBuilder.CopyTable( "weby_websites_copy", "weby_websites", new[]{"WebyID","Name", "Description","Url","Icon"}),
+				QueryBuilder.DropTable("weby_websites_copy")
+			} );
 		}
 
 		[SuppressMessage( "Microsoft.Security", "CA2100" )]
 		[SuppressMessage( "Microsoft.Performance", "CA1811", Justification = "This is just plain bullshit" )]
-		internal void UpgradeDatabase( int oldVersion, SQLiteConnection db )
+		internal void UpgradeDatabase( int oldVersion, DbConnection db )
 		{
 			if( oldVersion > DatabaseVersion )
 			{
@@ -32,7 +41,7 @@ namespace Blitzy.Model
 
 					foreach( string query in Queries[i] )
 					{
-						using( SQLiteCommand cmd = db.CreateCommand() )
+						using( DbCommand cmd = db.CreateCommand() )
 						{
 							cmd.CommandText = query;
 							cmd.ExecuteNonQuery();
@@ -41,5 +50,8 @@ namespace Blitzy.Model
 				}
 			}
 		}
+
+		internal const int DatabaseVersion = 1;
+		private readonly List<string[]> Queries = new List<string[]>();
 	}
 }

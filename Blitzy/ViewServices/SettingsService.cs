@@ -1,6 +1,4 @@
-﻿// $Id$
-
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows;
@@ -10,7 +8,7 @@ using Blitzy.ViewModel;
 namespace Blitzy.ViewServices
 {
 	[ExcludeFromCodeCoverage]
-	internal class SettingsService : IDialogService
+	internal class SettingsService : IViewService
 	{
 		public object Show( Window parent, object parameter = null )
 		{

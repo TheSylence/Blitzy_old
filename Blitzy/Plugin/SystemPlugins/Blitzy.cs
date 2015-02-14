@@ -1,28 +1,36 @@
-﻿// $Id$
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
 using Blitzy.Messages;
 using Blitzy.Model;
 using Blitzy.Utility;
-using GalaSoft.MvvmLight.Messaging;
 
 namespace Blitzy.Plugin.SystemPlugins
 {
 	internal class Blitzy : ISystemPlugin
 	{
-		#region Methods
-
 		public void ClearCache()
 		{
 			// Nothing to do
 		}
 
+		public void Dispose()
+		{
+			Dispose( true );
+			GC.SuppressFinalize( this );
+		}
+
+		protected void Dispose( bool disposing )
+		{
+			if( disposing )
+			{
+			}
+		}
+
 		public bool ExecuteCommand( CommandItem command, CommandExecutionMode mode, IList<string> input, out string message )
 		{
-			Messenger.Default.Send( new InternalCommandMessage( command.Name ) );
+			Host.Messenger.Send( new InternalCommandMessage( command.Name ) );
 
 			message = null;
 			return true;
@@ -37,7 +45,8 @@ namespace Blitzy.Plugin.SystemPlugins
 			yield return CommandItem.Create( "history", "ResetHistory".Localize(), this, "History.png" );
 
 #if DEBUG
-			yield return CommandItem.Create( "test", "Test Command", this );
+			yield return CommandItem.Create( "exception", "Throw an exception", this );
+			yield return CommandItem.Create( "subtest", "Test command with children", this );
 #endif
 		}
 
@@ -46,7 +55,7 @@ namespace Blitzy.Plugin.SystemPlugins
 			return null;
 		}
 
-		public IPluginViewModel GetSettingsDataContext()
+		public IPluginViewModel GetSettingsDataContext( IViewServiceManager viewServices )
 		{
 			return null;
 		}
@@ -58,7 +67,7 @@ namespace Blitzy.Plugin.SystemPlugins
 
 		public IEnumerable<CommandItem> GetSubCommands( CommandItem parent, IList<string> input )
 		{
-			if( parent.Name.Equals( "test" ) )
+			if( parent.Name.Equals( "subtest" ) )
 			{
 				yield return CommandItem.Create( "test2", "Nested test", this );
 			}
@@ -66,7 +75,8 @@ namespace Blitzy.Plugin.SystemPlugins
 
 		public bool Load( IPluginHost host, string oldVersion = null )
 		{
-			// Nothing to do
+			Host = host;
+
 			return true;
 		}
 
@@ -74,10 +84,6 @@ namespace Blitzy.Plugin.SystemPlugins
 		{
 			Debug.Assert( reason != PluginUnloadReason.Unload );
 		}
-
-		#endregion Methods
-
-		#region Properties
 
 		private Guid? Guid;
 
@@ -126,6 +132,6 @@ namespace Blitzy.Plugin.SystemPlugins
 			get { return new Uri( "http://btbsoft.org" ); }
 		}
 
-		#endregion Properties
+		private IPluginHost Host;
 	}
 }

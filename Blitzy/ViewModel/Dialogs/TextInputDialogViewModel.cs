@@ -1,100 +1,12 @@
-﻿// $Id$
-
-using GalaSoft.MvvmLight.Command;
+﻿using GalaSoft.MvvmLight.CommandWpf;
 
 namespace Blitzy.ViewModel.Dialogs
 {
 	public class TextInputDialogViewModel : ViewModelBaseEx
 	{
-		#region Properties
-
-		private string _Caption;
-		private string _Input;
-		private string _LabelText;
-
-		public string Caption
+		public TextInputDialogViewModel()
+			: base( null )
 		{
-			get
-			{
-				return _Caption;
-			}
-
-			set
-			{
-				if( _Caption == value )
-				{
-					return;
-				}
-
-				RaisePropertyChanging( () => Caption );
-				_Caption = value;
-				RaisePropertyChanged( () => Caption );
-			}
-		}
-
-		public string Input
-		{
-			get
-			{
-				return _Input;
-			}
-
-			set
-			{
-				if( _Input == value )
-				{
-					return;
-				}
-
-				RaisePropertyChanging( () => Input );
-				_Input = value;
-				RaisePropertyChanged( () => Input );
-			}
-		}
-
-		public string LabelText
-		{
-			get
-			{
-				return _LabelText;
-			}
-
-			set
-			{
-				if( _LabelText == value )
-				{
-					return;
-				}
-
-				RaisePropertyChanging( () => LabelText );
-				_LabelText = value;
-				RaisePropertyChanged( () => LabelText );
-			}
-		}
-
-		#endregion Properties
-
-		#region Commands
-
-		private RelayCommand _CancelCommand;
-		private RelayCommand _OkCommand;
-
-		public RelayCommand CancelCommand
-		{
-			get
-			{
-				return _CancelCommand ??
-					( _CancelCommand = new RelayCommand( ExecuteCancelCommand, CanExecuteCancelCommand ) );
-			}
-		}
-
-		public RelayCommand OkCommand
-		{
-			get
-			{
-				return _OkCommand ??
-					( _OkCommand = new RelayCommand( ExecuteOkCommand, CanExecuteOkCommand ) );
-			}
 		}
 
 		private bool CanExecuteCancelCommand()
@@ -117,6 +29,85 @@ namespace Blitzy.ViewModel.Dialogs
 			Close( true );
 		}
 
-		#endregion Commands
+		public RelayCommand CancelCommand
+		{
+			get
+			{
+				return _CancelCommand ??
+					( _CancelCommand = new RelayCommand( ExecuteCancelCommand, CanExecuteCancelCommand ) );
+			}
+		}
+
+		public string Caption
+		{
+			get
+			{
+				return _Caption;
+			}
+
+			set
+			{
+				if( _Caption == value )
+				{
+					return;
+				}
+
+				_Caption = value;
+				RaisePropertyChanged( () => Caption );
+			}
+		}
+
+		public string Input
+		{
+			get
+			{
+				return _Input;
+			}
+
+			set
+			{
+				if( _Input == value )
+				{
+					return;
+				}
+
+				_Input = value;
+				RaisePropertyChanged( () => Input );
+			}
+		}
+
+		public string LabelText
+		{
+			get
+			{
+				return _LabelText;
+			}
+
+			set
+			{
+				if( _LabelText == value )
+				{
+					return;
+				}
+
+				_LabelText = value;
+				RaisePropertyChanged( () => LabelText );
+			}
+		}
+
+		public RelayCommand OkCommand
+		{
+			get
+			{
+				return _OkCommand ??
+					( _OkCommand = new RelayCommand( ExecuteOkCommand, CanExecuteOkCommand ) );
+			}
+		}
+
+		private RelayCommand _CancelCommand;
+		private string _Caption;
+		private string _Input;
+		private string _LabelText;
+		private RelayCommand _OkCommand;
 	}
 }

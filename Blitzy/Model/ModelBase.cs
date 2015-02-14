@@ -1,33 +1,15 @@
-﻿// $Id$
-
-using System.Data.SQLite;
+﻿using System.Data.Common;
 
 namespace Blitzy.Model
 {
 	internal abstract class ModelBase : BaseObject
 	{
-		#region Constructor
+		public abstract void Delete( DbConnection connection );
 
-		#endregion Constructor
+		public abstract void Load( DbConnection connection );
 
-		#region Methods
-
-		public abstract void Delete( SQLiteConnection connection );
-
-		public abstract void Load( SQLiteConnection connection );
-
-		public abstract void Save( SQLiteConnection connection );
-
-		#endregion Methods
-
-		#region Properties
+		public abstract void Save( DbConnection connection );
 
 		internal bool ExistsInDatabase;
-
-		#endregion Properties
-
-		#region Attributes
-
-		#endregion Attributes
 	}
 }

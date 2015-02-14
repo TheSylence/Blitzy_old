@@ -1,6 +1,4 @@
-﻿// $Id$
-
-using System;
+﻿using System;
 using Blitzy.ViewModel;
 
 namespace Blitzy.Tests.Mocks
@@ -8,16 +6,11 @@ namespace Blitzy.Tests.Mocks
 	[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	internal class MockViewModel : ViewModelBaseEx
 	{
-		#region Constructor
-
 		public MockViewModel( string name )
+			: base( null )
 		{
 			Name = name;
 		}
-
-		#endregion Constructor
-
-		#region Methods
 
 		internal void Debug( string p )
 		{
@@ -54,16 +47,6 @@ namespace Blitzy.Tests.Mocks
 			LogWarning( p );
 		}
 
-		#endregion Methods
-
-		#region Properties
-
 		public string Name { get; private set; }
-
-		#endregion Properties
-
-		#region Attributes
-
-		#endregion Attributes
 	}
 }
